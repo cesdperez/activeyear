@@ -91,9 +91,9 @@
 
             <!-- Aspect Ratio Selector -->
             <div>
-                <label class="block text-sm font-medium text-zinc-400 mb-2">
+                <span class="block text-sm font-medium text-zinc-400 mb-2">
                     Aspect Ratio
-                </label>
+                </span>
                 <div class="flex gap-2">
                     {#each aspectRatios as ratio}
                         <button
@@ -114,9 +114,9 @@
 
             <!-- Theme Selector -->
             <div>
-                <label class="block text-sm font-medium text-zinc-400 mb-2">
+                <span class="block text-sm font-medium text-zinc-400 mb-2">
                     Theme
-                </label>
+                </span>
                 <div class="flex gap-2">
                     {#each themes as theme}
                         <button
