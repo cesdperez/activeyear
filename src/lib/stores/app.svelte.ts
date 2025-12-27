@@ -9,7 +9,8 @@ import type {
     YearStats,
     PersonalRecords,
     SportBreakdown,
-    ParseError
+    ParseError,
+    AspectRatio
 } from '../types/index.js';
 
 export type AppStatus = 'idle' | 'parsing' | 'ready' | 'error';
@@ -22,6 +23,9 @@ interface AppState {
     status: AppStatus;
     error: string | null;
     parseErrors: ParseError[];
+    // Export state
+    aspectRatio: AspectRatio;
+    userName: string;
 }
 
 function createAppStore() {
@@ -32,6 +36,10 @@ function createAppStore() {
     let status = $state<AppStatus>('idle');
     let error = $state<string | null>(null);
     let parseErrors = $state<ParseError[]>([]);
+
+    // Export state
+    let aspectRatio = $state<AspectRatio>('9:16');
+    let userName = $state<string>('');
 
     function reset() {
         activities = [];
@@ -100,6 +108,19 @@ function createAppStore() {
         },
         get parseErrors() {
             return parseErrors;
+        },
+        // Export state getters and setters
+        get aspectRatio() {
+            return aspectRatio;
+        },
+        set aspectRatio(value: AspectRatio) {
+            aspectRatio = value;
+        },
+        get userName() {
+            return userName;
+        },
+        set userName(value: string) {
+            userName = value;
         },
         reset,
         processFile
