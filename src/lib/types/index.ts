@@ -60,7 +60,7 @@ export interface GarminRawActivity {
 
 export type Theme = 'neon' | 'minimalist' | 'retro';
 
-export type AspectRatio = '9:16' | '1:1' | '4:5';
+export type AspectRatio = '9:16';
 
 export type Unit = 'km' | 'miles';
 

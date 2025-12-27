@@ -9,16 +9,6 @@
     let exportError = $state<string | null>(null);
     let previewWidth = $state(0);
 
-    const aspectRatios: {
-        value: AspectRatio;
-        label: string;
-        description: string;
-    }[] = [
-        { value: "9:16", label: "9:16", description: "Stories" },
-        { value: "1:1", label: "1:1", description: "Feed" },
-        { value: "4:5", label: "4:5", description: "Portrait" },
-    ];
-
     const themes: {
         value: Theme;
         label: string;
@@ -50,10 +40,6 @@
         } finally {
             isExporting = false;
         }
-    }
-
-    function setAspectRatio(ratio: AspectRatio) {
-        appStore.aspectRatio = ratio;
     }
 
     function setTheme(theme: Theme) {
@@ -88,29 +74,6 @@
                     placeholder="César"
                     class="w-full px-4 py-3 bg-[var(--color-surface-elevated)] border border-[rgba(255,255,255,0.1)] rounded-lg text-white placeholder-zinc-500 focus:border-[var(--color-accent)] focus:outline-none transition-colors"
                 />
-            </div>
-
-            <!-- Aspect Ratio Selector -->
-            <div>
-                <span class="block text-sm font-medium text-zinc-400 mb-2">
-                    Aspect Ratio
-                </span>
-                <div class="flex gap-2">
-                    {#each aspectRatios as ratio}
-                        <button
-                            onclick={() => setAspectRatio(ratio.value)}
-                            class="flex-1 px-4 py-3 rounded-lg text-center transition-all duration-200 {appStore.aspectRatio ===
-                            ratio.value
-                                ? 'bg-[var(--color-accent)] text-[var(--color-surface)] font-semibold'
-                                : 'bg-[var(--color-surface-elevated)] text-zinc-400 hover:text-white hover:bg-[var(--color-surface-hover)]'}"
-                        >
-                            <div class="text-sm font-bold">{ratio.label}</div>
-                            <div class="text-xs opacity-70">
-                                {ratio.description}
-                            </div>
-                        </button>
-                    {/each}
-                </div>
             </div>
 
             <!-- Theme Selector -->
@@ -156,10 +119,7 @@
             {/if}
 
             <!-- Tips -->
-            <div class="text-xs text-zinc-500 space-y-1">
-                <p>💡 9:16 is perfect for Instagram/TikTok Stories</p>
-                <p>💡 1:1 works great for Twitter and LinkedIn</p>
-            </div>
+            <p>💡 9:16 is perfect for Instagram/TikTok Stories</p>
         </div>
 
         <!-- Right: Preview -->

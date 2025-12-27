@@ -26,7 +26,6 @@ interface AppState {
     error: string | null;
     parseErrors: ParseError[];
     // Export state
-    aspectRatio: AspectRatio;
     userName: string;
     theme: Theme;
 }
@@ -41,7 +40,6 @@ function createAppStore() {
     let parseErrors = $state<ParseError[]>([]);
 
     // Export state
-    let aspectRatio = $state<AspectRatio>('9:16');
     let userName = $state<string>('');
     let theme = $state<Theme>('neon');
     let confettiEnabled = $state<boolean>(true);
@@ -123,13 +121,6 @@ function createAppStore() {
         },
         get parseErrors() {
             return parseErrors;
-        },
-        // Export state getters and setters
-        get aspectRatio() {
-            return aspectRatio;
-        },
-        set aspectRatio(value: AspectRatio) {
-            aspectRatio = value;
         },
         get userName() {
             return userName;

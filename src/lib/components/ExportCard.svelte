@@ -60,22 +60,14 @@
         other: "Other",
     };
 
-    // Get dimensions based on aspect ratio
-    let dimensions = $derived(getExportDimensions(appStore.aspectRatio));
+    // Base dimensions for 9:16 aspect ratio
+    let dimensions = $derived(getExportDimensions());
 
     // Optional preview width for responsive scaling
     let { previewWidth }: { previewWidth?: number } = $props();
 
     // Scale factor for preview (show smaller version)
-    let scale = $derived(
-        previewWidth
-            ? previewWidth / dimensions.width
-            : appStore.aspectRatio === "9:16"
-              ? 0.35
-              : appStore.aspectRatio === "4:5"
-                ? 0.4
-                : 0.45,
-    );
+    let scale = $derived(previewWidth ? previewWidth / dimensions.width : 0.35);
 
     // Top 4 sports for the card
     let topSports = $derived(appStore.breakdown.slice(0, 4));
