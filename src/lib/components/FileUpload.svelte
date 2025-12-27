@@ -67,31 +67,39 @@
 		{#if appStore.status === "parsing"}
 			<div class="mb-4">
 				<Loader2
-					class="w-12 h-12 mx-auto text-cyan-400 animate-spin"
+					class="w-12 h-12 mx-auto text-[var(--color-accent)] animate-spin"
 					strokeWidth={1.5}
 				/>
 			</div>
-			<p class="text-lg text-zinc-400">Analyzing activities...</p>
+			<p class="text-lg text-[var(--color-text-muted)]">
+				Analyzing activities...
+			</p>
 		{:else if appStore.status === "error"}
 			<div class="mb-4">
 				<AlertTriangle
-					class="w-12 h-12 mx-auto text-red-400"
+					class="w-12 h-12 mx-auto text-red-500"
 					strokeWidth={1.5}
 				/>
 			</div>
-			<p class="text-lg text-red-400 mb-2">{appStore.error}</p>
-			<p class="text-sm text-zinc-500">Click to try again</p>
+			<p class="text-lg text-red-500 mb-2">{appStore.error}</p>
+			<p class="text-sm text-[var(--color-text-dim)]">
+				Click to try again
+			</p>
 		{:else}
 			<div class="mb-4">
 				<Upload
-					class="w-12 h-12 mx-auto text-zinc-500 group-hover:text-cyan-400 transition-colors"
+					class="w-12 h-12 mx-auto text-[var(--color-text-dim)] group-hover:text-[var(--color-accent)] transition-colors duration-300"
 					strokeWidth={1.5}
 				/>
 			</div>
-			<p class="text-lg text-zinc-300 mb-1">Drop your Garmin CSV here</p>
-			<p class="text-sm text-zinc-500 mb-4">or click to browse</p>
+			<p class="text-lg text-[var(--color-text-primary)] mb-1">
+				Drop your Garmin CSV here
+			</p>
+			<p class="text-sm text-[var(--color-text-muted)] mb-4">
+				or click to browse
+			</p>
 			<p
-				class="text-xs text-zinc-600 flex items-center justify-center gap-1.5"
+				class="text-xs text-[var(--color-text-dim)] flex items-center justify-center gap-1.5"
 			>
 				<ShieldCheck class="w-3.5 h-3.5" strokeWidth={2} />
 				Your data never leaves this browser

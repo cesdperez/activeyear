@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { appStore } from "$lib/stores/app.svelte.js";
 	import StatCard from "./StatCard.svelte";
+	import PersonalRecordCard from "./PersonalRecordCard.svelte";
 	import {
 		formatDistance,
 		formatDuration,
@@ -58,36 +59,86 @@
 	};
 </script>
 
-<div class="max-w-6xl mx-auto px-4 py-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
 	<!-- Header -->
-	<header class="text-center mb-12">
-		<h1 class="text-4xl md:text-5xl font-bold mb-2 glow-text">Your 2025</h1>
-		<p class="text-zinc-400">
-			{appStore.stats?.activityCount} activities across {appStore.stats
-				?.activeDays} active days
-		</p>
+	<header class="text-center mb-16 md:mb-24">
+		<h1
+			class="text-5xl md:text-7xl font-bold mb-6 glow-text tracking-tight"
+		>
+			Your 2025
+		</h1>
+		<div
+			class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[var(--color-surface-elevated)] border border-[rgba(255,255,255,0.05)]"
+		>
+			<span class="text-[var(--color-accent)] font-mono font-bold"
+				>{appStore.stats?.activityCount}</span
+			>
+			<span class="text-[var(--color-text-muted)]">activities across</span
+			>
+			<span class="text-[var(--color-accent)] font-mono font-bold"
+				>{appStore.stats?.activeDays}</span
+			>
+			<span class="text-[var(--color-text-muted)]">active days</span>
+		</div>
 	</header>
 
-	<!-- Core Stats Grid -->
-	<section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-		<StatCard
-			value={formatDistance(appStore.stats?.totalDistance ?? 0)}
-			label="Total Distance"
-			delay={0}
+	<!-- Main Stats Grid - Asymmetrical Layout -->
+	<div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
+		<!-- Hero Stats -->
+		<div class="md:col-span-6 lg:col-span-3">
+			<StatCard
+				value={formatDistance(appStore.stats?.totalDistance ?? 0)}
+				label="Total Distance"
+				delay={0}
+			>
+				{#snippet icon()}
+					<Ruler />
+				{/snippet}
+			</StatCard>
+		</div>
+		<div class="md:col-span-6 lg:col-span-3">
+			<StatCard
+				value={formatDuration(appStore.stats?.totalDuration ?? 0)}
+				label="Time Active"
+				delay={50}
+			>
+				{#snippet icon()}
+					<Timer />
+				{/snippet}
+			</StatCard>
+		</div>
+
+		<!-- Consistency Big Cards -->
+		<div
+			class="md:col-span-12 lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-6"
 		>
-			{#snippet icon()}
-				<Ruler />
-			{/snippet}
-		</StatCard>
-		<StatCard
-			value={formatDuration(appStore.stats?.totalDuration ?? 0)}
-			label="Time Active"
-			delay={50}
-		>
-			{#snippet icon()}
-				<Timer />
-			{/snippet}
-		</StatCard>
+			<StatCard
+				value={`${appStore.stats?.activeDays ?? 0}`}
+				label="Active Days"
+				detail="in 2025"
+				highlight
+				delay={350}
+			>
+				{#snippet icon()}
+					<CalendarCheck />
+				{/snippet}
+			</StatCard>
+			<StatCard
+				value={`${appStore.stats?.longestStreak ?? 0}`}
+				label="Longest Streak"
+				detail="consecutive days"
+				highlight
+				delay={400}
+			>
+				{#snippet icon()}
+					<Zap />
+				{/snippet}
+			</StatCard>
+		</div>
+	</div>
+
+	<!-- Secondary Stats Row -->
+	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
 		<StatCard
 			value={formatCalories(appStore.stats?.totalCalories ?? 0)}
 			label="Calories Burned"
@@ -106,19 +157,6 @@
 				<Mountain />
 			{/snippet}
 		</StatCard>
-	</section>
-
-	<!-- Derived Metrics -->
-	<section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-		<StatCard
-			value={formatEarthLaps(appStore.stats?.totalDistance ?? 0)}
-			label="Earth Laps"
-			delay={200}
-		>
-			{#snippet icon()}
-				<Globe />
-			{/snippet}
-		</StatCard>
 		<StatCard
 			value={formatEverests(appStore.stats?.totalElevation ?? 0)}
 			label="Everests Climbed"
@@ -129,51 +167,31 @@
 			{/snippet}
 		</StatCard>
 		<StatCard
-			value={formatPizzaSlices(appStore.stats?.totalCalories ?? 0)}
-			label="Pizza Slices Burned"
-			delay={300}
+			value={formatEarthLaps(appStore.stats?.totalDistance ?? 0)}
+			label="Earth Laps"
+			delay={200}
 		>
 			{#snippet icon()}
-				<Pizza />
+				<Globe />
 			{/snippet}
 		</StatCard>
-	</section>
+	</div>
 
-	<!-- Consistency Stats -->
-	<section class="grid grid-cols-2 gap-4 mb-8">
-		<StatCard
-			value={`${appStore.stats?.activeDays ?? 0}`}
-			label="Active Days"
-			detail="in 2025"
-			highlight
-			delay={350}
-		>
-			{#snippet icon()}
-				<CalendarCheck />
-			{/snippet}
-		</StatCard>
-		<StatCard
-			value={`${appStore.stats?.longestStreak ?? 0}`}
-			label="Longest Streak"
-			detail="consecutive days"
-			highlight
-			delay={400}
-		>
-			{#snippet icon()}
-				<Zap />
-			{/snippet}
-		</StatCard>
-	</section>
-
-	<!-- Personal Records -->
+	<!-- Personal Records Section -->
 	{#if appStore.records}
-		<section class="mb-8">
-			<h2 class="text-xl font-semibold mb-4 text-zinc-300">
-				Personal Records
-			</h2>
-			<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+		<section class="mb-16">
+			<div class="flex items-end gap-4 mb-8">
+				<h2 class="text-3xl font-bold tracking-tight">
+					Personal Records
+				</h2>
+				<div
+					class="h-px flex-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent opacity-20 mb-2"
+				></div>
+			</div>
+
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 				{#if appStore.records.longestDistance}
-					<StatCard
+					<PersonalRecordCard
 						value={formatDistance(
 							appStore.records.longestDistance.value,
 						)}
@@ -184,10 +202,10 @@
 						{#snippet icon()}
 							<Trophy />
 						{/snippet}
-					</StatCard>
+					</PersonalRecordCard>
 				{/if}
 				{#if appStore.records.longestDuration}
-					<StatCard
+					<PersonalRecordCard
 						value={formatDuration(
 							appStore.records.longestDuration.value,
 						)}
@@ -198,10 +216,10 @@
 						{#snippet icon()}
 							<Hourglass />
 						{/snippet}
-					</StatCard>
+					</PersonalRecordCard>
 				{/if}
 				{#if appStore.records.biggestBurn}
-					<StatCard
+					<PersonalRecordCard
 						value={formatCalories(
 							appStore.records.biggestBurn.value,
 						)}
@@ -212,7 +230,7 @@
 						{#snippet icon()}
 							<Sparkles />
 						{/snippet}
-					</StatCard>
+					</PersonalRecordCard>
 				{/if}
 			</div>
 		</section>
@@ -221,29 +239,40 @@
 	<!-- Sport Breakdown -->
 	{#if appStore.breakdown.length > 0}
 		<section>
-			<h2 class="text-xl font-semibold mb-4 text-zinc-300">By Sport</h2>
-			<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+			<div class="flex items-end gap-4 mb-8">
+				<h2 class="text-3xl font-bold tracking-tight">By Sport</h2>
+				<div
+					class="h-px flex-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent opacity-20 mb-2"
+				></div>
+			</div>
+
+			<div
+				class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
+			>
 				{#each appStore.breakdown as sport, i}
 					{@const IconComponent = sportIcons[sport.type] ?? Target}
 					<div
-						class="stat-card p-4 sport-card"
+						class="stat-card p-5 sport-card group hover:bg-[var(--color-surface-hover)] transition-colors duration-300"
 						style="animation-delay: {600 + i * 50}ms"
 					>
-						<div class="icon-container mb-2">
-							<IconComponent
-								class="w-6 h-6 text-cyan-400"
-								strokeWidth={1.75}
-							/>
+						<div
+							class="icon-container mb-3 text-[var(--color-accent)] group-hover:scale-110 transition-transform duration-300 origin-left"
+						>
+							<IconComponent class="w-6 h-6" strokeWidth={1.5} />
 						</div>
-						<div class="text-lg font-semibold text-white">
+						<div class="text-lg font-bold text-white mb-1">
 							{sportNames[sport.type] ?? sport.type}
 						</div>
-						<div class="text-sm text-zinc-400">
+						<div
+							class="text-xs font-medium uppercase tracking-wider text-zinc-500 mb-2"
+						>
 							{sport.count}
 							{sport.count === 1 ? "activity" : "activities"}
 						</div>
 						{#if sport.distance > 0}
-							<div class="text-xs text-zinc-500 mt-1">
+							<div
+								class="text-sm font-mono text-[var(--color-text-dim)] group-hover:text-[var(--color-text-primary)] transition-colors"
+							>
 								{formatDistance(sport.distance)}
 							</div>
 						{/if}
@@ -254,12 +283,16 @@
 	{/if}
 
 	<!-- Upload New File -->
-	<div class="mt-12 text-center">
+	<div class="mt-24 text-center">
 		<button
-			class="text-sm text-zinc-500 hover:text-cyan-400 transition-colors"
+			class="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-[var(--color-surface-elevated)] transition-all duration-300 group"
 			onclick={() => appStore.reset()}
 		>
-			↺ Upload different file
+			<span
+				class="group-hover:-rotate-180 transition-transform duration-500"
+				>↺</span
+			>
+			Upload different file
 		</button>
 	</div>
 </div>

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { spring } from 'svelte/motion';
-	import type { Snippet } from 'svelte';
+	import { onMount } from "svelte";
+	import { spring } from "svelte/motion";
+	import type { Snippet } from "svelte";
 
 	interface Props {
 		value: string;
@@ -12,7 +12,14 @@
 		delay?: number;
 	}
 
-	let { value, label, detail, icon, highlight = false, delay = 0 }: Props = $props();
+	let {
+		value,
+		label,
+		detail,
+		icon,
+		highlight = false,
+		delay = 0,
+	}: Props = $props();
 
 	// Animation state
 	let visible = $state(false);
@@ -32,29 +39,42 @@
 </script>
 
 <div
-	class="stat-card p-6"
+	class="stat-card p-8 flex flex-col justify-between h-full relative overflow-hidden group"
 	class:glow-border={highlight}
 	style="opacity: {$opacity}; transform: scale({$scale});"
 >
-	{#if icon}
-		<div class="icon-container mb-3">
-			{@render icon()}
-		</div>
-	{/if}
+	<!-- Decorative accent gradient -->
+	<div
+		class="absolute -top-12 -right-12 w-24 h-24 bg-[var(--color-accent)] opacity-[0.03] blur-3xl rounded-full pointer-events-none group-hover:opacity-[0.07] transition-opacity duration-300"
+	></div>
 
-	<div class="stat-value text-3xl md:text-4xl text-white mb-1">
-		{value}
+	<div class="mb-6">
+		{#if icon}
+			<div
+				class="icon-container mb-4 text-[var(--color-text-muted)] group-hover:text-[var(--color-accent)] transition-colors duration-300"
+			>
+				{@render icon()}
+			</div>
+		{/if}
+
+		<div
+			class="stat-value text-4xl md:text-5xl text-[var(--color-text-primary)] leading-none tracking-tight mb-2"
+		>
+			{value}
+		</div>
 	</div>
 
-	<div class="stat-label">
-		{label}
-	</div>
-
-	{#if detail}
-		<div class="mt-2 text-sm text-zinc-500 truncate">
-			{detail}
+	<div class="mt-auto">
+		<div class="stat-label mb-1">
+			{label}
 		</div>
-	{/if}
+
+		{#if detail}
+			<div class="text-sm text-[var(--color-text-muted)] font-medium">
+				{detail}
+			</div>
+		{/if}
+	</div>
 </div>
 
 <style>
@@ -67,7 +87,6 @@
 	.icon-container :global(svg) {
 		width: 1.5rem;
 		height: 1.5rem;
-		color: var(--color-accent);
-		stroke-width: 1.75;
+		stroke-width: 1.5; /* Guidelines say 1.5-2px */
 	}
 </style>
