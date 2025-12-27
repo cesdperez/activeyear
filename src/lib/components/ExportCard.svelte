@@ -63,13 +63,18 @@
     // Get dimensions based on aspect ratio
     let dimensions = $derived(getExportDimensions(appStore.aspectRatio));
 
+    // Optional preview width for responsive scaling
+    let { previewWidth }: { previewWidth?: number } = $props();
+
     // Scale factor for preview (show smaller version)
     let scale = $derived(
-        appStore.aspectRatio === "9:16"
-            ? 0.35
-            : appStore.aspectRatio === "4:5"
-              ? 0.4
-              : 0.45,
+        previewWidth
+            ? previewWidth / dimensions.width
+            : appStore.aspectRatio === "9:16"
+              ? 0.35
+              : appStore.aspectRatio === "4:5"
+                ? 0.4
+                : 0.45,
     );
 
     // Top 4 sports for the card
@@ -121,46 +126,47 @@
             <!-- Content -->
             <div class="relative z-10 h-full flex flex-col p-[5%]">
                 <!-- Header -->
+                <!-- Header -->
                 <header class="text-center mb-auto">
                     {#if appStore.userName}
                         <p
-                            class="text-[28px] font-medium text-[var(--color-text-muted)] mb-2"
+                            class="text-[42px] font-medium text-[var(--color-text-muted)] mb-2"
                         >
                             {appStore.userName}'s
                         </p>
                     {/if}
                     <h1
-                        class="text-[64px] font-bold tracking-tight export-title"
+                        class="text-[120px] font-bold tracking-tight export-title leading-none mb-2"
                     >
                         2025
                     </h1>
                     <p
-                        class="text-[24px] text-[var(--color-text-dim)] font-medium"
+                        class="text-[32px] text-[var(--color-text-dim)] font-medium tracking-wide uppercase"
                     >
                         Year in Sport
                     </p>
                 </header>
 
                 <!-- Hero Stats -->
-                <div class="grid grid-cols-2 gap-6 mb-8">
+                <div class="grid grid-cols-2 gap-8 mb-8">
                     <div class="export-stat-card">
                         <div
-                            class="flex items-center gap-3 mb-2 text-[var(--color-accent)]"
+                            class="flex items-center gap-4 mb-4 text-[var(--color-accent)]"
                         >
-                            <Ruler class="w-8 h-8" strokeWidth={1.5} />
+                            <Ruler class="w-12 h-12" strokeWidth={1.5} />
                         </div>
                         <div
-                            class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                            class="text-[64px] font-bold stat-value text-[var(--color-text-primary)] leading-none -ml-[2px]"
                         >
                             {formatDistance(appStore.stats?.totalDistance ?? 0)}
                         </div>
                         <div
-                            class="text-[18px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-1"
+                            class="text-[24px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-2"
                         >
                             Total Distance
                         </div>
                         <div
-                            class="text-[14px] font-medium text-[var(--color-accent)] mt-2 opacity-80"
+                            class="text-[20px] font-medium text-[var(--color-accent)] mt-3 opacity-90"
                         >
                             🌍 {formatEarthLaps(
                                 appStore.stats?.totalDistance ?? 0,
@@ -169,24 +175,24 @@
                     </div>
                     <div class="export-stat-card">
                         <div
-                            class="flex items-center gap-3 mb-2 text-[var(--color-accent)]"
+                            class="flex items-center gap-4 mb-4 text-[var(--color-accent)]"
                         >
-                            <Mountain class="w-8 h-8" strokeWidth={1.5} />
+                            <Mountain class="w-12 h-12" strokeWidth={1.5} />
                         </div>
                         <div
-                            class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                            class="text-[64px] font-bold stat-value text-[var(--color-text-primary)] leading-none -ml-[2px]"
                         >
                             {formatElevation(
                                 appStore.stats?.totalElevation ?? 0,
                             )}
                         </div>
                         <div
-                            class="text-[18px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-1"
+                            class="text-[24px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-2"
                         >
                             Total Elevation
                         </div>
                         <div
-                            class="text-[14px] font-medium text-[var(--color-accent)] mt-2 opacity-80"
+                            class="text-[20px] font-medium text-[var(--color-accent)] mt-3 opacity-90"
                         >
                             🏔️ {formatEverests(
                                 appStore.stats?.totalElevation ?? 0,
@@ -196,25 +202,25 @@
                 </div>
 
                 <!-- Time & Calories Stats -->
-                <div class="grid grid-cols-2 gap-6 mb-8">
+                <div class="grid grid-cols-2 gap-8 mb-8">
                     <div class="export-stat-card">
                         <div
-                            class="flex items-center gap-3 mb-2 text-[var(--color-accent)]"
+                            class="flex items-center gap-4 mb-4 text-[var(--color-accent)]"
                         >
-                            <Timer class="w-8 h-8" strokeWidth={1.5} />
+                            <Timer class="w-12 h-12" strokeWidth={1.5} />
                         </div>
                         <div
-                            class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                            class="text-[64px] font-bold stat-value text-[var(--color-text-primary)] leading-none -ml-[2px]"
                         >
                             {formatDuration(appStore.stats?.totalDuration ?? 0)}
                         </div>
                         <div
-                            class="text-[18px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-1"
+                            class="text-[24px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-2"
                         >
                             Time Active
                         </div>
                         <div
-                            class="text-[14px] font-medium text-[var(--color-accent)] mt-2 opacity-80"
+                            class="text-[20px] font-medium text-[var(--color-accent)] mt-3 opacity-90"
                         >
                             💍 {formatLotRMarathons(
                                 appStore.stats?.totalDuration ?? 0,
@@ -223,22 +229,22 @@
                     </div>
                     <div class="export-stat-card">
                         <div
-                            class="flex items-center gap-3 mb-2 text-[var(--color-accent)]"
+                            class="flex items-center gap-4 mb-4 text-[var(--color-accent)]"
                         >
-                            <Sparkles class="w-8 h-8" strokeWidth={1.5} />
+                            <Sparkles class="w-12 h-12" strokeWidth={1.5} />
                         </div>
                         <div
-                            class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                            class="text-[64px] font-bold stat-value text-[var(--color-text-primary)] leading-none -ml-[2px]"
                         >
                             {formatCalories(appStore.stats?.totalCalories ?? 0)}
                         </div>
                         <div
-                            class="text-[18px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-1"
+                            class="text-[24px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-2"
                         >
                             Calories Burned
                         </div>
                         <div
-                            class="text-[14px] font-medium text-[var(--color-accent)] mt-2 opacity-80"
+                            class="text-[20px] font-medium text-[var(--color-accent)] mt-3 opacity-90"
                         >
                             🍕 {formatPizzaSlices(
                                 appStore.stats?.totalCalories ?? 0,
@@ -248,37 +254,40 @@
                 </div>
 
                 <!-- Consistency Stats -->
-                <div class="grid grid-cols-2 gap-6 mb-8">
+                <div class="grid grid-cols-2 gap-8 mb-8">
                     <div class="export-stat-card highlight">
                         <div
-                            class="flex items-center gap-3 mb-2 text-[var(--color-accent)]"
+                            class="flex items-center gap-4 mb-4 text-[var(--color-accent)]"
                         >
-                            <CalendarCheck class="w-7 h-7" strokeWidth={1.5} />
+                            <CalendarCheck
+                                class="w-12 h-12"
+                                strokeWidth={1.5}
+                            />
                         </div>
                         <div
-                            class="text-[56px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                            class="text-[96px] font-bold stat-value text-[var(--color-text-primary)] leading-none -ml-[3px]"
                         >
                             {appStore.stats?.activeDays ?? 0}
                         </div>
                         <div
-                            class="text-[16px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-1"
+                            class="text-[24px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-2"
                         >
                             Active Days
                         </div>
                     </div>
                     <div class="export-stat-card highlight">
                         <div
-                            class="flex items-center gap-3 mb-2 text-[var(--color-accent)]"
+                            class="flex items-center gap-4 mb-4 text-[var(--color-accent)]"
                         >
-                            <Zap class="w-7 h-7" strokeWidth={1.5} />
+                            <Zap class="w-12 h-12" strokeWidth={1.5} />
                         </div>
                         <div
-                            class="text-[56px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                            class="text-[96px] font-bold stat-value text-[var(--color-text-primary)] leading-none -ml-[3px]"
                         >
                             {appStore.stats?.longestStreak ?? 0}
                         </div>
                         <div
-                            class="text-[16px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-1"
+                            class="text-[24px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-2"
                         >
                             Day Streak
                         </div>
@@ -289,19 +298,19 @@
                 {#if appStore.records}
                     <div class="mb-8">
                         <h2
-                            class="text-[20px] font-semibold text-[var(--color-text-muted)] mb-4 uppercase tracking-wider"
+                            class="text-[28px] font-semibold text-[var(--color-text-muted)] mb-6 uppercase tracking-wider"
                         >
                             Personal Records
                         </h2>
-                        <div class="grid grid-cols-3 gap-4">
+                        <div class="grid grid-cols-3 gap-6">
                             {#if appStore.records.longestDistance}
                                 <div class="export-record-card">
                                     <Trophy
-                                        class="w-6 h-6 text-amber-400 mb-2"
+                                        class="w-10 h-10 text-amber-400 mb-3 mx-auto"
                                         strokeWidth={1.5}
                                     />
                                     <div
-                                        class="text-[28px] font-bold stat-value text-[var(--color-text-primary)]"
+                                        class="text-[42px] font-bold stat-value text-[var(--color-text-primary)] leading-none mb-1"
                                     >
                                         {formatDistance(
                                             appStore.records.longestDistance
@@ -309,7 +318,7 @@
                                         )}
                                     </div>
                                     <div
-                                        class="text-[12px] text-[var(--color-text-muted)] uppercase tracking-wide"
+                                        class="text-[16px] text-[var(--color-text-muted)] uppercase tracking-wide"
                                     >
                                         Longest
                                     </div>
@@ -318,11 +327,11 @@
                             {#if appStore.records.longestDuration}
                                 <div class="export-record-card">
                                     <Hourglass
-                                        class="w-6 h-6 text-amber-400 mb-2"
+                                        class="w-10 h-10 text-amber-400 mb-3 mx-auto"
                                         strokeWidth={1.5}
                                     />
                                     <div
-                                        class="text-[28px] font-bold stat-value text-[var(--color-text-primary)]"
+                                        class="text-[42px] font-bold stat-value text-[var(--color-text-primary)] leading-none mb-1"
                                     >
                                         {formatDuration(
                                             appStore.records.longestDuration
@@ -330,7 +339,7 @@
                                         )}
                                     </div>
                                     <div
-                                        class="text-[12px] text-[var(--color-text-muted)] uppercase tracking-wide"
+                                        class="text-[16px] text-[var(--color-text-muted)] uppercase tracking-wide"
                                     >
                                         Duration
                                     </div>
@@ -339,18 +348,18 @@
                             {#if appStore.records.biggestBurn}
                                 <div class="export-record-card">
                                     <Sparkles
-                                        class="w-6 h-6 text-amber-400 mb-2"
+                                        class="w-10 h-10 text-amber-400 mb-3 mx-auto"
                                         strokeWidth={1.5}
                                     />
                                     <div
-                                        class="text-[28px] font-bold stat-value text-[var(--color-text-primary)]"
+                                        class="text-[42px] font-bold stat-value text-[var(--color-text-primary)] leading-none mb-1"
                                     >
                                         {formatCalories(
                                             appStore.records.biggestBurn.value,
                                         )}
                                     </div>
                                     <div
-                                        class="text-[12px] text-[var(--color-text-muted)] uppercase tracking-wide"
+                                        class="text-[16px] text-[var(--color-text-muted)] uppercase tracking-wide"
                                     >
                                         Burn
                                     </div>
@@ -364,26 +373,26 @@
                 {#if topSports.length > 0}
                     <div class="mb-auto">
                         <h2
-                            class="text-[20px] font-semibold text-[var(--color-text-muted)] mb-4 uppercase tracking-wider"
+                            class="text-[28px] font-semibold text-[var(--color-text-muted)] mb-6 uppercase tracking-wider"
                         >
                             Activities
                         </h2>
-                        <div class="grid grid-cols-4 gap-3">
+                        <div class="grid grid-cols-4 gap-4">
                             {#each topSports as sport}
                                 {@const IconComponent =
                                     sportIcons[sport.type] ?? Target}
                                 <div class="export-sport-card">
                                     <IconComponent
-                                        class="w-6 h-6 text-[var(--color-accent)] mb-2"
+                                        class="w-10 h-10 text-[var(--color-accent)] mb-3 mx-auto"
                                         strokeWidth={1.5}
                                     />
                                     <div
-                                        class="text-[18px] font-bold text-[var(--color-text-primary)]"
+                                        class="text-[24px] font-bold text-[var(--color-text-primary)] mb-1"
                                     >
                                         {sportNames[sport.type] ?? sport.type}
                                     </div>
                                     <div
-                                        class="text-[14px] text-[var(--color-text-muted)]"
+                                        class="text-[20px] text-[var(--color-text-muted)]"
                                     >
                                         {sport.count}×
                                     </div>
@@ -396,7 +405,7 @@
                 <!-- Watermark -->
                 <div class="mt-auto pt-6 text-center">
                     <p
-                        class="text-[16px] text-[var(--color-text-dim)] font-medium"
+                        class="text-[24px] text-[var(--color-text-dim)] font-medium"
                     >
                         activeyear.app
                     </p>
@@ -455,7 +464,7 @@
     .export-stat-card {
         background: var(--color-accent-subtle);
         border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 16px;
+        border-radius: 24px;
         padding: 24px;
     }
 
@@ -483,8 +492,8 @@
     .export-record-card {
         background: var(--color-accent-subtle);
         border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
-        padding: 16px;
+        border-radius: 20px;
+        padding: 24px;
         text-align: center;
     }
 
@@ -501,8 +510,8 @@
     .export-sport-card {
         background: var(--color-accent-subtle);
         border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
-        padding: 12px;
+        border-radius: 20px;
+        padding: 24px;
         text-align: center;
     }
 

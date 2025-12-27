@@ -7,6 +7,7 @@
 
     let isExporting = $state(false);
     let exportError = $state<string | null>(null);
+    let previewWidth = $state(0);
 
     const aspectRatios: {
         value: AspectRatio;
@@ -60,7 +61,7 @@
     }
 </script>
 
-<section class="export-panel">
+<section class="export-panel" id="export-panel">
     <div class="flex items-end gap-4 mb-8">
         <h2 class="text-3xl font-bold tracking-tight">Export</h2>
         <div
@@ -162,12 +163,13 @@
         </div>
 
         <!-- Right: Preview -->
-        <div class="flex-1 flex flex-col items-center">
+        <div class="flex-1 flex flex-col items-center w-full">
             <div class="text-sm text-zinc-500 mb-4">Preview</div>
             <div
-                class="overflow-hidden rounded-lg border border-[rgba(255,255,255,0.1)] shadow-2xl"
+                class="overflow-hidden rounded-lg border border-[rgba(255,255,255,0.1)] shadow-2xl max-w-full"
+                bind:clientWidth={previewWidth}
             >
-                <ExportCard />
+                <ExportCard {previewWidth} />
             </div>
         </div>
     </div>

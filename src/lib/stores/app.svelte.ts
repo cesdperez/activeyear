@@ -44,6 +44,7 @@ function createAppStore() {
     let aspectRatio = $state<AspectRatio>('9:16');
     let userName = $state<string>('');
     let theme = $state<Theme>('neon');
+    let confettiEnabled = $state<boolean>(true);
 
     function reset() {
         activities = [];
@@ -144,7 +145,13 @@ function createAppStore() {
         },
         reset,
         processFile,
-        loadDemoData
+        loadDemoData,
+        get confettiEnabled() {
+            return confettiEnabled;
+        },
+        set confettiEnabled(value: boolean) {
+            confettiEnabled = value;
+        }
     };
 }
 
