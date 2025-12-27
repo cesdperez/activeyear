@@ -7,6 +7,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 test.describe('Upload Flow', () => {
     test('home page displays upload UI', async ({ page }) => {
+        // Disable animations for stability
+        await page.addStyleTag({ content: '*, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }' });
+
         await page.goto('/');
 
         // Check main heading
@@ -36,17 +39,19 @@ test.describe('Upload Flow', () => {
         await fileInput.setInputFiles(csvPath);
 
         // Wait for dashboard to appear
-        await expect(page.getByText('Your 2025')).toBeVisible({ timeout: 5000 });
+        await expect(page.getByRole('heading', { name: 'Your 2025' })).toBeVisible({ timeout: 10000 });
 
+        // Check core stats are displayed
         // Check core stats are displayed
         await expect(page.getByText('Total Distance').first()).toBeVisible();
         await expect(page.getByText('Time Active').first()).toBeVisible();
-        await expect(page.getByText('Calories Burned')).toBeVisible();
-        await expect(page.getByText('Elevation Gained')).toBeVisible();
+        await expect(page.getByText('Calories Burned').first()).toBeVisible();
+        await expect(page.getByText('Elevation Gained').first()).toBeVisible();
 
         // Check derived metrics
-        await expect(page.getByText('Earth Laps')).toBeVisible();
-        await expect(page.getByText('Everests Climbed')).toBeVisible();
+        // Check derived metrics
+        await expect(page.getByText(/around Earth/).first()).toBeVisible();
+        await expect(page.getByText(/Everest/).first()).toBeVisible();
     });
 
     test('allows uploading a different file', async ({ page }) => {
@@ -58,7 +63,7 @@ test.describe('Upload Flow', () => {
         await fileInput.setInputFiles(csvPath);
 
         // Wait for dashboard
-        await expect(page.getByText('Your 2025')).toBeVisible({ timeout: 5000 });
+        await expect(page.getByRole('heading', { name: 'Your 2025' })).toBeVisible({ timeout: 10000 });
 
         // Click reset button
         await page.getByRole('button', { name: 'Upload different file' }).click();

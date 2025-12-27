@@ -9,7 +9,31 @@
 
 	let isDragOver = $state(false);
 	let fileInput: HTMLInputElement;
+	let isArtificialDelay = $state(false);
+	let currentPhrase = $state("");
 
+	const FUNNY_PHRASES = [
+		"Warming up the calves...",
+		"Inflating the tires...",
+		"Finding the GPS signal...",
+		"Chasing down segments...",
+		"Hydrating the data...",
+		"Lacing up the shoes...",
+		"Greasing the chain...",
+		"Stretching the glutes...",
+		"Calculating VO2 max...",
+		"Eating a pre-run banana...",
+		"Tightening the cleats...",
+		"Checking the wind direction...",
+		"Refilling the water bottles...",
+		"Syncing with the satellites...",
+		"Polishing the frame...",
+		"Adjusting the saddle height...",
+		"Loading the power meter...",
+		"Applying anti-chafe cream...",
+		"Checking the weather forecast...",
+		"Calibrating the heart rate monitor...",
+	];
 	function handleDragOver(event: DragEvent) {
 		event.preventDefault();
 		isDragOver = true;
@@ -20,12 +44,30 @@
 		isDragOver = false;
 	}
 
+	async function startArtificialDelay() {
+		isArtificialDelay = true;
+		const phraseInterval = setInterval(() => {
+			currentPhrase =
+				FUNNY_PHRASES[Math.floor(Math.random() * FUNNY_PHRASES.length)];
+		}, 1000);
+
+		// Set initial phrase
+		currentPhrase =
+			FUNNY_PHRASES[Math.floor(Math.random() * FUNNY_PHRASES.length)];
+
+		await new Promise((resolve) => setTimeout(resolve, 5000));
+
+		clearInterval(phraseInterval);
+		isArtificialDelay = false;
+	}
+
 	async function handleDrop(event: DragEvent) {
 		event.preventDefault();
 		isDragOver = false;
 
 		const file = event.dataTransfer?.files[0];
 		if (file) {
+			await startArtificialDelay();
 			await appStore.processFile(file);
 		}
 	}
@@ -34,6 +76,7 @@
 		const target = event.target as HTMLInputElement;
 		const file = target.files?.[0];
 		if (file) {
+			await startArtificialDelay();
 			await appStore.processFile(file);
 		}
 	}
@@ -64,15 +107,15 @@
 	/>
 
 	<div class="text-center">
-		{#if appStore.status === "parsing"}
+		{#if appStore.status === "parsing" || isArtificialDelay}
 			<div class="mb-4">
 				<Loader2
 					class="w-12 h-12 mx-auto text-[var(--color-accent)] animate-spin"
 					strokeWidth={1.5}
 				/>
 			</div>
-			<p class="text-lg text-[var(--color-text-muted)]">
-				Analyzing activities...
+			<p class="text-lg text-[var(--color-text-muted)] animate-pulse">
+				{isArtificialDelay ? currentPhrase : "Analyzing activities..."}
 			</p>
 		{:else if appStore.status === "error"}
 			<div class="mb-4">
