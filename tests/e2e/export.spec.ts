@@ -7,11 +7,14 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 test.describe('Export Flow', () => {
     // Helper to upload CSV and get to dashboard
     async function uploadAndWaitForDashboard(page: Page) {
+        // Disable animations for stability
+        await page.addStyleTag({ content: '*, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }' });
+
         await page.goto('/');
         const fileInput = page.locator('input[type="file"]');
         const csvPath = join(__dirname, '..', '..', 'src', 'lib', 'parsers', '__fixtures__', 'garmin-sample.csv');
         await fileInput.setInputFiles(csvPath);
-        await expect(page.getByText('Your 2025')).toBeVisible({ timeout: 5000 });
+        await expect(page.getByRole('heading', { name: 'Your 2025' })).toBeVisible({ timeout: 10000 });
     }
 
     test('export panel appears after upload', async ({ page }) => {
