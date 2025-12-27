@@ -97,7 +97,11 @@ describe('formatEarthLaps', () => {
 
 	it('formats larger values as multiplier', () => {
 		expect(formatEarthLaps(80150)).toBe('2.00x laps around the globe');
-		expect(formatEarthLaps(40075)).toBe('1.00x laps around the globe');
+		expect(formatEarthLaps(400750)).toBe('10.00x laps around the globe');
+	});
+
+	it('formats values between 0.1 and 1.0 as percentage', () => {
+		expect(formatEarthLaps(8015)).toBe('20.0% of a lap around the globe');
 	});
 });
 
@@ -118,6 +122,10 @@ describe('formatEverests', () => {
 		expect(formatEverests(8848)).toBe('1.0x the height of Mt. Everest');
 		expect(formatEverests(20000)).toBe('2.3x the height of Mt. Everest');
 	});
+
+	it('formats values between 0.1 and 1.0 as percentage', () => {
+		expect(formatEverests(4424)).toBe('50% the height of Mt. Everest');
+	});
 });
 
 describe('calculatePizzaSlices', () => {
@@ -130,11 +138,11 @@ describe('calculatePizzaSlices', () => {
 
 describe('formatPizzaSlices', () => {
 	it('formats with thousands separator', () => {
-		expect(formatPizzaSlices(285000)).toBe('Fuelled by 1,000 pizza slices');
+		expect(formatPizzaSlices(285000)).toBe('1,000 pizza slices burnt');
 	});
 
 	it('handles small values', () => {
-		expect(formatPizzaSlices(855)).toBe('Fuelled by 3 pizza slices');
+		expect(formatPizzaSlices(855)).toBe('3 pizza slices burnt');
 	});
 });
 

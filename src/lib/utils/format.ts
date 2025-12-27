@@ -64,7 +64,7 @@ export function calculateEarthLaps(distanceKm: number): number {
  */
 export function formatEarthLaps(distanceKm: number): string {
     const laps = calculateEarthLaps(distanceKm);
-    if (laps < 0.1) {
+    if (laps < 1.0) {
         return `${(laps * 100).toFixed(1)}% of a lap around the globe`;
     }
     return `${laps.toFixed(2)}x laps around the globe`;
@@ -82,7 +82,7 @@ export function calculateEverests(elevationM: number): number {
  */
 export function formatEverests(elevationM: number): string {
     const everests = calculateEverests(elevationM);
-    if (everests < 0.1) {
+    if (everests < 1.0) {
         return `${(everests * 100).toFixed(0)}% the height of Mt. Everest`;
     }
     return `${everests.toFixed(1)}x the height of Mt. Everest`;
@@ -100,7 +100,7 @@ export function calculatePizzaSlices(calories: number): number {
  */
 export function formatPizzaSlices(calories: number): string {
     const slices = calculatePizzaSlices(calories);
-    return `Fuelled by ${slices.toLocaleString('en-US')} pizza slices`;
+    return `${slices.toLocaleString('en-US')} pizza slices burnt`;
 }
 
 export function formatActivityCount(count: number, type: string): string {

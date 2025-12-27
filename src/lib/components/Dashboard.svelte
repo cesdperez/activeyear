@@ -416,16 +416,6 @@
 </div>
 
 <style>
-	.icon-container {
-		display: flex;
-		align-items: center;
-	}
-
-	.sport-card {
-		opacity: 0;
-		animation: fadeInUp 0.4s ease-out forwards;
-	}
-
 	@keyframes fadeInUp {
 		from {
 			opacity: 0;

@@ -117,9 +117,6 @@
             {#if exportError}
                 <p class="text-red-400 text-sm">{exportError}</p>
             {/if}
-
-            <!-- Tips -->
-            <p>💡 9:16 is perfect for Instagram/TikTok Stories</p>
         </div>
 
         <!-- Right: Preview -->
