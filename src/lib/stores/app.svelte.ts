@@ -4,6 +4,7 @@ import {
     calculatePersonalRecords,
     calculateSportBreakdown
 } from '../utils/stats.js';
+import { demoStats, demoRecords, demoBreakdown } from '../data/demo.js';
 import type {
     Activity,
     YearStats,
@@ -90,6 +91,16 @@ function createAppStore() {
         }
     }
 
+    function loadDemoData() {
+        reset();
+        stats = demoStats;
+        records = demoRecords;
+        breakdown = demoBreakdown;
+        // Mock activities for potential future needs, though charts use aggregated stats
+        activities = [];
+        status = 'ready';
+    }
+
     return {
         get activities() {
             return activities;
@@ -132,7 +143,8 @@ function createAppStore() {
             theme = value;
         },
         reset,
-        processFile
+        processFile,
+        loadDemoData
     };
 }
 
