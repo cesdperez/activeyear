@@ -62,7 +62,9 @@
             </div>
 
             <div
-                class="stat-value text-2xl md:text-3xl text-white mb-1 group-hover:glow-text transition-all duration-300"
+                class="stat-value {value.length > 12
+                    ? 'text-xl md:text-2xl'
+                    : 'text-2xl md:text-3xl'} text-white mb-1 group-hover:glow-text transition-all duration-300"
             >
                 {value}
             </div>

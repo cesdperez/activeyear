@@ -85,7 +85,11 @@ body {
 
 /* Glow Text Effect */
 .glow-text {
-	text-shadow: 0 0 30px var(--color-accent-glow);
+	background: linear-gradient(to bottom, #fff 20%, #ccc 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	filter: drop-shadow(0 0 20px var(--color-accent-glow));
 }
 
 /* Glow Border Effect */
@@ -128,16 +132,34 @@ body {
 
 /* Card Styles */
 .stat-card {
-	background: var(--color-surface-elevated);
-	border-radius: 0.75rem;
-	border: 1px solid rgba(255, 255, 255, 0.05);
-	transition: all var(--transition-base);
+	background: linear-gradient(135deg, var(--color-surface-elevated), rgba(20, 20, 22, 0.4));
+	backdrop-filter: blur(10px);
+	border-radius: 1rem;
+	border: 1px solid rgba(255, 255, 255, 0.03);
+	transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1);
+	position: relative;
+	overflow: hidden;
+}
+
+.stat-card::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(circle at top right, var(--color-accent-subtle), transparent 70%);
+	opacity: 0;
+	transition: opacity 400ms ease;
 }
 
 .stat-card:hover {
-	border-color: rgba(34, 211, 238, 0.2);
-	box-shadow: var(--shadow-glow-sm);
-	transform: translateY(-2px);
+	border-color: rgba(34, 211, 238, 0.3);
+	box-shadow:
+		0 20px 40px -15px rgba(0, 0, 0, 0.5),
+		0 0 20px var(--color-accent-subtle);
+	transform: translateY(-4px) scale(1.01);
+}
+
+.stat-card:hover::before {
+	opacity: 1;
 }
 
 /* Label Styles */
