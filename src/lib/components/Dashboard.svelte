@@ -93,6 +93,21 @@
 			setTimeout(frame, 140);
 		})();
 	}
+
+	let breakdownMetric = $state<"count" | "duration">("count");
+	const sortedBreakdown = $derived(
+		[...(appStore.breakdown || [])].sort(
+			(a, b) => b[breakdownMetric] - a[breakdownMetric],
+		),
+	);
+	const maxMetricValue = $derived(
+		Math.max(
+			...sortedBreakdown.map(
+				(s: (typeof sortedBreakdown)[0]) => s[breakdownMetric],
+			),
+			1,
+		),
+	);
 </script>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative">
@@ -197,30 +212,48 @@
 	</div>
 
 	<!-- Consistency Stats -->
-	<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-		<StatCard
-			value={`${appStore.stats?.activeDays ?? 0}`}
-			label="Active Days"
-			detail="in 2025"
-			highlight
-			delay={350}
+	<div class="grid grid-cols-2 gap-4 md:gap-6 mb-16 max-w-2xl mx-auto">
+		<div
+			class="stat-card p-4 md:p-6 flex items-center gap-4 group"
+			style="animation-delay: 350ms"
 		>
-			{#snippet icon()}
-				<CalendarCheck />
-			{/snippet}
-		</StatCard>
+			<div class="text-[var(--color-accent)] shrink-0">
+				<CalendarCheck class="w-6 h-6 md:w-8 md:h-8" />
+			</div>
+			<div>
+				<div
+					class="text-2xl md:text-3xl font-bold text-white leading-none"
+				>
+					{appStore.stats?.activeDays ?? 0}
+				</div>
+				<div
+					class="text-xs md:text-sm text-[var(--color-text-muted)] font-medium uppercase tracking-wider"
+				>
+					Active Days
+				</div>
+			</div>
+		</div>
 
-		<StatCard
-			value={`${appStore.stats?.longestStreak ?? 0}`}
-			label="Longest Streak"
-			detail="consecutive days"
-			highlight
-			delay={400}
+		<div
+			class="stat-card p-4 md:p-6 flex items-center gap-4 group"
+			style="animation-delay: 400ms"
 		>
-			{#snippet icon()}
-				<Zap />
-			{/snippet}
-		</StatCard>
+			<div class="text-[var(--color-accent)] shrink-0">
+				<Zap class="w-6 h-6 md:w-8 md:h-8" />
+			</div>
+			<div>
+				<div
+					class="text-2xl md:text-3xl font-bold text-white leading-none"
+				>
+					{appStore.stats?.longestStreak ?? 0}
+				</div>
+				<div
+					class="text-xs md:text-sm text-[var(--color-text-muted)] font-medium uppercase tracking-wider"
+				>
+					Best Day Streak
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<!-- Personal Records Section -->
@@ -285,43 +318,79 @@
 	<!-- Sport Breakdown -->
 	{#if appStore.breakdown.length > 0}
 		<section>
-			<div class="flex items-end gap-4 mb-8">
-				<h2 class="text-3xl font-bold tracking-tight">By Sport</h2>
+			<div
+				class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8"
+			>
+				<div class="flex items-end gap-4 flex-1">
+					<h2 class="text-3xl font-bold tracking-tight">By Sport</h2>
+					<div
+						class="h-px flex-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent opacity-20 mb-2"
+					></div>
+				</div>
+
 				<div
-					class="h-px flex-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent opacity-20 mb-2"
-				></div>
+					class="flex p-1 bg-[var(--color-surface-elevated)] rounded-lg self-start"
+				>
+					<button
+						class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md transition-all duration-200 {breakdownMetric ===
+						'count'
+							? 'bg-[var(--color-accent)] text-black'
+							: 'text-zinc-500 hover:text-zinc-300'}"
+						onclick={() => (breakdownMetric = "count")}
+					>
+						Activities
+					</button>
+					<button
+						class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md transition-all duration-200 {breakdownMetric ===
+						'duration'
+							? 'bg-[var(--color-accent)] text-black'
+							: 'text-zinc-500 hover:text-zinc-300'}"
+						onclick={() => (breakdownMetric = "duration")}
+					>
+						Time
+					</button>
+				</div>
 			</div>
 
-			<div
-				class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
-			>
-				{#each appStore.breakdown as sport, i}
+			<div class="space-y-4 max-w-4xl">
+				{#each sortedBreakdown as sport, i (sport.type)}
 					{@const IconComponent = sportIcons[sport.type] ?? Target}
+					{@const value = sport[breakdownMetric]}
+					{@const percentage = (value / maxMetricValue) * 100}
 					<div
-						class="stat-card p-5 sport-card group hover:bg-[var(--color-surface-hover)] transition-colors duration-300"
-						style="animation-delay: {600 + i * 50}ms"
+						class="flex items-center gap-4 group"
+						style="animation: fadeInUp 0.4s ease-out forwards; animation-delay: {600 +
+							i * 50}ms"
 					>
 						<div
-							class="icon-container mb-3 text-[var(--color-accent)] group-hover:scale-110 transition-transform duration-300 origin-left"
+							class="w-10 h-10 rounded-lg bg-[var(--color-surface-elevated)] flex items-center justify-center text-[var(--color-accent)] group-hover:scale-110 transition-transform"
 						>
-							<IconComponent class="w-6 h-6" strokeWidth={1.5} />
+							<IconComponent class="w-5 h-5" strokeWidth={1.5} />
 						</div>
-						<div class="text-lg font-bold text-white mb-1">
-							{sportNames[sport.type] ?? sport.type}
-						</div>
-						<div
-							class="text-xs font-medium uppercase tracking-wider text-zinc-500 mb-2"
-						>
-							{sport.count}
-							{sport.count === 1 ? "activity" : "activities"}
-						</div>
-						{#if sport.distance > 0}
-							<div
-								class="text-sm font-mono text-[var(--color-text-dim)] group-hover:text-[var(--color-text-primary)] transition-colors"
-							>
-								{formatDistance(sport.distance)}
+
+						<div class="flex-1 min-w-0">
+							<div class="flex justify-between items-end mb-1">
+								<span class="font-bold text-white truncate">
+									{sportNames[sport.type] ?? sport.type}
+								</span>
+								<span
+									class="font-mono text-sm text-[var(--color-accent)]"
+								>
+									{breakdownMetric === "count"
+										? value
+										: formatDuration(value)}
+								</span>
 							</div>
-						{/if}
+
+							<div
+								class="h-2 bg-[var(--color-surface-elevated)] rounded-full overflow-hidden"
+							>
+								<div
+									class="h-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-dim,var(--color-accent))] rounded-full transition-all duration-500 ease-out"
+									style="width: {percentage}%"
+								></div>
+							</div>
+						</div>
 					</div>
 				{/each}
 			</div>

@@ -15,9 +15,9 @@ export function formatDistance(km: number, unit: Unit = 'km'): string {
     const suffix = unit === 'miles' ? 'mi' : 'km';
 
     if (value < 100) {
-        return `${Math.round(value)} ${suffix}`;
+        return `${Math.round(value)}${suffix}`;
     }
-    return `${value.toFixed(1)} ${suffix}`;
+    return `${value.toFixed(1)}${suffix}`;
 }
 
 /**
@@ -40,8 +40,8 @@ export function formatDuration(seconds: number): string {
  */
 export function formatCalories(calories: number): string {
     return Math.round(calories / 100) * 100 > 0
-        ? Math.round(calories).toLocaleString('en-US')
-        : '0';
+        ? `${Math.round(calories).toLocaleString('en-US')}kcal`
+        : '0kcal';
 }
 
 /**
@@ -64,10 +64,10 @@ export function calculateEarthLaps(distanceKm: number): number {
  */
 export function formatEarthLaps(distanceKm: number): string {
     const laps = calculateEarthLaps(distanceKm);
-    if (laps < 0.01) {
-        return `${(laps * 100).toFixed(1)}% around Earth`;
+    if (laps < 0.1) {
+        return `${(laps * 100).toFixed(1)}% of a lap around the globe`;
     }
-    return `${laps.toFixed(2)}× around Earth`;
+    return `${laps.toFixed(2)}x laps around the globe`;
 }
 
 /**
@@ -83,9 +83,9 @@ export function calculateEverests(elevationM: number): number {
 export function formatEverests(elevationM: number): string {
     const everests = calculateEverests(elevationM);
     if (everests < 0.1) {
-        return `${(everests * 100).toFixed(0)}% of Everest`;
+        return `${(everests * 100).toFixed(0)}% the height of Mt. Everest`;
     }
-    return `${everests.toFixed(1)} Everests`;
+    return `${everests.toFixed(1)}x the height of Mt. Everest`;
 }
 
 /**
@@ -100,7 +100,7 @@ export function calculatePizzaSlices(calories: number): number {
  */
 export function formatPizzaSlices(calories: number): string {
     const slices = calculatePizzaSlices(calories);
-    return `${slices.toLocaleString('en-US')} slices`;
+    return `Fuelled by ${slices.toLocaleString('en-US')} pizza slices`;
 }
 
 export function formatActivityCount(count: number, type: string): string {

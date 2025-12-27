@@ -15,23 +15,23 @@ import {
 
 describe('formatDistance', () => {
 	it('formats small distances without decimals', () => {
-		expect(formatDistance(42)).toBe('42 km');
-		expect(formatDistance(99)).toBe('99 km');
+		expect(formatDistance(42)).toBe('42km');
+		expect(formatDistance(99)).toBe('99km');
 	});
 
 	it('formats large distances with one decimal', () => {
-		expect(formatDistance(100.5)).toBe('100.5 km');
-		expect(formatDistance(847.345)).toBe('847.3 km');
+		expect(formatDistance(100.5)).toBe('100.5km');
+		expect(formatDistance(847.345)).toBe('847.3km');
 	});
 
 	it('rounds distances correctly', () => {
-		expect(formatDistance(42.7)).toBe('43 km');
-		expect(formatDistance(42.4)).toBe('42 km');
+		expect(formatDistance(42.7)).toBe('43km');
+		expect(formatDistance(42.4)).toBe('42km');
 	});
 
 	it('formats miles when unit is miles', () => {
-		expect(formatDistance(10, 'miles')).toBe('6 mi'); // 10km ≈ 6.2mi
-		expect(formatDistance(161, 'miles')).toBe('100.0 mi'); // 161km ≈ 100mi (over 100 gets decimal)
+		expect(formatDistance(10, 'miles')).toBe('6mi'); // 10km ≈ 6.2mi
+		expect(formatDistance(161, 'miles')).toBe('100.0mi'); // 161km ≈ 100mi (over 100 gets decimal)
 	});
 });
 
@@ -58,16 +58,16 @@ describe('formatDuration', () => {
 
 describe('formatCalories', () => {
 	it('formats with thousands separator', () => {
-		expect(formatCalories(2800)).toBe('2,800');
-		expect(formatCalories(12500)).toBe('12,500');
+		expect(formatCalories(2800)).toBe('2,800kcal');
+		expect(formatCalories(12500)).toBe('12,500kcal');
 	});
 
 	it('handles small values', () => {
-		expect(formatCalories(150)).toBe('150');
+		expect(formatCalories(150)).toBe('150kcal');
 	});
 
 	it('returns 0 for zero calories', () => {
-		expect(formatCalories(0)).toBe('0');
+		expect(formatCalories(0)).toBe('0kcal');
 	});
 });
 
@@ -92,12 +92,12 @@ describe('calculateEarthLaps', () => {
 
 describe('formatEarthLaps', () => {
 	it('formats small values as percentage', () => {
-		expect(formatEarthLaps(400)).toBe('1.0% around Earth');
+		expect(formatEarthLaps(400)).toBe('1.0% of a lap around the globe');
 	});
 
 	it('formats larger values as multiplier', () => {
-		expect(formatEarthLaps(4000)).toBe('0.10× around Earth');
-		expect(formatEarthLaps(40075)).toBe('1.00× around Earth');
+		expect(formatEarthLaps(80150)).toBe('2.00x laps around the globe');
+		expect(formatEarthLaps(40075)).toBe('1.00x laps around the globe');
 	});
 });
 
@@ -110,12 +110,13 @@ describe('calculateEverests', () => {
 
 describe('formatEverests', () => {
 	it('formats small values as percentage', () => {
-		expect(formatEverests(884)).toBe('10% of Everest');
+		// (884 / 8848) * 100 = 9.99...% -> 10%
+		expect(formatEverests(884)).toBe('10% the height of Mt. Everest');
 	});
 
 	it('formats larger values as multiplier', () => {
-		expect(formatEverests(8848)).toBe('1.0 Everests');
-		expect(formatEverests(20000)).toBe('2.3 Everests');
+		expect(formatEverests(8848)).toBe('1.0x the height of Mt. Everest');
+		expect(formatEverests(20000)).toBe('2.3x the height of Mt. Everest');
 	});
 });
 
@@ -129,11 +130,11 @@ describe('calculatePizzaSlices', () => {
 
 describe('formatPizzaSlices', () => {
 	it('formats with thousands separator', () => {
-		expect(formatPizzaSlices(285000)).toBe('1,000 slices');
+		expect(formatPizzaSlices(285000)).toBe('Fuelled by 1,000 pizza slices');
 	});
 
 	it('handles small values', () => {
-		expect(formatPizzaSlices(855)).toBe('3 slices');
+		expect(formatPizzaSlices(855)).toBe('Fuelled by 3 pizza slices');
 	});
 });
 

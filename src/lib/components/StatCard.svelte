@@ -41,7 +41,7 @@
 </script>
 
 <div
-	class="stat-card p-8 flex flex-col justify-between h-full relative overflow-hidden group"
+	class="stat-card p-6 md:p-8 flex flex-col justify-between h-full relative overflow-hidden group"
 	class:glow-border={highlight}
 	style="opacity: {$opacity}; transform: scale({$scale});"
 >
@@ -60,7 +60,9 @@
 		{/if}
 
 		<div
-			class="stat-value text-4xl md:text-5xl text-[var(--color-text-primary)] leading-none tracking-tight mb-2"
+			class="stat-value {value.length > 10
+				? 'text-2xl sm:text-3xl lg:text-4xl'
+				: 'text-3xl sm:text-4xl lg:text-5xl'} text-[var(--color-text-primary)] leading-none tracking-tight mb-2"
 		>
 			{value}
 		</div>
