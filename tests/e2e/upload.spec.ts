@@ -49,8 +49,7 @@ test.describe('Upload Flow', () => {
         await expect(page.getByText('Elevation Gained').first()).toBeVisible();
 
         // Check derived metrics
-        // Check derived metrics
-        await expect(page.getByText(/around Earth/).first()).toBeVisible();
+        await expect(page.getByText(/around the globe/).first()).toBeVisible();
         await expect(page.getByText(/Everest/).first()).toBeVisible();
     });
 
