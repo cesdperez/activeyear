@@ -3,7 +3,7 @@
     import ExportCard, { getExportElement } from "./ExportCard.svelte";
     import { exportToPng } from "$lib/utils/export.js";
     import { Download } from "@lucide/svelte";
-    import type { AspectRatio } from "$lib/types/index.js";
+    import type { AspectRatio, Theme } from "$lib/types/index.js";
 
     let isExporting = $state(false);
     let exportError = $state<string | null>(null);
@@ -16,6 +16,16 @@
         { value: "9:16", label: "9:16", description: "Stories" },
         { value: "1:1", label: "1:1", description: "Feed" },
         { value: "4:5", label: "4:5", description: "Portrait" },
+    ];
+
+    const themes: {
+        value: Theme;
+        label: string;
+        description: string;
+    }[] = [
+        { value: "neon", label: "Neon", description: "Cyberpunk" },
+        { value: "minimalist", label: "Minimal", description: "Swiss" },
+        { value: "retro", label: "Retro", description: "8-bit" },
     ];
 
     async function handleExport() {
@@ -43,6 +53,10 @@
 
     function setAspectRatio(ratio: AspectRatio) {
         appStore.aspectRatio = ratio;
+    }
+
+    function setTheme(theme: Theme) {
+        appStore.theme = theme;
     }
 </script>
 
@@ -92,6 +106,29 @@
                             <div class="text-sm font-bold">{ratio.label}</div>
                             <div class="text-xs opacity-70">
                                 {ratio.description}
+                            </div>
+                        </button>
+                    {/each}
+                </div>
+            </div>
+
+            <!-- Theme Selector -->
+            <div>
+                <label class="block text-sm font-medium text-zinc-400 mb-2">
+                    Theme
+                </label>
+                <div class="flex gap-2">
+                    {#each themes as theme}
+                        <button
+                            onclick={() => setTheme(theme.value)}
+                            class="flex-1 px-4 py-3 rounded-lg text-center transition-all duration-200 {appStore.theme ===
+                            theme.value
+                                ? 'bg-[var(--color-accent)] text-[var(--color-surface)] font-semibold'
+                                : 'bg-[var(--color-surface-elevated)] text-zinc-400 hover:text-white hover:bg-[var(--color-surface-hover)]'}"
+                        >
+                            <div class="text-sm font-bold">{theme.label}</div>
+                            <div class="text-xs opacity-70">
+                                {theme.description}
                             </div>
                         </button>
                     {/each}
