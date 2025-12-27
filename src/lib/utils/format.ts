@@ -103,10 +103,24 @@ export function formatPizzaSlices(calories: number): string {
     return `${slices.toLocaleString('en-US')} slices`;
 }
 
-/**
- * Format activity count with type name
- */
 export function formatActivityCount(count: number, type: string): string {
     const pluralType = count === 1 ? type : `${type}s`;
     return `${count} ${pluralType}`;
+}
+
+const LOTR_MARATHON_SECONDS = 42960; // 11h 56m (Extended Editions total)
+
+/**
+ * Calculate LotR marathons from seconds
+ */
+export function calculateLotRMarathons(seconds: number): number {
+    return seconds / LOTR_MARATHON_SECONDS;
+}
+
+/**
+ * Format LotR marathons for display
+ */
+export function formatLotRMarathons(seconds: number): string {
+    const marathons = calculateLotRMarathons(seconds);
+    return `${marathons.toFixed(1)} LotR marathons`;
 }

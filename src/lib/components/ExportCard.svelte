@@ -11,6 +11,10 @@
         formatDuration,
         formatCalories,
         formatElevation,
+        formatEarthLaps,
+        formatEverests,
+        formatPizzaSlices,
+        formatLotRMarathons,
     } from "$lib/utils/format.js";
     import { getExportDimensions } from "$lib/utils/export.js";
 
@@ -143,7 +147,38 @@
                     >
                         Total Distance
                     </div>
+                    <div
+                        class="text-[14px] font-medium text-[var(--color-accent)] mt-2 opacity-80"
+                    >
+                        🌍 {formatEarthLaps(appStore.stats?.totalDistance ?? 0)}
+                    </div>
                 </div>
+                <div class="export-stat-card">
+                    <div
+                        class="flex items-center gap-3 mb-2 text-[var(--color-accent)]"
+                    >
+                        <Mountain class="w-8 h-8" strokeWidth={1.5} />
+                    </div>
+                    <div
+                        class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                    >
+                        {formatElevation(appStore.stats?.totalElevation ?? 0)}
+                    </div>
+                    <div
+                        class="text-[18px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-1"
+                    >
+                        Total Elevation
+                    </div>
+                    <div
+                        class="text-[14px] font-medium text-[var(--color-accent)] mt-2 opacity-80"
+                    >
+                        🏔️ {formatEverests(appStore.stats?.totalElevation ?? 0)}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Time & Calories Stats -->
+            <div class="grid grid-cols-2 gap-6 mb-8">
                 <div class="export-stat-card">
                     <div
                         class="flex items-center gap-3 mb-2 text-[var(--color-accent)]"
@@ -159,6 +194,37 @@
                         class="text-[18px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-1"
                     >
                         Time Active
+                    </div>
+                    <div
+                        class="text-[14px] font-medium text-[var(--color-accent)] mt-2 opacity-80"
+                    >
+                        💍 {formatLotRMarathons(
+                            appStore.stats?.totalDuration ?? 0,
+                        )}
+                    </div>
+                </div>
+                <div class="export-stat-card">
+                    <div
+                        class="flex items-center gap-3 mb-2 text-[var(--color-accent)]"
+                    >
+                        <Sparkles class="w-8 h-8" strokeWidth={1.5} />
+                    </div>
+                    <div
+                        class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                    >
+                        {formatCalories(appStore.stats?.totalCalories ?? 0)}
+                    </div>
+                    <div
+                        class="text-[18px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-1"
+                    >
+                        Calories Burned
+                    </div>
+                    <div
+                        class="text-[14px] font-medium text-[var(--color-accent)] mt-2 opacity-80"
+                    >
+                        🍕 {formatPizzaSlices(
+                            appStore.stats?.totalCalories ?? 0,
+                        )}
                     </div>
                 </div>
             </div>

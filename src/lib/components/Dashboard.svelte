@@ -11,6 +11,7 @@
 		formatEarthLaps,
 		formatEverests,
 		formatPizzaSlices,
+		formatLotRMarathons,
 	} from "$lib/utils/format.js";
 
 	// Lucide icons
@@ -83,97 +84,76 @@
 		</div>
 	</header>
 
-	<!-- Main Stats Grid - Asymmetrical Layout -->
-	<div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-		<!-- Hero Stats -->
-		<div class="md:col-span-6 lg:col-span-3">
-			<StatCard
-				value={formatDistance(appStore.stats?.totalDistance ?? 0)}
-				label="Total Distance"
-				delay={0}
-			>
-				{#snippet icon()}
-					<Ruler />
-				{/snippet}
-			</StatCard>
-		</div>
-		<div class="md:col-span-6 lg:col-span-3">
-			<StatCard
-				value={formatDuration(appStore.stats?.totalDuration ?? 0)}
-				label="Time Active"
-				delay={50}
-			>
-				{#snippet icon()}
-					<Timer />
-				{/snippet}
-			</StatCard>
-		</div>
-
-		<!-- Consistency Big Cards -->
-		<div
-			class="md:col-span-12 lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-6"
-		>
-			<StatCard
-				value={`${appStore.stats?.activeDays ?? 0}`}
-				label="Active Days"
-				detail="in 2025"
-				highlight
-				delay={350}
-			>
-				{#snippet icon()}
-					<CalendarCheck />
-				{/snippet}
-			</StatCard>
-			<StatCard
-				value={`${appStore.stats?.longestStreak ?? 0}`}
-				label="Longest Streak"
-				detail="consecutive days"
-				highlight
-				delay={400}
-			>
-				{#snippet icon()}
-					<Zap />
-				{/snippet}
-			</StatCard>
-		</div>
-	</div>
-
-	<!-- Secondary Stats Row -->
-	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+	<!-- Main Stats Grid -->
+	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 		<StatCard
-			value={formatCalories(appStore.stats?.totalCalories ?? 0)}
-			label="Calories Burned"
-			delay={100}
+			value={formatDistance(appStore.stats?.totalDistance ?? 0)}
+			label="Total Distance"
+			delay={0}
+			equivalent={`🌍 ${formatEarthLaps(appStore.stats?.totalDistance ?? 0)}`}
 		>
 			{#snippet icon()}
-				<Flame />
+				<Ruler />
 			{/snippet}
 		</StatCard>
+
 		<StatCard
 			value={formatElevation(appStore.stats?.totalElevation ?? 0)}
 			label="Elevation Gained"
 			delay={150}
+			equivalent={`🏔️ ${formatEverests(appStore.stats?.totalElevation ?? 0)}`}
 		>
 			{#snippet icon()}
 				<Mountain />
 			{/snippet}
 		</StatCard>
+
 		<StatCard
-			value={formatEverests(appStore.stats?.totalElevation ?? 0)}
-			label="Everests Climbed"
-			delay={250}
+			value={formatDuration(appStore.stats?.totalDuration ?? 0)}
+			label="Time Active"
+			delay={50}
+			equivalent={`💍 ${formatLotRMarathons(appStore.stats?.totalDuration ?? 0)}`}
 		>
 			{#snippet icon()}
-				<MountainSnow />
+				<Timer />
 			{/snippet}
 		</StatCard>
+
 		<StatCard
-			value={formatEarthLaps(appStore.stats?.totalDistance ?? 0)}
-			label="Earth Laps"
-			delay={200}
+			value={formatCalories(appStore.stats?.totalCalories ?? 0)}
+			label="Calories Burned"
+			delay={100}
+			equivalent={`🍕 ${formatPizzaSlices(appStore.stats?.totalCalories ?? 0)}`}
 		>
 			{#snippet icon()}
-				<Globe />
+				<Flame />
+			{/snippet}
+		</StatCard>
+	</div>
+
+	<!-- Consistency Stats -->
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+		<StatCard
+			value={`${appStore.stats?.activeDays ?? 0}`}
+			label="Active Days"
+			detail="in 2025"
+			highlight
+			delay={350}
+		>
+			{#snippet icon()}
+				<CalendarCheck />
+			{/snippet}
+		</StatCard>
+
+		<StatCard
+			value={`${appStore.stats?.longestStreak ?? 0}`}
+			label="Longest Streak"
+			detail="consecutive days"
+			highlight
+			delay={400}
+		>
+			{#snippet icon()}
+				<Zap />
 			{/snippet}
 		</StatCard>
 	</div>

@@ -10,6 +10,7 @@
 		icon?: Snippet;
 		highlight?: boolean;
 		delay?: number;
+		equivalent?: string;
 	}
 
 	let {
@@ -19,6 +20,7 @@
 		icon,
 		highlight = false,
 		delay = 0,
+		equivalent,
 	}: Props = $props();
 
 	// Animation state
@@ -72,6 +74,14 @@
 		{#if detail}
 			<div class="text-sm text-[var(--color-text-muted)] font-medium">
 				{detail}
+			</div>
+		{/if}
+
+		{#if equivalent}
+			<div
+				class="text-sm font-medium text-[var(--color-accent)] mt-2 opacity-90"
+			>
+				{equivalent}
 			</div>
 		{/if}
 	</div>
