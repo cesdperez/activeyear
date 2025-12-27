@@ -130,4 +130,15 @@ test.describe('Export Flow', () => {
         await page.getByRole('button', { name: /Neon/i }).click();
         await expect(exportCard).toHaveAttribute('data-theme', 'neon');
     });
+
+    test('wrapper has correct scaled dimensions', async ({ page }) => {
+        await uploadAndWaitForDashboard(page);
+
+        // Default is 9:16, width 1080, scale 0.35 => 378px
+        const wrapper = page.locator('.export-card-wrapper');
+        await expect(wrapper).toHaveCSS('width', '378px');
+
+        // Height 1920 * 0.35 => 672px
+        await expect(wrapper).toHaveCSS('height', '672px');
+    });
 });

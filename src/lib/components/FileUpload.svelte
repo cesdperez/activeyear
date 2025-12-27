@@ -87,7 +87,7 @@
 </script>
 
 <div
-	class="upload-zone p-8 md:p-12 cursor-pointer group"
+	class="upload-zone p-8 md:p-12 cursor-pointer group flex flex-col items-center justify-center min-h-[300px]"
 	class:dragover={isDragOver}
 	role="button"
 	tabindex="0"
