@@ -23,34 +23,15 @@ test.describe('Export Flow', () => {
         // Check export section is visible
         await expect(page.getByRole('heading', { name: 'Export' })).toBeVisible();
 
-        // Check aspect ratio buttons are present
-        await expect(page.getByRole('button', { name: /9:16/i })).toBeVisible();
-        await expect(page.getByRole('button', { name: /1:1/i })).toBeVisible();
-        await expect(page.getByRole('button', { name: /4:5/i })).toBeVisible();
+        // Check ratio buttons are NOT present
+        await expect(page.getByRole('button', { name: /9:16/i })).not.toBeVisible();
+        await expect(page.getByRole('button', { name: /1:1/i })).not.toBeVisible();
+        await expect(page.getByRole('button', { name: /4:5/i })).not.toBeVisible();
 
         // Check download button
         await expect(page.getByRole('button', { name: /Download PNG/i })).toBeVisible();
     });
 
-    test('aspect ratio switching works', async ({ page }) => {
-        await uploadAndWaitForDashboard(page);
-
-        // 9:16 should be selected by default
-        const button916 = page.getByRole('button', { name: /9:16/i });
-        await expect(button916).toHaveClass(/bg-\[var\(--color-accent\)\]/);
-
-        // Click 1:1
-        const button11 = page.getByRole('button', { name: /1:1/i });
-        await button11.click();
-
-        // Verify selection changed (1:1 has accent background now)
-        await expect(button11).toHaveClass(/bg-\[var\(--color-accent\)\]/);
-
-        // Click 4:5
-        const button45 = page.getByRole('button', { name: /4:5/i });
-        await button45.click();
-        await expect(button45).toHaveClass(/bg-\[var\(--color-accent\)\]/);
-    });
 
     test('user name personalization works', async ({ page }) => {
         await uploadAndWaitForDashboard(page);
@@ -138,7 +119,7 @@ test.describe('Export Flow', () => {
         const wrapper = page.locator('.export-card-wrapper');
         await expect(wrapper).toHaveCSS('width', '378px');
 
-        // Height 1920 * 0.35 => 672px
+        // Height 1080 * 16/9 * 0.35 => 1920 * 0.35 => 672px
         await expect(wrapper).toHaveCSS('height', '672px');
     });
 });

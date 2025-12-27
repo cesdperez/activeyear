@@ -47,20 +47,10 @@ export async function exportToPng(
  * Get dimensions for a given aspect ratio
  * Base width is 1080px (standard for social media)
  */
-export function getExportDimensions(aspectRatio: '9:16' | '1:1' | '4:5'): {
+export function getExportDimensions(): {
     width: number;
     height: number;
 } {
     const baseWidth = 1080;
-
-    switch (aspectRatio) {
-        case '9:16':
-            return { width: baseWidth, height: Math.round((baseWidth * 16) / 9) };
-        case '1:1':
-            return { width: baseWidth, height: baseWidth };
-        case '4:5':
-            return { width: baseWidth, height: Math.round((baseWidth * 5) / 4) };
-        default:
-            return { width: baseWidth, height: Math.round((baseWidth * 16) / 9) };
-    }
+    return { width: baseWidth, height: Math.round((baseWidth * 16) / 9) };
 }
