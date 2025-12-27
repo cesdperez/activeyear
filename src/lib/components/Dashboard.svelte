@@ -2,6 +2,7 @@
 	import { appStore } from "$lib/stores/app.svelte.js";
 	import StatCard from "./StatCard.svelte";
 	import PersonalRecordCard from "./PersonalRecordCard.svelte";
+	import ExportPanel from "./ExportPanel.svelte";
 	import {
 		formatDistance,
 		formatDuration,
@@ -281,6 +282,9 @@
 			</div>
 		</section>
 	{/if}
+
+	<!-- Export Panel -->
+	<ExportPanel />
 
 	<!-- Upload New File -->
 	<div class="mt-24 text-center">
