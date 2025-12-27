@@ -33,6 +33,7 @@
 		"vitest": "^4.0.16"
 	},
 	"dependencies": {
+		"@lucide/svelte": "^0.562.0",
 		"html-to-image": "^1.11.13",
 		"papaparse": "^5.5.3"
 	}

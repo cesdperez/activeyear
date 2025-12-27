@@ -4,8 +4,7 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { parseGarminCsv } from './garmin.js';
 import { calculateYearStats, calculateSportBreakdown } from '../utils/stats.js';
-import type { Activity } from '../types.js';
-import type { YearStats, SportBreakdown } from '../utils/stats.js';
+import type { Activity, YearStats, SportBreakdown } from '../types/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
