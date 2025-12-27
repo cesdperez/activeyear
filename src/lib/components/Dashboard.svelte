@@ -34,6 +34,7 @@
 		Dumbbell,
 		Heart,
 		Target,
+		ArrowDown,
 	} from "@lucide/svelte";
 
 	// Sport type display names
@@ -59,9 +60,57 @@
 		yoga: Heart,
 		other: Target,
 	};
+
+	import confetti from "canvas-confetti";
+	import { PartyPopper } from "@lucide/svelte";
+
+	$effect(() => {
+		if (appStore.confettiEnabled) {
+			startConfetti();
+		}
+	});
+
+	function startConfetti() {
+		(function frame() {
+			if (!appStore.confettiEnabled) return;
+
+			confetti({
+				particleCount: 1,
+				startVelocity: 0,
+				ticks: 800,
+				gravity: 0.3,
+				scalar: 0.7,
+				origin: {
+					x: Math.random(),
+					// since they fall down, start a bit above the screen
+					y: -0.1,
+				},
+				colors: ["#FFD700", "#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4"],
+				shapes: ["circle", "square"],
+				disableForReducedMotion: true,
+			});
+
+			setTimeout(frame, 140);
+		})();
+	}
 </script>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative">
+	<div class="absolute top-4 right-4 md:right-8 z-10">
+		<button
+			class="p-2 rounded-full transition-all duration-300 hover:scale-110 {appStore.confettiEnabled
+				? 'bg-[var(--color-surface-elevated)] text-[var(--color-accent)] shadow-lg'
+				: 'bg-transparent text-zinc-600 hover:text-zinc-400'}"
+			onclick={() =>
+				(appStore.confettiEnabled = !appStore.confettiEnabled)}
+			title={appStore.confettiEnabled
+				? "Disable celebration mode"
+				: "Enable celebration mode"}
+			aria-label="Toggle celebration confetti"
+		>
+			<PartyPopper class="w-6 h-6" />
+		</button>
+	</div>
 	<!-- Header -->
 	<header class="text-center mb-16 md:mb-24">
 		<h1
@@ -81,6 +130,22 @@
 				>{appStore.stats?.activeDays}</span
 			>
 			<span class="text-[var(--color-text-muted)]">active days</span>
+		</div>
+
+		<div class="mt-8">
+			<button
+				class="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-accent)] hover:text-white transition-colors duration-200 group"
+				onclick={() => {
+					document
+						.getElementById("export-panel")
+						?.scrollIntoView({ behavior: "smooth" });
+				}}
+			>
+				<span>Jump to Export</span>
+				<ArrowDown
+					class="w-4 h-4 group-hover:translate-y-1 transition-transform"
+				/>
+			</button>
 		</div>
 	</header>
 
