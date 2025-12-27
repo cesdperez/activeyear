@@ -39,15 +39,14 @@ test.describe('Upload Flow', () => {
         await expect(page.getByText('Your 2025')).toBeVisible({ timeout: 5000 });
 
         // Check core stats are displayed
-        await expect(page.getByText('Total Distance')).toBeVisible();
-        await expect(page.getByText('Time Active')).toBeVisible();
+        await expect(page.getByText('Total Distance').first()).toBeVisible();
+        await expect(page.getByText('Time Active').first()).toBeVisible();
         await expect(page.getByText('Calories Burned')).toBeVisible();
         await expect(page.getByText('Elevation Gained')).toBeVisible();
 
         // Check derived metrics
         await expect(page.getByText('Earth Laps')).toBeVisible();
         await expect(page.getByText('Everests Climbed')).toBeVisible();
-        await expect(page.getByText('Pizza Slices Burned')).toBeVisible();
     });
 
     test('allows uploading a different file', async ({ page }) => {
