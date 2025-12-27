@@ -97,4 +97,34 @@ test.describe('Export Flow', () => {
         // The button text changes during export
         await expect(page.getByText(/Generating|Download PNG/i)).toBeVisible();
     });
+
+    test('theme selector is visible', async ({ page }) => {
+        await uploadAndWaitForDashboard(page);
+
+        // Check theme buttons are present
+        await expect(page.getByRole('button', { name: /Neon/i })).toBeVisible();
+        await expect(page.getByRole('button', { name: /Minimal/i })).toBeVisible();
+        await expect(page.getByRole('button', { name: /Retro/i })).toBeVisible();
+    });
+
+    test('theme switching works', async ({ page }) => {
+        await uploadAndWaitForDashboard(page);
+
+        const exportCard = page.locator('#export-card');
+
+        // Neon should be default (data-theme="neon")
+        await expect(exportCard).toHaveAttribute('data-theme', 'neon');
+
+        // Click Minimalist
+        await page.getByRole('button', { name: /Minimal/i }).click();
+        await expect(exportCard).toHaveAttribute('data-theme', 'minimalist');
+
+        // Click Retro
+        await page.getByRole('button', { name: /Retro/i }).click();
+        await expect(exportCard).toHaveAttribute('data-theme', 'retro');
+
+        // Click back to Neon
+        await page.getByRole('button', { name: /Neon/i }).click();
+        await expect(exportCard).toHaveAttribute('data-theme', 'neon');
+    });
 });

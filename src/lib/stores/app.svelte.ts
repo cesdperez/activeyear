@@ -10,7 +10,8 @@ import type {
     PersonalRecords,
     SportBreakdown,
     ParseError,
-    AspectRatio
+    AspectRatio,
+    Theme
 } from '../types/index.js';
 
 export type AppStatus = 'idle' | 'parsing' | 'ready' | 'error';
@@ -26,6 +27,7 @@ interface AppState {
     // Export state
     aspectRatio: AspectRatio;
     userName: string;
+    theme: Theme;
 }
 
 function createAppStore() {
@@ -40,6 +42,7 @@ function createAppStore() {
     // Export state
     let aspectRatio = $state<AspectRatio>('9:16');
     let userName = $state<string>('');
+    let theme = $state<Theme>('neon');
 
     function reset() {
         activities = [];
@@ -121,6 +124,12 @@ function createAppStore() {
         },
         set userName(value: string) {
             userName = value;
+        },
+        get theme() {
+            return theme;
+        },
+        set theme(value: Theme) {
+            theme = value;
         },
         reset,
         processFile

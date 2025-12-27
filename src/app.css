@@ -37,6 +37,32 @@
 	--shadow-glow-sm: 0 0 15px var(--color-accent-glow);
 }
 
+/* Theme: Minimalist - Swiss precision, high contrast */
+[data-theme="minimalist"] {
+	--color-surface: #fafaf9;
+	--color-surface-elevated: #f5f5f4;
+	--color-surface-hover: #e7e5e4;
+	--color-text-primary: #0a0a0b;
+	--color-text-muted: #52525b;
+	--color-text-dim: #a1a1aa;
+	--color-accent: #ef4444;
+	--color-accent-glow: rgba(239, 68, 68, 0.4);
+	--color-accent-subtle: rgba(239, 68, 68, 0.1);
+}
+
+/* Theme: Retro - 8-bit arcade aesthetic */
+[data-theme="retro"] {
+	--color-surface: #1e1b4b;
+	--color-surface-elevated: #2e2a6b;
+	--color-surface-hover: #3e387b;
+	--color-text-primary: #fafafa;
+	--color-text-muted: #a5a0d8;
+	--color-text-dim: #7c77a8;
+	--color-accent: #facc15;
+	--color-accent-glow: rgba(250, 204, 21, 0.5);
+	--color-accent-subtle: rgba(250, 204, 21, 0.15);
+}
+
 /* Base Styles */
 html {
 	font-family: 'Outfit', system-ui, sans-serif;
