@@ -203,7 +203,7 @@ describe('parseGarminCsv', () => {
         expect(marathon?.elevation).toBe(105);
     });
 
-    it('handles swimming distance with thousands separator', () => {
+    it('handles swimming distance converted from meters to km', () => {
         const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
         const csvContent = readFileSync(csvPath, 'utf-8');
 
@@ -211,7 +211,9 @@ describe('parseGarminCsv', () => {
         const swim = result.activities.find((a) => a.type === 'swimming');
 
         expect(swim).toBeDefined();
-        expect(swim?.distance).toBe(1500);
+        // Swimming distances are in meters in Garmin CSV, we convert to km
+        // 1,500 meters = 1.5 km
+        expect(swim?.distance).toBe(1.5);
     });
 
     it('handles activities with missing distance (like yoga)', () => {

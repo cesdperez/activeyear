@@ -26,8 +26,17 @@ const ACTIVITY_TYPE_MAP: Record<string, ActivityType> = {
     'Strength Training': 'strength',
     Strength: 'strength',
     Yoga: 'yoga',
-    Pilates: 'yoga'
+    Pilates: 'yoga',
+    Multisport: 'other',
+    'Rock Climbing': 'other'
 };
+
+// Activity types where distances are recorded in meters (not km)
+const DISTANCE_IN_METERS_TYPES = new Set([
+    'Pool Swim',
+    'Open Water Swimming',
+    'Swimming'
+]);
 
 /**
  * Parse Garmin time format (HH:MM:SS or MM:SS.S) to seconds
@@ -156,11 +165,17 @@ export function parseGarminCsv(csvContent: string, targetYear: number = 2025): P
             return;
         }
 
+        // Parse distance - swimming activities are in meters, convert to km
+        let distance = parseGarminDistance(row['Distance']);
+        if (DISTANCE_IN_METERS_TYPES.has(row['Activity Type'])) {
+            distance = distance / 1000; // Convert meters to km
+        }
+
         const activity: Activity = {
             date,
             type: mapActivityType(row['Activity Type']),
             title: row['Title'] || '',
-            distance: parseGarminDistance(row['Distance']),
+            distance,
             duration: parseGarminTime(row['Time']),
             calories: parseGarminCalories(row['Calories']),
             elevation: parseGarminElevation(row['Total Ascent'])
