@@ -42,7 +42,7 @@ function createAppStore() {
     // Export state
     let userName = $state<string>('');
     let theme = $state<Theme>('neon');
-    let confettiEnabled = $state<boolean>(true);
+    let confettiEnabled = $state<boolean>(false);
 
     function reset() {
         activities = [];
