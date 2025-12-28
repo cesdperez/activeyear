@@ -626,7 +626,7 @@
                             .sort((a, b) => b.count - a.count)
                             .slice(0, 2)
                             .map((item) => item.idx)}
-                        <div class="mb-32 px-2">
+                        <div class="mb-16 px-2">
                             <div
                                 class="text-[18px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest mb-4 text-center"
                             >
@@ -676,12 +676,12 @@
                             ((appStore.stats?.activeDays ?? 0) / 365) * 100,
                             100,
                         )}
-                        <div class="grid grid-cols-2 gap-6 mb-32">
+                        <div class="grid grid-cols-2 gap-8 mb-16">
                             <!-- Active Days -->
                             <div
-                                class="flex flex-col items-center text-center p-6 rounded-2xl consistency-card"
+                                class="flex flex-col items-center text-center p-8 rounded-2xl consistency-card"
                             >
-                                <div class="w-32 h-32 mb-3">
+                                <div class="w-44 h-44 mb-4">
                                     <svg
                                         viewBox="0 0 120 120"
                                         class="w-full h-full"
@@ -714,26 +714,26 @@
                                             text-anchor="middle"
                                             dominant-baseline="central"
                                             fill="var(--color-text-primary)"
-                                            style="font-size: 36px; font-weight: 900; font-family: inherit;"
+                                            style="font-size: 38px; font-weight: 900; font-family: inherit;"
                                             >{appStore.stats?.activeDays ??
                                                 0}</text
                                         >
                                     </svg>
                                 </div>
                                 <div
-                                    class="flex items-center gap-2 text-[var(--color-accent)]"
+                                    class="flex items-center gap-3 text-[var(--color-accent)]"
                                 >
                                     <CalendarCheck
-                                        class="w-6 h-6"
+                                        class="w-8 h-8"
                                         weight="bold"
                                     />
                                     <span
-                                        class="text-[20px] font-bold uppercase tracking-wider"
+                                        class="text-[28px] font-bold uppercase tracking-wider"
                                         >Active Days</span
                                     >
                                 </div>
                                 <div
-                                    class="text-[16px] text-[var(--color-text-muted)] mt-1 whitespace-nowrap"
+                                    class="text-[20px] text-[var(--color-text-muted)] mt-2 whitespace-nowrap"
                                 >
                                     {Math.round(activeDaysPercent)}% of the year
                                 </div>
@@ -741,9 +741,9 @@
 
                             <!-- Day Streak -->
                             <div
-                                class="flex flex-col items-center text-center p-6 rounded-2xl consistency-card"
+                                class="flex flex-col items-center text-center p-8 rounded-2xl consistency-card"
                             >
-                                <div class="w-32 h-32 mb-3">
+                                <div class="w-44 h-44 mb-4">
                                     <svg
                                         viewBox="0 0 120 120"
                                         class="w-full h-full"
@@ -775,23 +775,23 @@
                                             text-anchor="middle"
                                             dominant-baseline="central"
                                             fill="var(--color-text-primary)"
-                                            style="font-size: 36px; font-weight: 900; font-family: inherit;"
+                                            style="font-size: 38px; font-weight: 900; font-family: inherit;"
                                             >{appStore.stats?.longestStreak ??
                                                 0}</text
                                         >
                                     </svg>
                                 </div>
                                 <div
-                                    class="flex items-center gap-2 text-[#ff6b6b]"
+                                    class="flex items-center gap-3 text-[#ff6b6b]"
                                 >
-                                    <Lightning class="w-6 h-6" weight="bold" />
+                                    <Lightning class="w-8 h-8" weight="bold" />
                                     <span
-                                        class="text-[20px] font-bold uppercase tracking-wider"
+                                        class="text-[28px] font-bold uppercase tracking-wider"
                                         >Day Streak</span
                                     >
                                 </div>
                                 <div
-                                    class="text-[16px] text-[var(--color-text-muted)] mt-1 whitespace-nowrap"
+                                    class="text-[20px] text-[var(--color-text-muted)] mt-2 whitespace-nowrap"
                                 >
                                     most consecutive active days
                                 </div>
@@ -802,12 +802,12 @@
                     <!-- Personal Records - Horizontal Grid (matching Dashboard) -->
                     {#if appStore.records}
                         <div class="mb-auto">
-                            <div class="flex items-center gap-6 mb-8">
+                            <div class="flex items-center gap-6 mb-6">
                                 <div
                                     class="h-1 flex-1 bg-gradient-to-l from-[var(--color-accent)] to-transparent opacity-30"
                                 ></div>
                                 <h2
-                                    class="text-[32px] font-bold text-[var(--color-text-primary)] uppercase tracking-widest whitespace-nowrap"
+                                    class="text-[44px] font-bold text-[var(--color-text-primary)] uppercase tracking-widest whitespace-nowrap"
                                 >
                                     Personal Records
                                 </h2>
@@ -816,19 +816,19 @@
                                 ></div>
                             </div>
 
-                            <div class="grid grid-cols-3 gap-4">
+                            <div class="grid grid-cols-3 gap-6">
                                 {#if appStore.records.longestDistance}
                                     {@const record =
                                         appStore.records.longestDistance}
                                     <div class="record-card-compact">
                                         <div class="record-icon-compact">
                                             <Trophy
-                                                class="w-10 h-10"
+                                                class="w-14 h-14"
                                                 weight="fill"
                                             />
                                         </div>
                                         <div
-                                            class="text-[32px] font-black text-[var(--color-text-primary)] leading-tight whitespace-nowrap"
+                                            class="text-[42px] font-black text-[var(--color-text-primary)] leading-tight whitespace-nowrap"
                                         >
                                             {formatDistance(
                                                 record.value,
@@ -836,12 +836,12 @@
                                             )}
                                         </div>
                                         <div
-                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80 whitespace-nowrap"
+                                            class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80 whitespace-nowrap"
                                         >
                                             Longest Distance
                                         </div>
                                         <div
-                                            class="text-[12px] text-[var(--color-accent)] mt-1 font-medium truncate w-full"
+                                            class="text-[16px] text-[var(--color-accent)] mt-2 font-medium truncate w-full"
                                         >
                                             {record.activity.title}
                                         </div>
@@ -853,22 +853,22 @@
                                     <div class="record-card-compact">
                                         <div class="record-icon-compact">
                                             <Hourglass
-                                                class="w-10 h-10"
+                                                class="w-14 h-14"
                                                 weight="fill"
                                             />
                                         </div>
                                         <div
-                                            class="text-[32px] font-black text-[var(--color-text-primary)] leading-tight whitespace-nowrap"
+                                            class="text-[42px] font-black text-[var(--color-text-primary)] leading-tight whitespace-nowrap"
                                         >
                                             {formatDuration(record.value)}
                                         </div>
                                         <div
-                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80 whitespace-nowrap"
+                                            class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80 whitespace-nowrap"
                                         >
                                             Longest Duration
                                         </div>
                                         <div
-                                            class="text-[12px] text-[var(--color-accent)] mt-1 font-medium truncate w-full"
+                                            class="text-[16px] text-[var(--color-accent)] mt-2 font-medium truncate w-full"
                                         >
                                             {record.activity.title}
                                         </div>
@@ -880,22 +880,22 @@
                                     <div class="record-card-compact">
                                         <div class="record-icon-compact">
                                             <Fire
-                                                class="w-10 h-10"
+                                                class="w-14 h-14"
                                                 weight="fill"
                                             />
                                         </div>
                                         <div
-                                            class="text-[32px] font-black text-[var(--color-text-primary)] leading-tight whitespace-nowrap"
+                                            class="text-[42px] font-black text-[var(--color-text-primary)] leading-tight whitespace-nowrap"
                                         >
                                             {formatCalories(record.value)}
                                         </div>
                                         <div
-                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80 whitespace-nowrap"
+                                            class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80 whitespace-nowrap"
                                         >
                                             Biggest Burn
                                         </div>
                                         <div
-                                            class="text-[12px] text-[var(--color-accent)] mt-1 font-medium truncate w-full"
+                                            class="text-[16px] text-[var(--color-accent)] mt-2 font-medium truncate w-full"
                                         >
                                             {record.activity.title}
                                         </div>
