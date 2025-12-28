@@ -586,7 +586,7 @@
                                             </div>
                                             <div class="text-right">
                                                 <div
-                                                    class="text-[22px] font-bold text-[var(--color-text-primary)] leading-none"
+                                                    class="text-[22px] font-bold text-[var(--color-text-primary)] leading-none whitespace-nowrap"
                                                 >
                                                     {appStore.breakdownMetric ===
                                                     "count"
@@ -703,10 +703,10 @@
                                         />
                                     </svg>
                                     <div
-                                        class="absolute inset-0 flex items-center justify-center"
+                                        class="absolute inset-0 grid place-items-center"
                                     >
                                         <span
-                                            class="text-[48px] font-black text-[var(--color-text-primary)] leading-none"
+                                            class="text-[48px] font-black text-[var(--color-text-primary)] leading-none translate-y-0.5"
                                         >
                                             {appStore.stats?.activeDays ?? 0}
                                         </span>
@@ -725,7 +725,7 @@
                                     >
                                 </div>
                                 <div
-                                    class="text-[16px] text-[var(--color-text-muted)] mt-1"
+                                    class="text-[16px] text-[var(--color-text-muted)] mt-1 whitespace-nowrap"
                                 >
                                     {Math.round(activeDaysPercent)}% of the year
                                 </div>
@@ -764,10 +764,10 @@
                                         />
                                     </svg>
                                     <div
-                                        class="absolute inset-0 flex items-center justify-center"
+                                        class="absolute inset-0 grid place-items-center"
                                     >
                                         <span
-                                            class="text-[48px] font-black text-[var(--color-text-primary)] leading-none"
+                                            class="text-[48px] font-black text-[var(--color-text-primary)] leading-none translate-y-0.5"
                                         >
                                             {appStore.stats?.longestStreak ?? 0}
                                         </span>
@@ -783,7 +783,7 @@
                                     >
                                 </div>
                                 <div
-                                    class="text-[16px] text-[var(--color-text-muted)] mt-1"
+                                    class="text-[16px] text-[var(--color-text-muted)] mt-1 whitespace-nowrap"
                                 >
                                     most consecutive active days
                                 </div>
@@ -796,7 +796,7 @@
                         <div class="mb-auto">
                             <div class="flex items-end gap-4 mb-6">
                                 <h2
-                                    class="text-[32px] font-bold text-[var(--color-text-primary)] uppercase tracking-widest"
+                                    class="text-[32px] font-bold text-[var(--color-text-primary)] uppercase tracking-widest whitespace-nowrap"
                                 >
                                     Personal Records
                                 </h2>
@@ -817,17 +817,17 @@
                                             />
                                         </div>
                                         <div
-                                            class="text-[32px] font-black text-[var(--color-text-primary)] leading-tight"
+                                            class="text-[32px] font-black text-[var(--color-text-primary)] leading-tight whitespace-nowrap"
                                         >
                                             {formatDistance(record.value)}
                                         </div>
                                         <div
-                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80"
+                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80 whitespace-nowrap"
                                         >
                                             Longest Distance
                                         </div>
                                         <div
-                                            class="text-[12px] text-[var(--color-accent)] mt-1 font-medium"
+                                            class="text-[12px] text-[var(--color-accent)] mt-1 font-medium truncate w-full"
                                         >
                                             {record.activity.title}
                                         </div>
@@ -844,17 +844,17 @@
                                             />
                                         </div>
                                         <div
-                                            class="text-[32px] font-black text-[var(--color-text-primary)] leading-tight"
+                                            class="text-[32px] font-black text-[var(--color-text-primary)] leading-tight whitespace-nowrap"
                                         >
                                             {formatDuration(record.value)}
                                         </div>
                                         <div
-                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80"
+                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80 whitespace-nowrap"
                                         >
                                             Longest Duration
                                         </div>
                                         <div
-                                            class="text-[12px] text-[var(--color-accent)] mt-1 font-medium"
+                                            class="text-[12px] text-[var(--color-accent)] mt-1 font-medium truncate w-full"
                                         >
                                             {record.activity.title}
                                         </div>
@@ -871,17 +871,17 @@
                                             />
                                         </div>
                                         <div
-                                            class="text-[32px] font-black text-[var(--color-text-primary)] leading-tight"
+                                            class="text-[32px] font-black text-[var(--color-text-primary)] leading-tight whitespace-nowrap"
                                         >
                                             {formatCalories(record.value)}
                                         </div>
                                         <div
-                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80"
+                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80 whitespace-nowrap"
                                         >
                                             Biggest Burn
                                         </div>
                                         <div
-                                            class="text-[12px] text-[var(--color-accent)] mt-1 font-medium"
+                                            class="text-[12px] text-[var(--color-accent)] mt-1 font-medium truncate w-full"
                                         >
                                             {record.activity.title}
                                         </div>
