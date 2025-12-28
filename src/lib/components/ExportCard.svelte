@@ -969,7 +969,9 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%);
+        /* transform: translate(-50%, -50%); <-- Removed for export stability */
+        margin-left: -325px; /* Half of width (650px) */
+        margin-top: -325px; /* Half of height (650px) */
         width: 650px;
         height: 650px;
         pointer-events: none;
@@ -1032,6 +1034,8 @@
     .theme-retro .avatar-decorations {
         width: 550px;
         height: 550px;
+        margin-left: -275px; /* Half of width (550px) */
+        margin-top: -275px; /* Half of height (550px) */
     }
 
     .theme-retro .spiral-path {
@@ -1081,33 +1085,6 @@
     }
 
     /* Record Cards */
-    .record-card {
-        display: flex;
-        align-items: flex-start;
-        gap: 24px;
-        padding: 24px;
-        background: linear-gradient(
-            to bottom right,
-            var(--color-surface-elevated),
-            var(--color-surface)
-        );
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .record-icon {
-        flex-shrink: 0;
-        width: 100px;
-        height: 100px;
-        border-radius: 24px;
-        background: var(--color-surface-hover);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--color-gold);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
 
     .theme-minimalist .donut-segment {
         filter: none !important;
@@ -1121,11 +1098,6 @@
     .theme-minimalist .streak-ring {
         stroke: #666 !important;
         filter: none;
-    }
-
-    .theme-minimalist .record-card {
-        background: rgba(0, 0, 0, 0.02);
-        border: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .theme-retro .donut-segment {
