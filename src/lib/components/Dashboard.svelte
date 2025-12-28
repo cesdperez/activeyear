@@ -27,6 +27,7 @@
 		Sparkle,
 		ArrowDown,
 		Confetti,
+		Heart,
 		PersonSimpleRun,
 		PersonSimpleBike,
 		PersonSimpleSwim,
@@ -384,6 +385,72 @@
 						>
 							{dayLabels[i]}
 						</span>
+					</div>
+				{/each}
+			</div>
+		</section>
+	{/if}
+
+	<!-- Favorite Activities Section -->
+	{#if appStore.favorites.length > 0}
+		<section class="mb-16">
+			<div class="flex items-end gap-4 mb-8">
+				<h2 class="text-3xl font-bold tracking-tight">
+					Favorite Activities
+				</h2>
+				<div
+					class="h-px flex-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent opacity-20 mb-2"
+				></div>
+			</div>
+
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+				{#each appStore.favorites as fav, i}
+					{@const IconComponent = sportIcons[fav.type] ?? Target}
+					<div
+						class="stat-card p-4 flex items-center gap-4 group"
+						style="animation-delay: {450 + i * 50}ms"
+					>
+						<div
+							class="w-12 h-12 rounded-xl flex items-center justify-center bg-[var(--color-accent)]/10 text-[var(--color-accent)] shrink-0"
+						>
+							<IconComponent class="w-6 h-6" weight="bold" />
+						</div>
+						<div class="flex-1 min-w-0">
+							<div class="flex items-center gap-2 mb-1">
+								<Heart
+									class="w-4 h-4 text-red-400"
+									weight="fill"
+								/>
+								<span
+									class="font-bold text-white truncate"
+									title={fav.title}
+								>
+									{fav.title ||
+										sportNames[fav.type] ||
+										"Activity"}
+								</span>
+							</div>
+							<div
+								class="flex items-center gap-3 text-sm text-[var(--color-text-muted)]"
+							>
+								{#if fav.distance > 0}
+									<span class="font-mono"
+										>{formatDistance(
+											fav.distance,
+											appStore.unit,
+										)}</span
+									>
+								{/if}
+								<span class="font-mono"
+									>{formatDuration(fav.duration)}</span
+								>
+								<span
+									class="px-2 py-0.5 rounded-full bg-[var(--color-surface-elevated)] text-xs uppercase tracking-wider"
+								>
+									{sportNames[fav.type] ?? fav.type}
+								</span>
+							</div>
+						</div>
 					</div>
 				{/each}
 			</div>

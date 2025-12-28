@@ -8,7 +8,8 @@ const createActivity = (type: string, title: string, dateStr: string): Activity 
     distance: 0,
     duration: 0,
     calories: 0,
-    elevation: 0
+    elevation: 0,
+    favorite: false
 });
 
 export const demoStats: YearStats = {

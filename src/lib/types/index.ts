@@ -17,6 +17,7 @@ export interface Activity {
 	duration: number; // in seconds
 	calories: number;
 	elevation: number; // in meters
+	favorite: boolean;
 }
 
 export interface YearStats {
@@ -67,7 +68,7 @@ export type Theme = 'neon' | 'minimalist' | 'retro';
 
 export type AspectRatio = '9:16';
 
-export type CardVariant = 'summary' | 'breakdown';
+export type CardVariant = 'summary' | 'breakdown' | 'favorites';
 
 export type SummaryMetric = 'distance' | 'elevation' | 'duration' | 'calories';
 
