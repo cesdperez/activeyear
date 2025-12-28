@@ -64,6 +64,8 @@ export type AspectRatio = '9:16';
 
 export type CardVariant = 'summary' | 'breakdown';
 
+export type SummaryMetric = 'distance' | 'elevation' | 'duration' | 'calories';
+
 export type Unit = 'km' | 'miles';
 
 export interface ParseResult {

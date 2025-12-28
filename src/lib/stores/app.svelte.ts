@@ -12,7 +12,8 @@ import type {
     SportBreakdown,
     ParseError,
     AspectRatio,
-    Theme
+    Theme,
+    SummaryMetric
 } from '../types/index.js';
 
 export type AppStatus = 'idle' | 'parsing' | 'ready' | 'error';
@@ -45,6 +46,7 @@ function createAppStore() {
     let theme = $state<Theme>('neon');
     let userPfp = $state<string | null>(null);
     let confettiEnabled = $state<boolean>(false);
+    let summaryMetric = $state<SummaryMetric>('distance');
 
     function reset() {
         activities = [];
@@ -160,6 +162,12 @@ function createAppStore() {
         },
         set breakdownMetric(value: 'count' | 'duration') {
             breakdownMetric = value;
+        },
+        get summaryMetric() {
+            return summaryMetric;
+        },
+        set summaryMetric(value: SummaryMetric) {
+            summaryMetric = value;
         }
     };
 }
