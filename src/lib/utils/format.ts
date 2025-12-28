@@ -4,6 +4,7 @@ const EARTH_CIRCUMFERENCE_KM = 40075;
 const EVEREST_HEIGHT_M = 8848;
 const PIZZA_SLICE_CALORIES = 285;
 const KM_TO_MILES = 0.621371;
+const METERS_TO_FEET = 3.28084;
 
 /**
  * Format distance with appropriate precision
@@ -45,9 +46,14 @@ export function formatCalories(calories: number): string {
 }
 
 /**
- * Format elevation rounded to nearest 10m
+ * Format elevation rounded to nearest 10m (or 50ft)
  */
-export function formatElevation(meters: number): string {
+export function formatElevation(meters: number, unit: Unit = 'km'): string {
+    if (unit === 'miles') {
+        const feet = meters * METERS_TO_FEET;
+        const rounded = Math.round(feet / 50) * 50; // Round to nearest 50ft
+        return `${rounded.toLocaleString('en-US')}ft`;
+    }
     const rounded = Math.round(meters / 10) * 10;
     return `${rounded.toLocaleString('en-US')}m`;
 }

@@ -155,7 +155,30 @@
 <div
 	class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative overflow-x-hidden"
 >
-	<div class="absolute top-4 right-4 md:right-8 z-10">
+	<div class="absolute top-4 right-4 md:right-8 z-10 flex items-center gap-2">
+		<!-- Unit Toggle -->
+		<div
+			class="flex p-0.5 bg-[var(--color-surface-elevated)] rounded-full border border-[rgba(255,255,255,0.05)]"
+		>
+			<button
+				class="px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-200 {appStore.unit ===
+				'km'
+					? 'bg-[var(--color-accent)] text-black'
+					: 'text-zinc-500 hover:text-zinc-300'}"
+				onclick={() => (appStore.unit = "km")}
+			>
+				km
+			</button>
+			<button
+				class="px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-200 {appStore.unit ===
+				'miles'
+					? 'bg-[var(--color-accent)] text-black'
+					: 'text-zinc-500 hover:text-zinc-300'}"
+				onclick={() => (appStore.unit = "miles")}
+			>
+				mi
+			</button>
+		</div>
 		<button
 			class="p-2 rounded-full transition-all duration-300 hover:scale-110 {appStore.confettiEnabled
 				? 'bg-[var(--color-surface-elevated)] text-[var(--color-accent)] shadow-lg'
@@ -211,7 +234,10 @@
 	<!-- Main Stats Grid -->
 	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 		<StatCard
-			value={formatDistance(appStore.stats?.totalDistance ?? 0)}
+			value={formatDistance(
+				appStore.stats?.totalDistance ?? 0,
+				appStore.unit,
+			)}
 			label="Total Distance"
 			delay={0}
 			equivalent={`🌍 ${formatEarthLaps(appStore.stats?.totalDistance ?? 0)}`}
@@ -222,7 +248,10 @@
 		</StatCard>
 
 		<StatCard
-			value={formatElevation(appStore.stats?.totalElevation ?? 0)}
+			value={formatElevation(
+				appStore.stats?.totalElevation ?? 0,
+				appStore.unit,
+			)}
 			label="Elevation Gained"
 			delay={150}
 			equivalent={`🏔️ ${formatEverests(appStore.stats?.totalElevation ?? 0)}`}
@@ -378,6 +407,7 @@
 					<PersonalRecordCard
 						value={formatDistance(
 							appStore.records.longestDistance.value,
+							appStore.unit,
 						)}
 						label="Longest Distance"
 						detail={appStore.records.longestDistance.activity.title}

@@ -81,6 +81,11 @@ describe('formatElevation', () => {
 		expect(formatElevation(1234)).toBe('1,230m');
 		expect(formatElevation(8848)).toBe('8,850m');
 	});
+
+	it('formats feet when unit is miles', () => {
+		expect(formatElevation(100, 'miles')).toBe('350ft'); // 100m ≈ 328ft → rounds to 350
+		expect(formatElevation(1000, 'miles')).toBe('3,300ft'); // 1000m ≈ 3280ft → rounds to 3300
+	});
 });
 
 describe('calculateEarthLaps', () => {

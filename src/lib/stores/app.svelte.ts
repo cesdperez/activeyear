@@ -15,7 +15,8 @@ import type {
     ParseError,
     AspectRatio,
     Theme,
-    SummaryMetric
+    SummaryMetric,
+    Unit
 } from '../types/index.js';
 
 export type AppStatus = 'idle' | 'parsing' | 'ready' | 'error';
@@ -50,6 +51,7 @@ function createAppStore() {
     let userPfp = $state<string | null>(null);
     let confettiEnabled = $state<boolean>(false);
     let summaryMetric = $state<SummaryMetric>('distance');
+    let unit = $state<Unit>('km');
 
     function reset() {
         activities = [];
@@ -185,6 +187,12 @@ function createAppStore() {
         },
         set summaryMetric(value: SummaryMetric) {
             summaryMetric = value;
+        },
+        get unit() {
+            return unit;
+        },
+        set unit(value: Unit) {
+            unit = value;
         }
     };
 }

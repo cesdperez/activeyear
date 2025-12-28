@@ -314,6 +314,7 @@
                             label: "Total Distance",
                             value: formatDistance(
                                 appStore.stats?.totalDistance ?? 0,
+                                appStore.unit,
                             ),
                             icon: Ruler,
                             equivalent: `🌍 ${formatEarthLaps(appStore.stats?.totalDistance ?? 0)}`,
@@ -323,6 +324,7 @@
                             label: "Elevation",
                             value: formatElevation(
                                 appStore.stats?.totalElevation ?? 0,
+                                appStore.unit,
                             ),
                             icon: Mountains,
                             equivalent: `🏔️ ${formatEverests(appStore.stats?.totalElevation ?? 0)}`,
@@ -713,7 +715,8 @@
                                             dominant-baseline="central"
                                             fill="var(--color-text-primary)"
                                             style="font-size: 36px; font-weight: 900; font-family: inherit;"
-                                            >{appStore.stats?.activeDays ?? 0}</text
+                                            >{appStore.stats?.activeDays ??
+                                                0}</text
                                         >
                                     </svg>
                                 </div>
@@ -773,7 +776,8 @@
                                             dominant-baseline="central"
                                             fill="var(--color-text-primary)"
                                             style="font-size: 36px; font-weight: 900; font-family: inherit;"
-                                            >{appStore.stats?.longestStreak ?? 0}</text
+                                            >{appStore.stats?.longestStreak ??
+                                                0}</text
                                         >
                                     </svg>
                                 </div>
@@ -823,7 +827,10 @@
                                         <div
                                             class="text-[32px] font-black text-[var(--color-text-primary)] leading-tight whitespace-nowrap"
                                         >
-                                            {formatDistance(record.value)}
+                                            {formatDistance(
+                                                record.value,
+                                                appStore.unit,
+                                            )}
                                         </div>
                                         <div
                                             class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80 whitespace-nowrap"
