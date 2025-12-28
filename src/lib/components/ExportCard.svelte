@@ -1062,27 +1062,9 @@
         opacity: 0.85;
     }
 
-    .theme-minimalist .spiral-path {
-        stroke: #555;
-        stroke-width: 1.6;
-        stroke-dasharray: none;
-    }
-
     .theme-retro .spiral-svg {
         width: 550px;
         height: 550px;
-    }
-
-    .theme-retro .spiral-path {
-        stroke: #ff00cc;
-        stroke-width: 3;
-        stroke-dasharray: 20 10;
-        opacity: 0.5;
-    }
-
-    .theme-retro .spiral-path-accent {
-        stroke: #3333ff;
-        stroke-width: 2;
     }
 
     /* Donut Chart */
