@@ -200,7 +200,8 @@ export function parseGarminCsv(csvContent: string, targetYear: number = 2025): P
             distance,
             duration: parseGarminTime(row['Total Time'] || row['Time']),
             calories: parseGarminCalories(row['Calories']),
-            elevation: parseGarminElevation(row['Total Ascent'])
+            elevation: parseGarminElevation(row['Total Ascent']),
+            favorite: row['Favorite']?.toLowerCase() === 'true'
         };
 
         activities.push(activity);

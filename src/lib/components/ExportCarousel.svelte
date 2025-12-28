@@ -5,15 +5,19 @@
     import { CaretLeft, CaretRight } from "phosphor-svelte";
     import type { CardVariant } from "$lib/types/index.js";
 
-    let currentSlide = $state<0 | 1>(0);
-    const slides: CardVariant[] = ["summary", "breakdown"];
+    let currentSlide = $state<0 | 1 | 2>(0);
+    const slides: CardVariant[] = ["summary", "breakdown", "favorites"];
+    const slideLabels = ["Summary", "Breakdown", "Favorites"];
 
     function nextSlide() {
-        currentSlide = currentSlide === 0 ? 1 : 0;
+        currentSlide = ((currentSlide + 1) % slides.length) as 0 | 1 | 2;
     }
 
     function prevSlide() {
-        currentSlide = currentSlide === 0 ? 1 : 0;
+        currentSlide = ((currentSlide - 1 + slides.length) % slides.length) as
+            | 0
+            | 1
+            | 2;
     }
 
     export async function exportAllCards(): Promise<void> {
@@ -44,6 +48,16 @@
             });
         }
 
+        // Export favorites card
+        currentSlide = 2;
+        await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for render
+        const favoritesEl = getExportElement();
+        if (favoritesEl) {
+            await exportToPng(favoritesEl, {
+                filename: `${baseFilename}-favorites`,
+            });
+        }
+
         // Restore original slide
         currentSlide = originalSlide;
     }
@@ -70,7 +84,7 @@
             {#each slides as _, i}
                 <button
                     class="dot {currentSlide === i ? 'active' : ''}"
-                    onclick={() => (currentSlide = i as 0 | 1)}
+                    onclick={() => (currentSlide = i as 0 | 1 | 2)}
                     aria-label="Go to slide {i + 1}"
                 ></button>
             {/each}
@@ -83,8 +97,7 @@
 
     <!-- Slide Label -->
     <div class="slide-label">
-        {currentSlide === 0 ? "Summary" : "Breakdown"} ({currentSlide +
-            1}/{slides.length})
+        {slideLabels[currentSlide]} ({currentSlide + 1}/{slides.length})
     </div>
 </div>
 

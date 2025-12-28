@@ -341,3 +341,32 @@ describe('mapActivityType extended', () => {
         expect(mapActivityType('Skating')).toBe('other');
     });
 });
+
+describe('parseGarminCsv favorite field', () => {
+    it('parses Favorite column correctly', () => {
+        const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
+        const csvContent = readFileSync(csvPath, 'utf-8');
+
+        const result = parseGarminCsv(csvContent, 2025);
+
+        // All activities in the sample have Favorite=false
+        expect(result.activities.every((a) => a.favorite === false)).toBe(true);
+    });
+
+    it('sets favorite to false when Favorite column is missing', () => {
+        const csv = 'Activity Type,Date,Title,Distance,Calories,Time,Total Ascent\nRunning,2025-01-01 08:00:00,Morning Run,10.0,600,00:50:00,100';
+        const result = parseGarminCsv(csv, 2025);
+
+        expect(result.activities).toHaveLength(1);
+        expect(result.activities[0].favorite).toBe(false);
+    });
+
+    it('parses Favorite=true correctly', () => {
+        const csv = 'Activity Type,Date,Favorite,Title,Distance,Calories,Time,Total Ascent\nRunning,2025-01-01 08:00:00,true,Best Run Ever,10.0,600,00:50:00,100';
+        const result = parseGarminCsv(csv, 2025);
+
+        expect(result.activities).toHaveLength(1);
+        expect(result.activities[0].favorite).toBe(true);
+        expect(result.activities[0].title).toBe('Best Run Ever');
+    });
+});

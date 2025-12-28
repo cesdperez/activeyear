@@ -16,6 +16,7 @@ const createActivity = (overrides: Partial<Activity> = {}): Activity => ({
     duration: 3600,
     calories: 500,
     elevation: 100,
+    favorite: false,
     ...overrides
 });
 
