@@ -46,6 +46,10 @@ export interface SportBreakdown {
 	count: number;
 }
 
+// Weekly activity pattern - count of activities per day of week
+// Index 0 = Monday, 6 = Sunday
+export type WeeklyPattern = [number, number, number, number, number, number, number];
+
 export interface GarminRawActivity {
 	'Activity Type': string;
 	Date: string;

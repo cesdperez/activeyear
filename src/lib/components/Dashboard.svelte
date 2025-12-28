@@ -254,6 +254,67 @@
 		</div>
 	</div>
 
+	<!-- Weekly Activity Pattern -->
+	{#if appStore.weeklyPattern.some((v) => v > 0)}
+		{@const maxDay = Math.max(...appStore.weeklyPattern, 1)}
+		{@const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}
+		{@const barContainerHeight = 160}
+		{@const sortedIndices = appStore.weeklyPattern
+			.map((count, idx) => ({ count, idx }))
+			.sort((a, b) => b.count - a.count)
+			.slice(0, 2)
+			.map((item) => item.idx)}
+		<section class="mb-16 max-w-3xl">
+			<div class="flex items-end gap-4 mb-8">
+				<h2 class="text-3xl font-bold tracking-tight">
+					When You Train
+				</h2>
+				<div
+					class="h-px flex-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent opacity-20 mb-2"
+				></div>
+			</div>
+
+			<div
+				class="flex items-end justify-between gap-4 px-4"
+				style="height: {barContainerHeight + 60}px;"
+			>
+				{#each appStore.weeklyPattern as count, i}
+					{@const heightPercent = (count / maxDay) * 100}
+					{@const barHeight = Math.max(
+						(heightPercent / 100) * barContainerHeight,
+						8,
+					)}
+					{@const isTopDay = sortedIndices.includes(i)}
+					<div
+						class="flex-1 flex flex-col items-center justify-end gap-3"
+					>
+						<span
+							class="text-sm font-mono text-[var(--color-text-muted)]"
+						>
+							{count}
+						</span>
+						<div
+							class="w-full rounded-t-xl transition-all duration-500 ease-out"
+							style="height: {barHeight}px; background: linear-gradient(to top, {isTopDay
+								? '#00ff88'
+								: 'var(--color-accent)'}, {isTopDay
+								? '#00ff8840'
+								: 'var(--color-accent)40'}); box-shadow: 0 0 20px {isTopDay
+								? '#00ff8830'
+								: 'var(--color-accent-glow)'};"
+							style:animation-delay="{i * 50}ms"
+						></div>
+						<span
+							class="text-sm font-bold text-[var(--color-text-muted)] uppercase tracking-wider"
+						>
+							{dayLabels[i]}
+						</span>
+					</div>
+				{/each}
+			</div>
+		</section>
+	{/if}
+
 	<!-- Personal Records Section -->
 	{#if appStore.records}
 		<section class="mb-16">
