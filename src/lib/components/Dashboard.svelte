@@ -394,17 +394,15 @@
 	<!-- Favorite Activities Section -->
 	<section class="mb-16">
 		<div class="flex items-end gap-4 mb-8">
-			<h2 class="text-3xl font-bold tracking-tight">
-				Favorite Activities
-			</h2>
+			<h2 class="text-3xl font-bold tracking-tight">Highlights</h2>
 			<div
 				class="h-px flex-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent opacity-20 mb-2"
 			></div>
 		</div>
 
-		{#if appStore.favorites.length > 0}
+		{#if appStore.highlights.length > 0}
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-				{#each appStore.favorites as fav, i}
+				{#each appStore.highlights as fav, i}
 					{@const IconComponent = sportIcons[fav.type] ?? Target}
 					<div
 						class="stat-card p-4 flex items-center gap-4 group"
@@ -465,10 +463,12 @@
 					<Heart class="w-10 h-10 text-red-400" weight="fill" />
 				</div>
 				<p class="text-lg text-[var(--color-text-muted)] mb-4">
-					No favorite activities yet
+					No highlights yet
 				</p>
 				<p class="text-sm text-[var(--color-text-muted)] max-w-md">
-					Mark activities as favorites in Garmin Connect by tapping the heart icon on any activity, then re-export your data.
+					Mark activities as favorites in Garmin Connect by tapping
+					the heart icon on any activity, then re-export your data to
+					see them here.
 				</p>
 			</div>
 		{/if}

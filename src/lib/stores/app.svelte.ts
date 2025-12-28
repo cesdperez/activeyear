@@ -128,7 +128,7 @@ function createAppStore() {
         get activities() {
             return activities;
         },
-        get favorites() {
+        get highlights() {
             return activities.filter(a => a.favorite);
         },
         get stats() {

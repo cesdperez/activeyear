@@ -211,7 +211,7 @@
                     Generating...
                 {:else}
                     <DownloadSimple class="w-5 h-5" weight="bold" />
-                    Download Both Images
+                    Download All Images
                 {/if}
             </button>
 
@@ -220,7 +220,7 @@
             {/if}
 
             <p class="text-xs text-zinc-500">
-                Downloads two images: Summary and Breakdown
+                Downloads three images: Summary, Breakdown, and Highlights
             </p>
         </div>
 

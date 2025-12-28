@@ -6,8 +6,8 @@
     import type { CardVariant } from "$lib/types/index.js";
 
     let currentSlide = $state<0 | 1 | 2>(0);
-    const slides: CardVariant[] = ["summary", "breakdown", "favorites"];
-    const slideLabels = ["Summary", "Breakdown", "Favorites"];
+    const slides: CardVariant[] = ["summary", "breakdown", "highlights"];
+    const slideLabels = ["Summary", "Breakdown", "Highlights"];
 
     function nextSlide() {
         currentSlide = ((currentSlide + 1) % slides.length) as 0 | 1 | 2;
@@ -48,13 +48,13 @@
             });
         }
 
-        // Export favorites card
+        // Export highlights card
         currentSlide = 2;
         await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for render
-        const favoritesEl = getExportElement();
-        if (favoritesEl) {
-            await exportToPng(favoritesEl, {
-                filename: `${baseFilename}-favorites`,
+        const highlightsEl = getExportElement();
+        if (highlightsEl) {
+            await exportToPng(highlightsEl, {
+                filename: `${baseFilename}-highlights`,
             });
         }
 

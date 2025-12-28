@@ -914,13 +914,13 @@
                             activeyear.app
                         </p>
                     </div>
-                {:else if variant === "favorites"}
+                {:else if variant === "highlights"}
                     <!-- ======================== -->
-                    <!-- FAVORITES CARD VARIANT  -->
+                    <!-- HIGHLIGHTS CARD VARIANT  -->
                     <!-- ======================== -->
 
                     <!-- Header with Username -->
-                    <header class="text-center mb-[100px] relative">
+                    <header class="text-center mb-[80px] relative">
                         {#if appStore.userName}
                             <p
                                 class="text-[42px] font-bold text-[var(--color-accent)] mb-2 relative z-10 leading-none uppercase tracking-widest mr-[-0.1em]"
@@ -937,91 +937,111 @@
                             <h1
                                 class="text-[72px] font-bold tracking-[0.15em] export-title leading-none relative z-10 uppercase text-[var(--color-text-dim)] mr-[-0.15em]"
                             >
-                                FAVORITES
+                                HIGHLIGHTS
                             </h1>
                         </div>
                     </header>
 
-                    <!-- Heart Icon -->
-                    <div class="flex justify-center mb-[80px]">
+                    {@const highlights = appStore.highlights.slice(0, 10)}
+                    {@const hasMany = highlights.length > 5}
+
+                    <!-- Heart Icon (Smaller if many items) -->
+                    <div
+                        class="flex justify-center {hasMany
+                            ? 'mb-12'
+                            : 'mb-20'}"
+                    >
                         <div
-                            class="w-40 h-40 rounded-full flex items-center justify-center bg-[var(--color-accent)]/10"
+                            class="{hasMany
+                                ? 'w-24 h-24'
+                                : 'w-42 h-42'} rounded-full flex items-center justify-center bg-[var(--color-accent)]/10"
                         >
                             <Heart
-                                class="w-24 h-24 text-red-400"
+                                class="{hasMany
+                                    ? 'w-14 h-14'
+                                    : 'w-24 h-24'} text-red-400"
                                 weight="fill"
                             />
                         </div>
                     </div>
 
-                    <!-- Favorites List -->
-                    <div class="flex-1 flex flex-col gap-6 px-4 mb-16">
-                        {#if appStore.favorites.length === 0}
+                    <!-- Highlights List (Responsive Grid) -->
+                    <div class="flex-1 flex flex-col justify-center px-4 mb-20">
+                        {#if highlights.length === 0}
                             <div
                                 class="text-center text-[var(--color-text-muted)] text-[28px]"
                             >
-                                No favorite activities yet
+                                No highlight activities yet
                             </div>
                         {:else}
-                            {#each appStore.favorites.slice(0, 8) as fav}
-                                {@const IconComponent =
-                                    sportIcons[fav.type] ?? Target}
-                                <div
-                                    class="flex items-center gap-6 p-6 rounded-2xl bg-[rgba(0,0,0,0.05)]"
-                                >
+                            <div
+                                class="grid {highlights.length > 5
+                                    ? 'grid-cols-2'
+                                    : 'grid-cols-1'} gap-6"
+                            >
+                                {#each highlights as fav}
+                                    {@const IconComponent =
+                                        sportIcons[fav.type] ?? Target}
                                     <div
-                                        class="w-16 h-16 rounded-xl flex items-center justify-center bg-[var(--color-accent)]/20 text-[var(--color-accent)] shrink-0"
+                                        class="flex items-center gap-5 p-5 rounded-2xl bg-[rgba(255,255,255,0.03)] border border-white/5"
                                     >
-                                        <IconComponent
-                                            class="w-8 h-8"
-                                            weight="bold"
-                                        />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
                                         <div
-                                            class="flex items-center gap-3 mb-2"
+                                            class="w-14 h-14 rounded-xl flex items-center justify-center bg-[var(--color-accent)]/20 text-[var(--color-accent)] shrink-0"
                                         >
-                                            <Heart
-                                                class="w-6 h-6 text-red-400 shrink-0"
-                                                weight="fill"
+                                            <IconComponent
+                                                class="w-7 h-7"
+                                                weight="bold"
                                             />
-                                            <span
-                                                class="text-[28px] font-bold text-[var(--color-text-primary)] truncate"
-                                            >
-                                                {fav.title ||
-                                                    sportNames[fav.type] ||
-                                                    "Activity"}
-                                            </span>
                                         </div>
-                                        <div
-                                            class="flex items-center gap-4 text-[22px] text-[var(--color-text-muted)]"
-                                        >
-                                            {#if fav.distance > 0}
+                                        <div class="flex-1 min-w-0">
+                                            <div
+                                                class="flex items-center gap-2 mb-1"
+                                            >
+                                                <Heart
+                                                    class="w-4 h-4 text-red-400 shrink-0"
+                                                    weight="fill"
+                                                />
+                                                <span
+                                                    class="text-[24px] font-bold text-[var(--color-text-primary)] truncate"
+                                                >
+                                                    {fav.title ||
+                                                        sportNames[fav.type] ||
+                                                        "Activity"}
+                                                </span>
+                                            </div>
+                                            <div
+                                                class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[18px] text-[var(--color-text-muted)]"
+                                            >
+                                                {#if fav.distance > 0}
+                                                    <span class="font-mono">
+                                                        {formatDistance(
+                                                            fav.distance,
+                                                            appStore.unit,
+                                                        )}
+                                                    </span>
+                                                {/if}
                                                 <span class="font-mono">
-                                                    {formatDistance(
-                                                        fav.distance,
-                                                        appStore.unit,
+                                                    {formatDuration(
+                                                        fav.duration,
                                                     )}
                                                 </span>
-                                            {/if}
-                                            <span class="font-mono">
-                                                {formatDuration(fav.duration)}
-                                            </span>
-                                            <span
-                                                class="px-3 py-1 rounded-full bg-[var(--color-accent)]/10 text-[18px] uppercase tracking-wider text-[var(--color-accent)]"
-                                            >
-                                                {sportNames[fav.type] ??
-                                                    fav.type}
-                                            </span>
+                                                <span
+                                                    class="px-2 py-0.5 rounded-full bg-[var(--color-accent)]/10 text-[14px] uppercase tracking-wider text-[var(--color-accent)]"
+                                                >
+                                                    {sportNames[fav.type] ??
+                                                        fav.type}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            {/each}
-                            {#if appStore.favorites.length > 8}
+                                {/each}
+                            </div>
+
+                            {#if appStore.highlights.length > 10}
                                 <div
-                                    class="text-center text-[var(--color-text-muted)] text-[24px]"
+                                    class="text-center text-[var(--color-text-muted)] text-[22px] mt-8"
                                 >
-                                    +{appStore.favorites.length - 8} more favorites
+                                    +{appStore.highlights.length - 10} more highlights
                                 </div>
                             {/if}
                         {/if}
