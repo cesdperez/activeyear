@@ -843,7 +843,7 @@
                                             Longest Distance
                                         </div>
                                         <div
-                                            class="text-[16px] text-[var(--color-accent)] mt-2 font-medium truncate w-full"
+                                            class="text-[16px] text-[var(--color-accent)] mt-2 font-medium line-clamp-2 w-full"
                                         >
                                             {record.activity.title}
                                         </div>
@@ -870,7 +870,7 @@
                                             Longest Duration
                                         </div>
                                         <div
-                                            class="text-[16px] text-[var(--color-accent)] mt-2 font-medium truncate w-full"
+                                            class="text-[16px] text-[var(--color-accent)] mt-2 font-medium line-clamp-2 w-full"
                                         >
                                             {record.activity.title}
                                         </div>
@@ -897,7 +897,7 @@
                                             Biggest Burn
                                         </div>
                                         <div
-                                            class="text-[16px] text-[var(--color-accent)] mt-2 font-medium truncate w-full"
+                                            class="text-[16px] text-[var(--color-accent)] mt-2 font-medium line-clamp-2 w-full"
                                         >
                                             {record.activity.title}
                                         </div>
@@ -1072,7 +1072,7 @@
                                                             class="{highlights.length <
                                                             7
                                                                 ? 'text-[32px]'
-                                                                : 'text-[22px]'} font-bold text-[var(--color-text-primary)] truncate"
+                                                                : 'text-[22px]'} font-bold text-[var(--color-text-primary)] line-clamp-2"
                                                         >
                                                             {fav.title ||
                                                                 sportNames[
