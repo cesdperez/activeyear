@@ -1,5 +1,5 @@
 <script lang="ts">
-    let title = "ActiveYear — Your 2025 in Sport";
+    let title = "ActiveYear - Your 2025 in Sport";
     let description =
         "Generate beautiful shareable infographics from your Garmin activity data. All processing happens in your browser, your data never leaves.";
     let url = "https://activeyear.app";
