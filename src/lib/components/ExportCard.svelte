@@ -418,7 +418,8 @@
                                                 cy="100"
                                                 r="80"
                                                 fill="none"
-                                                stroke="rgba(255,255,255,0.05)"
+                                                stroke="rgba(0,0,0,0.05)"
+                                                class="donut-bg"
                                                 stroke-width="28"
                                             />
                                             <!-- Sport segments -->
@@ -521,7 +522,7 @@
                                             </div>
                                         </div>
                                         <div
-                                            class="h-3 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden"
+                                            class="h-3 bg-[rgba(0,0,0,0.05)] sport-bar-bg rounded-full overflow-hidden"
                                         >
                                             <div
                                                 class="h-full rounded-full transition-all duration-500"
@@ -571,8 +572,11 @@
                                             class="w-full rounded-t-lg transition-all weekly-bar"
                                             style="height: {barHeight}px; background: {isTopDay
                                                 ? '#00ff88'
-                                                : 'var(--color-accent)'}; opacity: {0.4 +
-                                                (heightPercent / 100) * 0.6};"
+                                                : 'var(--color-accent)'}; opacity: {currentTheme ===
+                                            'minimalist'
+                                                ? 0.8
+                                                : 0.4 +
+                                                  (heightPercent / 100) * 0.6};"
                                         ></div>
                                         <span
                                             class="text-[16px] font-bold text-[var(--color-text-muted)]"
@@ -594,7 +598,7 @@
                         <div class="grid grid-cols-2 gap-6 mb-24">
                             <!-- Active Days -->
                             <div
-                                class="flex flex-col items-center text-center p-6 rounded-2xl bg-[rgba(255,255,255,0.02)]"
+                                class="flex flex-col items-center text-center p-6 rounded-2xl bg-[rgba(0,0,0,0.02)] consistency-card"
                             >
                                 <div class="relative mb-3">
                                     <svg
@@ -606,7 +610,8 @@
                                             cy="60"
                                             r="52"
                                             fill="none"
-                                            stroke="rgba(255,255,255,0.08)"
+                                            stroke="rgba(0,0,0,0.05)"
+                                            class="progress-ring-bg"
                                             stroke-width="10"
                                         />
                                         <circle
@@ -654,7 +659,7 @@
 
                             <!-- Day Streak -->
                             <div
-                                class="flex flex-col items-center text-center p-6 rounded-2xl bg-[rgba(255,255,255,0.02)]"
+                                class="flex flex-col items-center text-center p-6 rounded-2xl bg-[rgba(0,0,0,0.02)] consistency-card"
                             >
                                 <div class="relative mb-3">
                                     <svg
@@ -666,7 +671,8 @@
                                             cy="60"
                                             r="52"
                                             fill="none"
-                                            stroke="rgba(255,255,255,0.08)"
+                                            stroke="rgba(0,0,0,0.05)"
+                                            class="progress-ring-bg"
                                             stroke-width="10"
                                         />
                                         <!-- Decorative flame effect -->
@@ -737,7 +743,7 @@
                                             />
                                         </div>
                                         <div
-                                            class="text-[32px] font-black text-white leading-tight"
+                                            class="text-[32px] font-black text-[var(--color-text-primary)] leading-tight"
                                         >
                                             {formatDistance(record.value)}
                                         </div>
@@ -764,7 +770,7 @@
                                             />
                                         </div>
                                         <div
-                                            class="text-[32px] font-black text-white leading-tight"
+                                            class="text-[32px] font-black text-[var(--color-text-primary)] leading-tight"
                                         >
                                             {formatDuration(record.value)}
                                         </div>
@@ -791,7 +797,7 @@
                                             />
                                         </div>
                                         <div
-                                            class="text-[32px] font-black text-white leading-tight"
+                                            class="text-[32px] font-black text-[var(--color-text-primary)] leading-tight"
                                         >
                                             {formatCalories(record.value)}
                                         </div>
@@ -1123,13 +1129,41 @@
     }
 
     .theme-minimalist .record-card-compact {
-        background: rgba(0, 0, 0, 0.02);
-        border: 1px solid rgba(0, 0, 0, 0.05);
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     }
 
     .theme-minimalist .record-icon-compact {
-        background: rgba(0, 0, 0, 0.04);
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        color: #000;
+        background: #fafafa;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        color: var(--color-gold);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Theme-specific background/stroke overrides */
+    .theme-neon .donut-bg,
+    .theme-retro .donut-bg {
+        stroke: rgba(255, 255, 255, 0.05);
+    }
+
+    .theme-neon .sport-bar-bg,
+    .theme-retro .sport-bar-bg {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    .theme-neon .progress-ring-bg,
+    .theme-retro .progress-ring-bg {
+        stroke: rgba(255, 255, 255, 0.08);
+    }
+
+    .theme-neon .consistency-card,
+    .theme-retro .consistency-card {
+        background-color: rgba(255, 255, 255, 0.02) !important;
+    }
+
+    .theme-minimalist .consistency-card {
+        background-color: rgba(0, 0, 0, 0.02) !important;
+        border: 1px solid rgba(0, 0, 0, 0.05);
     }
 </style>
