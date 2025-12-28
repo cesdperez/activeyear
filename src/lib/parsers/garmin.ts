@@ -27,6 +27,12 @@ const ACTIVITY_TYPE_MAP: Record<string, ActivityType> = {
     Strength: 'strength',
     Yoga: 'yoga',
     Pilates: 'yoga',
+    Cardio: 'cardio',
+    CrossFit: 'cardio',
+    HIIT: 'cardio',
+    Padel: 'other',
+    Skating: 'other',
+    'Ice Skating': 'other',
     Multisport: 'other',
     'Rock Climbing': 'other'
 };
@@ -127,7 +133,7 @@ export function parseGarminCsv(csvContent: string, targetYear: number = 2025): P
     });
 
     // Check if the expected headers are present (detect wrong language)
-    const expectedHeaders = ['Activity Type', 'Date', 'Distance', 'Time'];
+    const expectedHeaders = ['Activity Type', 'Date', 'Distance'];
     const actualHeaders = parseResult.meta.fields || [];
     const missingHeaders = expectedHeaders.filter(h => !actualHeaders.includes(h));
 
@@ -192,7 +198,7 @@ export function parseGarminCsv(csvContent: string, targetYear: number = 2025): P
             type: mapActivityType(row['Activity Type']),
             title: row['Title'] || '',
             distance,
-            duration: parseGarminTime(row['Time']),
+            duration: parseGarminTime(row['Total Time'] || row['Time']),
             calories: parseGarminCalories(row['Calories']),
             elevation: parseGarminElevation(row['Total Ascent'])
         };

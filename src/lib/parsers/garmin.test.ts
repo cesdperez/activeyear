@@ -248,3 +248,96 @@ describe('parseGarminCsv', () => {
         expect(result.errors[0].message).toContain('English');
     });
 });
+
+describe('parseGarminCsv with garmin-sample-2.csv', () => {
+    it('parses sample 2 CSV file correctly', () => {
+        const csvPath = join(__dirname, '__fixtures__', 'garmin-sample-2.csv');
+        const csvContent = readFileSync(csvPath, 'utf-8');
+
+        const result = parseGarminCsv(csvContent, 2025);
+
+        expect(result.errors).toHaveLength(0);
+        // 177 activities from 2025 (excludes 24 from 2024 at the bottom)
+        expect(result.activities.length).toBeGreaterThan(150);
+    });
+
+    it('correctly parses Cardio activities as cardio type', () => {
+        const csvPath = join(__dirname, '__fixtures__', 'garmin-sample-2.csv');
+        const csvContent = readFileSync(csvPath, 'utf-8');
+
+        const result = parseGarminCsv(csvContent, 2025);
+        const cardioActivities = result.activities.filter((a) => a.type === 'cardio');
+
+        // There are many CrossFit activities in the file
+        expect(cardioActivities.length).toBeGreaterThan(30);
+        expect(cardioActivities.some((a) => a.title === 'CrossFit')).toBe(true);
+    });
+
+    it('correctly parses Running activities (not as other)', () => {
+        const csvPath = join(__dirname, '__fixtures__', 'garmin-sample-2.csv');
+        const csvContent = readFileSync(csvPath, 'utf-8');
+
+        const result = parseGarminCsv(csvContent, 2025);
+        const runningActivities = result.activities.filter((a) => a.type === 'running');
+
+        // There are many running activities
+        expect(runningActivities.length).toBeGreaterThan(50);
+    });
+
+    it('correctly parses Hiking activities', () => {
+        const csvPath = join(__dirname, '__fixtures__', 'garmin-sample-2.csv');
+        const csvContent = readFileSync(csvPath, 'utf-8');
+
+        const result = parseGarminCsv(csvContent, 2025);
+        const hikingActivities = result.activities.filter((a) => a.type === 'hiking');
+
+        expect(hikingActivities.length).toBeGreaterThan(15);
+    });
+
+    it('correctly parses duration from Total Time column', () => {
+        const csvPath = join(__dirname, '__fixtures__', 'garmin-sample-2.csv');
+        const csvContent = readFileSync(csvPath, 'utf-8');
+
+        const result = parseGarminCsv(csvContent, 2025);
+
+        // All activities should have non-zero duration
+        const activitiesWithDuration = result.activities.filter((a) => a.duration > 0);
+        expect(activitiesWithDuration.length).toBe(result.activities.length);
+    });
+
+    it('finds the longest duration activity (personal record)', () => {
+        const csvPath = join(__dirname, '__fixtures__', 'garmin-sample-2.csv');
+        const csvContent = readFileSync(csvPath, 'utf-8');
+
+        const result = parseGarminCsv(csvContent, 2025);
+
+        // Find activity with longest duration
+        const longestDuration = result.activities.reduce((max, a) =>
+            a.duration > max.duration ? a : max, result.activities[0]);
+
+        // There should be hiking activities with several hours duration
+        expect(longestDuration.duration).toBeGreaterThan(3600 * 5); // > 5 hours
+    });
+});
+
+describe('mapActivityType extended', () => {
+    it('maps Cardio to cardio', () => {
+        expect(mapActivityType('Cardio')).toBe('cardio');
+    });
+
+    it('maps CrossFit to cardio', () => {
+        expect(mapActivityType('CrossFit')).toBe('cardio');
+    });
+
+    it('maps HIIT to cardio', () => {
+        expect(mapActivityType('HIIT')).toBe('cardio');
+    });
+
+    it('maps Padel to other', () => {
+        expect(mapActivityType('Padel')).toBe('other');
+    });
+
+    it('maps Skating to other', () => {
+        expect(mapActivityType('Skating')).toBe('other');
+    });
+});
