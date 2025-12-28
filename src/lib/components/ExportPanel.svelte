@@ -2,14 +2,14 @@
     import { appStore } from "$lib/stores/app.svelte.js";
     import ExportCarousel from "./ExportCarousel.svelte";
     import {
-        Download,
-        ImagePlus,
-        Trash2,
+        DownloadSimple,
+        Image,
+        Trash,
         Ruler,
-        Mountain,
+        Mountains,
         Timer,
-        Flame,
-    } from "@lucide/svelte";
+        Fire,
+    } from "phosphor-svelte";
     import type { Theme, SummaryMetric } from "$lib/types/index.js";
 
     let isExporting = $state(false);
@@ -129,7 +129,7 @@
                             class="p-2 text-zinc-400 hover:text-red-400 transition-colors"
                             title="Remove image"
                         >
-                            <Trash2 class="w-4 h-4" />
+                            <Trash class="w-4 h-4" />
                         </button>
                     </div>
                 {:else}
@@ -145,7 +145,7 @@
                             for="userAvatar"
                             class="flex items-center justify-center gap-3 w-full px-4 py-3 bg-[var(--color-surface-elevated)] border border-dashed border-[rgba(255,255,255,0.2)] rounded-lg text-zinc-400 hover:text-white hover:border-[var(--color-accent)] cursor-pointer transition-all"
                         >
-                            <ImagePlus class="w-5 h-5" />
+                            <Image class="w-5 h-5" />
                             <span class="text-sm font-medium">Upload Image</span
                             >
                         </label>
@@ -159,7 +159,7 @@
                     Focused Stat (Summary Card)
                 </span>
                 <div class="grid grid-cols-2 gap-2">
-                    {#each [{ value: "distance", label: "Distance", icon: Ruler }, { value: "elevation", label: "Elevation", icon: Mountain }, { value: "duration", label: "Time", icon: Timer }, { value: "calories", label: "Calories", icon: Flame }] as metric}
+                    {#each [{ value: "distance", label: "Distance", icon: Ruler }, { value: "elevation", label: "Elevation", icon: Mountains }, { value: "duration", label: "Time", icon: Timer }, { value: "calories", label: "Calories", icon: Fire }] as metric}
                         <button
                             onclick={() =>
                                 (appStore.summaryMetric =
@@ -210,7 +210,7 @@
                     <span class="animate-spin">⏳</span>
                     Generating...
                 {:else}
-                    <Download class="w-5 h-5" strokeWidth={2} />
+                    <DownloadSimple class="w-5 h-5" weight="bold" />
                     Download Both Images
                 {/if}
             </button>

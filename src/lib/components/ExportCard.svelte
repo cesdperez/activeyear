@@ -19,28 +19,23 @@
     import { getExportDimensions } from "$lib/utils/export.js";
     import type { CardVariant } from "$lib/types/index.js";
 
-    // Lucide icons (for non-sport UI elements)
+    // Phosphor icons
     import {
         Ruler,
         Timer,
         CalendarCheck,
-        Zap,
+        Lightning,
         Trophy,
         Hourglass,
-        Sparkles,
-        Mountain,
-        Flame,
-    } from "@lucide/svelte";
-
-    // Phosphor icons for sports (bold, activity-true icons)
-    import {
+        Sparkle,
+        Mountains,
+        Fire,
         PersonSimpleRun,
         PersonSimpleBike,
         PersonSimpleSwim,
         PersonSimpleWalk,
-        Mountains,
         Barbell,
-        Flower,
+        PersonSimpleTaiChi,
         Target,
     } from "phosphor-svelte";
 
@@ -52,7 +47,7 @@
         walking: PersonSimpleWalk,
         hiking: Mountains,
         strength: Barbell,
-        yoga: Flower,
+        yoga: PersonSimpleTaiChi,
         other: Target,
     };
 
@@ -256,7 +251,7 @@
                             value: formatElevation(
                                 appStore.stats?.totalElevation ?? 0,
                             ),
-                            icon: Mountain,
+                            icon: Mountains,
                             equivalent: `🏔️ ${formatEverests(appStore.stats?.totalElevation ?? 0)}`,
                         },
                         {
@@ -274,7 +269,7 @@
                             value: formatCalories(
                                 appStore.stats?.totalCalories ?? 0,
                             ),
-                            icon: Flame,
+                            icon: Fire,
                             equivalent: `🍕 ${formatPizzaSlices(appStore.stats?.totalCalories ?? 0)}`,
                         },
                     ]}
@@ -295,7 +290,7 @@
                             >
                                 <heroStat.icon
                                     class="w-16 h-16"
-                                    strokeWidth={2.5}
+                                    weight="bold"
                                 />
                             </div>
                             <div
@@ -330,7 +325,7 @@
                                 >
                                     <stat.icon
                                         class="w-12 h-12 text-[var(--color-text-dim)] mb-3 mx-auto"
-                                        strokeWidth={2}
+                                        weight="bold"
                                     />
                                     <div
                                         class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
@@ -451,10 +446,7 @@
                             <div
                                 class="flex items-center gap-2 text-[var(--color-accent)] mt-1"
                             >
-                                <CalendarCheck
-                                    class="w-6 h-6"
-                                    strokeWidth={2}
-                                />
+                                <CalendarCheck class="w-6 h-6" weight="bold" />
                                 <span
                                     class="text-[20px] font-bold uppercase tracking-wider"
                                     >Active Days</span
@@ -470,7 +462,7 @@
                             <div
                                 class="flex items-center gap-2 text-[var(--color-accent)] mt-1"
                             >
-                                <Zap class="w-6 h-6" strokeWidth={2} />
+                                <Lightning class="w-6 h-6" weight="bold" />
                                 <span
                                     class="text-[20px] font-bold uppercase tracking-wider"
                                     >Day Streak</span
@@ -556,7 +548,7 @@
                                             <div
                                                 class="w-8 h-8 rounded-full bg-[var(--color-surface-elevated)] flex items-center justify-center"
                                             >
-                                                <Flame
+                                                <Fire
                                                     class="w-4 h-4 text-[var(--color-text-dim)]"
                                                 />
                                             </div>

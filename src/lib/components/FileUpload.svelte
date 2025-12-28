@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { appStore } from "$lib/stores/app.svelte.js";
 	import {
-		Upload,
-		AlertTriangle,
-		Loader2,
+		UploadSimple,
+		Warning,
+		SpinnerGap,
 		ShieldCheck,
-	} from "@lucide/svelte";
+	} from "phosphor-svelte";
 
 	let isDragOver = $state(false);
 	let fileInput: HTMLInputElement;
@@ -109,9 +109,9 @@
 	<div class="text-center">
 		{#if appStore.status === "parsing" || isArtificialDelay}
 			<div class="mb-4">
-				<Loader2
+				<SpinnerGap
 					class="w-12 h-12 mx-auto text-[var(--color-accent)] animate-spin"
-					strokeWidth={1.5}
+					weight="bold"
 				/>
 			</div>
 			<p class="text-lg text-[var(--color-text-muted)] animate-pulse">
@@ -119,10 +119,7 @@
 			</p>
 		{:else if appStore.status === "error"}
 			<div class="mb-4">
-				<AlertTriangle
-					class="w-12 h-12 mx-auto text-red-500"
-					strokeWidth={1.5}
-				/>
+				<Warning class="w-12 h-12 mx-auto text-red-500" weight="bold" />
 			</div>
 			<p class="text-lg text-red-500 mb-2">{appStore.error}</p>
 			<p class="text-sm text-[var(--color-text-dim)]">
@@ -130,9 +127,9 @@
 			</p>
 		{:else}
 			<div class="mb-4">
-				<Upload
+				<UploadSimple
 					class="w-12 h-12 mx-auto text-[var(--color-text-dim)] group-hover:text-[var(--color-accent)] transition-colors duration-300"
-					strokeWidth={1.5}
+					weight="bold"
 				/>
 			</div>
 			<p class="text-lg text-[var(--color-text-primary)] mb-1">
@@ -144,7 +141,7 @@
 			<p
 				class="text-xs text-[var(--color-text-dim)] flex items-center justify-center gap-1.5"
 			>
-				<ShieldCheck class="w-3.5 h-3.5" strokeWidth={2} />
+				<ShieldCheck class="w-3.5 h-3.5" weight="bold" />
 				Your data never leaves this browser
 			</p>
 		{/if}
