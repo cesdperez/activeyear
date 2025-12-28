@@ -211,24 +211,39 @@
                                     cy="100"
                                     rx="90"
                                     ry="30"
-                                    class="spiral-path spiral-path-1"
                                     transform="rotate(-30 100 100)"
+                                    fill="none"
+                                    stroke="var(--color-accent)"
+                                    stroke-width="1.5"
+                                    stroke-linecap="round"
+                                    stroke-dasharray="200 100"
+                                    opacity="0.4"
                                 />
                                 <ellipse
                                     cx="100"
                                     cy="100"
                                     rx="90"
                                     ry="30"
-                                    class="spiral-path spiral-path-2"
                                     transform="rotate(45 100 100)"
+                                    fill="none"
+                                    stroke="var(--color-accent)"
+                                    stroke-width="1"
+                                    stroke-linecap="round"
+                                    stroke-dasharray="150 150"
+                                    opacity="0.25"
                                 />
                                 <ellipse
                                     cx="100"
                                     cy="100"
                                     rx="95"
                                     ry="40"
-                                    class="spiral-path spiral-path-3"
                                     transform="rotate(120 100 100)"
+                                    fill="none"
+                                    stroke="var(--color-accent)"
+                                    stroke-width="0.8"
+                                    stroke-linecap="round"
+                                    stroke-dasharray="100 200"
+                                    opacity="0.2"
                                 />
 
                                 <!-- Concentric Accents -->
@@ -236,16 +251,22 @@
                                     cx="100"
                                     cy="100"
                                     r="78"
-                                    class="spiral-path-accent"
                                     stroke-dasharray="10 20"
+                                    fill="none"
+                                    stroke="var(--color-accent)"
+                                    stroke-width="0.5"
+                                    stroke-linecap="round"
                                 />
                                 <circle
                                     cx="100"
                                     cy="100"
                                     r="82"
-                                    class="spiral-path-accent"
-                                    stroke-dasharray="5 15"
                                     opacity="0.3"
+                                    fill="none"
+                                    stroke="var(--color-accent)"
+                                    stroke-width="0.5"
+                                    stroke-linecap="round"
+                                    stroke-dasharray="5 15"
                                 />
                             </svg>
                         </div>
@@ -967,13 +988,10 @@
     /* Avatar Decorations & Spirals */
     .avatar-decorations {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        /* transform: translate(-50%, -50%); <-- Removed for export stability */
-        margin-left: -325px; /* Half of width (650px) */
-        margin-top: -325px; /* Half of height (650px) */
-        width: 650px;
-        height: 650px;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         pointer-events: none;
         z-index: 10;
         display: flex;
@@ -982,10 +1000,11 @@
     }
 
     .spiral-svg {
-        width: 100%;
-        height: 100%;
+        width: 650px;
+        height: 650px;
         overflow: visible;
         transform: rotate(-15deg);
+        flex-shrink: 0;
     }
 
     .spiral-path {
@@ -1031,11 +1050,9 @@
         stroke-dasharray: none;
     }
 
-    .theme-retro .avatar-decorations {
+    .theme-retro .spiral-svg {
         width: 550px;
         height: 550px;
-        margin-left: -275px; /* Half of width (550px) */
-        margin-top: -275px; /* Half of height (550px) */
     }
 
     .theme-retro .spiral-path {
