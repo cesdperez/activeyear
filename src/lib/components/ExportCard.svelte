@@ -394,10 +394,12 @@
                     <!-- BREAKDOWN CARD VARIANT -->
                     <!-- ======================== -->
 
-                    {@const totalCount = topSports.reduce(
+                    {@const topSportsCount = topSports.reduce(
                         (sum, s) => sum + s.count,
                         0,
                     )}
+                    {@const totalActivities =
+                        appStore.stats?.activityCount ?? 0}
                     {@const sportColors = [
                         "#00d4ff",
                         "#00ff88",
@@ -457,14 +459,15 @@
                                             <!-- Sport segments -->
                                             {#each topSports as sport, i}
                                                 {@const percentage =
-                                                    sport.count / totalCount}
+                                                    sport.count /
+                                                    topSportsCount}
                                                 {@const offset = topSports
                                                     .slice(0, i)
                                                     .reduce(
                                                         (sum, s) =>
                                                             sum +
                                                             (s.count /
-                                                                totalCount) *
+                                                                topSportsCount) *
                                                                 circumference,
                                                         0,
                                                     )}
@@ -496,7 +499,7 @@
                                         <div
                                             class="text-[72px] font-black text-[var(--color-text-primary)] leading-none"
                                         >
-                                            {totalCount}
+                                            {totalActivities}
                                         </div>
                                         <div
                                             class="text-[20px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest"
