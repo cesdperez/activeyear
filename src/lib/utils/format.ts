@@ -15,9 +15,6 @@ export function formatDistance(km: number, unit: Unit = 'km'): string {
     const value = unit === 'miles' ? km * KM_TO_MILES : km;
     const suffix = unit === 'miles' ? 'mi' : 'km';
 
-    if (value < 100) {
-        return `${Math.round(value)}${suffix}`;
-    }
     return `${value.toFixed(1)}${suffix}`;
 }
 
