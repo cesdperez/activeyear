@@ -28,6 +28,7 @@ interface AppState {
     // Export state
     userName: string;
     theme: Theme;
+    userPfp: string | null;
 }
 
 function createAppStore() {
@@ -42,6 +43,7 @@ function createAppStore() {
     // Export state
     let userName = $state<string>('');
     let theme = $state<Theme>('neon');
+    let userPfp = $state<string | null>(null);
     let confettiEnabled = $state<boolean>(false);
 
     function reset() {
@@ -52,6 +54,7 @@ function createAppStore() {
         status = 'idle';
         error = null;
         parseErrors = [];
+        userPfp = null;
     }
 
     async function processFile(file: File) {
@@ -136,6 +139,12 @@ function createAppStore() {
         },
         set theme(value: Theme) {
             theme = value;
+        },
+        get userPfp() {
+            return userPfp;
+        },
+        set userPfp(value: string | null) {
+            userPfp = value;
         },
         reset,
         processFile,

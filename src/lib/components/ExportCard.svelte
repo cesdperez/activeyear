@@ -101,6 +101,12 @@
     const maxSportCount = $derived(
         Math.max(...topSports.map((s) => s[appStore.breakdownMetric]), 1),
     );
+
+    // Get top sport icon
+    let topSportIcon = $derived(() => {
+        if (topSports.length === 0) return Target;
+        return sportIcons[topSports[0].type] ?? Target;
+    });
 </script>
 
 <!-- Export Card Container -->
@@ -130,14 +136,14 @@
             {/if}
 
             <!-- Content -->
-            <div class="relative z-10 h-full flex flex-col p-8">
+            <div class="relative z-10 h-full flex flex-col p-14">
                 {#if variant === "summary"}
                     <!-- ===================== -->
                     <!-- SUMMARY CARD VARIANT -->
                     <!-- ===================== -->
 
                     <!-- Header -->
-                    <header class="text-center mb-10 relative">
+                    <header class="text-center mb-[160px] relative">
                         {#if appStore.userName}
                             <p
                                 class="text-[42px] font-bold text-[var(--color-accent)] mb-2 relative z-10 leading-none uppercase tracking-widest"
@@ -159,31 +165,102 @@
                         </div>
                     </header>
 
+                    <!-- User Avatar / Sport Icon -->
+                    <div class="flex justify-center mb-[140px] relative">
+                        <!-- Decorative Spiral Effects (Static for Export) -->
+                        <div class="avatar-decorations">
+                            <svg viewBox="0 0 200 200" class="spiral-svg">
+                                <!-- Orbiting Rings with Perspective -->
+                                <ellipse
+                                    cx="100"
+                                    cy="100"
+                                    rx="90"
+                                    ry="30"
+                                    class="spiral-path spiral-path-1"
+                                    transform="rotate(-30 100 100)"
+                                />
+                                <ellipse
+                                    cx="100"
+                                    cy="100"
+                                    rx="90"
+                                    ry="30"
+                                    class="spiral-path spiral-path-2"
+                                    transform="rotate(45 100 100)"
+                                />
+                                <ellipse
+                                    cx="100"
+                                    cy="100"
+                                    rx="95"
+                                    ry="40"
+                                    class="spiral-path spiral-path-3"
+                                    transform="rotate(120 100 100)"
+                                />
+
+                                <!-- Concentric Accents -->
+                                <circle
+                                    cx="100"
+                                    cy="100"
+                                    r="78"
+                                    class="spiral-path-accent"
+                                    stroke-dasharray="10 20"
+                                />
+                                <circle
+                                    cx="100"
+                                    cy="100"
+                                    r="82"
+                                    class="spiral-path-accent"
+                                    stroke-dasharray="5 15"
+                                    opacity="0.3"
+                                />
+                            </svg>
+                        </div>
+
+                        <div class="avatar-container">
+                            {#if appStore.userPfp}
+                                <img
+                                    src={appStore.userPfp}
+                                    alt="Profile"
+                                    class="w-full h-full object-cover rounded-full"
+                                />
+                            {:else}
+                                {@const TopIcon = topSportIcon()}
+                                <div
+                                    class="w-full h-full flex items-center justify-center text-[var(--color-accent)]"
+                                >
+                                    <TopIcon
+                                        class="w-56 h-56"
+                                        strokeWidth={2.5}
+                                    />
+                                </div>
+                            {/if}
+                        </div>
+                    </div>
+
                     <!-- Hero Stat: Featured Metric with Fun Equivalent -->
                     <div
-                        class="flex-1 flex flex-col justify-center items-center text-center gap-4 py-8"
+                        class="flex-1 flex flex-col justify-start items-center text-center gap-4"
                     >
                         <!-- Distance Hero - Floating -->
-                        <div class="mb-8">
+                        <div class="mb-[60px]">
                             <div
                                 class="flex items-center justify-center gap-4 mb-4 text-[var(--color-accent)]"
                             >
                                 <Ruler class="w-16 h-16" strokeWidth={2.5} />
                             </div>
                             <div
-                                class="text-[180px] font-bold stat-value text-[var(--color-text-primary)] leading-none -tracking-[0.04em]"
+                                class="text-[140px] font-bold stat-value text-[var(--color-text-primary)] leading-none -tracking-[0.04em]"
                             >
                                 {formatDistance(
                                     appStore.stats?.totalDistance ?? 0,
                                 )}
                             </div>
                             <div
-                                class="text-[32px] font-medium text-[var(--color-text-dim)] uppercase tracking-widest mt-4"
+                                class="text-[32px] font-medium text-[var(--color-text-dim)] uppercase tracking-[0.2em] mt-4"
                             >
                                 Total Distance
                             </div>
                             <div
-                                class="text-[42px] font-semibold text-[var(--color-accent)] mt-8"
+                                class="text-[44px] font-bold text-[var(--color-accent)] mt-8"
                             >
                                 🌍 {formatEarthLaps(
                                     appStore.stats?.totalDistance ?? 0,
@@ -193,31 +270,31 @@
 
                         <!-- Separator -->
                         <div
-                            class="w-32 h-1.5 bg-[var(--color-accent)] opacity-40 rounded-full my-10"
+                            class="w-64 h-2 bg-[var(--color-accent)] opacity-40 rounded-full mb-[72px]"
                         ></div>
 
                         <!-- Supporting Stats Row - Clean Grid -->
-                        <div class="grid grid-cols-3 gap-4 w-full px-6">
+                        <div class="grid grid-cols-3 gap-4 w-full">
                             <!-- Elevation -->
-                            <div class="text-center overflow-hidden">
+                            <div class="text-center overflow-visible">
                                 <Mountain
-                                    class="w-12 h-12 text-[var(--color-text-dim)] mb-4 mx-auto"
+                                    class="w-12 h-12 text-[var(--color-text-dim)] mb-3 mx-auto"
                                     strokeWidth={2}
                                 />
                                 <div
-                                    class="text-[56px] font-bold stat-value text-[var(--color-text-primary)] leading-none truncate"
+                                    class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
                                 >
                                     {formatElevation(
                                         appStore.stats?.totalElevation ?? 0,
                                     )}
                                 </div>
                                 <div
-                                    class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-wide mt-2 truncate"
+                                    class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest mt-2"
                                 >
                                     Elevation
                                 </div>
                                 <div
-                                    class="text-[20px] text-[var(--color-accent)] mt-2 font-medium truncate"
+                                    class="text-[22px] text-[var(--color-accent)] mt-2 font-medium"
                                 >
                                     🏔️ {formatEverests(
                                         appStore.stats?.totalElevation ?? 0,
@@ -227,26 +304,26 @@
 
                             <!-- Time -->
                             <div
-                                class="text-center border-l border-r border-white/10 overflow-hidden"
+                                class="text-center border-l border-r border-white/10 overflow-visible"
                             >
                                 <Timer
-                                    class="w-12 h-12 text-[var(--color-text-dim)] mb-4 mx-auto"
+                                    class="w-12 h-12 text-[var(--color-text-dim)] mb-3 mx-auto"
                                     strokeWidth={2}
                                 />
                                 <div
-                                    class="text-[56px] font-bold stat-value text-[var(--color-text-primary)] leading-none truncate"
+                                    class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
                                 >
                                     {formatDuration(
                                         appStore.stats?.totalDuration ?? 0,
                                     )}
                                 </div>
                                 <div
-                                    class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-wide mt-2 truncate"
+                                    class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest mt-2"
                                 >
                                     Time Active
                                 </div>
                                 <div
-                                    class="text-[20px] text-[var(--color-accent)] mt-2 font-medium truncate"
+                                    class="text-[22px] text-[var(--color-accent)] mt-2 font-medium"
                                 >
                                     💍 {formatLotRMarathons(
                                         appStore.stats?.totalDuration ?? 0,
@@ -255,25 +332,25 @@
                             </div>
 
                             <!-- Calories -->
-                            <div class="text-center overflow-hidden">
+                            <div class="text-center overflow-visible">
                                 <Flame
-                                    class="w-12 h-12 text-[var(--color-text-dim)] mb-4 mx-auto"
+                                    class="w-12 h-12 text-[var(--color-text-dim)] mb-3 mx-auto"
                                     strokeWidth={2}
                                 />
                                 <div
-                                    class="text-[56px] font-bold stat-value text-[var(--color-text-primary)] leading-none truncate"
+                                    class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
                                 >
                                     {formatCalories(
                                         appStore.stats?.totalCalories ?? 0,
                                     )}
                                 </div>
                                 <div
-                                    class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-wide mt-2 truncate"
+                                    class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest mt-2"
                                 >
                                     Calories
                                 </div>
                                 <div
-                                    class="text-[20px] text-[var(--color-accent)] mt-2 font-medium truncate"
+                                    class="text-[22px] text-[var(--color-accent)] mt-2 font-medium"
                                 >
                                     🍕 {formatPizzaSlices(
                                         appStore.stats?.totalCalories ?? 0,
@@ -606,5 +683,118 @@
         background: linear-gradient(90deg, #ff00cc, #3333ff);
         box-shadow: none;
         border-radius: 0;
+    }
+
+    /* Avatar Container */
+    .avatar-container {
+        width: 400px;
+        height: 400px;
+        border-radius: 9999px;
+        background: var(--color-surface-elevated);
+        border: 4px solid var(--color-accent);
+        box-shadow: 0 0 30px var(--color-accent-glow);
+        padding: 4px;
+        overflow: hidden;
+        position: relative;
+        z-index: 20;
+    }
+
+    .theme-minimalist .avatar-container {
+        background: #fff;
+        border: 4px solid #000;
+        box-shadow: none;
+    }
+
+    .theme-retro .avatar-container {
+        background: #2e2660;
+        border: 6px solid #ff00cc;
+        box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3);
+        border-radius: 20%; /* More square for retro */
+    }
+
+    .theme-retro .avatar-container img {
+        border-radius: 8%;
+    }
+
+    /* Avatar Decorations & Spirals */
+    .avatar-decorations {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 650px;
+        height: 650px;
+        pointer-events: none;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .spiral-svg {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        transform: rotate(-15deg);
+    }
+
+    .spiral-path {
+        fill: none;
+        stroke: var(--color-accent);
+        stroke-linecap: round;
+        opacity: 0.3;
+        transition: stroke 0.3s ease;
+    }
+
+    .spiral-path-1 {
+        stroke-width: 1.5;
+        stroke-dasharray: 200 100;
+        opacity: 0.4;
+    }
+
+    .spiral-path-2 {
+        stroke-width: 1;
+        stroke-dasharray: 150 150;
+        opacity: 0.25;
+    }
+
+    .spiral-path-3 {
+        stroke-width: 0.8;
+        stroke-dasharray: 100 200;
+        opacity: 0.2;
+    }
+
+    .spiral-path-accent {
+        fill: none;
+        stroke: var(--color-accent);
+        stroke-width: 0.5;
+    }
+
+    /* Theme-specific tweaks for decorations */
+    .theme-minimalist .avatar-decorations {
+        opacity: 0.85;
+    }
+
+    .theme-minimalist .spiral-path {
+        stroke: #555;
+        stroke-width: 1.6;
+        stroke-dasharray: none;
+    }
+
+    .theme-retro .avatar-decorations {
+        width: 550px;
+        height: 550px;
+    }
+
+    .theme-retro .spiral-path {
+        stroke: #ff00cc;
+        stroke-width: 3;
+        stroke-dasharray: 20 10;
+        opacity: 0.5;
+    }
+
+    .theme-retro .spiral-path-accent {
+        stroke: #3333ff;
+        stroke-width: 2;
     }
 </style>
