@@ -27,7 +27,6 @@
 		Sparkle,
 		ArrowDown,
 		Confetti,
-		Heart,
 		PersonSimpleRun,
 		PersonSimpleBike,
 		PersonSimpleSwim,
@@ -35,6 +34,7 @@
 		Barbell,
 		PersonSimpleTaiChi,
 		Target,
+		Star,
 	} from "phosphor-svelte";
 
 	// Sport type display names
@@ -415,8 +415,8 @@
 						</div>
 						<div class="flex-1 min-w-0">
 							<div class="flex items-center gap-2 mb-1">
-								<Heart
-									class="w-4 h-4 text-red-400"
+								<Star
+									class="w-4 h-4 text-yellow-500"
 									weight="fill"
 								/>
 								<span
@@ -460,14 +460,14 @@
 				<div
 					class="w-20 h-20 rounded-full flex items-center justify-center bg-[var(--color-accent)]/10 mb-6"
 				>
-					<Heart class="w-10 h-10 text-red-400" weight="fill" />
+					<Star class="w-10 h-10 text-yellow-500" weight="fill" />
 				</div>
 				<p class="text-lg text-[var(--color-text-muted)] mb-4">
 					No highlights yet
 				</p>
 				<p class="text-sm text-[var(--color-text-muted)] max-w-md">
 					Mark activities as favorites in Garmin Connect by tapping
-					the heart icon on any activity, then re-export your data to
+					the star icon on any activity, then re-export your data to
 					see them here.
 				</p>
 			</div>
