@@ -30,6 +30,7 @@
         Sparkle,
         Mountains,
         Fire,
+        Star,
         Heart,
         PersonSimpleRun,
         PersonSimpleBike,
@@ -920,7 +921,7 @@
                     <!-- ======================== -->
 
                     <!-- Header with Username -->
-                    <header class="text-center mb-[60px] relative">
+                    <header class="text-center mb-[78px] relative">
                         {#if appStore.userName}
                             <p
                                 class="text-[42px] font-bold text-[var(--color-accent)] mb-2 relative z-10 leading-none uppercase tracking-widest mr-[-0.1em]"
@@ -988,10 +989,10 @@
                                 <div
                                     class="flex flex-col w-full"
                                     style="gap: {Math.min(
-                                        80,
+                                        120,
                                         Math.max(
-                                            20,
-                                            (1200 - highlights.length * 100) /
+                                            24,
+                                            (1100 - highlights.length * 90) /
                                                 Math.max(
                                                     highlights.length - 1,
                                                     1,
@@ -1003,7 +1004,8 @@
                                         {@const IconComponent =
                                             sportIcons[fav.type] ?? Target}
                                         {@const date = new Date(fav.date)}
-                                        {@const month = monthNames[date.getMonth()]}
+                                        {@const month =
+                                            monthNames[date.getMonth()]}
                                         {@const day = date.getDate()}
 
                                         <div
@@ -1036,13 +1038,22 @@
 
                                             <!-- Activity Card -->
                                             <div
-                                                class="flex-1 flex items-center gap-4 p-4 rounded-2xl timeline-card"
+                                                class="flex-1 flex items-center {highlights.length <
+                                                7
+                                                    ? 'gap-8 p-8'
+                                                    : 'gap-4 p-4'} rounded-2xl timeline-card"
                                             >
                                                 <div
-                                                    class="w-12 h-12 rounded-xl flex items-center justify-center bg-[var(--color-accent)]/20 text-[var(--color-accent)] shrink-0"
+                                                    class="{highlights.length <
+                                                    7
+                                                        ? 'w-16 h-16 rounded-2xl'
+                                                        : 'w-12 h-12 rounded-xl'} flex items-center justify-center bg-[var(--color-accent)]/20 text-[var(--color-accent)] shrink-0"
                                                 >
                                                     <IconComponent
-                                                        class="w-6 h-6"
+                                                        class={highlights.length <
+                                                        7
+                                                            ? "w-8 h-8"
+                                                            : "w-6 h-6"}
                                                         weight="bold"
                                                     />
                                                 </div>
@@ -1050,12 +1061,18 @@
                                                     <div
                                                         class="flex items-center gap-2 mb-1"
                                                     >
-                                                        <Heart
-                                                            class="w-4 h-4 text-red-400 shrink-0"
+                                                        <Star
+                                                            class="{highlights.length <
+                                                            7
+                                                                ? 'w-6 h-6'
+                                                                : 'w-4 h-4'} text-yellow-500 shrink-0"
                                                             weight="fill"
                                                         />
                                                         <span
-                                                            class="text-[22px] font-bold text-[var(--color-text-primary)] truncate"
+                                                            class="{highlights.length <
+                                                            7
+                                                                ? 'text-[32px]'
+                                                                : 'text-[22px]'} font-bold text-[var(--color-text-primary)] truncate"
                                                         >
                                                             {fav.title ||
                                                                 sportNames[
@@ -1065,7 +1082,10 @@
                                                         </span>
                                                     </div>
                                                     <div
-                                                        class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[16px] text-[var(--color-text-muted)]"
+                                                        class="flex flex-wrap items-center gap-x-3 gap-y-1 {highlights.length <
+                                                        7
+                                                            ? 'text-[22px]'
+                                                            : 'text-[16px]'} text-[var(--color-text-muted)]"
                                                     >
                                                         {#if fav.distance > 0}
                                                             <span
@@ -1108,7 +1128,7 @@
                     </div>
 
                     <!-- Watermark -->
-                    <div class="mt-auto pt-6 text-center">
+                    <div class="mt-auto pt-8 text-center">
                         <p
                             class="text-[24px] text-[var(--color-text-dim)] font-medium tracking-widest opacity-80"
                         >
