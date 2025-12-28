@@ -87,3 +87,66 @@ export const demoBreakdown: SportBreakdown[] = [
         count: 5
     }
 ];
+
+export const demoHighlights: Activity[] = [
+    {
+        type: 'running',
+        title: 'New Year\'s Resolution Run',
+        date: new Date('2025-01-01'),
+        distance: 5.0,
+        duration: 1800,
+        calories: 350,
+        elevation: 25,
+        favorite: true
+    },
+    {
+        type: 'cycling',
+        title: 'Century Ride Achievement',
+        date: new Date('2025-03-15'),
+        distance: 160.0,
+        duration: 21600,
+        calories: 4200,
+        elevation: 1100,
+        favorite: true
+    },
+    {
+        type: 'running',
+        title: 'First Half Marathon',
+        date: new Date('2025-04-20'),
+        distance: 21.1,
+        duration: 6300,
+        calories: 1450,
+        elevation: 85,
+        favorite: true
+    },
+    {
+        type: 'hiking',
+        title: 'Summit Sunrise Hike',
+        date: new Date('2025-06-21'),
+        distance: 18.5,
+        duration: 25200,
+        calories: 2100,
+        elevation: 1450,
+        favorite: true
+    },
+    {
+        type: 'swimming',
+        title: 'Open Water 5K',
+        date: new Date('2025-07-14'),
+        distance: 5.0,
+        duration: 5400,
+        calories: 650,
+        elevation: 0,
+        favorite: true
+    },
+    {
+        type: 'running',
+        title: 'Marathon Finisher',
+        date: new Date('2025-10-12'),
+        distance: 42.2,
+        duration: 12600,
+        calories: 2800,
+        elevation: 150,
+        favorite: true
+    }
+];

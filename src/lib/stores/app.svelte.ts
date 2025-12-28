@@ -5,7 +5,7 @@ import {
     calculateSportBreakdown,
     calculateWeeklyPattern
 } from '../utils/stats.js';
-import { demoStats, demoRecords, demoBreakdown } from '../data/demo.js';
+import { demoStats, demoRecords, demoBreakdown, demoHighlights } from '../data/demo.js';
 import type {
     Activity,
     YearStats,
@@ -116,8 +116,8 @@ function createAppStore() {
         breakdown = demoBreakdown;
         // Demo weekly pattern - typical distribution
         weeklyPattern = [45, 38, 42, 35, 28, 52, 48];
-        // Mock activities for potential future needs, though charts use aggregated stats
-        activities = [];
+        // Load demo highlights as activities
+        activities = demoHighlights;
         status = 'ready';
     }
 
