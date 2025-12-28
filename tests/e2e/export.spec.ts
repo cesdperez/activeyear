@@ -29,7 +29,7 @@ test.describe('Export Flow', () => {
         await expect(page.getByRole('button', { name: /4:5/i })).not.toBeVisible();
 
         // Check download button
-        await expect(page.getByRole('button', { name: /Download PNG/i })).toBeVisible();
+        await expect(page.getByRole('button', { name: /Download All Images/i })).toBeVisible();
     });
 
 
@@ -70,7 +70,7 @@ test.describe('Export Flow', () => {
     test('download button is clickable', async ({ page }) => {
         await uploadAndWaitForDashboard(page);
 
-        const downloadButton = page.getByRole('button', { name: /Download PNG/i });
+        const downloadButton = page.getByRole('button', { name: /Download All Images/i });
         await expect(downloadButton).toBeEnabled();
 
         // Note: We can't easily test actual file download in headless mode
@@ -79,7 +79,7 @@ test.describe('Export Flow', () => {
 
         // Should show "Generating..." state briefly
         // The button text changes during export
-        await expect(page.getByText(/Generating|Download PNG/i)).toBeVisible();
+        await expect(page.getByText(/Generating|Download All Images/i)).toBeVisible();
     });
 
     test('theme selector is visible', async ({ page }) => {
