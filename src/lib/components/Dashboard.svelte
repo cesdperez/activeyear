@@ -254,7 +254,7 @@
 				<div
 					class="text-xs md:text-sm text-[var(--color-text-muted)] font-medium uppercase tracking-wider"
 				>
-					Best Day Streak
+					most consecutive active days
 				</div>
 			</div>
 		</div>

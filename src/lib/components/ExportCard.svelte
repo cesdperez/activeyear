@@ -72,14 +72,14 @@
     // Fixed scale factor for preview (show smaller version)
     const scale = 0.35;
 
-    // Top 4 sports for the card
+    // Top 5 sports for the card
     let topSports = $derived(
         [...appStore.breakdown]
             .sort(
                 (a, b) =>
                     b[appStore.breakdownMetric] - a[appStore.breakdownMetric],
             )
-            .slice(0, 4),
+            .slice(0, 5),
     );
 
     // Current theme
@@ -375,7 +375,7 @@
                     ]}
 
                     <!-- Header with Username -->
-                    <header class="text-center mb-[160px] relative">
+                    <header class="text-center mb-[130px] relative">
                         {#if appStore.userName}
                             <p
                                 class="text-[42px] font-bold text-[var(--color-accent)] mb-2 relative z-10 leading-none uppercase tracking-widest"
@@ -399,7 +399,7 @@
 
                     <!-- Radial Sport Distribution Chart -->
                     {#if topSports.length > 0}
-                        <div class="flex items-center gap-12 mb-24 px-4">
+                        <div class="flex items-center gap-12 mb-20 px-4">
                             <!-- Left: Radial Sport Distribution Chart -->
                             <div class="shrink-0 relative">
                                 <div
@@ -545,7 +545,7 @@
                             .sort((a, b) => b.count - a.count)
                             .slice(0, 2)
                             .map((item) => item.idx)}
-                        <div class="mb-24 px-2">
+                        <div class="mb-20 px-2">
                             <div
                                 class="text-[18px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest mb-4 text-center"
                             >
@@ -595,7 +595,7 @@
                             ((appStore.stats?.activeDays ?? 0) / 365) * 100,
                             100,
                         )}
-                        <div class="grid grid-cols-2 gap-6 mb-24">
+                        <div class="grid grid-cols-2 gap-6 mb-20">
                             <!-- Active Days -->
                             <div
                                 class="flex flex-col items-center text-center p-6 rounded-2xl bg-[rgba(0,0,0,0.02)] consistency-card"
@@ -711,7 +711,7 @@
                                 <div
                                     class="text-[16px] text-[var(--color-text-muted)] mt-1"
                                 >
-                                    Best consecutive run
+                                    most consecutive active days
                                 </div>
                             </div>
                         </div>
