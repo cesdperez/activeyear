@@ -986,10 +986,10 @@
                                 <div
                                     class="flex flex-col w-full relative"
                                     style="gap: {Math.min(
-                                        120,
+                                        160,
                                         Math.max(
-                                            24,
-                                            (1100 - highlights.length * 90) /
+                                            32,
+                                            (1250 - highlights.length * 120) /
                                                 Math.max(
                                                     highlights.length - 1,
                                                     1,
@@ -1129,7 +1129,9 @@
                     </div>
 
                     <!-- Watermark -->
-                    <div class="mt-auto pt-8 text-center">
+                    <div
+                        class="absolute bottom-[56px] left-0 right-0 text-center pointer-events-none z-20"
+                    >
                         <p
                             class="text-[24px] text-[var(--color-text-dim)] font-medium tracking-widest opacity-80"
                         >
