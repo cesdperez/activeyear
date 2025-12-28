@@ -72,9 +72,43 @@
     // Fixed scale factor for preview (show smaller version)
     const scale = 0.35;
 
-    // Top 5 sports for the card
+    // Consolidate small sports (less than 1 hour) into "other"
+    const ONE_HOUR_IN_SECONDS = 3600;
+    let consolidatedBreakdown = $derived(() => {
+        const breakdown = appStore.breakdown || [];
+        const result: typeof breakdown = [];
+        let otherEntry: (typeof breakdown)[0] | null = null;
+
+        for (const sport of breakdown) {
+            if (sport.type === "other") {
+                otherEntry = { ...sport };
+            } else if (sport.duration < ONE_HOUR_IN_SECONDS) {
+                if (!otherEntry) {
+                    otherEntry = {
+                        type: "other",
+                        distance: 0,
+                        duration: 0,
+                        count: 0,
+                    };
+                }
+                otherEntry.distance += sport.distance;
+                otherEntry.duration += sport.duration;
+                otherEntry.count += sport.count;
+            } else {
+                result.push(sport);
+            }
+        }
+
+        if (otherEntry && otherEntry.count > 0) {
+            result.push(otherEntry);
+        }
+
+        return result;
+    });
+
+    // Top 5 sports for the card (from consolidated breakdown)
     let topSports = $derived(
-        [...appStore.breakdown]
+        [...consolidatedBreakdown()]
             .sort(
                 (a, b) =>
                     b[appStore.breakdownMetric] - a[appStore.breakdownMetric],
