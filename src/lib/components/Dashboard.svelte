@@ -14,32 +14,25 @@
 		formatLotRMarathons,
 	} from "$lib/utils/format.js";
 
-	// Lucide icons (for non-sport UI elements)
+	// Phosphor icons
 	import {
 		Ruler,
 		Timer,
-		Flame,
-		Mountain,
-		Globe,
-		MountainSnow,
-		Pizza,
+		Fire,
+		Mountains,
 		CalendarCheck,
-		Zap,
+		Lightning,
 		Trophy,
 		Hourglass,
-		Sparkles,
+		Sparkle,
 		ArrowDown,
-	} from "@lucide/svelte";
-
-	// Phosphor icons for sports (bold, activity-true icons)
-	import {
+		Confetti,
 		PersonSimpleRun,
 		PersonSimpleBike,
 		PersonSimpleSwim,
 		PersonSimpleWalk,
-		Mountains,
 		Barbell,
-		Flower,
+		PersonSimpleTaiChi,
 		Target,
 	} from "phosphor-svelte";
 
@@ -63,12 +56,11 @@
 		walking: PersonSimpleWalk,
 		hiking: Mountains,
 		strength: Barbell,
-		yoga: Flower,
+		yoga: PersonSimpleTaiChi,
 		other: Target,
 	};
 
 	import confetti from "canvas-confetti";
-	import { PartyPopper } from "@lucide/svelte";
 
 	$effect(() => {
 		if (appStore.confettiEnabled) {
@@ -129,7 +121,7 @@
 				: "Enable celebration mode"}
 			aria-label="Toggle celebration confetti"
 		>
-			<PartyPopper class="w-6 h-6" />
+			<Confetti class="w-6 h-6" />
 		</button>
 	</div>
 	<!-- Header -->
@@ -179,7 +171,7 @@
 			equivalent={`🌍 ${formatEarthLaps(appStore.stats?.totalDistance ?? 0)}`}
 		>
 			{#snippet icon()}
-				<Ruler />
+				<Ruler weight="bold" />
 			{/snippet}
 		</StatCard>
 
@@ -190,7 +182,7 @@
 			equivalent={`🏔️ ${formatEverests(appStore.stats?.totalElevation ?? 0)}`}
 		>
 			{#snippet icon()}
-				<Mountain />
+				<Mountains weight="bold" />
 			{/snippet}
 		</StatCard>
 
@@ -201,7 +193,7 @@
 			equivalent={`💍 ${formatLotRMarathons(appStore.stats?.totalDuration ?? 0)}`}
 		>
 			{#snippet icon()}
-				<Timer />
+				<Timer weight="bold" />
 			{/snippet}
 		</StatCard>
 
@@ -212,7 +204,7 @@
 			equivalent={`🍕 ${formatPizzaSlices(appStore.stats?.totalCalories ?? 0)}`}
 		>
 			{#snippet icon()}
-				<Flame />
+				<Fire weight="bold" />
 			{/snippet}
 		</StatCard>
 	</div>
@@ -224,7 +216,7 @@
 			style="animation-delay: 350ms"
 		>
 			<div class="text-[var(--color-accent)] shrink-0">
-				<CalendarCheck class="w-6 h-6 md:w-8 md:h-8" />
+				<CalendarCheck class="w-6 h-6 md:w-8 md:h-8" weight="bold" />
 			</div>
 			<div>
 				<div
@@ -245,7 +237,7 @@
 			style="animation-delay: 400ms"
 		>
 			<div class="text-[var(--color-accent)] shrink-0">
-				<Zap class="w-6 h-6 md:w-8 md:h-8" />
+				<Lightning class="w-6 h-6 md:w-8 md:h-8" weight="bold" />
 			</div>
 			<div>
 				<div
@@ -285,7 +277,7 @@
 						delay={450}
 					>
 						{#snippet icon()}
-							<Trophy />
+							<Trophy weight="fill" />
 						{/snippet}
 					</PersonalRecordCard>
 				{/if}
@@ -299,7 +291,7 @@
 						delay={500}
 					>
 						{#snippet icon()}
-							<Hourglass />
+							<Hourglass weight="fill" />
 						{/snippet}
 					</PersonalRecordCard>
 				{/if}
@@ -313,7 +305,7 @@
 						delay={550}
 					>
 						{#snippet icon()}
-							<Flame />
+							<Fire weight="fill" />
 						{/snippet}
 					</PersonalRecordCard>
 				{/if}

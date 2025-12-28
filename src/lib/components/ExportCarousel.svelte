@@ -2,7 +2,7 @@
     import { appStore } from "$lib/stores/app.svelte.js";
     import ExportCard, { getExportElement } from "./ExportCard.svelte";
     import { exportToPng } from "$lib/utils/export.js";
-    import { ChevronLeft, ChevronRight } from "@lucide/svelte";
+    import { CaretLeft, CaretRight } from "phosphor-svelte";
     import type { CardVariant } from "$lib/types/index.js";
 
     let currentSlide = $state<0 | 1>(0);
@@ -62,7 +62,7 @@
             class="nav-button"
             aria-label="Previous slide"
         >
-            <ChevronLeft class="w-5 h-5" strokeWidth={2} />
+            <CaretLeft class="w-5 h-5" weight="bold" />
         </button>
 
         <!-- Dots -->
@@ -77,7 +77,7 @@
         </div>
 
         <button onclick={nextSlide} class="nav-button" aria-label="Next slide">
-            <ChevronRight class="w-5 h-5" strokeWidth={2} />
+            <CaretRight class="w-5 h-5" weight="bold" />
         </button>
     </div>
 

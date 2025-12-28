@@ -33,7 +33,6 @@
 		"vitest": "^4.0.16"
 	},
 	"dependencies": {
-		"@lucide/svelte": "^0.562.0",
 		"@types/canvas-confetti": "^1.9.0",
 		"canvas-confetti": "^1.9.4",
 		"html-to-image": "^1.11.13",
