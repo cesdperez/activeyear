@@ -920,7 +920,7 @@
                     <!-- ======================== -->
 
                     <!-- Header with Username -->
-                    <header class="text-center mb-[80px] relative">
+                    <header class="text-center mb-[60px] relative">
                         {#if appStore.userName}
                             <p
                                 class="text-[42px] font-bold text-[var(--color-accent)] mb-2 relative z-10 leading-none uppercase tracking-widest mr-[-0.1em]"
@@ -942,104 +942,164 @@
                         </div>
                     </header>
 
-                    {@const highlights = appStore.highlights.slice(0, 10)}
-                    {@const hasMany = highlights.length > 5}
+                    {@const highlights = appStore.highlights
+                        .slice(0, 10)
+                        .sort(
+                            (a, b) =>
+                                new Date(a.date).getTime() -
+                                new Date(b.date).getTime(),
+                        )}
+                    {@const monthNames = [
+                        "JAN",
+                        "FEB",
+                        "MAR",
+                        "APR",
+                        "MAY",
+                        "JUN",
+                        "JUL",
+                        "AUG",
+                        "SEP",
+                        "OCT",
+                        "NOV",
+                        "DEC",
+                    ]}
 
-                    <!-- Heart Icon (Smaller if many items) -->
-                    <div
-                        class="flex justify-center {hasMany
-                            ? 'mb-12'
-                            : 'mb-20'}"
-                    >
-                        <div
-                            class="{hasMany
-                                ? 'w-24 h-24'
-                                : 'w-42 h-42'} rounded-full flex items-center justify-center bg-[var(--color-accent)]/10"
-                        >
-                            <Heart
-                                class="{hasMany
-                                    ? 'w-14 h-14'
-                                    : 'w-24 h-24'} text-red-400"
-                                weight="fill"
-                            />
-                        </div>
-                    </div>
-
-                    <!-- Highlights List (Responsive Grid) -->
-                    <div class="flex-1 flex flex-col justify-center px-4 mb-20">
+                    <!-- Timeline Journey Visualization -->
+                    <div class="flex-1 flex flex-col px-6">
                         {#if highlights.length === 0}
                             <div
-                                class="text-center text-[var(--color-text-muted)] text-[28px]"
+                                class="flex-1 flex items-center justify-center"
                             >
-                                No highlight activities yet
+                                <div
+                                    class="text-center text-[var(--color-text-muted)] text-[28px]"
+                                >
+                                    No highlight activities yet
+                                </div>
                             </div>
                         {:else}
-                            <div
-                                class="grid {highlights.length > 5
-                                    ? 'grid-cols-2'
-                                    : 'grid-cols-1'} gap-6"
-                            >
-                                {#each highlights as fav}
-                                    {@const IconComponent =
-                                        sportIcons[fav.type] ?? Target}
-                                    <div
-                                        class="flex items-center gap-5 p-5 rounded-2xl bg-[rgba(255,255,255,0.03)] border border-white/5"
-                                    >
+                            <!-- Timeline Container -->
+                            <div class="relative flex-1 flex">
+                                <!-- Vertical Timeline Line -->
+                                <div
+                                    class="absolute left-[60px] top-0 bottom-0 w-[4px] timeline-line"
+                                ></div>
+
+                                <!-- Timeline Items -->
+                                <div
+                                    class="flex flex-col w-full"
+                                    style="gap: {Math.min(
+                                        80,
+                                        Math.max(
+                                            20,
+                                            (1200 - highlights.length * 100) /
+                                                Math.max(
+                                                    highlights.length - 1,
+                                                    1,
+                                                ),
+                                        ),
+                                    )}px;"
+                                >
+                                    {#each highlights as fav, i}
+                                        {@const IconComponent =
+                                            sportIcons[fav.type] ?? Target}
+                                        {@const date = new Date(fav.date)}
+                                        {@const month = monthNames[date.getMonth()]}
+                                        {@const day = date.getDate()}
+
                                         <div
-                                            class="w-14 h-14 rounded-xl flex items-center justify-center bg-[var(--color-accent)]/20 text-[var(--color-accent)] shrink-0"
+                                            class="flex items-center gap-6 relative"
                                         >
-                                            <IconComponent
-                                                class="w-7 h-7"
-                                                weight="bold"
-                                            />
-                                        </div>
-                                        <div class="flex-1 min-w-0">
+                                            <!-- Date Column -->
                                             <div
-                                                class="flex items-center gap-2 mb-1"
+                                                class="w-[48px] text-center shrink-0"
                                             >
-                                                <Heart
-                                                    class="w-4 h-4 text-red-400 shrink-0"
-                                                    weight="fill"
-                                                />
-                                                <span
-                                                    class="text-[24px] font-bold text-[var(--color-text-primary)] truncate"
+                                                <div
+                                                    class="text-[14px] font-bold text-[var(--color-accent)] tracking-widest"
                                                 >
-                                                    {fav.title ||
-                                                        sportNames[fav.type] ||
-                                                        "Activity"}
-                                                </span>
+                                                    {month}
+                                                </div>
+                                                <div
+                                                    class="text-[32px] font-black text-[var(--color-text-primary)] leading-none"
+                                                >
+                                                    {day}
+                                                </div>
                                             </div>
+
+                                            <!-- Timeline Node -->
                                             <div
-                                                class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[18px] text-[var(--color-text-muted)]"
+                                                class="relative z-10 w-[28px] h-[28px] rounded-full timeline-node flex items-center justify-center shrink-0"
                                             >
-                                                {#if fav.distance > 0}
-                                                    <span class="font-mono">
-                                                        {formatDistance(
-                                                            fav.distance,
-                                                            appStore.unit,
-                                                        )}
-                                                    </span>
-                                                {/if}
-                                                <span class="font-mono">
-                                                    {formatDuration(
-                                                        fav.duration,
-                                                    )}
-                                                </span>
-                                                <span
-                                                    class="px-2 py-0.5 rounded-full bg-[var(--color-accent)]/10 text-[14px] uppercase tracking-wider text-[var(--color-accent)]"
+                                                <div
+                                                    class="w-[14px] h-[14px] rounded-full bg-[var(--color-accent)]"
+                                                ></div>
+                                            </div>
+
+                                            <!-- Activity Card -->
+                                            <div
+                                                class="flex-1 flex items-center gap-4 p-4 rounded-2xl timeline-card"
+                                            >
+                                                <div
+                                                    class="w-12 h-12 rounded-xl flex items-center justify-center bg-[var(--color-accent)]/20 text-[var(--color-accent)] shrink-0"
                                                 >
-                                                    {sportNames[fav.type] ??
-                                                        fav.type}
-                                                </span>
+                                                    <IconComponent
+                                                        class="w-6 h-6"
+                                                        weight="bold"
+                                                    />
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <div
+                                                        class="flex items-center gap-2 mb-1"
+                                                    >
+                                                        <Heart
+                                                            class="w-4 h-4 text-red-400 shrink-0"
+                                                            weight="fill"
+                                                        />
+                                                        <span
+                                                            class="text-[22px] font-bold text-[var(--color-text-primary)] truncate"
+                                                        >
+                                                            {fav.title ||
+                                                                sportNames[
+                                                                    fav.type
+                                                                ] ||
+                                                                "Activity"}
+                                                        </span>
+                                                    </div>
+                                                    <div
+                                                        class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[16px] text-[var(--color-text-muted)]"
+                                                    >
+                                                        {#if fav.distance > 0}
+                                                            <span
+                                                                class="font-mono"
+                                                            >
+                                                                {formatDistance(
+                                                                    fav.distance,
+                                                                    appStore.unit,
+                                                                )}
+                                                            </span>
+                                                        {/if}
+                                                        <span class="font-mono">
+                                                            {formatDuration(
+                                                                fav.duration,
+                                                            )}
+                                                        </span>
+                                                        <span
+                                                            class="px-2 py-0.5 rounded-full bg-[var(--color-accent)]/10 text-[12px] uppercase tracking-wider text-[var(--color-accent)]"
+                                                        >
+                                                            {sportNames[
+                                                                fav.type
+                                                            ] ?? fav.type}
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                {/each}
+                                    {/each}
+                                </div>
                             </div>
 
                             {#if appStore.highlights.length > 10}
                                 <div
-                                    class="text-center text-[var(--color-text-muted)] text-[22px] mt-8"
+                                    class="text-center text-[var(--color-text-muted)] text-[20px] mt-6"
                                 >
                                     +{appStore.highlights.length - 10} more highlights
                                 </div>
@@ -1048,7 +1108,7 @@
                     </div>
 
                     <!-- Watermark -->
-                    <div class="mt-auto pt-8 text-center">
+                    <div class="mt-auto pt-6 text-center">
                         <p
                             class="text-[24px] text-[var(--color-text-dim)] font-medium tracking-widest opacity-80"
                         >
@@ -1322,5 +1382,77 @@
         background-color: transparent !important;
         border: none !important;
         box-shadow: none !important;
+    }
+
+    /* Timeline Styles */
+    .timeline-line {
+        background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            var(--color-accent) 5%,
+            var(--color-accent) 95%,
+            transparent 100%
+        );
+        opacity: 0.3;
+    }
+
+    .timeline-node {
+        background: var(--color-surface);
+        border: 3px solid var(--color-accent);
+        box-shadow: 0 0 12px var(--color-accent-glow);
+    }
+
+    .timeline-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Minimalist theme overrides */
+    .theme-minimalist .timeline-line {
+        background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            #000 5%,
+            #000 95%,
+            transparent 100%
+        );
+        opacity: 0.15;
+    }
+
+    .theme-minimalist .timeline-node {
+        background: #fff;
+        border-color: #000;
+        box-shadow: none;
+    }
+
+    .theme-minimalist .timeline-node > div {
+        background: #000 !important;
+    }
+
+    .theme-minimalist .timeline-card {
+        background: rgba(0, 0, 0, 0.02);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    /* Retro theme overrides */
+    .theme-retro .timeline-line {
+        background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            #ff00cc 5%,
+            #ff00cc 95%,
+            transparent 100%
+        );
+        opacity: 0.5;
+    }
+
+    .theme-retro .timeline-node {
+        border-color: #ff00cc;
+        box-shadow: 0 0 16px rgba(255, 0, 204, 0.6);
+    }
+
+    .theme-retro .timeline-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(255, 0, 204, 0.3);
     }
 </style>
