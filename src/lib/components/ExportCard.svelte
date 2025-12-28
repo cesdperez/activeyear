@@ -531,21 +531,26 @@
                                                     ]}40);"
                                                 />
                                             {/each}
+                                            <text
+                                                x="100"
+                                                y="95"
+                                                text-anchor="middle"
+                                                dominant-baseline="central"
+                                                fill="var(--color-text-primary)"
+                                                style="font-size: 52px; font-weight: 900; font-family: inherit;"
+                                                >{totalActivities}</text
+                                            >
+                                            <text
+                                                x="100"
+                                                y="130"
+                                                text-anchor="middle"
+                                                dominant-baseline="central"
+                                                fill="var(--color-text-muted)"
+                                                style="font-size: 14px; font-weight: 700; font-family: inherit; letter-spacing: 0.1em; text-transform: uppercase;"
+                                                >Activities</text
+                                            >
                                         </svg>
                                     {/if}
-                                    <!-- Center content -->
-                                    <div class="donut-center">
-                                        <div
-                                            class="text-[72px] font-black text-[var(--color-text-primary)] leading-none"
-                                        >
-                                            {totalActivities}
-                                        </div>
-                                        <div
-                                            class="text-[20px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest"
-                                        >
-                                            Activities
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
 
@@ -674,10 +679,10 @@
                             <div
                                 class="flex flex-col items-center text-center p-6 rounded-2xl consistency-card"
                             >
-                                <div class="relative mb-3">
+                                <div class="w-32 h-32 mb-3">
                                     <svg
                                         viewBox="0 0 120 120"
-                                        class="w-32 h-32"
+                                        class="w-full h-full"
                                     >
                                         <circle
                                             cx="60"
@@ -701,16 +706,16 @@
                                             transform="rotate(-90 60 60)"
                                             class="progress-ring"
                                         />
-                                    </svg>
-                                    <div
-                                        class="absolute inset-0 grid place-items-center"
-                                    >
-                                        <span
-                                            class="text-[48px] font-black text-[var(--color-text-primary)] leading-none translate-y-0.5"
+                                        <text
+                                            x="60"
+                                            y="60"
+                                            text-anchor="middle"
+                                            dominant-baseline="central"
+                                            fill="var(--color-text-primary)"
+                                            style="font-size: 36px; font-weight: 900; font-family: inherit;"
+                                            >{appStore.stats?.activeDays ?? 0}</text
                                         >
-                                            {appStore.stats?.activeDays ?? 0}
-                                        </span>
-                                    </div>
+                                    </svg>
                                 </div>
                                 <div
                                     class="flex items-center gap-2 text-[var(--color-accent)]"
@@ -735,10 +740,10 @@
                             <div
                                 class="flex flex-col items-center text-center p-6 rounded-2xl consistency-card"
                             >
-                                <div class="relative mb-3">
+                                <div class="w-32 h-32 mb-3">
                                     <svg
                                         viewBox="0 0 120 120"
-                                        class="w-32 h-32"
+                                        class="w-full h-full"
                                     >
                                         <circle
                                             cx="60"
@@ -749,7 +754,6 @@
                                             class="progress-ring-bg"
                                             stroke-width="10"
                                         />
-                                        <!-- Decorative flame effect -->
                                         <circle
                                             cx="60"
                                             cy="60"
@@ -762,16 +766,16 @@
                                             transform="rotate(-90 60 60)"
                                             class="streak-ring"
                                         />
-                                    </svg>
-                                    <div
-                                        class="absolute inset-0 grid place-items-center"
-                                    >
-                                        <span
-                                            class="text-[48px] font-black text-[var(--color-text-primary)] leading-none translate-y-0.5"
+                                        <text
+                                            x="60"
+                                            y="60"
+                                            text-anchor="middle"
+                                            dominant-baseline="central"
+                                            fill="var(--color-text-primary)"
+                                            style="font-size: 36px; font-weight: 900; font-family: inherit;"
+                                            >{appStore.stats?.longestStreak ?? 0}</text
                                         >
-                                            {appStore.stats?.longestStreak ?? 0}
-                                        </span>
-                                    </div>
+                                    </svg>
                                 </div>
                                 <div
                                     class="flex items-center gap-2 text-[#ff6b6b]"
@@ -1084,15 +1088,6 @@
         transition: stroke-dasharray 0.3s ease;
     }
 
-    .donut-center {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-    }
-
-    /* Progress Rings */
     .progress-ring {
         filter: drop-shadow(0 0 10px var(--color-accent-glow));
     }
