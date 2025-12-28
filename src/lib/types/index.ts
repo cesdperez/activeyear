@@ -78,7 +78,7 @@ export interface ParseResult {
 }
 
 export interface ParseError {
-	type: 'invalid-date' | 'invalid-number' | 'missing-column' | 'unknown';
+	type: 'invalid-date' | 'invalid-number' | 'missing-column' | 'wrong-language' | 'unknown';
 	row: number;
 	message: string;
 }

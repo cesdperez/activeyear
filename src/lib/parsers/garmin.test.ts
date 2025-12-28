@@ -236,4 +236,15 @@ describe('parseGarminCsv', () => {
         const result = parseGarminCsv('Activity Type,Date,Title,Distance,Calories,Time,Total Ascent', 2025);
         expect(result.activities).toHaveLength(0);
     });
+
+    it('detects non-English headers and returns wrong-language error', () => {
+        // Spanish headers
+        const spanishCsv = 'Tipo de actividad,Fecha,Título,Distancia,Calorías,Tiempo,Ascenso total\nCarrera,2025-01-01 08:00:00,Morning Run,10.0,600,00:50:00,100';
+        const result = parseGarminCsv(spanishCsv, 2025);
+
+        expect(result.activities).toHaveLength(0);
+        expect(result.errors).toHaveLength(1);
+        expect(result.errors[0].type).toBe('wrong-language');
+        expect(result.errors[0].message).toContain('English');
+    });
 });

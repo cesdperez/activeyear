@@ -126,6 +126,22 @@ export function parseGarminCsv(csvContent: string, targetYear: number = 2025): P
         transformHeader: (header) => header.trim()
     });
 
+    // Check if the expected headers are present (detect wrong language)
+    const expectedHeaders = ['Activity Type', 'Date', 'Distance', 'Time'];
+    const actualHeaders = parseResult.meta.fields || [];
+    const missingHeaders = expectedHeaders.filter(h => !actualHeaders.includes(h));
+
+    if (missingHeaders.length > 1) { // If multiple key headers are missing, it's likely the wrong language
+        return {
+            activities: [],
+            errors: [{
+                type: 'wrong-language',
+                row: 0,
+                message: 'Is your Garmin Connect in English? We couldn\'t find the expected headers. Please export your CSV in English.'
+            }]
+        };
+    }
+
     if (parseResult.errors.length > 0) {
         parseResult.errors.forEach((error) => {
             errors.push({
