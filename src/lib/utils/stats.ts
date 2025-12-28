@@ -4,6 +4,7 @@ import type {
     PersonalRecord,
     PersonalRecords,
     SportBreakdown,
+    WeeklyPattern,
     YearStats
 } from '../types/index.js';
 
@@ -147,4 +148,22 @@ export function calculateSportBreakdown(activities: Activity[]): SportBreakdown[
 
     // Sort by count descending
     return Array.from(breakdownMap.values()).sort((a, b) => b.count - a.count);
+}
+
+/**
+ * Calculate weekly activity pattern (count per day of week)
+ * Returns an array of 7 numbers: [Mon, Tue, Wed, Thu, Fri, Sat, Sun]
+ */
+export function calculateWeeklyPattern(activities: Activity[]): WeeklyPattern {
+    const pattern: WeeklyPattern = [0, 0, 0, 0, 0, 0, 0];
+
+    for (const activity of activities) {
+        // JavaScript getDay() returns 0 for Sunday, 1 for Monday, etc.
+        // We want Monday = 0, Sunday = 6
+        const jsDay = activity.date.getDay();
+        const dayIndex = jsDay === 0 ? 6 : jsDay - 1;
+        pattern[dayIndex]++;
+    }
+
+    return pattern;
 }

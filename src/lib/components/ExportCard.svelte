@@ -362,219 +362,430 @@
                     <!-- BREAKDOWN CARD VARIANT -->
                     <!-- ======================== -->
 
-                    <!-- Header -->
-                    <header
-                        class="text-left mb-10 pl-2 border-l-4 border-[var(--color-accent)]"
-                    >
-                        <h1
-                            class="text-[64px] font-bold tracking-tight export-title leading-none mb-1"
-                        >
-                            BREAKDOWN
-                        </h1>
-                        <p
-                            class="text-[28px] text-[var(--color-text-muted)] font-medium tracking-wide"
-                        >
-                            2025 ACTIVITY LOG
-                        </p>
+                    {@const totalCount = topSports.reduce(
+                        (sum, s) => sum + s.count,
+                        0,
+                    )}
+                    {@const sportColors = [
+                        "#00d4ff",
+                        "#00ff88",
+                        "#ff6b6b",
+                        "#ffd93d",
+                        "#c084fc",
+                    ]}
+
+                    <!-- Header with Username -->
+                    <header class="text-center mb-12">
+                        {#if appStore.userName}
+                            <p
+                                class="text-[42px] font-bold text-[var(--color-accent)] mb-2 leading-none uppercase tracking-widest"
+                            >
+                                {appStore.userName}'s
+                            </p>
+                        {/if}
+                        <div class="flex flex-col items-center justify-center">
+                            <h2
+                                class="text-[120px] font-black text-[var(--color-text-primary)] leading-[0.8] mb-2 tracking-tighter"
+                            >
+                                2025
+                            </h2>
+                            <h1
+                                class="text-[56px] font-bold tracking-[0.08em] export-title leading-none uppercase text-[var(--color-text-dim)]"
+                            >
+                                BREAKDOWN
+                            </h1>
+                        </div>
                     </header>
 
-                    <!-- Sport Breakdown with Modern Bars -->
+                    <!-- Radial Sport Distribution Chart -->
                     {#if topSports.length > 0}
-                        <div class="mb-12">
-                            <div class="space-y-6">
-                                {#each topSports as sport, i}
-                                    {@const IconComponent =
-                                        sportIcons[sport.type] ?? Target}
-                                    {@const barWidth =
-                                        (sport[appStore.breakdownMetric] /
-                                            maxSportCount) *
-                                        100}
-                                    <div class="relative">
-                                        <!-- Label Row -->
-                                        <div
-                                            class="flex items-end justify-between mb-2 px-1"
-                                        >
-                                            <div
-                                                class="flex items-center gap-3"
-                                            >
-                                                <IconComponent
-                                                    class="w-6 h-6 text-[var(--color-accent)]"
-                                                    weight="bold"
-                                                />
-                                                <span
-                                                    class="text-[24px] font-bold text-[var(--color-text-primary)] uppercase tracking-wide"
-                                                >
-                                                    {sportNames[sport.type] ??
-                                                        sport.type}
-                                                </span>
-                                            </div>
-                                            <span
-                                                class="text-[24px] font-mono font-bold text-[var(--color-text-primary)]"
-                                            >
-                                                {appStore.breakdownMetric ===
-                                                "count"
-                                                    ? sport.count
-                                                    : formatDuration(
-                                                          sport.duration,
-                                                      )}
-                                            </span>
-                                        </div>
+                        {@const circumference = 2 * Math.PI * 80}
+                        <div class="flex justify-center mb-10 relative">
+                            <div class="donut-chart-container">
+                                <svg viewBox="0 0 200 200" class="donut-chart">
+                                    <!-- Background circle -->
+                                    <circle
+                                        cx="100"
+                                        cy="100"
+                                        r="80"
+                                        fill="none"
+                                        stroke="rgba(255,255,255,0.05)"
+                                        stroke-width="28"
+                                    />
+                                    <!-- Sport segments -->
+                                    {#each topSports as sport, i}
+                                        {@const percentage =
+                                            sport.count / totalCount}
+                                        {@const offset = topSports
+                                            .slice(0, i)
+                                            .reduce(
+                                                (sum, s) =>
+                                                    sum +
+                                                    (s.count / totalCount) *
+                                                        circumference,
+                                                0,
+                                            )}
+                                        <circle
+                                            cx="100"
+                                            cy="100"
+                                            r="80"
+                                            fill="none"
+                                            stroke={sportColors[
+                                                i % sportColors.length
+                                            ]}
+                                            stroke-width="28"
+                                            stroke-dasharray="{percentage *
+                                                circumference -
+                                                4} {circumference}"
+                                            stroke-dashoffset={-offset}
+                                            stroke-linecap="round"
+                                            transform="rotate(-90 100 100)"
+                                            class="donut-segment"
+                                            style="filter: drop-shadow(0 0 8px {sportColors[
+                                                i % sportColors.length
+                                            ]}40);"
+                                        />
+                                    {/each}
+                                </svg>
+                                <!-- Center content -->
+                                <div class="donut-center">
+                                    <div
+                                        class="text-[72px] font-black text-[var(--color-text-primary)] leading-none"
+                                    >
+                                        {totalCount}
+                                    </div>
+                                    <div
+                                        class="text-[20px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest"
+                                    >
+                                        Activities
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                                        <!-- Bar -->
+                        <!-- Sport Legend Grid -->
+                        <div class="grid grid-cols-2 gap-4 mb-10">
+                            {#each topSports as sport, i}
+                                {@const IconComponent =
+                                    sportIcons[sport.type] ?? Target}
+                                {@const percentage = Math.round(
+                                    (sport.count / totalCount) * 100,
+                                )}
+                                <div
+                                    class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.03)]"
+                                >
+                                    <div
+                                        class="w-10 h-10 rounded-full flex items-center justify-center"
+                                        style="background: {sportColors[
+                                            i % sportColors.length
+                                        ]}20; border: 2px solid {sportColors[
+                                            i % sportColors.length
+                                        ]};"
+                                    >
+                                        <IconComponent
+                                            class="w-5 h-5"
+                                            style="color: {sportColors[
+                                                i % sportColors.length
+                                            ]};"
+                                            weight="bold"
+                                        />
+                                    </div>
+                                    <div class="flex-1">
                                         <div
-                                            class="h-4 rounded-full bg-[rgba(255,255,255,0.1)] overflow-hidden"
+                                            class="text-[22px] font-bold text-[var(--color-text-primary)] uppercase tracking-wide"
                                         >
-                                            <div
-                                                class="h-full sport-bar-fill rounded-full"
-                                                style="width: {barWidth}%;"
-                                            ></div>
+                                            {sportNames[sport.type] ??
+                                                sport.type}
                                         </div>
+                                        <div
+                                            class="text-[18px] text-[var(--color-text-muted)]"
+                                        >
+                                            {sport.count} · {percentage}%
+                                        </div>
+                                    </div>
+                                </div>
+                            {/each}
+                        </div>
+                    {/if}
+
+                    <!-- Weekly Activity Pattern -->
+                    {#if appStore.weeklyPattern.some((v) => v > 0)}
+                        {@const maxDay = Math.max(...appStore.weeklyPattern, 1)}
+                        {@const dayLabels = ["M", "T", "W", "T", "F", "S", "S"]}
+                        {@const barContainerHeight = 100}
+                        {@const sortedIndices = appStore.weeklyPattern
+                            .map((count, idx) => ({ count, idx }))
+                            .sort((a, b) => b.count - a.count)
+                            .slice(0, 2)
+                            .map((item) => item.idx)}
+                        <div class="mb-10 px-2">
+                            <div
+                                class="text-[18px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest mb-4 text-center"
+                            >
+                                When You Train
+                            </div>
+                            <div
+                                class="flex items-end justify-between gap-3"
+                                style="height: {barContainerHeight + 28}px;"
+                            >
+                                {#each appStore.weeklyPattern as count, i}
+                                    {@const heightPercent =
+                                        (count / maxDay) * 100}
+                                    {@const barHeight = Math.max(
+                                        (heightPercent / 100) *
+                                            barContainerHeight,
+                                        8,
+                                    )}
+                                    {@const isTopDay =
+                                        sortedIndices.includes(i)}
+                                    <div
+                                        class="flex-1 flex flex-col items-center justify-end gap-2"
+                                    >
+                                        <div
+                                            class="w-full rounded-t-lg transition-all weekly-bar"
+                                            style="height: {barHeight}px; background: {isTopDay
+                                                ? '#00ff88'
+                                                : 'var(--color-accent)'}; opacity: {0.4 +
+                                                (heightPercent / 100) * 0.6};"
+                                        ></div>
+                                        <span
+                                            class="text-[16px] font-bold text-[var(--color-text-muted)]"
+                                        >
+                                            {dayLabels[i]}
+                                        </span>
                                     </div>
                                 {/each}
                             </div>
                         </div>
                     {/if}
 
-                    <!-- Consistency Stats - Big Numbers -->
-                    <div class="grid grid-cols-2 gap-8 mb-12">
-                        <div class="text-left">
+                    <!-- Consistency Stats with Progress Rings -->
+                    {#if true}
+                        {@const activeDaysPercent = Math.min(
+                            ((appStore.stats?.activeDays ?? 0) / 365) * 100,
+                            100,
+                        )}
+                        <div class="grid grid-cols-2 gap-6 mb-10">
+                            <!-- Active Days -->
                             <div
-                                class="text-[80px] font-bold stat-value text-[var(--color-text-primary)] leading-none -tracking-wider"
+                                class="flex flex-col items-center text-center p-6 rounded-2xl bg-[rgba(255,255,255,0.02)]"
                             >
-                                {appStore.stats?.activeDays ?? 0}
-                            </div>
-                            <div
-                                class="flex items-center gap-2 text-[var(--color-accent)] mt-1"
-                            >
-                                <CalendarCheck class="w-6 h-6" weight="bold" />
-                                <span
-                                    class="text-[20px] font-bold uppercase tracking-wider"
-                                    >Active Days</span
+                                <div class="relative mb-3">
+                                    <svg
+                                        viewBox="0 0 120 120"
+                                        class="w-32 h-32"
+                                    >
+                                        <circle
+                                            cx="60"
+                                            cy="60"
+                                            r="52"
+                                            fill="none"
+                                            stroke="rgba(255,255,255,0.08)"
+                                            stroke-width="10"
+                                        />
+                                        <circle
+                                            cx="60"
+                                            cy="60"
+                                            r="52"
+                                            fill="none"
+                                            stroke="var(--color-accent)"
+                                            stroke-width="10"
+                                            stroke-dasharray="{activeDaysPercent *
+                                                3.27} 327"
+                                            stroke-linecap="round"
+                                            transform="rotate(-90 60 60)"
+                                            class="progress-ring"
+                                        />
+                                    </svg>
+                                    <div
+                                        class="absolute inset-0 flex items-center justify-center"
+                                    >
+                                        <span
+                                            class="text-[48px] font-black text-[var(--color-text-primary)] leading-none"
+                                        >
+                                            {appStore.stats?.activeDays ?? 0}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div
+                                    class="flex items-center gap-2 text-[var(--color-accent)]"
                                 >
-                            </div>
-                        </div>
-                        <div class="text-left">
-                            <div
-                                class="text-[80px] font-bold stat-value text-[var(--color-text-primary)] leading-none -tracking-wider"
-                            >
-                                {appStore.stats?.longestStreak ?? 0}
-                            </div>
-                            <div
-                                class="flex items-center gap-2 text-[var(--color-accent)] mt-1"
-                            >
-                                <Lightning class="w-6 h-6" weight="bold" />
-                                <span
-                                    class="text-[20px] font-bold uppercase tracking-wider"
-                                    >Day Streak</span
+                                    <CalendarCheck
+                                        class="w-6 h-6"
+                                        weight="bold"
+                                    />
+                                    <span
+                                        class="text-[20px] font-bold uppercase tracking-wider"
+                                        >Active Days</span
+                                    >
+                                </div>
+                                <div
+                                    class="text-[16px] text-[var(--color-text-muted)] mt-1"
                                 >
+                                    {Math.round(activeDaysPercent)}% of the year
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Personal Records - Minimal List -->
+                            <!-- Day Streak -->
+                            <div
+                                class="flex flex-col items-center text-center p-6 rounded-2xl bg-[rgba(255,255,255,0.02)]"
+                            >
+                                <div class="relative mb-3">
+                                    <svg
+                                        viewBox="0 0 120 120"
+                                        class="w-32 h-32"
+                                    >
+                                        <circle
+                                            cx="60"
+                                            cy="60"
+                                            r="52"
+                                            fill="none"
+                                            stroke="rgba(255,255,255,0.08)"
+                                            stroke-width="10"
+                                        />
+                                        <!-- Decorative flame effect -->
+                                        <circle
+                                            cx="60"
+                                            cy="60"
+                                            r="52"
+                                            fill="none"
+                                            stroke="#ff6b6b"
+                                            stroke-width="10"
+                                            stroke-dasharray="20 10"
+                                            stroke-linecap="round"
+                                            transform="rotate(-90 60 60)"
+                                            class="streak-ring"
+                                        />
+                                    </svg>
+                                    <div
+                                        class="absolute inset-0 flex items-center justify-center"
+                                    >
+                                        <span
+                                            class="text-[48px] font-black text-[var(--color-text-primary)] leading-none"
+                                        >
+                                            {appStore.stats?.longestStreak ?? 0}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div
+                                    class="flex items-center gap-2 text-[#ff6b6b]"
+                                >
+                                    <Lightning class="w-6 h-6" weight="bold" />
+                                    <span
+                                        class="text-[20px] font-bold uppercase tracking-wider"
+                                        >Day Streak</span
+                                    >
+                                </div>
+                                <div
+                                    class="text-[16px] text-[var(--color-text-muted)] mt-1"
+                                >
+                                    Best consecutive run
+                                </div>
+                            </div>
+                        </div>
+                    {/if}
+
+                    <!-- Personal Records - Horizontal Cards -->
                     {#if appStore.records}
-                        <div
-                            class="mb-auto mt-4 px-4 py-6 bg-[rgba(255,255,255,0.03)] rounded-2xl border border-[rgba(255,255,255,0.05)]"
-                        >
-                            <div class="flex justify-between items-center mb-6">
+                        <div class="mb-auto">
+                            <div class="flex items-center gap-3 mb-5">
+                                <Trophy
+                                    class="w-8 h-8 text-amber-400"
+                                    weight="fill"
+                                />
                                 <h2
-                                    class="text-[20px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest"
+                                    class="text-[28px] font-bold text-[var(--color-text-primary)] uppercase tracking-wide"
                                 >
                                     Personal Bests
                                 </h2>
-                                <Trophy class="w-6 h-6 text-amber-400" />
                             </div>
 
-                            <div class="space-y-6">
+                            <div class="grid grid-cols-3 gap-3">
                                 {#if appStore.records.longestDistance}
-                                    <div
-                                        class="flex items-center justify-between"
-                                    >
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="w-8 h-8 rounded-full bg-[var(--color-surface-elevated)] flex items-center justify-center"
-                                            >
-                                                <Trophy
-                                                    class="w-4 h-4 text-[var(--color-text-dim)]"
-                                                />
-                                            </div>
-                                            <span
-                                                class="text-[20px] text-[var(--color-text-primary)] font-medium"
-                                                >Longest Distance</span
-                                            >
+                                    <div class="record-card">
+                                        <div
+                                            class="record-icon bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border-cyan-400/40"
+                                        >
+                                            <Ruler
+                                                class="w-6 h-6 text-cyan-400"
+                                                weight="bold"
+                                            />
                                         </div>
-                                        <span
-                                            class="text-[24px] font-bold font-mono text-[var(--color-text-primary)]"
+                                        <div
+                                            class="text-[28px] font-black text-[var(--color-text-primary)] leading-none mt-3"
                                         >
                                             {formatDistance(
                                                 appStore.records.longestDistance
                                                     .value,
                                             )}
-                                        </span>
+                                        </div>
+                                        <div
+                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-wider mt-1"
+                                        >
+                                            Distance
+                                        </div>
                                     </div>
                                 {/if}
                                 {#if appStore.records.longestDuration}
-                                    <div
-                                        class="flex items-center justify-between"
-                                    >
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="w-8 h-8 rounded-full bg-[var(--color-surface-elevated)] flex items-center justify-center"
-                                            >
-                                                <Hourglass
-                                                    class="w-4 h-4 text-[var(--color-text-dim)]"
-                                                />
-                                            </div>
-                                            <span
-                                                class="text-[20px] text-[var(--color-text-primary)] font-medium"
-                                                >Duration</span
-                                            >
+                                    <div class="record-card">
+                                        <div
+                                            class="record-icon bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-400/40"
+                                        >
+                                            <Hourglass
+                                                class="w-6 h-6 text-purple-400"
+                                                weight="bold"
+                                            />
                                         </div>
-                                        <span
-                                            class="text-[24px] font-bold font-mono text-[var(--color-text-primary)]"
+                                        <div
+                                            class="text-[28px] font-black text-[var(--color-text-primary)] leading-none mt-3"
                                         >
                                             {formatDuration(
                                                 appStore.records.longestDuration
                                                     .value,
                                             )}
-                                        </span>
+                                        </div>
+                                        <div
+                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-wider mt-1"
+                                        >
+                                            Duration
+                                        </div>
                                     </div>
                                 {/if}
                                 {#if appStore.records.biggestBurn}
-                                    <div
-                                        class="flex items-center justify-between"
-                                    >
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="w-8 h-8 rounded-full bg-[var(--color-surface-elevated)] flex items-center justify-center"
-                                            >
-                                                <Fire
-                                                    class="w-4 h-4 text-[var(--color-text-dim)]"
-                                                />
-                                            </div>
-                                            <span
-                                                class="text-[20px] text-[var(--color-text-primary)] font-medium"
-                                                >Biggest Burn</span
-                                            >
+                                    <div class="record-card">
+                                        <div
+                                            class="record-icon bg-gradient-to-br from-orange-500/20 to-red-500/20 border-orange-400/40"
+                                        >
+                                            <Fire
+                                                class="w-6 h-6 text-orange-400"
+                                                weight="bold"
+                                            />
                                         </div>
-                                        <span
-                                            class="text-[24px] font-bold font-mono text-[var(--color-text-primary)]"
+                                        <div
+                                            class="text-[28px] font-black text-[var(--color-text-primary)] leading-none mt-3"
                                         >
                                             {formatCalories(
                                                 appStore.records.biggestBurn
                                                     .value,
                                             )}
-                                        </span>
+                                        </div>
+                                        <div
+                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-wider mt-1"
+                                        >
+                                            Calories
+                                        </div>
                                     </div>
                                 {/if}
                             </div>
                         </div>
                     {/if}
 
-                    <!-- Watermark -->
-                    <div class="mt-auto pt-6 text-center">
+                    <!-- Watermark (matching summary) -->
+                    <div
+                        class="mt-auto pt-8 text-center bg-gradient-to-t from-[var(--color-surface)] to-transparent"
+                    >
                         <p
-                            class="text-[20px] text-[var(--color-text-dim)] font-medium tracking-wide"
+                            class="text-[24px] text-[var(--color-text-dim)] font-medium tracking-widest opacity-80"
                         >
                             activeyear.app
                         </p>
@@ -650,23 +861,6 @@
     .stat-value {
         font-feature-settings: "tnum";
         font-variant-numeric: tabular-nums;
-    }
-
-    /* Progress Bar */
-    .sport-bar-fill {
-        background: var(--color-accent);
-        box-shadow: 0 0 15px var(--color-accent-glow);
-    }
-
-    .theme-minimalist .sport-bar-fill {
-        background: #000;
-        box-shadow: none;
-    }
-
-    .theme-retro .sport-bar-fill {
-        background: linear-gradient(90deg, #ff00cc, #3333ff);
-        box-shadow: none;
-        border-radius: 0;
     }
 
     /* Avatar Container */
@@ -780,5 +974,85 @@
     .theme-retro .spiral-path-accent {
         stroke: #3333ff;
         stroke-width: 2;
+    }
+
+    /* Donut Chart */
+    .donut-chart-container {
+        width: 360px;
+        height: 360px;
+        position: relative;
+    }
+
+    .donut-chart {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+    }
+
+    .donut-segment {
+        transition: stroke-dasharray 0.3s ease;
+    }
+
+    .donut-center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+
+    /* Progress Rings */
+    .progress-ring {
+        filter: drop-shadow(0 0 10px var(--color-accent-glow));
+    }
+
+    .streak-ring {
+        filter: drop-shadow(0 0 10px rgba(255, 107, 107, 0.4));
+    }
+
+    /* Record Cards */
+    .record-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 16px 12px;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .record-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-width: 2px;
+        border-style: solid;
+    }
+
+    .theme-minimalist .donut-segment {
+        filter: none !important;
+    }
+
+    .theme-minimalist .progress-ring {
+        stroke: #000 !important;
+        filter: none;
+    }
+
+    .theme-minimalist .streak-ring {
+        stroke: #666 !important;
+        filter: none;
+    }
+
+    .theme-minimalist .record-card {
+        background: rgba(0, 0, 0, 0.02);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .theme-retro .donut-segment {
+        filter: drop-shadow(0 0 12px var(--color-accent)) !important;
     }
 </style>

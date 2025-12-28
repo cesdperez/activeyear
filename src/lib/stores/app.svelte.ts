@@ -2,7 +2,8 @@ import { parseGarminCsv } from '../parsers/garmin.js';
 import {
     calculateYearStats,
     calculatePersonalRecords,
-    calculateSportBreakdown
+    calculateSportBreakdown,
+    calculateWeeklyPattern
 } from '../utils/stats.js';
 import { demoStats, demoRecords, demoBreakdown } from '../data/demo.js';
 import type {
@@ -10,6 +11,7 @@ import type {
     YearStats,
     PersonalRecords,
     SportBreakdown,
+    WeeklyPattern,
     ParseError,
     AspectRatio,
     Theme,
@@ -37,6 +39,7 @@ function createAppStore() {
     let stats = $state<YearStats | null>(null);
     let records = $state<PersonalRecords | null>(null);
     let breakdown = $state<SportBreakdown[]>([]);
+    let weeklyPattern = $state<WeeklyPattern>([0, 0, 0, 0, 0, 0, 0]);
     let status = $state<AppStatus>('idle');
     let error = $state<string | null>(null);
     let parseErrors = $state<ParseError[]>([]);
@@ -53,6 +56,7 @@ function createAppStore() {
         stats = null;
         records = null;
         breakdown = [];
+        weeklyPattern = [0, 0, 0, 0, 0, 0, 0];
         status = 'idle';
         error = null;
         parseErrors = [];
@@ -87,6 +91,7 @@ function createAppStore() {
             stats = calculateYearStats(activities);
             records = calculatePersonalRecords(activities);
             breakdown = calculateSportBreakdown(activities);
+            weeklyPattern = calculateWeeklyPattern(activities);
 
             status = 'ready';
         } catch (err) {
@@ -100,6 +105,8 @@ function createAppStore() {
         stats = demoStats;
         records = demoRecords;
         breakdown = demoBreakdown;
+        // Demo weekly pattern - typical distribution
+        weeklyPattern = [45, 38, 42, 35, 28, 52, 48];
         // Mock activities for potential future needs, though charts use aggregated stats
         activities = [];
         status = 'ready';
@@ -120,6 +127,9 @@ function createAppStore() {
         },
         get breakdown() {
             return breakdown;
+        },
+        get weeklyPattern() {
+            return weeklyPattern;
         },
         get status() {
             return status;
