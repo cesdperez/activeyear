@@ -137,53 +137,53 @@
                     <!-- ===================== -->
 
                     <!-- Header -->
-                    <header class="text-center mb-8 relative">
-                        <!-- Massive Watermark Year -->
-                        <div
-                            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[280px] font-bold text-[var(--color-text-primary)] opacity-[0.03] pointer-events-none select-none leading-none z-0"
-                        >
-                            2025
-                        </div>
-
+                    <header class="text-center mb-10 relative">
                         {#if appStore.userName}
                             <p
-                                class="text-[32px] font-medium text-[var(--color-text-muted)] mb-1 relative z-10"
+                                class="text-[42px] font-bold text-[var(--color-accent)] mb-2 relative z-10 leading-none uppercase tracking-widest"
                             >
                                 {appStore.userName}'s
                             </p>
                         {/if}
-                        <h1
-                            class="text-[72px] font-bold tracking-tight export-title leading-none relative z-10"
-                        >
-                            YEAR IN SPORT
-                        </h1>
+                        <div class="flex flex-col items-center justify-center">
+                            <h2
+                                class="text-[140px] font-black text-[var(--color-text-primary)] leading-[0.8] mb-2 tracking-tighter"
+                            >
+                                2025
+                            </h2>
+                            <h1
+                                class="text-[72px] font-bold tracking-[0.15em] export-title leading-none relative z-10 uppercase text-[var(--color-text-dim)]"
+                            >
+                                YEAR IN SPORT
+                            </h1>
+                        </div>
                     </header>
 
                     <!-- Hero Stat: Featured Metric with Fun Equivalent -->
                     <div
-                        class="flex-1 flex flex-col justify-center items-center text-center gap-2"
+                        class="flex-1 flex flex-col justify-center items-center text-center gap-4 py-8"
                     >
                         <!-- Distance Hero - Floating -->
-                        <div class="mb-4">
+                        <div class="mb-8">
                             <div
-                                class="flex items-center justify-center gap-3 mb-2 text-[var(--color-accent)]"
+                                class="flex items-center justify-center gap-4 mb-4 text-[var(--color-accent)]"
                             >
-                                <Ruler class="w-12 h-12" strokeWidth={2} />
+                                <Ruler class="w-16 h-16" strokeWidth={2.5} />
                             </div>
                             <div
-                                class="text-[140px] font-bold stat-value text-[var(--color-text-primary)] leading-none -tracking-[0.04em]"
+                                class="text-[180px] font-bold stat-value text-[var(--color-text-primary)] leading-none -tracking-[0.04em]"
                             >
                                 {formatDistance(
                                     appStore.stats?.totalDistance ?? 0,
                                 )}
                             </div>
                             <div
-                                class="text-[24px] font-medium text-[var(--color-text-dim)] uppercase tracking-widest mt-2"
+                                class="text-[32px] font-medium text-[var(--color-text-dim)] uppercase tracking-widest mt-4"
                             >
                                 Total Distance
                             </div>
                             <div
-                                class="text-[32px] font-semibold text-[var(--color-accent)] mt-4"
+                                class="text-[42px] font-semibold text-[var(--color-accent)] mt-8"
                             >
                                 🌍 {formatEarthLaps(
                                     appStore.stats?.totalDistance ?? 0,
@@ -193,31 +193,31 @@
 
                         <!-- Separator -->
                         <div
-                            class="w-24 h-1 bg-[var(--color-accent)] opacity-30 rounded-full my-6"
+                            class="w-32 h-1.5 bg-[var(--color-accent)] opacity-40 rounded-full my-10"
                         ></div>
 
                         <!-- Supporting Stats Row - Clean Grid -->
-                        <div class="grid grid-cols-3 gap-4 w-full px-2">
+                        <div class="grid grid-cols-3 gap-4 w-full px-6">
                             <!-- Elevation -->
-                            <div class="text-center">
+                            <div class="text-center overflow-hidden">
                                 <Mountain
-                                    class="w-8 h-8 text-[var(--color-text-dim)] mb-2 mx-auto"
+                                    class="w-12 h-12 text-[var(--color-text-dim)] mb-4 mx-auto"
                                     strokeWidth={2}
                                 />
                                 <div
-                                    class="text-[42px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                                    class="text-[56px] font-bold stat-value text-[var(--color-text-primary)] leading-none truncate"
                                 >
                                     {formatElevation(
                                         appStore.stats?.totalElevation ?? 0,
                                     )}
                                 </div>
                                 <div
-                                    class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-wide mt-1"
+                                    class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-wide mt-2 truncate"
                                 >
                                     Elevation
                                 </div>
                                 <div
-                                    class="text-[16px] text-[var(--color-accent)] mt-1 font-medium"
+                                    class="text-[20px] text-[var(--color-accent)] mt-2 font-medium truncate"
                                 >
                                     🏔️ {formatEverests(
                                         appStore.stats?.totalElevation ?? 0,
@@ -227,26 +227,26 @@
 
                             <!-- Time -->
                             <div
-                                class="text-center border-l border-r border-white/5"
+                                class="text-center border-l border-r border-white/10 overflow-hidden"
                             >
                                 <Timer
-                                    class="w-8 h-8 text-[var(--color-text-dim)] mb-2 mx-auto"
+                                    class="w-12 h-12 text-[var(--color-text-dim)] mb-4 mx-auto"
                                     strokeWidth={2}
                                 />
                                 <div
-                                    class="text-[42px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                                    class="text-[56px] font-bold stat-value text-[var(--color-text-primary)] leading-none truncate"
                                 >
                                     {formatDuration(
                                         appStore.stats?.totalDuration ?? 0,
                                     )}
                                 </div>
                                 <div
-                                    class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-wide mt-1"
+                                    class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-wide mt-2 truncate"
                                 >
                                     Time Active
                                 </div>
                                 <div
-                                    class="text-[16px] text-[var(--color-accent)] mt-1 font-medium"
+                                    class="text-[20px] text-[var(--color-accent)] mt-2 font-medium truncate"
                                 >
                                     💍 {formatLotRMarathons(
                                         appStore.stats?.totalDuration ?? 0,
@@ -255,25 +255,25 @@
                             </div>
 
                             <!-- Calories -->
-                            <div class="text-center">
+                            <div class="text-center overflow-hidden">
                                 <Flame
-                                    class="w-8 h-8 text-[var(--color-text-dim)] mb-2 mx-auto"
+                                    class="w-12 h-12 text-[var(--color-text-dim)] mb-4 mx-auto"
                                     strokeWidth={2}
                                 />
                                 <div
-                                    class="text-[42px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                                    class="text-[56px] font-bold stat-value text-[var(--color-text-primary)] leading-none truncate"
                                 >
                                     {formatCalories(
                                         appStore.stats?.totalCalories ?? 0,
                                     )}
                                 </div>
                                 <div
-                                    class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-wide mt-1"
+                                    class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-wide mt-2 truncate"
                                 >
                                     Calories
                                 </div>
                                 <div
-                                    class="text-[16px] text-[var(--color-accent)] mt-1 font-medium"
+                                    class="text-[20px] text-[var(--color-accent)] mt-2 font-medium truncate"
                                 >
                                     🍕 {formatPizzaSlices(
                                         appStore.stats?.totalCalories ?? 0,
@@ -284,9 +284,11 @@
                     </div>
 
                     <!-- Watermark -->
-                    <div class="mt-auto pt-6 text-center">
+                    <div
+                        class="mt-auto pt-8 text-center bg-gradient-to-t from-[var(--color-surface)] to-transparent"
+                    >
                         <p
-                            class="text-[20px] text-[var(--color-text-dim)] font-medium tracking-wide"
+                            class="text-[24px] text-[var(--color-text-dim)] font-medium tracking-widest opacity-80"
                         >
                             activeyear.app
                         </p>
