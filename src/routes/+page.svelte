@@ -4,14 +4,6 @@
 	import Dashboard from "$lib/components/Dashboard.svelte";
 </script>
 
-<svelte:head>
-	<title>ActiveYear — Your 2025 in Sport</title>
-	<meta
-		name="description"
-		content="Generate beautiful shareable infographics from your Garmin activity data. All processing happens in your browser - your data never leaves."
-	/>
-</svelte:head>
-
 <main class="min-h-screen bg-[var(--color-surface)]">
 	{#if appStore.status === "ready"}
 		<Dashboard />
