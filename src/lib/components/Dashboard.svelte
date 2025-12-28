@@ -94,7 +94,7 @@
 		})();
 	}
 
-	let breakdownMetric = $state<"count" | "duration">("count");
+	let breakdownMetric = $derived(appStore.breakdownMetric);
 	const sortedBreakdown = $derived(
 		[...(appStore.breakdown || [])].sort(
 			(a, b) => b[breakdownMetric] - a[breakdownMetric],
@@ -336,7 +336,7 @@
 						'count'
 							? 'bg-[var(--color-accent)] text-black'
 							: 'text-zinc-500 hover:text-zinc-300'}"
-						onclick={() => (breakdownMetric = "count")}
+						onclick={() => (appStore.breakdownMetric = "count")}
 					>
 						Activities
 					</button>
@@ -345,7 +345,7 @@
 						'duration'
 							? 'bg-[var(--color-accent)] text-black'
 							: 'text-zinc-500 hover:text-zinc-300'}"
-						onclick={() => (breakdownMetric = "duration")}
+						onclick={() => (appStore.breakdownMetric = "duration")}
 					>
 						Time
 					</button>
