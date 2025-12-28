@@ -199,19 +199,19 @@
                     <header class="text-center mb-[160px] relative">
                         {#if appStore.userName}
                             <p
-                                class="text-[42px] font-bold text-[var(--color-accent)] mb-2 relative z-10 leading-none uppercase tracking-widest"
+                                class="text-[42px] font-bold text-[var(--color-accent)] mb-2 relative z-10 leading-none uppercase tracking-widest mr-[-0.1em]"
                             >
                                 {appStore.userName}'s
                             </p>
                         {/if}
                         <div class="flex flex-col items-center justify-center">
                             <h2
-                                class="text-[140px] font-black text-[var(--color-text-primary)] leading-[0.8] mb-2 tracking-tighter"
+                                class="text-[140px] font-black text-[var(--color-text-primary)] leading-[0.8] mb-2 tracking-tighter mr-[0.05em]"
                             >
                                 2025
                             </h2>
                             <h1
-                                class="text-[72px] font-bold tracking-[0.15em] export-title leading-none relative z-10 uppercase text-[var(--color-text-dim)]"
+                                class="text-[72px] font-bold tracking-[0.15em] export-title leading-none relative z-10 uppercase text-[var(--color-text-dim)] mr-[-0.15em]"
                             >
                                 YEAR IN SPORT
                             </h1>
@@ -453,19 +453,19 @@
                     <header class="text-center mb-[130px] relative">
                         {#if appStore.userName}
                             <p
-                                class="text-[42px] font-bold text-[var(--color-accent)] mb-2 relative z-10 leading-none uppercase tracking-widest"
+                                class="text-[42px] font-bold text-[var(--color-accent)] mb-2 relative z-10 leading-none uppercase tracking-widest mr-[-0.1em]"
                             >
                                 {appStore.userName}'s
                             </p>
                         {/if}
                         <div class="flex flex-col items-center justify-center">
                             <h2
-                                class="text-[140px] font-black text-[var(--color-text-primary)] leading-[0.8] mb-2 tracking-tighter"
+                                class="text-[140px] font-black text-[var(--color-text-primary)] leading-[0.8] mb-2 tracking-tighter mr-[0.05em]"
                             >
                                 2025
                             </h2>
                             <h1
-                                class="text-[72px] font-bold tracking-[0.15em] export-title leading-none relative z-10 uppercase text-[var(--color-text-dim)]"
+                                class="text-[72px] font-bold tracking-[0.15em] export-title leading-none relative z-10 uppercase text-[var(--color-text-dim)] mr-[-0.15em]"
                             >
                                 BREAKDOWN
                             </h1>
@@ -802,14 +802,17 @@
                     <!-- Personal Records - Horizontal Grid (matching Dashboard) -->
                     {#if appStore.records}
                         <div class="mb-auto">
-                            <div class="flex items-end gap-4 mb-6">
+                            <div class="flex items-center gap-6 mb-8">
+                                <div
+                                    class="h-1 flex-1 bg-gradient-to-l from-[var(--color-accent)] to-transparent opacity-30"
+                                ></div>
                                 <h2
                                     class="text-[32px] font-bold text-[var(--color-text-primary)] uppercase tracking-widest whitespace-nowrap"
                                 >
                                     Personal Records
                                 </h2>
                                 <div
-                                    class="h-1 flex-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent opacity-30 mb-2"
+                                    class="h-1 flex-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent opacity-30"
                                 ></div>
                             </div>
 
