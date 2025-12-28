@@ -237,34 +237,78 @@
                     </div>
 
                     <!-- Hero Stat: Featured Metric with Fun Equivalent -->
+                    {@const allStats = [
+                        {
+                            id: "distance",
+                            label: "Total Distance",
+                            value: formatDistance(
+                                appStore.stats?.totalDistance ?? 0,
+                            ),
+                            icon: Ruler,
+                            equivalent: `🌍 ${formatEarthLaps(appStore.stats?.totalDistance ?? 0)}`,
+                        },
+                        {
+                            id: "elevation",
+                            label: "Elevation",
+                            value: formatElevation(
+                                appStore.stats?.totalElevation ?? 0,
+                            ),
+                            icon: Mountain,
+                            equivalent: `🏔️ ${formatEverests(appStore.stats?.totalElevation ?? 0)}`,
+                        },
+                        {
+                            id: "duration",
+                            label: "Time Active",
+                            value: formatDuration(
+                                appStore.stats?.totalDuration ?? 0,
+                            ),
+                            icon: Timer,
+                            equivalent: `💍 ${formatLotRMarathons(appStore.stats?.totalDuration ?? 0)}`,
+                        },
+                        {
+                            id: "calories",
+                            label: "Calories",
+                            value: formatCalories(
+                                appStore.stats?.totalCalories ?? 0,
+                            ),
+                            icon: Flame,
+                            equivalent: `🍕 ${formatPizzaSlices(appStore.stats?.totalCalories ?? 0)}`,
+                        },
+                    ]}
+                    {@const heroStat =
+                        allStats.find((s) => s.id === appStore.summaryMetric) ||
+                        allStats[0]}
+                    {@const supportingStats = allStats.filter(
+                        (s) => s.id !== heroStat.id,
+                    )}
+
                     <div
                         class="flex-1 flex flex-col justify-start items-center text-center gap-4"
                     >
-                        <!-- Distance Hero - Floating -->
+                        <!-- Hero Stat - Floating -->
                         <div class="mb-[60px]">
                             <div
                                 class="flex items-center justify-center gap-4 mb-4 text-[var(--color-accent)]"
                             >
-                                <Ruler class="w-16 h-16" strokeWidth={2.5} />
+                                <heroStat.icon
+                                    class="w-16 h-16"
+                                    strokeWidth={2.5}
+                                />
                             </div>
                             <div
                                 class="text-[140px] font-bold stat-value text-[var(--color-text-primary)] leading-none -tracking-[0.04em]"
                             >
-                                {formatDistance(
-                                    appStore.stats?.totalDistance ?? 0,
-                                )}
+                                {heroStat.value}
                             </div>
                             <div
                                 class="text-[32px] font-medium text-[var(--color-text-dim)] uppercase tracking-[0.2em] mt-4"
                             >
-                                Total Distance
+                                {heroStat.label}
                             </div>
                             <div
                                 class="text-[44px] font-bold text-[var(--color-accent)] mt-8"
                             >
-                                🌍 {formatEarthLaps(
-                                    appStore.stats?.totalDistance ?? 0,
-                                )}
+                                {heroStat.equivalent}
                             </div>
                         </div>
 
@@ -275,88 +319,33 @@
 
                         <!-- Supporting Stats Row - Clean Grid -->
                         <div class="grid grid-cols-3 gap-4 w-full">
-                            <!-- Elevation -->
-                            <div class="text-center overflow-visible">
-                                <Mountain
-                                    class="w-12 h-12 text-[var(--color-text-dim)] mb-3 mx-auto"
-                                    strokeWidth={2}
-                                />
+                            {#each supportingStats as stat, i}
                                 <div
-                                    class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                                    class="text-center overflow-visible {i === 1
+                                        ? 'border-l border-r border-white/10'
+                                        : ''}"
                                 >
-                                    {formatElevation(
-                                        appStore.stats?.totalElevation ?? 0,
-                                    )}
+                                    <stat.icon
+                                        class="w-12 h-12 text-[var(--color-text-dim)] mb-3 mx-auto"
+                                        strokeWidth={2}
+                                    />
+                                    <div
+                                        class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                                    >
+                                        {stat.value}
+                                    </div>
+                                    <div
+                                        class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest mt-2"
+                                    >
+                                        {stat.label}
+                                    </div>
+                                    <div
+                                        class="text-[22px] text-[var(--color-accent)] mt-2 font-medium"
+                                    >
+                                        {stat.equivalent}
+                                    </div>
                                 </div>
-                                <div
-                                    class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest mt-2"
-                                >
-                                    Elevation
-                                </div>
-                                <div
-                                    class="text-[22px] text-[var(--color-accent)] mt-2 font-medium"
-                                >
-                                    🏔️ {formatEverests(
-                                        appStore.stats?.totalElevation ?? 0,
-                                    )}
-                                </div>
-                            </div>
-
-                            <!-- Time -->
-                            <div
-                                class="text-center border-l border-r border-white/10 overflow-visible"
-                            >
-                                <Timer
-                                    class="w-12 h-12 text-[var(--color-text-dim)] mb-3 mx-auto"
-                                    strokeWidth={2}
-                                />
-                                <div
-                                    class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
-                                >
-                                    {formatDuration(
-                                        appStore.stats?.totalDuration ?? 0,
-                                    )}
-                                </div>
-                                <div
-                                    class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest mt-2"
-                                >
-                                    Time Active
-                                </div>
-                                <div
-                                    class="text-[22px] text-[var(--color-accent)] mt-2 font-medium"
-                                >
-                                    💍 {formatLotRMarathons(
-                                        appStore.stats?.totalDuration ?? 0,
-                                    )}
-                                </div>
-                            </div>
-
-                            <!-- Calories -->
-                            <div class="text-center overflow-visible">
-                                <Flame
-                                    class="w-12 h-12 text-[var(--color-text-dim)] mb-3 mx-auto"
-                                    strokeWidth={2}
-                                />
-                                <div
-                                    class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
-                                >
-                                    {formatCalories(
-                                        appStore.stats?.totalCalories ?? 0,
-                                    )}
-                                </div>
-                                <div
-                                    class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest mt-2"
-                                >
-                                    Calories
-                                </div>
-                                <div
-                                    class="text-[22px] text-[var(--color-accent)] mt-2 font-medium"
-                                >
-                                    🍕 {formatPizzaSlices(
-                                        appStore.stats?.totalCalories ?? 0,
-                                    )}
-                                </div>
-                            </div>
+                            {/each}
                         </div>
                     </div>
 

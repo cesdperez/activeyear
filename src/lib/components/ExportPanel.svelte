@@ -1,8 +1,16 @@
 <script lang="ts">
     import { appStore } from "$lib/stores/app.svelte.js";
     import ExportCarousel from "./ExportCarousel.svelte";
-    import { Download, ImagePlus, Trash2 } from "@lucide/svelte";
-    import type { Theme } from "$lib/types/index.js";
+    import {
+        Download,
+        ImagePlus,
+        Trash2,
+        Ruler,
+        Mountain,
+        Timer,
+        Flame,
+    } from "@lucide/svelte";
+    import type { Theme, SummaryMetric } from "$lib/types/index.js";
 
     let isExporting = $state(false);
     let exportError = $state<string | null>(null);
@@ -143,6 +151,30 @@
                         </label>
                     </div>
                 {/if}
+            </div>
+
+            <!-- Summary Metric Selector -->
+            <div>
+                <span class="block text-sm font-medium text-zinc-400 mb-2">
+                    Focused Stat (Summary Card)
+                </span>
+                <div class="grid grid-cols-2 gap-2">
+                    {#each [{ value: "distance", label: "Distance", icon: Ruler }, { value: "elevation", label: "Elevation", icon: Mountain }, { value: "duration", label: "Time", icon: Timer }, { value: "calories", label: "Calories", icon: Flame }] as metric}
+                        <button
+                            onclick={() =>
+                                (appStore.summaryMetric =
+                                    metric.value as SummaryMetric)}
+                            class="flex items-center justify-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 {appStore.summaryMetric ===
+                            metric.value
+                                ? 'bg-[var(--color-accent)] text-[var(--color-surface)] font-semibold'
+                                : 'bg-[var(--color-surface-elevated)] text-zinc-400 hover:text-white hover:bg-[var(--color-surface-hover)]'}"
+                        >
+                            <metric.icon class="w-4 h-4" />
+                            <span class="text-sm font-bold">{metric.label}</span
+                            >
+                        </button>
+                    {/each}
+                </div>
             </div>
 
             <!-- Theme Selector -->
