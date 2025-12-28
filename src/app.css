@@ -23,6 +23,10 @@
 	--color-accent-glow: rgba(34, 211, 238, 0.4);
 	--color-accent-subtle: rgba(34, 211, 238, 0.1);
 
+	/* Gold Colors - Personal Achievements */
+	--color-gold: #facc15;
+	--color-gold-glow: rgba(250, 204, 21, 0.4);
+
 	/* Transitions */
 	--transition-fast: 150ms ease-out;
 	--transition-base: 200ms ease-out;

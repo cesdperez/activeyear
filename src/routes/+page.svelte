@@ -60,7 +60,7 @@
 					</li>
 					<li class="flex gap-2">
 						<span class="text-cyan-400 font-mono">3.</span>
-						Scroll down to load all 2025 activities
+						Scroll down until all 2025 activities are loaded
 					</li>
 					<li class="flex gap-2">
 						<span class="text-cyan-400 font-mono">4.</span>
