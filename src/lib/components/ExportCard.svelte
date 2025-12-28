@@ -69,8 +69,26 @@
     // Props
     let { variant = "summary" }: { variant?: CardVariant } = $props();
 
-    // Fixed scale factor for preview (show smaller version)
-    const scale = 0.35;
+    // Reactive scale factor for preview (show smaller version)
+    let scale = $state(0.35);
+
+    $effect(() => {
+        if (typeof window === "undefined") return;
+
+        function updateScale() {
+            // dimensions.width is 1080.
+            // We want to fit it in the viewport with some padding.
+            // On mobile, the Dashboard has px-4 (16px) or sm:px-6 (24px).
+            const padding = window.innerWidth < 640 ? 48 : 80;
+            const availableWidth = Math.min(window.innerWidth - padding, 400);
+            const targetScale = availableWidth / 1080;
+            scale = Math.min(0.35, targetScale);
+        }
+
+        updateScale();
+        window.addEventListener("resize", updateScale);
+        return () => window.removeEventListener("resize", updateScale);
+    });
 
     // Consolidate small sports (less than 1 hour) into "other"
     const ONE_HOUR_IN_SECONDS = 3600;
