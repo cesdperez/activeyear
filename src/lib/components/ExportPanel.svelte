@@ -1,13 +1,14 @@
 <script lang="ts">
     import { appStore } from "$lib/stores/app.svelte.js";
-    import ExportCard, { getExportElement } from "./ExportCard.svelte";
-    import { exportToPng } from "$lib/utils/export.js";
+    import ExportCarousel from "./ExportCarousel.svelte";
     import { Download } from "@lucide/svelte";
-    import type { AspectRatio, Theme } from "$lib/types/index.js";
+    import type { Theme } from "$lib/types/index.js";
 
     let isExporting = $state(false);
     let exportError = $state<string | null>(null);
-    let previewWidth = $state(0);
+    let carouselRef = $state<{ exportAllCards: () => Promise<void> } | null>(
+        null,
+    );
 
     const themes: {
         value: Theme;
@@ -20,9 +21,8 @@
     ];
 
     async function handleExport() {
-        const element = getExportElement();
-        if (!element) {
-            exportError = "Export element not found";
+        if (!carouselRef) {
+            exportError = "Export component not ready";
             return;
         }
 
@@ -30,10 +30,7 @@
         exportError = null;
 
         try {
-            const filename = appStore.userName
-                ? `${appStore.userName.toLowerCase().replace(/\s+/g, "-")}-2025`
-                : "activeyear-2025";
-            await exportToPng(element, { filename });
+            await carouselRef.exportAllCards();
         } catch (error) {
             exportError =
                 error instanceof Error ? error.message : "Failed to export";
@@ -110,23 +107,24 @@
                     Generating...
                 {:else}
                     <Download class="w-5 h-5" strokeWidth={2} />
-                    Download PNG
+                    Download Both Images
                 {/if}
             </button>
 
             {#if exportError}
                 <p class="text-red-400 text-sm">{exportError}</p>
             {/if}
+
+            <p class="text-xs text-zinc-500">
+                Downloads two images: Summary and Breakdown
+            </p>
         </div>
 
         <!-- Right: Preview -->
-        <div class="flex-1 flex flex-col items-center w-full">
+        <div class="flex-1 flex flex-col items-center w-full preview-container">
             <div class="text-sm text-zinc-500 mb-4">Preview</div>
-            <div
-                class="overflow-hidden rounded-lg border border-[rgba(255,255,255,0.1)] shadow-2xl max-w-full"
-                bind:clientWidth={previewWidth}
-            >
-                <ExportCard {previewWidth} />
+            <div class="preview-wrapper">
+                <ExportCarousel bind:this={carouselRef} />
             </div>
         </div>
     </div>
@@ -137,5 +135,10 @@
         padding-top: 2rem;
         margin-top: 2rem;
         border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .preview-wrapper {
+        width: 100%;
+        max-width: 400px;
     }
 </style>

@@ -307,7 +307,7 @@
 						delay={550}
 					>
 						{#snippet icon()}
-							<Sparkles />
+							<Flame />
 						{/snippet}
 					</PersonalRecordCard>
 				{/if}

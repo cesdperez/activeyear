@@ -47,7 +47,7 @@
     <div class="relative z-10 p-6 flex items-start gap-4">
         <!-- Icon Badge -->
         <div
-            class="shrink-0 w-12 h-12 rounded-xl bg-[var(--color-surface-hover)] border border-[rgba(255,255,255,0.05)] flex items-center justify-center text-[var(--color-accent)] shadow-sm group-hover:scale-110 group-hover:border-[rgba(34,211,238,0.2)] transition-all duration-300"
+            class="shrink-0 w-12 h-12 rounded-xl bg-[var(--color-surface-hover)] border border-[rgba(255,255,255,0.05)] flex items-center justify-center text-[var(--color-gold)] shadow-sm group-hover:scale-110 group-hover:border-[rgba(250,204,21,0.3)] transition-all duration-300"
         >
             {#if icon}
                 <div class="icon-inner">

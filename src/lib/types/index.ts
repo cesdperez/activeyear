@@ -62,6 +62,8 @@ export type Theme = 'neon' | 'minimalist' | 'retro';
 
 export type AspectRatio = '9:16';
 
+export type CardVariant = 'summary' | 'breakdown';
+
 export type Unit = 'km' | 'miles';
 
 export interface ParseResult {
