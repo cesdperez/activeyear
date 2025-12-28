@@ -270,7 +270,7 @@
 			.sort((a, b) => b.count - a.count)
 			.slice(0, 2)
 			.map((item) => item.idx)}
-		<section class="mb-16 max-w-3xl">
+		<section class="mb-16">
 			<div class="flex items-end gap-4 mb-8">
 				<h2 class="text-3xl font-bold tracking-tight">
 					When You Train
