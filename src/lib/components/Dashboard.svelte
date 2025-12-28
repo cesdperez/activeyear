@@ -14,7 +14,7 @@
 		formatLotRMarathons,
 	} from "$lib/utils/format.js";
 
-	// Lucide icons
+	// Lucide icons (for non-sport UI elements)
 	import {
 		Ruler,
 		Timer,
@@ -28,14 +28,20 @@
 		Trophy,
 		Hourglass,
 		Sparkles,
-		Footprints,
-		Bike,
-		Waves,
-		Dumbbell,
-		Heart,
-		Target,
 		ArrowDown,
 	} from "@lucide/svelte";
+
+	// Phosphor icons for sports (bold, activity-true icons)
+	import {
+		PersonSimpleRun,
+		PersonSimpleBike,
+		PersonSimpleSwim,
+		PersonSimpleWalk,
+		Mountains,
+		Barbell,
+		Flower,
+		Target,
+	} from "phosphor-svelte";
 
 	// Sport type display names
 	const sportNames: Record<string, string> = {
@@ -49,15 +55,15 @@
 		other: "Other",
 	};
 
-	// Sport icons mapping
-	const sportIcons: Record<string, typeof Footprints> = {
-		running: Footprints,
-		cycling: Bike,
-		swimming: Waves,
-		walking: Footprints,
-		hiking: Mountain,
-		strength: Dumbbell,
-		yoga: Heart,
+	// Sport icons mapping (using Phosphor for bold, activity-specific icons)
+	const sportIcons: Record<string, typeof PersonSimpleRun> = {
+		running: PersonSimpleRun,
+		cycling: PersonSimpleBike,
+		swimming: PersonSimpleSwim,
+		walking: PersonSimpleWalk,
+		hiking: Mountains,
+		strength: Barbell,
+		yoga: Flower,
 		other: Target,
 	};
 
@@ -365,7 +371,7 @@
 						<div
 							class="w-10 h-10 rounded-lg bg-[var(--color-surface-elevated)] flex items-center justify-center text-[var(--color-accent)] group-hover:scale-110 transition-transform"
 						>
-							<IconComponent class="w-5 h-5" strokeWidth={1.5} />
+							<IconComponent class="w-5 h-5" weight="bold" />
 						</div>
 
 						<div class="flex-1 min-w-0">
