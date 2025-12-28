@@ -72,7 +72,14 @@
     const scale = 0.35;
 
     // Top 4 sports for the card
-    let topSports = $derived(appStore.breakdown.slice(0, 4));
+    let topSports = $derived(
+        [...appStore.breakdown]
+            .sort(
+                (a, b) =>
+                    b[appStore.breakdownMetric] - a[appStore.breakdownMetric],
+            )
+            .slice(0, 4),
+    );
 
     // Current theme
     let currentTheme = $derived(appStore.theme);
@@ -91,7 +98,9 @@
     let scaledHeight = $derived(dimensions.height * scale);
 
     // Calculate progress bar widths for sports breakdown
-    let maxSportCount = $derived(Math.max(...topSports.map((s) => s.count), 1));
+    const maxSportCount = $derived(
+        Math.max(...topSports.map((s) => s[appStore.breakdownMetric]), 1),
+    );
 </script>
 
 <!-- Export Card Container -->
@@ -121,58 +130,60 @@
             {/if}
 
             <!-- Content -->
-            <div class="relative z-10 h-full flex flex-col p-[5%]">
+            <div class="relative z-10 h-full flex flex-col p-8">
                 {#if variant === "summary"}
                     <!-- ===================== -->
                     <!-- SUMMARY CARD VARIANT -->
                     <!-- ===================== -->
 
                     <!-- Header -->
-                    <header class="text-center mb-8">
+                    <header class="text-center mb-8 relative">
+                        <!-- Massive Watermark Year -->
+                        <div
+                            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[280px] font-bold text-[var(--color-text-primary)] opacity-[0.03] pointer-events-none select-none leading-none z-0"
+                        >
+                            2025
+                        </div>
+
                         {#if appStore.userName}
                             <p
-                                class="text-[48px] font-medium text-[var(--color-text-muted)] mb-2"
+                                class="text-[32px] font-medium text-[var(--color-text-muted)] mb-1 relative z-10"
                             >
                                 {appStore.userName}'s
                             </p>
                         {/if}
                         <h1
-                            class="text-[140px] font-bold tracking-tight export-title leading-none mb-2"
+                            class="text-[72px] font-bold tracking-tight export-title leading-none relative z-10"
                         >
-                            2025
+                            YEAR IN SPORT
                         </h1>
-                        <p
-                            class="text-[36px] text-[var(--color-text-dim)] font-medium tracking-wide uppercase"
-                        >
-                            Year in Sport
-                        </p>
                     </header>
 
                     <!-- Hero Stat: Featured Metric with Fun Equivalent -->
                     <div
-                        class="flex-1 flex flex-col justify-center items-center text-center gap-8"
+                        class="flex-1 flex flex-col justify-center items-center text-center gap-2"
                     >
-                        <!-- Distance Hero -->
-                        <div class="hero-stat-block">
+                        <!-- Distance Hero - Floating -->
+                        <div class="mb-4">
                             <div
-                                class="flex items-center justify-center gap-4 mb-4 text-[var(--color-accent)]"
+                                class="flex items-center justify-center gap-3 mb-2 text-[var(--color-accent)]"
                             >
-                                <Ruler class="w-16 h-16" strokeWidth={1.5} />
+                                <Ruler class="w-12 h-12" strokeWidth={2} />
                             </div>
                             <div
-                                class="text-[120px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                                class="text-[140px] font-bold stat-value text-[var(--color-text-primary)] leading-none -tracking-[0.04em]"
                             >
                                 {formatDistance(
                                     appStore.stats?.totalDistance ?? 0,
                                 )}
                             </div>
                             <div
-                                class="text-[28px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-2"
+                                class="text-[24px] font-medium text-[var(--color-text-dim)] uppercase tracking-widest mt-2"
                             >
                                 Total Distance
                             </div>
                             <div
-                                class="text-[36px] font-semibold text-[var(--color-accent)] mt-4"
+                                class="text-[32px] font-semibold text-[var(--color-accent)] mt-4"
                             >
                                 🌍 {formatEarthLaps(
                                     appStore.stats?.totalDistance ?? 0,
@@ -180,28 +191,33 @@
                             </div>
                         </div>
 
-                        <!-- Supporting Stats Row -->
-                        <div class="grid grid-cols-3 gap-6 w-full mt-8">
+                        <!-- Separator -->
+                        <div
+                            class="w-24 h-1 bg-[var(--color-accent)] opacity-30 rounded-full my-6"
+                        ></div>
+
+                        <!-- Supporting Stats Row - Clean Grid -->
+                        <div class="grid grid-cols-3 gap-4 w-full px-2">
                             <!-- Elevation -->
-                            <div class="summary-stat-card">
+                            <div class="text-center">
                                 <Mountain
-                                    class="w-10 h-10 text-[var(--color-accent)] mb-3 mx-auto"
-                                    strokeWidth={1.5}
+                                    class="w-8 h-8 text-[var(--color-text-dim)] mb-2 mx-auto"
+                                    strokeWidth={2}
                                 />
                                 <div
-                                    class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                                    class="text-[42px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
                                 >
                                     {formatElevation(
                                         appStore.stats?.totalElevation ?? 0,
                                     )}
                                 </div>
                                 <div
-                                    class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-wide mt-1"
+                                    class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-wide mt-1"
                                 >
                                     Elevation
                                 </div>
                                 <div
-                                    class="text-[20px] text-[var(--color-accent)] mt-2"
+                                    class="text-[16px] text-[var(--color-accent)] mt-1 font-medium"
                                 >
                                     🏔️ {formatEverests(
                                         appStore.stats?.totalElevation ?? 0,
@@ -210,25 +226,27 @@
                             </div>
 
                             <!-- Time -->
-                            <div class="summary-stat-card">
+                            <div
+                                class="text-center border-l border-r border-white/5"
+                            >
                                 <Timer
-                                    class="w-10 h-10 text-[var(--color-accent)] mb-3 mx-auto"
-                                    strokeWidth={1.5}
+                                    class="w-8 h-8 text-[var(--color-text-dim)] mb-2 mx-auto"
+                                    strokeWidth={2}
                                 />
                                 <div
-                                    class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                                    class="text-[42px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
                                 >
                                     {formatDuration(
                                         appStore.stats?.totalDuration ?? 0,
                                     )}
                                 </div>
                                 <div
-                                    class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-wide mt-1"
+                                    class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-wide mt-1"
                                 >
                                     Time Active
                                 </div>
                                 <div
-                                    class="text-[20px] text-[var(--color-accent)] mt-2"
+                                    class="text-[16px] text-[var(--color-accent)] mt-1 font-medium"
                                 >
                                     💍 {formatLotRMarathons(
                                         appStore.stats?.totalDuration ?? 0,
@@ -237,25 +255,25 @@
                             </div>
 
                             <!-- Calories -->
-                            <div class="summary-stat-card">
+                            <div class="text-center">
                                 <Flame
-                                    class="w-10 h-10 text-[var(--color-accent)] mb-3 mx-auto"
-                                    strokeWidth={1.5}
+                                    class="w-8 h-8 text-[var(--color-text-dim)] mb-2 mx-auto"
+                                    strokeWidth={2}
                                 />
                                 <div
-                                    class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                                    class="text-[42px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
                                 >
                                     {formatCalories(
                                         appStore.stats?.totalCalories ?? 0,
                                     )}
                                 </div>
                                 <div
-                                    class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-wide mt-1"
+                                    class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-wide mt-1"
                                 >
                                     Calories
                                 </div>
                                 <div
-                                    class="text-[20px] text-[var(--color-accent)] mt-2"
+                                    class="text-[16px] text-[var(--color-accent)] mt-1 font-medium"
                                 >
                                     🍕 {formatPizzaSlices(
                                         appStore.stats?.totalCalories ?? 0,
@@ -268,7 +286,7 @@
                     <!-- Watermark -->
                     <div class="mt-auto pt-6 text-center">
                         <p
-                            class="text-[24px] text-[var(--color-text-dim)] font-medium"
+                            class="text-[20px] text-[var(--color-text-dim)] font-medium tracking-wide"
                         >
                             activeyear.app
                         </p>
@@ -279,64 +297,71 @@
                     <!-- ======================== -->
 
                     <!-- Header -->
-                    <header class="text-center mb-8">
+                    <header
+                        class="text-left mb-10 pl-2 border-l-4 border-[var(--color-accent)]"
+                    >
                         <h1
-                            class="text-[72px] font-bold tracking-tight export-title leading-none mb-2"
+                            class="text-[64px] font-bold tracking-tight export-title leading-none mb-1"
                         >
-                            Activity Breakdown
+                            BREAKDOWN
                         </h1>
                         <p
-                            class="text-[28px] text-[var(--color-text-dim)] font-medium tracking-wide"
+                            class="text-[28px] text-[var(--color-text-muted)] font-medium tracking-wide"
                         >
-                            {appStore.userName
-                                ? `${appStore.userName}'s `
-                                : ""}2025 Year in Sport
+                            2025 ACTIVITY LOG
                         </p>
                     </header>
 
-                    <!-- Sport Breakdown with Horizontal Bars -->
+                    <!-- Sport Breakdown with Modern Bars -->
                     {#if topSports.length > 0}
-                        <div class="mb-10">
-                            <h2
-                                class="text-[32px] font-semibold text-[var(--color-text-muted)] mb-6 uppercase tracking-wider"
-                            >
-                                Top Activities
-                            </h2>
-                            <div class="space-y-4">
+                        <div class="mb-12">
+                            <div class="space-y-6">
                                 {#each topSports as sport, i}
                                     {@const IconComponent =
                                         sportIcons[sport.type] ?? Target}
                                     {@const barWidth =
-                                        (sport.count / maxSportCount) * 100}
-                                    <div class="sport-bar-row">
+                                        (sport[appStore.breakdownMetric] /
+                                            maxSportCount) *
+                                        100}
+                                    <div class="relative">
+                                        <!-- Label Row -->
                                         <div
-                                            class="flex items-center gap-4 w-48"
-                                        >
-                                            <IconComponent
-                                                class="w-8 h-8 text-[var(--color-accent)]"
-                                                strokeWidth={1.5}
-                                            />
-                                            <span
-                                                class="text-[24px] font-medium text-[var(--color-text-primary)]"
-                                            >
-                                                {sportNames[sport.type] ??
-                                                    sport.type}
-                                            </span>
-                                        </div>
-                                        <div
-                                            class="flex-1 h-12 rounded-lg bg-[var(--color-accent-subtle)] overflow-hidden"
+                                            class="flex items-end justify-between mb-2 px-1"
                                         >
                                             <div
-                                                class="h-full sport-bar-fill rounded-lg"
+                                                class="flex items-center gap-3"
+                                            >
+                                                <IconComponent
+                                                    class="w-6 h-6 text-[var(--color-accent)]"
+                                                    strokeWidth={2}
+                                                />
+                                                <span
+                                                    class="text-[24px] font-bold text-[var(--color-text-primary)] uppercase tracking-wide"
+                                                >
+                                                    {sportNames[sport.type] ??
+                                                        sport.type}
+                                                </span>
+                                            </div>
+                                            <span
+                                                class="text-[24px] font-mono font-bold text-[var(--color-text-primary)]"
+                                            >
+                                                {appStore.breakdownMetric ===
+                                                "count"
+                                                    ? sport.count
+                                                    : formatDuration(
+                                                          sport.duration,
+                                                      )}
+                                            </span>
+                                        </div>
+
+                                        <!-- Bar -->
+                                        <div
+                                            class="h-4 rounded-full bg-[rgba(255,255,255,0.1)] overflow-hidden"
+                                        >
+                                            <div
+                                                class="h-full sport-bar-fill rounded-full"
                                                 style="width: {barWidth}%;"
                                             ></div>
-                                        </div>
-                                        <div class="w-24 text-right">
-                                            <span
-                                                class="text-[28px] font-bold stat-value text-[var(--color-text-primary)]"
-                                            >
-                                                {sport.count}
-                                            </span>
                                         </div>
                                     </div>
                                 {/each}
@@ -344,117 +369,139 @@
                         </div>
                     {/if}
 
-                    <!-- Consistency Stats -->
-                    <div class="grid grid-cols-2 gap-8 mb-10">
-                        <div class="breakdown-stat-card">
+                    <!-- Consistency Stats - Big Numbers -->
+                    <div class="grid grid-cols-2 gap-8 mb-12">
+                        <div class="text-left">
                             <div
-                                class="flex items-center gap-4 mb-4 text-[var(--color-accent)]"
-                            >
-                                <CalendarCheck
-                                    class="w-14 h-14"
-                                    strokeWidth={1.5}
-                                />
-                            </div>
-                            <div
-                                class="text-[96px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                                class="text-[80px] font-bold stat-value text-[var(--color-text-primary)] leading-none -tracking-wider"
                             >
                                 {appStore.stats?.activeDays ?? 0}
                             </div>
                             <div
-                                class="text-[24px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-2"
+                                class="flex items-center gap-2 text-[var(--color-accent)] mt-1"
                             >
-                                Active Days
+                                <CalendarCheck
+                                    class="w-6 h-6"
+                                    strokeWidth={2}
+                                />
+                                <span
+                                    class="text-[20px] font-bold uppercase tracking-wider"
+                                    >Active Days</span
+                                >
                             </div>
                         </div>
-                        <div class="breakdown-stat-card">
+                        <div class="text-left">
                             <div
-                                class="flex items-center gap-4 mb-4 text-[var(--color-accent)]"
-                            >
-                                <Zap class="w-14 h-14" strokeWidth={1.5} />
-                            </div>
-                            <div
-                                class="text-[96px] font-bold stat-value text-[var(--color-text-primary)] leading-none"
+                                class="text-[80px] font-bold stat-value text-[var(--color-text-primary)] leading-none -tracking-wider"
                             >
                                 {appStore.stats?.longestStreak ?? 0}
                             </div>
                             <div
-                                class="text-[24px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider mt-2"
+                                class="flex items-center gap-2 text-[var(--color-accent)] mt-1"
                             >
-                                Day Streak
+                                <Zap class="w-6 h-6" strokeWidth={2} />
+                                <span
+                                    class="text-[20px] font-bold uppercase tracking-wider"
+                                    >Day Streak</span
+                                >
                             </div>
                         </div>
                     </div>
 
-                    <!-- Personal Records -->
+                    <!-- Personal Records - Minimal List -->
                     {#if appStore.records}
-                        <div class="mb-auto">
-                            <h2
-                                class="text-[32px] font-semibold text-[var(--color-text-muted)] mb-6 uppercase tracking-wider"
-                            >
-                                Personal Records
-                            </h2>
-                            <div class="grid grid-cols-3 gap-6">
+                        <div
+                            class="mb-auto mt-4 px-4 py-6 bg-[rgba(255,255,255,0.03)] rounded-2xl border border-[rgba(255,255,255,0.05)]"
+                        >
+                            <div class="flex justify-between items-center mb-6">
+                                <h2
+                                    class="text-[20px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest"
+                                >
+                                    Personal Bests
+                                </h2>
+                                <Trophy class="w-6 h-6 text-amber-400" />
+                            </div>
+
+                            <div class="space-y-6">
                                 {#if appStore.records.longestDistance}
-                                    <div class="record-card">
-                                        <Trophy
-                                            class="w-12 h-12 text-amber-400 mb-3 mx-auto"
-                                            strokeWidth={1.5}
-                                        />
-                                        <div
-                                            class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none mb-1"
+                                    <div
+                                        class="flex items-center justify-between"
+                                    >
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-[var(--color-surface-elevated)] flex items-center justify-center"
+                                            >
+                                                <Trophy
+                                                    class="w-4 h-4 text-[var(--color-text-dim)]"
+                                                />
+                                            </div>
+                                            <span
+                                                class="text-[20px] text-[var(--color-text-primary)] font-medium"
+                                                >Longest Distance</span
+                                            >
+                                        </div>
+                                        <span
+                                            class="text-[24px] font-bold font-mono text-[var(--color-text-primary)]"
                                         >
                                             {formatDistance(
                                                 appStore.records.longestDistance
                                                     .value,
                                             )}
-                                        </div>
-                                        <div
-                                            class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-wide"
-                                        >
-                                            Longest
-                                        </div>
+                                        </span>
                                     </div>
                                 {/if}
                                 {#if appStore.records.longestDuration}
-                                    <div class="record-card">
-                                        <Hourglass
-                                            class="w-12 h-12 text-amber-400 mb-3 mx-auto"
-                                            strokeWidth={1.5}
-                                        />
-                                        <div
-                                            class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none mb-1"
+                                    <div
+                                        class="flex items-center justify-between"
+                                    >
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-[var(--color-surface-elevated)] flex items-center justify-center"
+                                            >
+                                                <Hourglass
+                                                    class="w-4 h-4 text-[var(--color-text-dim)]"
+                                                />
+                                            </div>
+                                            <span
+                                                class="text-[20px] text-[var(--color-text-primary)] font-medium"
+                                                >Duration</span
+                                            >
+                                        </div>
+                                        <span
+                                            class="text-[24px] font-bold font-mono text-[var(--color-text-primary)]"
                                         >
                                             {formatDuration(
                                                 appStore.records.longestDuration
                                                     .value,
                                             )}
-                                        </div>
-                                        <div
-                                            class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-wide"
-                                        >
-                                            Duration
-                                        </div>
+                                        </span>
                                     </div>
                                 {/if}
                                 {#if appStore.records.biggestBurn}
-                                    <div class="record-card">
-                                        <Sparkles
-                                            class="w-12 h-12 text-amber-400 mb-3 mx-auto"
-                                            strokeWidth={1.5}
-                                        />
-                                        <div
-                                            class="text-[48px] font-bold stat-value text-[var(--color-text-primary)] leading-none mb-1"
+                                    <div
+                                        class="flex items-center justify-between"
+                                    >
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-[var(--color-surface-elevated)] flex items-center justify-center"
+                                            >
+                                                <Flame
+                                                    class="w-4 h-4 text-[var(--color-text-dim)]"
+                                                />
+                                            </div>
+                                            <span
+                                                class="text-[20px] text-[var(--color-text-primary)] font-medium"
+                                                >Biggest Burn</span
+                                            >
+                                        </div>
+                                        <span
+                                            class="text-[24px] font-bold font-mono text-[var(--color-text-primary)]"
                                         >
                                             {formatCalories(
                                                 appStore.records.biggestBurn
                                                     .value,
                                             )}
-                                        </div>
-                                        <div
-                                            class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-wide"
-                                        >
-                                            Burn
-                                        </div>
+                                        </span>
                                     </div>
                                 {/if}
                             </div>
@@ -464,7 +511,7 @@
                     <!-- Watermark -->
                     <div class="mt-auto pt-6 text-center">
                         <p
-                            class="text-[24px] text-[var(--color-text-dim)] font-medium"
+                            class="text-[20px] text-[var(--color-text-dim)] font-medium tracking-wide"
                         >
                             activeyear.app
                         </p>
@@ -494,148 +541,68 @@
     }
 
     .theme-neon .export-background {
-        background: linear-gradient(to bottom, #0f1014, #0a0a0b);
+        background: radial-gradient(circle at 50% 0%, #1a1b26 0%, #050505 100%);
     }
 
     .theme-minimalist .export-background {
-        background: var(--color-surface);
+        background: #fdfdfd;
     }
 
     .theme-retro .export-background {
-        background: linear-gradient(135deg, #1e1b4b 0%, #2e2660 100%);
+        background: linear-gradient(135deg, #2e2660 0%, #1e1b4b 100%);
     }
 
-    /* Title glow for Neon theme */
+    /* Typography Overrides */
     .theme-neon .export-title {
-        text-shadow: 0 0 30px var(--color-accent-glow);
+        text-shadow: 0 0 40px var(--color-accent-glow);
         color: var(--color-text-primary);
     }
 
-    .theme-minimalist .export-title,
-    .theme-retro .export-title {
-        color: var(--color-text-primary);
+    .theme-minimalist .export-title {
+        color: #000;
+        letter-spacing: -0.05em;
     }
 
-    /* Retro title has subtle glow */
+    .theme-minimalist .stat-value {
+        color: #000 !important;
+    }
+
+    .theme-minimalist .text-\[var\(--color-text-primary\)\] {
+        color: #111 !important;
+    }
+
+    .theme-minimalist .text-\[var\(--color-text-muted\)\] {
+        color: #666 !important;
+    }
+
+    .theme-minimalist .text-\[var\(--color-text-dim\)\] {
+        color: #999 !important;
+    }
+
     .theme-retro .export-title {
-        text-shadow: 0 0 20px var(--color-accent-glow);
+        text-shadow: 3px 3px 0px var(--color-accent-dim);
+        font-style: italic;
     }
 
     .stat-value {
-        font-family: "JetBrains Mono", monospace;
-        letter-spacing: -0.02em;
+        font-feature-settings: "tnum";
+        font-variant-numeric: tabular-nums;
     }
 
-    /* ============== */
-    /* SUMMARY STYLES */
-    /* ============== */
-
-    .hero-stat-block {
-        padding: 3rem;
-        border-radius: 2rem;
-        background: var(--color-accent-subtle);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .theme-neon .hero-stat-block {
-        box-shadow: 0 0 40px var(--color-accent-glow);
-    }
-
-    .theme-minimalist .hero-stat-block {
-        background: rgba(0, 0, 0, 0.03);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 1rem;
-    }
-
-    .theme-retro .hero-stat-block {
-        border: 4px solid var(--color-accent);
-        border-radius: 0;
-    }
-
-    .summary-stat-card {
-        background: var(--color-accent-subtle);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 1.5rem;
-        padding: 1.5rem;
-        text-align: center;
-    }
-
-    .theme-minimalist .summary-stat-card {
-        background: rgba(0, 0, 0, 0.02);
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        border-radius: 0.75rem;
-    }
-
-    .theme-retro .summary-stat-card {
-        border: 3px solid var(--color-accent);
-        border-radius: 0;
-    }
-
-    /* ================ */
-    /* BREAKDOWN STYLES */
-    /* ================ */
-
-    .sport-bar-row {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
+    /* Progress Bar */
     .sport-bar-fill {
-        background: linear-gradient(
-            90deg,
-            var(--color-accent),
-            var(--color-accent-glow)
-        );
-        transition: width 0.5s ease-out;
+        background: var(--color-accent);
+        box-shadow: 0 0 15px var(--color-accent-glow);
     }
 
     .theme-minimalist .sport-bar-fill {
-        background: var(--color-accent);
+        background: #000;
+        box-shadow: none;
     }
 
     .theme-retro .sport-bar-fill {
-        background: var(--color-accent);
-        border-radius: 0;
-    }
-
-    .breakdown-stat-card {
-        background: var(--color-accent-subtle);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 1.5rem;
-        padding: 2rem;
-    }
-
-    .theme-neon .breakdown-stat-card {
-        box-shadow: 0 0 20px var(--color-accent-glow);
-    }
-
-    .theme-minimalist .breakdown-stat-card {
-        background: rgba(0, 0, 0, 0.03);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 0.75rem;
-    }
-
-    .theme-retro .breakdown-stat-card {
-        border: 4px solid var(--color-accent);
-        border-radius: 0;
-    }
-
-    .record-card {
-        background: var(--color-accent-subtle);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 1.25rem;
-        padding: 1.5rem;
-        text-align: center;
-    }
-
-    .theme-minimalist .record-card {
-        background: rgba(0, 0, 0, 0.02);
-        border: 1px solid rgba(0, 0, 0, 0.08);
-    }
-
-    .theme-retro .record-card {
-        border: 3px solid var(--color-accent);
+        background: linear-gradient(90deg, #ff00cc, #3333ff);
+        box-shadow: none;
         border-radius: 0;
     }
 </style>

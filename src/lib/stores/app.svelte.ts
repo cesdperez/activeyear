@@ -100,6 +100,9 @@ function createAppStore() {
         status = 'ready';
     }
 
+    // UI state
+    let breakdownMetric = $state<'count' | 'duration'>('count');
+
     return {
         get activities() {
             return activities;
@@ -142,6 +145,12 @@ function createAppStore() {
         },
         set confettiEnabled(value: boolean) {
             confettiEnabled = value;
+        },
+        get breakdownMetric() {
+            return breakdownMetric;
+        },
+        set breakdownMetric(value: 'count' | 'duration') {
+            breakdownMetric = value;
         }
     };
 }
