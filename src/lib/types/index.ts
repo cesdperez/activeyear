@@ -68,7 +68,7 @@ export type Theme = 'neon' | 'minimalist' | 'retro';
 
 export type AspectRatio = '9:16';
 
-export type CardVariant = 'summary' | 'breakdown' | 'favorites';
+export type CardVariant = 'summary' | 'breakdown' | 'highlights';
 
 export type SummaryMetric = 'distance' | 'elevation' | 'duration' | 'calories';
 
