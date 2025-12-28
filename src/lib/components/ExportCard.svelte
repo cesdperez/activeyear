@@ -113,7 +113,7 @@
                 (a, b) =>
                     b[appStore.breakdownMetric] - a[appStore.breakdownMetric],
             )
-            .slice(0, 5),
+            .slice(0, 4),
     );
 
     // Current theme
@@ -382,9 +382,7 @@
                     </div>
 
                     <!-- Watermark -->
-                    <div
-                        class="mt-auto pt-8 text-center bg-gradient-to-t from-[var(--color-surface)] to-transparent"
-                    >
+                    <div class="mt-auto pt-8 text-center">
                         <p
                             class="text-[24px] text-[var(--color-text-dim)] font-medium tracking-widest opacity-80"
                         >
@@ -433,7 +431,7 @@
 
                     <!-- Radial Sport Distribution Chart -->
                     {#if topSports.length > 0}
-                        <div class="flex items-center gap-12 mb-20 px-4">
+                        <div class="flex items-center gap-12 mb-32 px-4">
                             <!-- Left: Radial Sport Distribution Chart -->
                             <div class="shrink-0 relative">
                                 <div
@@ -579,7 +577,7 @@
                             .sort((a, b) => b.count - a.count)
                             .slice(0, 2)
                             .map((item) => item.idx)}
-                        <div class="mb-20 px-2">
+                        <div class="mb-32 px-2">
                             <div
                                 class="text-[18px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest mb-4 text-center"
                             >
@@ -629,10 +627,10 @@
                             ((appStore.stats?.activeDays ?? 0) / 365) * 100,
                             100,
                         )}
-                        <div class="grid grid-cols-2 gap-6 mb-20">
+                        <div class="grid grid-cols-2 gap-6 mb-32">
                             <!-- Active Days -->
                             <div
-                                class="flex flex-col items-center text-center p-6 rounded-2xl bg-[rgba(0,0,0,0.02)] consistency-card"
+                                class="flex flex-col items-center text-center p-6 rounded-2xl consistency-card"
                             >
                                 <div class="relative mb-3">
                                     <svg
@@ -693,7 +691,7 @@
 
                             <!-- Day Streak -->
                             <div
-                                class="flex flex-col items-center text-center p-6 rounded-2xl bg-[rgba(0,0,0,0.02)] consistency-card"
+                                class="flex flex-col items-center text-center p-6 rounded-2xl consistency-card"
                             >
                                 <div class="relative mb-3">
                                     <svg
@@ -852,9 +850,7 @@
                     {/if}
 
                     <!-- Watermark (matching summary) -->
-                    <div
-                        class="mt-auto pt-8 text-center bg-gradient-to-t from-[var(--color-surface)] to-transparent"
-                    >
+                    <div class="mt-auto pt-8 text-center">
                         <p
                             class="text-[24px] text-[var(--color-text-dim)] font-medium tracking-widest opacity-80"
                         >
@@ -1140,39 +1136,29 @@
         align-items: center;
         text-align: center;
         padding: 20px 12px;
-        background: linear-gradient(
-            to bottom right,
-            var(--color-surface-elevated),
-            var(--color-surface)
-        );
+        background: transparent;
         border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        border: none;
     }
 
     .record-icon-compact {
         width: 56px;
         height: 56px;
-        border-radius: 14px;
-        background: var(--color-surface-hover);
-        border: 1px solid rgba(255, 255, 255, 0.05);
         display: flex;
         align-items: center;
         justify-content: center;
         color: var(--color-gold);
         margin-bottom: 12px;
+        background: transparent;
+        border: none;
+        box-shadow: none;
     }
 
-    .theme-minimalist .record-card-compact {
-        background: #fff;
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    }
-
+    .theme-minimalist .record-card-compact,
     .theme-minimalist .record-icon-compact {
-        background: #fafafa;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        color: var(--color-gold);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+        background: transparent;
+        border: none;
+        box-shadow: none;
     }
 
     /* Theme-specific background/stroke overrides */
@@ -1192,12 +1178,10 @@
     }
 
     .theme-neon .consistency-card,
-    .theme-retro .consistency-card {
-        background-color: rgba(255, 255, 255, 0.02) !important;
-    }
-
+    .theme-retro .consistency-card,
     .theme-minimalist .consistency-card {
-        background-color: rgba(0, 0, 0, 0.02) !important;
-        border: 1px solid rgba(0, 0, 0, 0.05);
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
     }
 </style>
