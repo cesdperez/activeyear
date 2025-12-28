@@ -375,22 +375,22 @@
                     ]}
 
                     <!-- Header with Username -->
-                    <header class="text-center mb-12">
+                    <header class="text-center mb-[160px] relative">
                         {#if appStore.userName}
                             <p
-                                class="text-[42px] font-bold text-[var(--color-accent)] mb-2 leading-none uppercase tracking-widest"
+                                class="text-[42px] font-bold text-[var(--color-accent)] mb-2 relative z-10 leading-none uppercase tracking-widest"
                             >
                                 {appStore.userName}'s
                             </p>
                         {/if}
                         <div class="flex flex-col items-center justify-center">
                             <h2
-                                class="text-[120px] font-black text-[var(--color-text-primary)] leading-[0.8] mb-2 tracking-tighter"
+                                class="text-[140px] font-black text-[var(--color-text-primary)] leading-[0.8] mb-2 tracking-tighter"
                             >
                                 2025
                             </h2>
                             <h1
-                                class="text-[56px] font-bold tracking-[0.08em] export-title leading-none uppercase text-[var(--color-text-dim)]"
+                                class="text-[72px] font-bold tracking-[0.15em] export-title leading-none relative z-10 uppercase text-[var(--color-text-dim)]"
                             >
                                 BREAKDOWN
                             </h1>
@@ -399,16 +399,15 @@
 
                     <!-- Radial Sport Distribution Chart -->
                     {#if topSports.length > 0}
-                        {@const circumference = 2 * Math.PI * 80}
-                        <!-- Activity Distribution Section (Side-by-Side) -->
-                        {#if topSports.length > 0}
-                            {@const circumference = 2 * Math.PI * 80}
-                            <div class="flex items-center gap-12 mb-10 px-4">
-                                <!-- Left: Radial Sport Distribution Chart -->
-                                <div class="shrink-0 relative">
-                                    <div
-                                        class="donut-chart-container !w-[280px] !h-[280px]"
-                                    >
+                        <div class="flex items-center gap-12 mb-24 px-4">
+                            <!-- Left: Radial Sport Distribution Chart -->
+                            <div class="shrink-0 relative">
+                                <div
+                                    class="donut-chart-container !w-[280px] !h-[280px]"
+                                >
+                                    {#if true}
+                                        {@const circumference =
+                                            2 * Math.PI * 80}
                                         <svg
                                             viewBox="0 0 200 200"
                                             class="donut-chart"
@@ -458,84 +457,81 @@
                                                 />
                                             {/each}
                                         </svg>
-                                        <!-- Center content -->
-                                        <div class="donut-center">
-                                            <div
-                                                class="text-[72px] font-black text-[var(--color-text-primary)] leading-none"
-                                            >
-                                                {totalCount}
-                                            </div>
-                                            <div
-                                                class="text-[20px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest"
-                                            >
-                                                Activities
-                                            </div>
+                                    {/if}
+                                    <!-- Center content -->
+                                    <div class="donut-center">
+                                        <div
+                                            class="text-[72px] font-black text-[var(--color-text-primary)] leading-none"
+                                        >
+                                            {totalCount}
+                                        </div>
+                                        <div
+                                            class="text-[20px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest"
+                                        >
+                                            Activities
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Right: Sport Bars (Similar to Dashboard) -->
-                                <div class="flex-1 space-y-6">
-                                    {#each topSports as sport, i}
-                                        {@const IconComponent =
-                                            sportIcons[sport.type] ?? Target}
-                                        {@const value =
-                                            sport[appStore.breakdownMetric]}
-                                        {@const percentage =
-                                            (value / maxSportCount) * 100}
-                                        {@const color =
-                                            sportColors[i % sportColors.length]}
+                            <!-- Right: Sport Bars (Similar to Dashboard) -->
+                            <div class="flex-1 space-y-6">
+                                {#each topSports as sport, i}
+                                    {@const IconComponent =
+                                        sportIcons[sport.type] ?? Target}
+                                    {@const value =
+                                        sport[appStore.breakdownMetric]}
+                                    {@const percentage =
+                                        (value / maxSportCount) * 100}
+                                    {@const color =
+                                        sportColors[i % sportColors.length]}
 
-                                        <div class="flex flex-col gap-2">
+                                    <div class="flex flex-col gap-2">
+                                        <div
+                                            class="flex justify-between items-center"
+                                        >
                                             <div
-                                                class="flex justify-between items-center"
+                                                class="flex items-center gap-3"
                                             >
                                                 <div
-                                                    class="flex items-center gap-3"
+                                                    class="w-8 h-8 rounded-lg flex items-center justify-center"
+                                                    style="background: {color}20; color: {color};"
                                                 >
-                                                    <div
-                                                        class="w-8 h-8 rounded-lg flex items-center justify-center"
-                                                        style="background: {color}20; color: {color};"
-                                                    >
-                                                        <IconComponent
-                                                            class="w-5 h-5"
-                                                            weight="bold"
-                                                        />
-                                                    </div>
-                                                    <span
-                                                        class="text-[24px] font-bold text-[var(--color-text-primary)] uppercase tracking-wide"
-                                                    >
-                                                        {sportNames[
-                                                            sport.type
-                                                        ] ?? sport.type}
-                                                    </span>
+                                                    <IconComponent
+                                                        class="w-5 h-5"
+                                                        weight="bold"
+                                                    />
                                                 </div>
-                                                <div class="text-right">
-                                                    <div
-                                                        class="text-[22px] font-bold text-[var(--color-text-primary)] leading-none"
-                                                    >
-                                                        {appStore.breakdownMetric ===
-                                                        "count"
-                                                            ? value
-                                                            : formatDuration(
-                                                                  value,
-                                                              )}
-                                                    </div>
-                                                </div>
+                                                <span
+                                                    class="text-[24px] font-bold text-[var(--color-text-primary)] uppercase tracking-wide"
+                                                >
+                                                    {sportNames[sport.type] ??
+                                                        sport.type}
+                                                </span>
                                             </div>
-                                            <div
-                                                class="h-3 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden"
-                                            >
+                                            <div class="text-right">
                                                 <div
-                                                    class="h-full rounded-full transition-all duration-500"
-                                                    style="width: {percentage}%; background: {color}; filter: drop-shadow(0 0 4px {color}40);"
-                                                ></div>
+                                                    class="text-[22px] font-bold text-[var(--color-text-primary)] leading-none"
+                                                >
+                                                    {appStore.breakdownMetric ===
+                                                    "count"
+                                                        ? value
+                                                        : formatDuration(value)}
+                                                </div>
                                             </div>
                                         </div>
-                                    {/each}
-                                </div>
+                                        <div
+                                            class="h-3 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden"
+                                        >
+                                            <div
+                                                class="h-full rounded-full transition-all duration-500"
+                                                style="width: {percentage}%; background: {color}; filter: drop-shadow(0 0 4px {color}40);"
+                                            ></div>
+                                        </div>
+                                    </div>
+                                {/each}
                             </div>
-                        {/if}
+                        </div>
                     {/if}
 
                     <!-- Weekly Activity Pattern -->
@@ -548,7 +544,7 @@
                             .sort((a, b) => b.count - a.count)
                             .slice(0, 2)
                             .map((item) => item.idx)}
-                        <div class="mb-10 px-2">
+                        <div class="mb-24 px-2">
                             <div
                                 class="text-[18px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest mb-4 text-center"
                             >
@@ -595,7 +591,7 @@
                             ((appStore.stats?.activeDays ?? 0) / 365) * 100,
                             100,
                         )}
-                        <div class="grid grid-cols-2 gap-6 mb-10">
+                        <div class="grid grid-cols-2 gap-6 mb-24">
                             <!-- Active Days -->
                             <div
                                 class="flex flex-col items-center text-center p-6 rounded-2xl bg-[rgba(255,255,255,0.02)]"
@@ -715,94 +711,99 @@
                         </div>
                     {/if}
 
-                    <!-- Personal Records - Horizontal Cards -->
+                    <!-- Personal Records - Horizontal Grid (matching Dashboard) -->
                     {#if appStore.records}
                         <div class="mb-auto">
-                            <div class="flex items-center gap-3 mb-5">
-                                <Trophy
-                                    class="w-8 h-8 text-amber-400"
-                                    weight="fill"
-                                />
+                            <div class="flex items-end gap-4 mb-6">
                                 <h2
-                                    class="text-[28px] font-bold text-[var(--color-text-primary)] uppercase tracking-wide"
+                                    class="text-[32px] font-bold text-[var(--color-text-primary)] uppercase tracking-widest"
                                 >
-                                    Personal Bests
+                                    Personal Records
                                 </h2>
+                                <div
+                                    class="h-1 flex-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent opacity-30 mb-2"
+                                ></div>
                             </div>
 
-                            <div class="grid grid-cols-3 gap-3">
+                            <div class="grid grid-cols-3 gap-4">
                                 {#if appStore.records.longestDistance}
-                                    <div class="record-card">
-                                        <div
-                                            class="record-icon bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border-cyan-400/40"
-                                        >
-                                            <Ruler
-                                                class="w-6 h-6 text-cyan-400"
-                                                weight="bold"
+                                    {@const record =
+                                        appStore.records.longestDistance}
+                                    <div class="record-card-compact">
+                                        <div class="record-icon-compact">
+                                            <Trophy
+                                                class="w-10 h-10"
+                                                weight="fill"
                                             />
                                         </div>
                                         <div
-                                            class="text-[28px] font-black text-[var(--color-text-primary)] leading-none mt-3"
+                                            class="text-[32px] font-black text-white leading-tight"
                                         >
-                                            {formatDistance(
-                                                appStore.records.longestDistance
-                                                    .value,
-                                            )}
+                                            {formatDistance(record.value)}
                                         </div>
                                         <div
-                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-wider mt-1"
+                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80"
                                         >
-                                            Distance
+                                            Longest Distance
+                                        </div>
+                                        <div
+                                            class="text-[12px] text-[var(--color-accent)] mt-1 font-medium"
+                                        >
+                                            {record.activity.title}
                                         </div>
                                     </div>
                                 {/if}
                                 {#if appStore.records.longestDuration}
-                                    <div class="record-card">
-                                        <div
-                                            class="record-icon bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-400/40"
-                                        >
+                                    {@const record =
+                                        appStore.records.longestDuration}
+                                    <div class="record-card-compact">
+                                        <div class="record-icon-compact">
                                             <Hourglass
-                                                class="w-6 h-6 text-purple-400"
-                                                weight="bold"
+                                                class="w-10 h-10"
+                                                weight="fill"
                                             />
                                         </div>
                                         <div
-                                            class="text-[28px] font-black text-[var(--color-text-primary)] leading-none mt-3"
+                                            class="text-[32px] font-black text-white leading-tight"
                                         >
-                                            {formatDuration(
-                                                appStore.records.longestDuration
-                                                    .value,
-                                            )}
+                                            {formatDuration(record.value)}
                                         </div>
                                         <div
-                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-wider mt-1"
+                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80"
                                         >
-                                            Duration
+                                            Longest Duration
+                                        </div>
+                                        <div
+                                            class="text-[12px] text-[var(--color-accent)] mt-1 font-medium"
+                                        >
+                                            {record.activity.title}
                                         </div>
                                     </div>
                                 {/if}
                                 {#if appStore.records.biggestBurn}
-                                    <div class="record-card">
-                                        <div
-                                            class="record-icon bg-gradient-to-br from-orange-500/20 to-red-500/20 border-orange-400/40"
-                                        >
+                                    {@const record =
+                                        appStore.records.biggestBurn}
+                                    <div class="record-card-compact">
+                                        <div class="record-icon-compact">
                                             <Fire
-                                                class="w-6 h-6 text-orange-400"
-                                                weight="bold"
+                                                class="w-10 h-10"
+                                                weight="fill"
                                             />
                                         </div>
                                         <div
-                                            class="text-[28px] font-black text-[var(--color-text-primary)] leading-none mt-3"
+                                            class="text-[32px] font-black text-white leading-tight"
                                         >
-                                            {formatCalories(
-                                                appStore.records.biggestBurn
-                                                    .value,
-                                            )}
+                                            {formatCalories(record.value)}
                                         </div>
                                         <div
-                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-wider mt-1"
+                                            class="text-[14px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80"
                                         >
-                                            Calories
+                                            Biggest Burn
+                                        </div>
+                                        <div
+                                            class="text-[12px] text-[var(--color-accent)] mt-1 font-medium"
+                                        >
+                                            {record.activity.title}
                                         </div>
                                     </div>
                                 {/if}
@@ -1043,24 +1044,30 @@
     /* Record Cards */
     .record-card {
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        padding: 16px 12px;
-        background: rgba(255, 255, 255, 0.02);
-        border-radius: 16px;
+        align-items: flex-start;
+        gap: 24px;
+        padding: 24px;
+        background: linear-gradient(
+            to bottom right,
+            var(--color-surface-elevated),
+            var(--color-surface)
+        );
+        border-radius: 20px;
         border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .record-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
+        flex-shrink: 0;
+        width: 100px;
+        height: 100px;
+        border-radius: 24px;
+        background: var(--color-surface-hover);
+        border: 1px solid rgba(255, 255, 255, 0.05);
         display: flex;
         align-items: center;
         justify-content: center;
-        border-width: 2px;
-        border-style: solid;
+        color: var(--color-gold);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     }
 
     .theme-minimalist .donut-segment {
@@ -1084,5 +1091,45 @@
 
     .theme-retro .donut-segment {
         filter: drop-shadow(0 0 12px var(--color-accent)) !important;
+    }
+
+    /* Compact Record Cards (Horizontal Layout) */
+    .record-card-compact {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 20px 12px;
+        background: linear-gradient(
+            to bottom right,
+            var(--color-surface-elevated),
+            var(--color-surface)
+        );
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .record-icon-compact {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        background: var(--color-surface-hover);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-gold);
+        margin-bottom: 12px;
+    }
+
+    .theme-minimalist .record-card-compact {
+        background: rgba(0, 0, 0, 0.02);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .theme-minimalist .record-icon-compact {
+        background: rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        color: #000;
     }
 </style>

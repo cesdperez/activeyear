@@ -106,6 +106,12 @@
 			1,
 		),
 	);
+
+	const totalCount = $derived(
+		sortedBreakdown.reduce((sum, s) => sum + s.count, 0),
+	);
+
+	const sportColors = ["#00d4ff", "#00ff88", "#ff6b6b", "#ffd93d", "#c084fc"];
 </script>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative">
@@ -411,47 +417,128 @@
 				</div>
 			</div>
 
-			<div class="space-y-4 max-w-4xl">
-				{#each sortedBreakdown as sport, i (sport.type)}
-					{@const IconComponent = sportIcons[sport.type] ?? Target}
-					{@const value = sport[breakdownMetric]}
-					{@const percentage = (value / maxMetricValue) * 100}
+			<div
+				class="flex flex-col lg:flex-row items-center lg:items-start gap-12"
+			>
+				<!-- Left: Donut Chart -->
+				<div class="shrink-0 relative">
 					<div
-						class="flex items-center gap-4 group"
-						style="animation: fadeInUp 0.4s ease-out forwards; animation-delay: {600 +
-							i * 50}ms"
+						class="donut-chart-container !w-[280px] !h-[280px] md:!w-[340px] md:!h-[340px]"
 					>
-						<div
-							class="w-10 h-10 rounded-lg bg-[var(--color-surface-elevated)] flex items-center justify-center text-[var(--color-accent)] group-hover:scale-110 transition-transform"
-						>
-							<IconComponent class="w-5 h-5" weight="bold" />
+						{#if true}
+							{@const circumference = 2 * Math.PI * 80}
+							<svg viewBox="0 0 200 200" class="donut-chart">
+								<circle
+									cx="100"
+									cy="100"
+									r="80"
+									fill="none"
+									stroke="rgba(255,255,255,0.05)"
+									stroke-width="28"
+								/>
+								{#each sortedBreakdown as sport, i}
+									{@const percentage =
+										sport.count / totalCount}
+									{@const offset = sortedBreakdown
+										.slice(0, i)
+										.reduce(
+											(sum, s) =>
+												sum +
+												(s.count / totalCount) *
+													circumference,
+											0,
+										)}
+									<circle
+										cx="100"
+										cy="100"
+										r="80"
+										fill="none"
+										stroke={sportColors[
+											i % sportColors.length
+										]}
+										stroke-width="28"
+										stroke-dasharray="{percentage *
+											circumference -
+											2} {circumference}"
+										stroke-dashoffset={-offset}
+										stroke-linecap="round"
+										transform="rotate(-90 100 100)"
+										class="donut-segment"
+										style="filter: drop-shadow(0 0 8px {sportColors[
+											i % sportColors.length
+										]}40);"
+									/>
+								{/each}
+							</svg>
+						{/if}
+						<div class="donut-center">
+							<div
+								class="text-4xl md:text-5xl font-black text-white leading-none"
+							>
+								{totalCount}
+							</div>
+							<div
+								class="text-xs md:text-sm font-bold text-[var(--color-text-muted)] uppercase tracking-widest mt-1"
+							>
+								Activities
+							</div>
 						</div>
+					</div>
+				</div>
 
-						<div class="flex-1 min-w-0">
-							<div class="flex justify-between items-end mb-1">
-								<span class="font-bold text-white truncate">
-									{sportNames[sport.type] ?? sport.type}
-								</span>
-								<span
-									class="font-mono text-sm text-[var(--color-accent)]"
-								>
-									{breakdownMetric === "count"
-										? value
-										: formatDuration(value)}
-								</span>
+				<!-- Right: Sport Bars -->
+				<div class="flex-1 space-y-6 w-full max-w-2xl">
+					{#each sortedBreakdown as sport, i (sport.type)}
+						{@const IconComponent =
+							sportIcons[sport.type] ?? Target}
+						{@const value = sport[breakdownMetric]}
+						{@const percentage = (value / maxMetricValue) * 100}
+						{@const color = sportColors[i % sportColors.length]}
+
+						<div
+							class="flex flex-col gap-2 group"
+							style="animation: fadeInUp 0.4s ease-out forwards; animation-delay: {600 +
+								i * 50}ms"
+						>
+							<div class="flex justify-between items-center">
+								<div class="flex items-center gap-3">
+									<div
+										class="w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110"
+										style="background: {color}20; color: {color};"
+									>
+										<IconComponent
+											class="w-5 h-5"
+											weight="bold"
+										/>
+									</div>
+									<span
+										class="font-bold text-white uppercase tracking-wide"
+									>
+										{sportNames[sport.type] ?? sport.type}
+									</span>
+								</div>
+								<div class="text-right">
+									<span
+										class="font-mono font-bold text-[var(--color-accent)]"
+									>
+										{breakdownMetric === "count"
+											? value
+											: formatDuration(value)}
+									</span>
+								</div>
 							</div>
 
 							<div
 								class="h-2 bg-[var(--color-surface-elevated)] rounded-full overflow-hidden"
 							>
 								<div
-									class="h-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-dim,var(--color-accent))] rounded-full transition-all duration-500 ease-out"
-									style="width: {percentage}%"
+									class="h-full rounded-full transition-all duration-1000 ease-out"
+									style="width: {percentage}%; background: {color}; box-shadow: 0 0 10px {color}40;"
 								></div>
 							</div>
 						</div>
-					</div>
-				{/each}
+					{/each}
+				</div>
 			</div>
 		</section>
 	{/if}
@@ -484,5 +571,28 @@
 			opacity: 1;
 			transform: translateY(0);
 		}
+	}
+
+	/* Donut Chart */
+	.donut-chart-container {
+		position: relative;
+	}
+
+	.donut-chart {
+		width: 100%;
+		height: 100%;
+		overflow: visible;
+	}
+
+	.donut-segment {
+		transition: stroke-dasharray 0.3s ease;
+	}
+
+	.donut-center {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		text-align: center;
 	}
 </style>
