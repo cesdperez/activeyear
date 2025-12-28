@@ -152,7 +152,9 @@
 	const sportColors = ["#00d4ff", "#00ff88", "#ff6b6b", "#ffd93d", "#c084fc"];
 </script>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative">
+<div
+	class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative overflow-x-hidden"
+>
 	<div class="absolute top-4 right-4 md:right-8 z-10">
 		<button
 			class="p-2 rounded-full transition-all duration-300 hover:scale-110 {appStore.confettiEnabled
