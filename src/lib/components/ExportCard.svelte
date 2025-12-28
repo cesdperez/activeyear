@@ -400,112 +400,142 @@
                     <!-- Radial Sport Distribution Chart -->
                     {#if topSports.length > 0}
                         {@const circumference = 2 * Math.PI * 80}
-                        <div class="flex justify-center mb-10 relative">
-                            <div class="donut-chart-container">
-                                <svg viewBox="0 0 200 200" class="donut-chart">
-                                    <!-- Background circle -->
-                                    <circle
-                                        cx="100"
-                                        cy="100"
-                                        r="80"
-                                        fill="none"
-                                        stroke="rgba(255,255,255,0.05)"
-                                        stroke-width="28"
-                                    />
-                                    <!-- Sport segments -->
+                        <!-- Activity Distribution Section (Side-by-Side) -->
+                        {#if topSports.length > 0}
+                            {@const circumference = 2 * Math.PI * 80}
+                            <div class="flex items-center gap-12 mb-10 px-4">
+                                <!-- Left: Radial Sport Distribution Chart -->
+                                <div class="shrink-0 relative">
+                                    <div
+                                        class="donut-chart-container !w-[280px] !h-[280px]"
+                                    >
+                                        <svg
+                                            viewBox="0 0 200 200"
+                                            class="donut-chart"
+                                        >
+                                            <!-- Background circle -->
+                                            <circle
+                                                cx="100"
+                                                cy="100"
+                                                r="80"
+                                                fill="none"
+                                                stroke="rgba(255,255,255,0.05)"
+                                                stroke-width="28"
+                                            />
+                                            <!-- Sport segments -->
+                                            {#each topSports as sport, i}
+                                                {@const percentage =
+                                                    sport.count / totalCount}
+                                                {@const offset = topSports
+                                                    .slice(0, i)
+                                                    .reduce(
+                                                        (sum, s) =>
+                                                            sum +
+                                                            (s.count /
+                                                                totalCount) *
+                                                                circumference,
+                                                        0,
+                                                    )}
+                                                <circle
+                                                    cx="100"
+                                                    cy="100"
+                                                    r="80"
+                                                    fill="none"
+                                                    stroke={sportColors[
+                                                        i % sportColors.length
+                                                    ]}
+                                                    stroke-width="28"
+                                                    stroke-dasharray="{percentage *
+                                                        circumference -
+                                                        4} {circumference}"
+                                                    stroke-dashoffset={-offset}
+                                                    stroke-linecap="round"
+                                                    transform="rotate(-90 100 100)"
+                                                    class="donut-segment"
+                                                    style="filter: drop-shadow(0 0 8px {sportColors[
+                                                        i % sportColors.length
+                                                    ]}40);"
+                                                />
+                                            {/each}
+                                        </svg>
+                                        <!-- Center content -->
+                                        <div class="donut-center">
+                                            <div
+                                                class="text-[72px] font-black text-[var(--color-text-primary)] leading-none"
+                                            >
+                                                {totalCount}
+                                            </div>
+                                            <div
+                                                class="text-[20px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest"
+                                            >
+                                                Activities
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right: Sport Bars (Similar to Dashboard) -->
+                                <div class="flex-1 space-y-6">
                                     {#each topSports as sport, i}
+                                        {@const IconComponent =
+                                            sportIcons[sport.type] ?? Target}
+                                        {@const value =
+                                            sport[appStore.breakdownMetric]}
                                         {@const percentage =
-                                            sport.count / totalCount}
-                                        {@const offset = topSports
-                                            .slice(0, i)
-                                            .reduce(
-                                                (sum, s) =>
-                                                    sum +
-                                                    (s.count / totalCount) *
-                                                        circumference,
-                                                0,
-                                            )}
-                                        <circle
-                                            cx="100"
-                                            cy="100"
-                                            r="80"
-                                            fill="none"
-                                            stroke={sportColors[
-                                                i % sportColors.length
-                                            ]}
-                                            stroke-width="28"
-                                            stroke-dasharray="{percentage *
-                                                circumference -
-                                                4} {circumference}"
-                                            stroke-dashoffset={-offset}
-                                            stroke-linecap="round"
-                                            transform="rotate(-90 100 100)"
-                                            class="donut-segment"
-                                            style="filter: drop-shadow(0 0 8px {sportColors[
-                                                i % sportColors.length
-                                            ]}40);"
-                                        />
+                                            (value / maxSportCount) * 100}
+                                        {@const color =
+                                            sportColors[i % sportColors.length]}
+
+                                        <div class="flex flex-col gap-2">
+                                            <div
+                                                class="flex justify-between items-center"
+                                            >
+                                                <div
+                                                    class="flex items-center gap-3"
+                                                >
+                                                    <div
+                                                        class="w-8 h-8 rounded-lg flex items-center justify-center"
+                                                        style="background: {color}20; color: {color};"
+                                                    >
+                                                        <IconComponent
+                                                            class="w-5 h-5"
+                                                            weight="bold"
+                                                        />
+                                                    </div>
+                                                    <span
+                                                        class="text-[24px] font-bold text-[var(--color-text-primary)] uppercase tracking-wide"
+                                                    >
+                                                        {sportNames[
+                                                            sport.type
+                                                        ] ?? sport.type}
+                                                    </span>
+                                                </div>
+                                                <div class="text-right">
+                                                    <div
+                                                        class="text-[22px] font-bold text-[var(--color-text-primary)] leading-none"
+                                                    >
+                                                        {appStore.breakdownMetric ===
+                                                        "count"
+                                                            ? value
+                                                            : formatDuration(
+                                                                  value,
+                                                              )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="h-3 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden"
+                                            >
+                                                <div
+                                                    class="h-full rounded-full transition-all duration-500"
+                                                    style="width: {percentage}%; background: {color}; filter: drop-shadow(0 0 4px {color}40);"
+                                                ></div>
+                                            </div>
+                                        </div>
                                     {/each}
-                                </svg>
-                                <!-- Center content -->
-                                <div class="donut-center">
-                                    <div
-                                        class="text-[72px] font-black text-[var(--color-text-primary)] leading-none"
-                                    >
-                                        {totalCount}
-                                    </div>
-                                    <div
-                                        class="text-[20px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest"
-                                    >
-                                        Activities
-                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Sport Legend Grid -->
-                        <div class="grid grid-cols-2 gap-4 mb-10">
-                            {#each topSports as sport, i}
-                                {@const IconComponent =
-                                    sportIcons[sport.type] ?? Target}
-                                {@const percentage = Math.round(
-                                    (sport.count / totalCount) * 100,
-                                )}
-                                <div
-                                    class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.03)]"
-                                >
-                                    <div
-                                        class="w-10 h-10 rounded-full flex items-center justify-center"
-                                        style="background: {sportColors[
-                                            i % sportColors.length
-                                        ]}20; border: 2px solid {sportColors[
-                                            i % sportColors.length
-                                        ]};"
-                                    >
-                                        <IconComponent
-                                            class="w-5 h-5"
-                                            style="color: {sportColors[
-                                                i % sportColors.length
-                                            ]};"
-                                            weight="bold"
-                                        />
-                                    </div>
-                                    <div class="flex-1">
-                                        <div
-                                            class="text-[22px] font-bold text-[var(--color-text-primary)] uppercase tracking-wide"
-                                        >
-                                            {sportNames[sport.type] ??
-                                                sport.type}
-                                        </div>
-                                        <div
-                                            class="text-[18px] text-[var(--color-text-muted)]"
-                                        >
-                                            {sport.count} · {percentage}%
-                                        </div>
-                                    </div>
-                                </div>
-                            {/each}
-                        </div>
+                        {/if}
                     {/if}
 
                     <!-- Weekly Activity Pattern -->
