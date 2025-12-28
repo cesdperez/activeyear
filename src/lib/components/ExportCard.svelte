@@ -200,19 +200,19 @@
                     <header class="text-center mb-[160px] relative">
                         {#if appStore.userName}
                             <p
-                                class="text-[42px] font-bold text-[var(--color-accent)] mb-2 relative z-10 leading-none uppercase tracking-widest"
+                                class="text-[42px] font-bold text-[var(--color-accent)] mb-2 relative z-10 leading-none uppercase tracking-widest mr-[-0.1em]"
                             >
                                 {appStore.userName}'s
                             </p>
                         {/if}
                         <div class="flex flex-col items-center justify-center">
                             <h2
-                                class="text-[140px] font-black text-[var(--color-text-primary)] leading-[0.8] mb-2 tracking-tighter"
+                                class="text-[140px] font-black text-[var(--color-text-primary)] leading-[0.8] mb-2 tracking-tighter mr-[0.05em]"
                             >
                                 2025
                             </h2>
                             <h1
-                                class="text-[72px] font-bold tracking-[0.15em] export-title leading-none relative z-10 uppercase text-[var(--color-text-dim)]"
+                                class="text-[72px] font-bold tracking-[0.15em] export-title leading-none relative z-10 uppercase text-[var(--color-text-dim)] mr-[-0.15em]"
                             >
                                 YEAR IN SPORT
                             </h1>
@@ -315,6 +315,7 @@
                             label: "Total Distance",
                             value: formatDistance(
                                 appStore.stats?.totalDistance ?? 0,
+                                appStore.unit,
                             ),
                             icon: Ruler,
                             equivalent: `🌍 ${formatEarthLaps(appStore.stats?.totalDistance ?? 0)}`,
@@ -324,6 +325,7 @@
                             label: "Elevation",
                             value: formatElevation(
                                 appStore.stats?.totalElevation ?? 0,
+                                appStore.unit,
                             ),
                             icon: Mountains,
                             equivalent: `🏔️ ${formatEverests(appStore.stats?.totalElevation ?? 0)}`,
@@ -434,11 +436,12 @@
                     <!-- BREAKDOWN CARD VARIANT   -->
                     <!-- ======================== -->
 
-                    {@const totalActivities = appStore.activities?.length ?? 0}
                     {@const topSportsCount = topSports.reduce(
                         (sum, s) => sum + s.count,
                         0,
                     )}
+                    {@const totalActivities =
+                        appStore.stats?.activityCount ?? 0}
                     {@const sportColors = [
                         "#00d4ff",
                         "#00ff88",
@@ -593,25 +596,19 @@
                                                 <div
                                                     class="text-[22px] font-bold text-[var(--color-text-primary)] leading-none whitespace-nowrap"
                                                 >
-                                                    {#if appStore.breakdownMetric === "count"}
-                                                        {value}
-                                                    {:else if appStore.breakdownMetric === "distance"}
-                                                        {formatDistance(
-                                                            value,
-                                                            appStore.unit,
-                                                        )}
-                                                    {:else}
-                                                        {formatDuration(value)}
-                                                    {/if}
+                                                    {appStore.breakdownMetric ===
+                                                    "count"
+                                                        ? value
+                                                        : formatDuration(value)}
                                                 </div>
                                             </div>
                                         </div>
                                         <div
-                                            class="h-3 bg-black/10 rounded-full overflow-hidden"
+                                            class="h-3 bg-[rgba(0,0,0,0.05)] sport-bar-bg rounded-full overflow-hidden"
                                         >
                                             <div
                                                 class="h-full rounded-full transition-all duration-500"
-                                                style="width: {percentage}%; background: {color}; box-shadow: 0 0 12px {color}40;"
+                                                style="width: {percentage}%; background: {color}; filter: drop-shadow(0 0 4px {color}40);"
                                             ></div>
                                         </div>
                                     </div>
@@ -620,16 +617,72 @@
                         </div>
                     {/if}
 
-                    <!-- Active Days & Streak Row -->
-                    {#if appStore.stats}
-                        <div
-                            class="grid grid-cols-2 gap-8 mb-32 items-center justify-items-center"
-                        >
-                            <!-- Active Days Ring -->
+                    <!-- Weekly Activity Pattern -->
+                    {#if appStore.weeklyPattern.some((v) => v > 0)}
+                        {@const maxDay = Math.max(...appStore.weeklyPattern, 1)}
+                        {@const dayLabels = ["M", "T", "W", "T", "F", "S", "S"]}
+                        {@const barContainerHeight = 100}
+                        {@const sortedIndices = appStore.weeklyPattern
+                            .map((count, idx) => ({ count, idx }))
+                            .sort((a, b) => b.count - a.count)
+                            .slice(0, 2)
+                            .map((item) => item.idx)}
+                        <div class="mb-16 px-2">
                             <div
-                                class="flex flex-col items-center gap-4 text-center"
+                                class="text-[18px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest mb-4 text-center"
                             >
-                                <div class="w-[160px] h-[160px] relative">
+                                When You Train
+                            </div>
+                            <div
+                                class="flex items-end justify-between gap-3"
+                                style="height: {barContainerHeight + 28}px;"
+                            >
+                                {#each appStore.weeklyPattern as count, i}
+                                    {@const heightPercent =
+                                        (count / maxDay) * 100}
+                                    {@const barHeight = Math.max(
+                                        (heightPercent / 100) *
+                                            barContainerHeight,
+                                        8,
+                                    )}
+                                    {@const isTopDay =
+                                        sortedIndices.includes(i)}
+                                    <div
+                                        class="flex-1 flex flex-col items-center justify-end gap-2"
+                                    >
+                                        <div
+                                            class="w-full rounded-t-lg transition-all weekly-bar"
+                                            style="height: {barHeight}px; background: {isTopDay
+                                                ? '#00ff88'
+                                                : 'var(--color-accent)'}; opacity: {currentTheme ===
+                                            'minimalist'
+                                                ? 0.8
+                                                : 0.4 +
+                                                  (heightPercent / 100) * 0.6};"
+                                        ></div>
+                                        <span
+                                            class="text-[16px] font-bold text-[var(--color-text-muted)]"
+                                        >
+                                            {dayLabels[i]}
+                                        </span>
+                                    </div>
+                                {/each}
+                            </div>
+                        </div>
+                    {/if}
+
+                    <!-- Consistency Stats with Progress Rings -->
+                    {#if true}
+                        {@const activeDaysPercent = Math.min(
+                            ((appStore.stats?.activeDays ?? 0) / 365) * 100,
+                            100,
+                        )}
+                        <div class="grid grid-cols-2 gap-8 mb-16">
+                            <!-- Active Days -->
+                            <div
+                                class="flex flex-col items-center text-center p-8 rounded-2xl consistency-card"
+                            >
+                                <div class="w-44 h-44 mb-4">
                                     <svg
                                         viewBox="0 0 120 120"
                                         class="w-full h-full"
@@ -637,24 +690,21 @@
                                         <circle
                                             cx="60"
                                             cy="60"
-                                            r="50"
+                                            r="52"
                                             fill="none"
-                                            stroke="rgba(0,0,0,0.1)"
+                                            stroke="rgba(0,0,0,0.05)"
+                                            class="progress-ring-bg"
                                             stroke-width="10"
                                         />
                                         <circle
                                             cx="60"
                                             cy="60"
-                                            r="50"
+                                            r="52"
                                             fill="none"
                                             stroke="var(--color-accent)"
                                             stroke-width="10"
-                                            stroke-dasharray="{((appStore.stats
-                                                ?.activeDays ?? 0) /
-                                                365) *
-                                                2 *
-                                                Math.PI *
-                                                50} {2 * Math.PI * 50}"
+                                            stroke-dasharray="{activeDaysPercent *
+                                                3.27} 327"
                                             stroke-linecap="round"
                                             transform="rotate(-90 60 60)"
                                             class="progress-ring"
@@ -686,15 +736,15 @@
                                 <div
                                     class="text-[20px] text-[var(--color-text-muted)] mt-2 whitespace-nowrap"
                                 >
-                                    out of 365
+                                    {Math.round(activeDaysPercent)}% of the year
                                 </div>
                             </div>
 
                             <!-- Day Streak -->
                             <div
-                                class="flex flex-col items-center gap-4 text-center"
+                                class="flex flex-col items-center text-center p-8 rounded-2xl consistency-card"
                             >
-                                <div class="w-[160px] h-[160px] relative">
+                                <div class="w-44 h-44 mb-4">
                                     <svg
                                         viewBox="0 0 120 120"
                                         class="w-full h-full"
@@ -702,15 +752,16 @@
                                         <circle
                                             cx="60"
                                             cy="60"
-                                            r="50"
+                                            r="52"
                                             fill="none"
-                                            stroke="rgba(0,0,0,0.1)"
+                                            stroke="rgba(0,0,0,0.05)"
+                                            class="progress-ring-bg"
                                             stroke-width="10"
                                         />
                                         <circle
                                             cx="60"
                                             cy="60"
-                                            r="50"
+                                            r="52"
                                             fill="none"
                                             stroke="#ff6b6b"
                                             stroke-width="10"
