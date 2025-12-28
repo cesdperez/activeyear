@@ -1,7 +1,7 @@
 <script lang="ts">
     import { appStore } from "$lib/stores/app.svelte.js";
     import ExportCarousel from "./ExportCarousel.svelte";
-    import { Download } from "@lucide/svelte";
+    import { Download, ImagePlus, Trash2 } from "@lucide/svelte";
     import type { Theme } from "$lib/types/index.js";
 
     let isExporting = $state(false);
@@ -42,6 +42,27 @@
     function setTheme(theme: Theme) {
         appStore.theme = theme;
     }
+
+    function handleImageUpload(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+            exportError = "Please upload an image file";
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            appStore.userPfp = e.target?.result as string;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function removeImage() {
+        appStore.userPfp = null;
+    }
 </script>
 
 <section class="export-panel" id="export-panel">
@@ -71,6 +92,57 @@
                     placeholder="César"
                     class="w-full px-4 py-3 bg-[var(--color-surface-elevated)] border border-[rgba(255,255,255,0.1)] rounded-lg text-white placeholder-zinc-500 focus:border-[var(--color-accent)] focus:outline-none transition-colors"
                 />
+            </div>
+
+            <!-- Profile Picture Upload -->
+            <div>
+                <label
+                    for="userAvatar"
+                    class="block text-sm font-medium text-zinc-400 mb-2"
+                >
+                    Profile Picture (optional)
+                </label>
+                {#if appStore.userPfp}
+                    <div
+                        class="flex items-center gap-4 p-3 bg-[var(--color-surface-elevated)] border border-[rgba(255,255,255,0.1)] rounded-lg"
+                    >
+                        <img
+                            src={appStore.userPfp}
+                            alt="Preview"
+                            class="w-12 h-12 rounded-full object-cover border border-white/10"
+                        />
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs text-zinc-400 truncate">
+                                Custom pfp active
+                            </p>
+                        </div>
+                        <button
+                            onclick={removeImage}
+                            class="p-2 text-zinc-400 hover:text-red-400 transition-colors"
+                            title="Remove image"
+                        >
+                            <Trash2 class="w-4 h-4" />
+                        </button>
+                    </div>
+                {:else}
+                    <div class="relative group">
+                        <input
+                            type="file"
+                            id="userAvatar"
+                            accept="image/*"
+                            onchange={handleImageUpload}
+                            class="hidden"
+                        />
+                        <label
+                            for="userAvatar"
+                            class="flex items-center justify-center gap-3 w-full px-4 py-3 bg-[var(--color-surface-elevated)] border border-dashed border-[rgba(255,255,255,0.2)] rounded-lg text-zinc-400 hover:text-white hover:border-[var(--color-accent)] cursor-pointer transition-all"
+                        >
+                            <ImagePlus class="w-5 h-5" />
+                            <span class="text-sm font-medium">Upload Image</span
+                            >
+                        </label>
+                    </div>
+                {/if}
             </div>
 
             <!-- Theme Selector -->
