@@ -77,6 +77,13 @@ function createAppStore() {
             const content = await file.text();
             const result = parseGarminCsv(content, 2025);
 
+            if (result.errors.some(e => e.type === 'wrong-language')) {
+                status = 'error';
+                error = result.errors.find(e => e.type === 'wrong-language')?.message || 'Wrong language';
+                parseErrors = result.errors;
+                return;
+            }
+
             if (result.activities.length === 0) {
                 status = 'error';
                 error = 'No 2025 activities found in the file';
