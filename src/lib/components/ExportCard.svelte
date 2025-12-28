@@ -19,7 +19,7 @@
     import { getExportDimensions } from "$lib/utils/export.js";
     import type { CardVariant } from "$lib/types/index.js";
 
-    // Lucide icons
+    // Lucide icons (for non-sport UI elements)
     import {
         Ruler,
         Timer,
@@ -28,25 +28,31 @@
         Trophy,
         Hourglass,
         Sparkles,
-        Footprints,
-        Bike,
-        Waves,
         Mountain,
-        Dumbbell,
-        Heart,
-        Target,
         Flame,
     } from "@lucide/svelte";
 
-    // Sport icons mapping
-    const sportIcons: Record<string, typeof Footprints> = {
-        running: Footprints,
-        cycling: Bike,
-        swimming: Waves,
-        walking: Footprints,
-        hiking: Mountain,
-        strength: Dumbbell,
-        yoga: Heart,
+    // Phosphor icons for sports (bold, activity-true icons)
+    import {
+        PersonSimpleRun,
+        PersonSimpleBike,
+        PersonSimpleSwim,
+        PersonSimpleWalk,
+        Mountains,
+        Barbell,
+        Flower,
+        Target,
+    } from "phosphor-svelte";
+
+    // Sport icons mapping (using Phosphor for bold, activity-specific icons)
+    const sportIcons: Record<string, typeof PersonSimpleRun> = {
+        running: PersonSimpleRun,
+        cycling: PersonSimpleBike,
+        swimming: PersonSimpleSwim,
+        walking: PersonSimpleWalk,
+        hiking: Mountains,
+        strength: Barbell,
+        yoga: Flower,
         other: Target,
     };
 
@@ -227,10 +233,7 @@
                                 <div
                                     class="w-full h-full flex items-center justify-center text-[var(--color-accent)]"
                                 >
-                                    <TopIcon
-                                        class="w-56 h-56"
-                                        strokeWidth={2.5}
-                                    />
+                                    <TopIcon class="w-56 h-56" weight="bold" />
                                 </div>
                             {/if}
                         </div>
@@ -401,7 +404,7 @@
                                             >
                                                 <IconComponent
                                                     class="w-6 h-6 text-[var(--color-accent)]"
-                                                    strokeWidth={2}
+                                                    weight="bold"
                                                 />
                                                 <span
                                                     class="text-[24px] font-bold text-[var(--color-text-primary)] uppercase tracking-wide"
