@@ -979,15 +979,12 @@
                             </div>
                         {:else}
                             <!-- Timeline Container -->
-                            <div class="relative flex-1 flex">
-                                <!-- Vertical Timeline Line -->
-                                <div
-                                    class="absolute left-[60px] top-0 bottom-0 w-[4px] timeline-line"
-                                ></div>
-
+                            <div
+                                class="relative flex-1 flex flex-col justify-center"
+                            >
                                 <!-- Timeline Items -->
                                 <div
-                                    class="flex flex-col w-full"
+                                    class="flex flex-col w-full relative"
                                     style="gap: {Math.min(
                                         120,
                                         Math.max(
@@ -1000,6 +997,10 @@
                                         ),
                                     )}px;"
                                 >
+                                    <!-- Vertical Timeline Line -->
+                                    <div
+                                        class="absolute left-[60px] top-[45px] bottom-[45px] w-[4px] timeline-line"
+                                    ></div>
                                     {#each highlights as fav, i}
                                         {@const IconComponent =
                                             sportIcons[fav.type] ?? Target}
@@ -1068,18 +1069,18 @@
                                                                 : 'w-4 h-4'} text-yellow-500 shrink-0"
                                                             weight="fill"
                                                         />
-                                                        <span
+                                                        <div
                                                             class="{highlights.length <
                                                             7
                                                                 ? 'text-[32px]'
-                                                                : 'text-[22px]'} font-bold text-[var(--color-text-primary)] line-clamp-2"
+                                                                : 'text-[22px]'} font-bold text-[var(--color-text-primary)] line-clamp-2 flex-1 min-w-0"
                                                         >
                                                             {fav.title ||
                                                                 sportNames[
                                                                     fav.type
                                                                 ] ||
                                                                 "Activity"}
-                                                        </span>
+                                                        </div>
                                                     </div>
                                                     <div
                                                         class="flex flex-wrap items-center gap-x-3 gap-y-1 {highlights.length <
