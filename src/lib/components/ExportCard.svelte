@@ -427,7 +427,7 @@
                     <!-- Watermark -->
                     <div class="mt-auto pt-8 text-center">
                         <p
-                            class="text-[24px] text-[var(--color-text-dim)] font-medium tracking-widest opacity-80"
+                            class="text-[24px] text-[var(--color-text-dim)] font-medium tracking-widest"
                         >
                             activeyear.app
                         </p>
@@ -838,7 +838,7 @@
                                             )}
                                         </div>
                                         <div
-                                            class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80 whitespace-nowrap"
+                                            class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest whitespace-nowrap"
                                         >
                                             Longest Distance
                                         </div>
@@ -865,7 +865,7 @@
                                             {formatDuration(record.value)}
                                         </div>
                                         <div
-                                            class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80 whitespace-nowrap"
+                                            class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest whitespace-nowrap"
                                         >
                                             Longest Duration
                                         </div>
@@ -892,7 +892,7 @@
                                             {formatCalories(record.value)}
                                         </div>
                                         <div
-                                            class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest opacity-80 whitespace-nowrap"
+                                            class="text-[18px] text-[var(--color-text-muted)] uppercase tracking-widest whitespace-nowrap"
                                         >
                                             Biggest Burn
                                         </div>
@@ -910,7 +910,7 @@
                     <!-- Watermark (matching summary) -->
                     <div class="mt-auto pt-8 text-center">
                         <p
-                            class="text-[24px] text-[var(--color-text-dim)] font-medium tracking-widest opacity-80"
+                            class="text-[24px] text-[var(--color-text-dim)] font-medium tracking-widest"
                         >
                             activeyear.app
                         </p>
@@ -1133,7 +1133,7 @@
                         class="absolute bottom-[56px] left-0 right-0 text-center pointer-events-none z-20"
                     >
                         <p
-                            class="text-[24px] text-[var(--color-text-dim)] font-medium tracking-widest opacity-80"
+                            class="text-[24px] text-[var(--color-text-dim)] font-medium tracking-widest"
                         >
                             activeyear.app
                         </p>
