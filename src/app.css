@@ -15,8 +15,8 @@
 
 	/* Text Colors */
 	--color-text-primary: #fafafa;
-	--color-text-muted: #71717a;
-	--color-text-dim: #52525b;
+	--color-text-muted: #d4d4d8;
+	--color-text-dim: #a1a1aa;
 
 	/* Accent Colors - Cyan */
 	--color-accent: #22d3ee;
@@ -48,7 +48,7 @@
 	--color-surface-hover: #e7e5e4;
 	--color-text-primary: #0a0a0b;
 	--color-text-muted: #52525b;
-	--color-text-dim: #a1a1aa;
+	--color-text-dim: #71717a;
 	--color-accent: #ef4444;
 	--color-accent-glow: rgba(239, 68, 68, 0.4);
 	--color-accent-subtle: rgba(239, 68, 68, 0.1);
@@ -60,8 +60,8 @@
 	--color-surface-elevated: #2e2a6b;
 	--color-surface-hover: #3e387b;
 	--color-text-primary: #fafafa;
-	--color-text-muted: #a5a0d8;
-	--color-text-dim: #7c77a8;
+	--color-text-muted: #c4b8ef;
+	--color-text-dim: #a5a0d8;
 	--color-accent: #facc15;
 	--color-accent-glow: rgba(250, 204, 21, 0.5);
 	--color-accent-subtle: rgba(250, 204, 21, 0.15);
