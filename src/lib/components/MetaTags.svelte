@@ -10,8 +10,8 @@
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0a0a0b" />
-    <link rel="icon" type="image/png" href="/favicon.png?v=3" />
-    <link rel="apple-touch-icon" href="/favicon.png?v=3" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
+    <link rel="apple-touch-icon" href="/favicon.svg?v=3" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
