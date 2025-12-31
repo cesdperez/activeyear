@@ -66,12 +66,70 @@ export function parseGarminTime(timeStr: string): number {
 }
 
 /**
+ * Helper to clean numeric strings by handling different locales (English vs European)
+ * English: thousands = , decimal = .
+ * European: thousands = . decimal = ,
+ */
+function cleanNumericString(str: string): string {
+    if (!str || str === '--') return '0';
+
+    // Remove all whitespace
+    let cleaned = str.trim();
+
+    const hasComma = cleaned.includes(',');
+    const hasDot = cleaned.includes('.');
+
+    if (hasComma && hasDot) {
+        // Both exist: the last one is the decimal separator
+        const lastComma = cleaned.lastIndexOf(',');
+        const lastDot = cleaned.lastIndexOf('.');
+
+        if (lastComma > lastDot) {
+            // European format: 1.234,56
+            return cleaned.replace(/\./g, '').replace(/,/g, '.');
+        } else {
+            // English format: 1,234.56
+            return cleaned.replace(/,/g, '');
+        }
+    } else if (hasComma) {
+        // Only comma: could be decimal (45,25) or thousands (1,000)
+        // In Garmin exports, comma is usually decimal in European locales
+        // and thousands in English. But English also uses dot for decimals.
+        // If there's ONLY a comma, we check the length of the fractional part.
+        const parts = cleaned.split(',');
+        if (parts.length === 2 && parts[1].length <= 2) {
+            // likely decimal: 45,25
+            return cleaned.replace(/,/g, '.');
+        } else {
+            // likely thousands or multi-part: 1,000
+            return cleaned.replace(/,/g, '');
+        }
+    } else if (hasDot) {
+        // Only dot: could be decimal (45.25) or thousands (1.000)
+        // If it looks like a thousand (exactly 3 digits after dot), it's ambiguous.
+        // But usually Garmin uses dot as decimal.
+        // EXCEPT for things like Calories or Steps where thousands are common.
+        // We'll treat it as a decimal unless it's a thousand-like pattern and the value is large.
+        const parts = cleaned.split('.');
+        if (parts.length === 2 && parts[1].length === 3) {
+            // Ambiguous! 1.000 could be 1 or 1000.
+            // For now, let's assume decimal unless we have better context.
+            // Actually, in the user's file, 1.000 was 1000 meters or 1540 calories.
+            // Let's assume dot is thousands if it's strictly 3 digits and no comma exists?
+            // No, that's risky for km.
+            return cleaned;
+        }
+        return cleaned;
+    }
+
+    return cleaned;
+}
+
+/**
  * Parse Garmin distance string to km
  */
 export function parseGarminDistance(distanceStr: string): number {
-    if (!distanceStr || distanceStr === '--') return 0;
-    // Remove commas and parse (Garmin uses comma as thousands separator)
-    const cleaned = distanceStr.replace(/,/g, '');
+    const cleaned = cleanNumericString(distanceStr);
     const value = parseFloat(cleaned);
     return isNaN(value) ? 0 : value;
 }
@@ -80,9 +138,16 @@ export function parseGarminDistance(distanceStr: string): number {
  * Parse Garmin calories string to number
  */
 export function parseGarminCalories(caloriesStr: string): number {
-    if (!caloriesStr || caloriesStr === '--') return 0;
-    const cleaned = caloriesStr.replace(/,/g, '');
-    const value = parseInt(cleaned, 10);
+    const cleaned = cleanNumericString(caloriesStr);
+    // Remove dot if we suspect it's a thousands separator
+    let final = cleaned;
+    if (cleaned.includes('.') && !cleaned.includes(',')) {
+        const parts = cleaned.split('.');
+        if (parts.length === 2 && parts[1].length === 3) {
+            final = cleaned.replace(/\./g, '');
+        }
+    }
+    const value = parseInt(final, 10);
     return isNaN(value) ? 0 : value;
 }
 
@@ -90,9 +155,15 @@ export function parseGarminCalories(caloriesStr: string): number {
  * Parse Garmin elevation string to meters
  */
 export function parseGarminElevation(elevationStr: string): number {
-    if (!elevationStr || elevationStr === '--') return 0;
-    const cleaned = elevationStr.replace(/,/g, '');
-    const value = parseInt(cleaned, 10);
+    const cleaned = cleanNumericString(elevationStr);
+    let final = cleaned;
+    if (cleaned.includes('.') && !cleaned.includes(',')) {
+        const parts = cleaned.split('.');
+        if (parts.length === 2 && parts[1].length === 3) {
+            final = cleaned.replace(/\./g, '');
+        }
+    }
+    const value = parseInt(final, 10);
     return isNaN(value) ? 0 : value;
 }
 
@@ -126,11 +197,51 @@ export function parseGarminCsv(csvContent: string, targetYear: number = 2025): P
     const activities: Activity[] = [];
     const errors: ParseError[] = [];
 
-    const parseResult = Papa.parse<GarminRawActivity>(csvContent, {
+    // Preprocess content if it appears to be "whole-row quoted"
+    // This happens when some tools wrap each CSV row in quotes and escape internal quotes.
+    // We use a two-pass approach: 
+    // 1. Parse as headerless CSV to correctly handle quotes and internal newlines.
+    // 2. If most rows have only 1 column, it's the weird format. Flatten it and re-parse.
+
+    let processedContent = csvContent;
+    const firstPass = Papa.parse<string[]>(csvContent, {
+        header: false,
+        skipEmptyLines: true
+    });
+
+    if (firstPass.data.length > 0) {
+        // We consider it a "whole-row quoted" format if most rows have only 1 column
+        // but the file clearly has commas inside those quotes.
+        // Also handle cases where header might NOT be quoted but data rows are.
+        const rowsWithOneColumn = firstPass.data.filter(row => row.length === 1);
+        const dataRows = firstPass.data.slice(1);
+        const quotedDataRows = dataRows.filter(row => row.length === 1).length;
+
+        if (quotedDataRows > dataRows.length / 2 && dataRows.length > 0) {
+            // It's likely the whole-row quoted format. Flatten it.
+            const processedRows = firstPass.data.map(row => {
+                if (row.length === 1) return row[0];
+                // If it already has multiple columns (like an unquoted header), 
+                // we reconstruct it as CSV to keep it consistent for the second pass.
+                return row.map(cell => {
+                    const cellStr = String(cell);
+                    if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
+                        return `"${cellStr.replace(/"/g, '""')}"`;
+                    }
+                    return cellStr;
+                }).join(',');
+            });
+            processedContent = processedRows.join('\n');
+        }
+    }
+
+
+    const parseResult = Papa.parse<GarminRawActivity>(processedContent, {
         header: true,
         skipEmptyLines: true,
         transformHeader: (header) => header.trim()
     });
+
 
     // Check if the expected headers are present (detect wrong language)
     const expectedHeaders = ['Activity Type', 'Date', 'Distance'];

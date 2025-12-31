@@ -42,8 +42,16 @@ describe('parseGarminDistance', () => {
         expect(parseGarminDistance('10.33')).toBe(10.33);
     });
 
-    it('parses number with comma thousands separator', () => {
+    it('parses number with comma thousands separator (English)', () => {
         expect(parseGarminDistance('1,500')).toBe(1500);
+    });
+
+    it('parses number with comma decimal separator (European)', () => {
+        expect(parseGarminDistance('45,25')).toBe(45.25);
+    });
+
+    it('parses number with dot thousands and comma decimal (European)', () => {
+        expect(parseGarminDistance('1.234,56')).toBe(1234.56);
     });
 
     it('returns 0 for "--"', () => {
@@ -60,8 +68,12 @@ describe('parseGarminCalories', () => {
         expect(parseGarminCalories('658')).toBe(658);
     });
 
-    it('parses number with comma', () => {
+    it('parses number with comma thousands (English)', () => {
         expect(parseGarminCalories('2,800')).toBe(2800);
+    });
+
+    it('parses number with dot thousands (European)', () => {
+        expect(parseGarminCalories('1.540')).toBe(1540);
     });
 
     it('returns 0 for "--"', () => {
@@ -368,5 +380,32 @@ describe('parseGarminCsv favorite field', () => {
         expect(result.activities).toHaveLength(1);
         expect(result.activities[0].favorite).toBe(true);
         expect(result.activities[0].title).toBe('Best Run Ever');
+    });
+});
+
+describe('parseGarminCsv with special formats', () => {
+    it('handles whole-row quoted format correctly', () => {
+        const csv = '"Activity Type,Date,Title,Distance,Calories,Time"\n' +
+            '"Running,2025-01-01 08:00:00,Morning Run,""10,0"",600,00:50:00"';
+        const result = parseGarminCsv(csv, 2025);
+        expect(result.activities).toHaveLength(1);
+        expect(result.activities[0].title).toBe('Morning Run');
+        expect(result.activities[0].distance).toBe(10.0);
+    });
+
+    it('handles whole-row quoted format with internal newlines', () => {
+        const csv = '"Activity Type,Date,Title,Distance,Calories,Time"\n' +
+            '"Running,2025-01-01 08:00:00,""Multi\nLine Title"",10.0,600,00:50:00"';
+        const result = parseGarminCsv(csv, 2025);
+        expect(result.activities).toHaveLength(1);
+        expect(result.activities[0].title).toBe('Multi\nLine Title');
+    });
+
+    it('handles mixed quoted and unquoted header/rows', () => {
+        const csv = 'Activity Type,Date,Title,Distance,Calories,Time\n' +
+            '"Running,2025-01-01 08:00:00,Morning Run,10.0,600,00:50:00"';
+        const result = parseGarminCsv(csv, 2025);
+        expect(result.activities).toHaveLength(1);
+        expect(result.activities[0].title).toBe('Morning Run');
     });
 });
