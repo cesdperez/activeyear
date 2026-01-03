@@ -7,6 +7,9 @@ import {
     Barbell,
     PersonSimpleTaiChi,
     Target,
+    Heartbeat,
+    Waves,
+    Anchor,
 } from "phosphor-svelte";
 
 // Sport type display names
@@ -18,6 +21,9 @@ export const sportNames: Record<string, string> = {
     hiking: "Hiking",
     strength: "Strength",
     yoga: "Yoga",
+    paddling: "Paddling",
+    rowing: "Rowing",
+    cardio: "Cardio",
     other: "Other",
 };
 
@@ -30,5 +36,8 @@ export const sportIcons: Record<string, typeof PersonSimpleRun> = {
     hiking: Mountains,
     strength: Barbell,
     yoga: PersonSimpleTaiChi,
+    paddling: Waves,
+    rowing: Anchor,
+    cardio: Heartbeat,
     other: Target,
 };

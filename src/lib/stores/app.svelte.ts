@@ -52,6 +52,7 @@ function createAppStore() {
     let confettiEnabled = $state<boolean>(false);
     let summaryMetric = $state<SummaryMetric>('distance');
     let unit = $state<Unit>('km');
+    let selectedYear = $state<number>(2025);
 
     function reset() {
         activities = [];
@@ -77,7 +78,7 @@ function createAppStore() {
 
         try {
             const content = await file.text();
-            const result = parseGarminCsv(content, 2025);
+            const result = parseGarminCsv(content, selectedYear);
 
             if (result.errors.some(e => e.type === 'wrong-language')) {
                 status = 'error';
@@ -88,7 +89,7 @@ function createAppStore() {
 
             if (result.activities.length === 0) {
                 status = 'error';
-                error = 'No 2025 activities found in the file';
+                error = `No ${selectedYear} activities found in the file`;
                 parseErrors = result.errors;
                 return;
             }
@@ -196,6 +197,12 @@ function createAppStore() {
         },
         set unit(value: Unit) {
             unit = value;
+        },
+        get selectedYear() {
+            return selectedYear;
+        },
+        set selectedYear(value: number) {
+            selectedYear = value;
         }
     };
 }

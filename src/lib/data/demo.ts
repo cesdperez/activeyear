@@ -1,8 +1,8 @@
-import type { YearStats, PersonalRecords, SportBreakdown, Activity } from '../types/index.js';
+import type { YearStats, PersonalRecords, SportBreakdown, Activity, ActivityType } from '../types/index.js';
 
 // Helper to create a dummy activity
 const createActivity = (type: string, title: string, dateStr: string): Activity => ({
-    type: type as any,
+    type: type as ActivityType,
     title,
     date: new Date(dateStr),
     distance: 0,
