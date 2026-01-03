@@ -17,7 +17,7 @@ type ThemeName = (typeof THEMES)[number];
 // and html-to-image's canvas-based rendering. The preview and download use the same DOM,
 // so any structural differences would indicate a real bug. Anti-aliasing and font rendering
 // differences between the two engines are expected.
-const MAX_DIFF_RATIO = 0.06;
+const MAX_DIFF_RATIO = 0.05;
 
 async function setupDashboard(page: Page): Promise<void> {
 	await page.addStyleTag({
@@ -101,7 +101,7 @@ function scaleDownImage(buffer: Buffer, scaleFactor: number): Buffer {
 		for (let x = 0; x < newWidth; x++) {
 			const srcX = x * scaleFactor;
 			const srcY = y * scaleFactor;
-			
+
 			// Average the 2x2 block of source pixels
 			let r = 0, g = 0, b = 0, a = 0;
 			for (let dy = 0; dy < scaleFactor; dy++) {
@@ -115,7 +115,7 @@ function scaleDownImage(buffer: Buffer, scaleFactor: number): Buffer {
 					a += src.data[srcIdx + 3];
 				}
 			}
-			
+
 			const pixelCount = scaleFactor * scaleFactor;
 			const dstIdx = (y * newWidth + x) * 4;
 			dst.data[dstIdx] = Math.round(r / pixelCount);
@@ -165,12 +165,17 @@ function compareImages(screenshotBuffer: Buffer, downloadBuffer: Buffer): { diff
 
 	// The download is at 2x resolution (pixelRatio: 2 in html-to-image)
 	// Scale it down to match the screenshot resolution (allow small rounding differences)
+	// Determine the scale factor (e.g. 2x, 4x)
 	const widthRatio = download.width / screenshot.width;
 	const heightRatio = download.height / screenshot.height;
-	
-	if (Math.abs(widthRatio - 2) < 0.01 && Math.abs(heightRatio - 2) < 0.01) {
-		downloadBuffer = scaleDownImage(downloadBuffer, 2);
-		download = PNG.sync.read(downloadBuffer);
+
+	// Check if ratios are consistent and close to an integer
+	if (Math.abs(widthRatio - heightRatio) < 0.1) {
+		const scaleFactor = Math.round(widthRatio);
+		if (scaleFactor > 1 && Math.abs(widthRatio - scaleFactor) < 0.1) {
+			downloadBuffer = scaleDownImage(downloadBuffer, scaleFactor);
+			download = PNG.sync.read(downloadBuffer);
+		}
 	}
 
 	// Images must have same dimensions (allow 1px difference for rounding)

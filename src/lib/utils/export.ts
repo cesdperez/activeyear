@@ -26,9 +26,15 @@ export async function exportToPng(
         const dataUrl = await toPng(element, {
             // High quality settings
             pixelRatio: scale,
+            style: {
+                'text-rendering': 'geometricPrecision',
+                '-webkit-font-smoothing': 'antialiased',
+                '-moz-osx-font-smoothing': 'grayscale'
+            } as any,
             // Ensure background is captured
             backgroundColor,
             // Proper font handling
+            fontEmbedCSS: '@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap");',
             cacheBust: true,
             // Skip elements that shouldn't be in export
             filter: (node) => {
