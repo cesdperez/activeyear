@@ -24,14 +24,12 @@
 	}: Props = $props();
 
 	// Animation state
-	let visible = $state(false);
 	let opacity = spring(0, { stiffness: 0.1, damping: 0.6 });
 	let scale = spring(0.95, { stiffness: 0.15, damping: 0.5 });
 
 	onMount(() => {
 		// Staggered entry animation
 		const timer = setTimeout(() => {
-			visible = true;
 			opacity.set(1);
 			scale.set(1);
 		}, delay);

@@ -8,13 +8,16 @@ const METERS_TO_FEET = 3.28084;
 
 /**
  * Format distance with appropriate precision
- * - Under 100: no decimals
- * - 100+: one decimal
+ * - Under 100: one decimal
+ * - 100+: no decimals
  */
 export function formatDistance(km: number, unit: Unit = 'km'): string {
     const value = unit === 'miles' ? km * KM_TO_MILES : km;
     const suffix = unit === 'miles' ? 'mi' : 'km';
 
+    if (value >= 100) {
+        return `${Math.round(value)}${suffix}`;
+    }
     return `${value.toFixed(1)}${suffix}`;
 }
 
@@ -107,7 +110,20 @@ export function formatPizzaSlices(calories: number): string {
 }
 
 export function formatActivityCount(count: number, type: string): string {
-    const pluralType = count === 1 ? type : `${type}s`;
+    const pluralRules = new Intl.PluralRules('en-US');
+    const rule = pluralRules.select(count);
+
+    // Simple mapping for now, but better than just adding 's'
+    const plurals: Record<string, string> = {
+        'activity': 'activities',
+        'swim': 'swims',
+        'run': 'runs',
+        'ride': 'rides',
+        'walk': 'walks',
+        'workout': 'workouts',
+    };
+
+    const pluralType = rule === 'one' ? type : (plurals[type.toLowerCase()] ?? `${type}s`);
     return `${count} ${pluralType}`;
 }
 

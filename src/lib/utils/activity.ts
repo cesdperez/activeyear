@@ -1,6 +1,6 @@
 import type { SportBreakdown } from '$lib/types';
+import { ONE_HOUR_IN_SECONDS } from '../constants/time.js';
 
-export const ONE_HOUR_IN_SECONDS = 3600;
 
 /**
  * Consolidates sports with less than 1 hour of total duration into an "other" category.

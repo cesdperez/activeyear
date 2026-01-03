@@ -1,9 +1,3 @@
-<script module lang="ts">
-    export function getExportElement(): HTMLElement | null {
-        return document.getElementById("export-card");
-    }
-</script>
-
 <script lang="ts">
     import { appStore } from "$lib/stores/app.svelte.js";
     import {
@@ -27,11 +21,9 @@
         Lightning,
         Trophy,
         Hourglass,
-        Sparkle,
         Mountains,
         Fire,
         Star,
-        Heart,
         PersonSimpleRun,
         PersonSimpleBike,
         PersonSimpleSwim,
@@ -41,7 +33,11 @@
         Target,
     } from "phosphor-svelte";
 
-    import { sportNames, sportIcons } from "$lib/constants/sports.js";
+    import {
+        sportNames,
+        sportIcons,
+        sportColors,
+    } from "$lib/constants/sports.js";
     import { consolidateBreakdown } from "$lib/utils/activity.js";
 
     // Base dimensions for 9:16 aspect ratio
@@ -107,11 +103,18 @@
         Math.max(...topSports.map((s) => s[appStore.breakdownMetric]), 1),
     );
 
+    const activeDaysPercent = $derived(
+        Math.min(((appStore.stats?.activeDays ?? 0) / 365) * 100, 100),
+    );
+
+    const circumference = 2 * Math.PI * 80;
+
     // Get top sport icon
-    let topSportIcon = $derived(() => {
-        if (topSports.length === 0) return Target;
-        return sportIcons[topSports[0].type] ?? Target;
-    });
+    let topSportIcon = $derived(
+        topSports.length === 0
+            ? Target
+            : (sportIcons[topSports[0].type] ?? Target),
+    );
 </script>
 
 <!-- Export Card Container -->
@@ -249,7 +252,7 @@
                                     class="w-full h-full object-cover rounded-full"
                                 />
                             {:else}
-                                {@const TopIcon = topSportIcon()}
+                                {@const TopIcon = topSportIcon}
                                 <div
                                     class="w-full h-full flex items-center justify-center text-[var(--color-accent)]"
                                 >
@@ -393,13 +396,6 @@
                     )}
                     {@const totalActivities =
                         appStore.stats?.activityCount ?? 0}
-                    {@const sportColors = [
-                        "#00d4ff",
-                        "#00ff88",
-                        "#ff6b6b",
-                        "#ffd93d",
-                        "#c084fc",
-                    ]}
 
                     <!-- Header with Username -->
                     <header class="text-center mb-[130px] relative">
@@ -432,79 +428,74 @@
                                 <div
                                     class="donut-chart-container !w-[280px] !h-[280px]"
                                 >
-                                    {#if true}
-                                        {@const circumference =
-                                            2 * Math.PI * 80}
-                                        <svg
-                                            viewBox="0 0 200 200"
-                                            class="donut-chart"
-                                        >
-                                            <!-- Background circle -->
+                                    <svg
+                                        viewBox="0 0 200 200"
+                                        class="donut-chart"
+                                    >
+                                        <!-- Background circle -->
+                                        <circle
+                                            cx="100"
+                                            cy="100"
+                                            r="80"
+                                            fill="none"
+                                            stroke="rgba(0,0,0,0.05)"
+                                            class="donut-bg"
+                                            stroke-width="28"
+                                        />
+                                        <!-- Sport segments -->
+                                        {#each topSports as sport, i}
+                                            {@const percentage =
+                                                sport.count / topSportsCount}
+                                            {@const offset = topSports
+                                                .slice(0, i)
+                                                .reduce(
+                                                    (sum, s) =>
+                                                        sum +
+                                                        (s.count /
+                                                            topSportsCount) *
+                                                            circumference,
+                                                    0,
+                                                )}
                                             <circle
                                                 cx="100"
                                                 cy="100"
                                                 r="80"
                                                 fill="none"
-                                                stroke="rgba(0,0,0,0.05)"
-                                                class="donut-bg"
+                                                stroke={sportColors[
+                                                    i % sportColors.length
+                                                ]}
                                                 stroke-width="28"
+                                                stroke-dasharray="{percentage *
+                                                    circumference -
+                                                    4} {circumference}"
+                                                stroke-dashoffset={-offset}
+                                                stroke-linecap="round"
+                                                transform="rotate(-90 100 100)"
+                                                class="donut-segment"
+                                                style="filter: drop-shadow(0 0 8px {sportColors[
+                                                    i % sportColors.length
+                                                ]}40);"
                                             />
-                                            <!-- Sport segments -->
-                                            {#each topSports as sport, i}
-                                                {@const percentage =
-                                                    sport.count /
-                                                    topSportsCount}
-                                                {@const offset = topSports
-                                                    .slice(0, i)
-                                                    .reduce(
-                                                        (sum, s) =>
-                                                            sum +
-                                                            (s.count /
-                                                                topSportsCount) *
-                                                                circumference,
-                                                        0,
-                                                    )}
-                                                <circle
-                                                    cx="100"
-                                                    cy="100"
-                                                    r="80"
-                                                    fill="none"
-                                                    stroke={sportColors[
-                                                        i % sportColors.length
-                                                    ]}
-                                                    stroke-width="28"
-                                                    stroke-dasharray="{percentage *
-                                                        circumference -
-                                                        4} {circumference}"
-                                                    stroke-dashoffset={-offset}
-                                                    stroke-linecap="round"
-                                                    transform="rotate(-90 100 100)"
-                                                    class="donut-segment"
-                                                    style="filter: drop-shadow(0 0 8px {sportColors[
-                                                        i % sportColors.length
-                                                    ]}40);"
-                                                />
-                                            {/each}
-                                            <text
-                                                x="100"
-                                                y="95"
-                                                text-anchor="middle"
-                                                dominant-baseline="central"
-                                                fill="var(--color-text-primary)"
-                                                style="font-size: 52px; font-weight: 900; font-family: inherit;"
-                                                >{totalActivities}</text
-                                            >
-                                            <text
-                                                x="100"
-                                                y="130"
-                                                text-anchor="middle"
-                                                dominant-baseline="central"
-                                                fill="var(--color-text-muted)"
-                                                style="font-size: 14px; font-weight: 700; font-family: inherit; letter-spacing: 0.1em; text-transform: uppercase;"
-                                                >Activities</text
-                                            >
-                                        </svg>
-                                    {/if}
+                                        {/each}
+                                        <text
+                                            x="100"
+                                            y="95"
+                                            text-anchor="middle"
+                                            dominant-baseline="central"
+                                            fill="var(--color-text-primary)"
+                                            style="font-size: 52px; font-weight: 900; font-family: inherit;"
+                                            >{totalActivities}</text
+                                        >
+                                        <text
+                                            x="100"
+                                            y="130"
+                                            text-anchor="middle"
+                                            dominant-baseline="central"
+                                            fill="var(--color-text-muted)"
+                                            style="font-size: 14px; font-weight: 700; font-family: inherit; letter-spacing: 0.1em; text-transform: uppercase;"
+                                            >Activities</text
+                                        >
+                                    </svg>
                                 </div>
                             </div>
 
@@ -623,133 +614,121 @@
                     {/if}
 
                     <!-- Consistency Stats with Progress Rings -->
-                    {#if true}
-                        {@const activeDaysPercent = Math.min(
-                            ((appStore.stats?.activeDays ?? 0) / 365) * 100,
-                            100,
-                        )}
                         <div class="grid grid-cols-2 gap-8 mb-16">
-                            <!-- Active Days -->
-                            <div
-                                class="flex flex-col items-center text-center p-8 rounded-2xl consistency-card"
-                            >
-                                <div class="w-44 h-44 mb-4">
-                                    <svg
-                                        viewBox="0 0 120 120"
-                                        class="w-full h-full"
-                                    >
-                                        <circle
-                                            cx="60"
-                                            cy="60"
-                                            r="52"
-                                            fill="none"
-                                            stroke="rgba(0,0,0,0.05)"
-                                            class="progress-ring-bg"
-                                            stroke-width="10"
-                                        />
-                                        <circle
-                                            cx="60"
-                                            cy="60"
-                                            r="52"
-                                            fill="none"
-                                            stroke="var(--color-accent)"
-                                            stroke-width="10"
-                                            stroke-dasharray="{activeDaysPercent *
-                                                3.27} 327"
-                                            stroke-linecap="round"
-                                            transform="rotate(-90 60 60)"
-                                            class="progress-ring"
-                                        />
-                                        <text
-                                            x="60"
-                                            y="60"
-                                            text-anchor="middle"
-                                            dominant-baseline="central"
-                                            fill="var(--color-text-primary)"
-                                            style="font-size: 38px; font-weight: 900; font-family: inherit;"
-                                            >{appStore.stats?.activeDays ??
-                                                0}</text
-                                        >
-                                    </svg>
-                                </div>
-                                <div
-                                    class="flex items-center gap-3 text-[var(--color-accent)]"
+                        <!-- Active Days -->
+                        <div
+                            class="flex flex-col items-center text-center p-8 rounded-2xl consistency-card"
+                        >
+                            <div class="w-44 h-44 mb-4">
+                                <svg
+                                    viewBox="0 0 120 120"
+                                    class="w-full h-full"
                                 >
-                                    <CalendarCheck
-                                        class="w-8 h-8"
-                                        weight="bold"
+                                    <circle
+                                        cx="60"
+                                        cy="60"
+                                        r="52"
+                                        fill="none"
+                                        stroke="rgba(0,0,0,0.05)"
+                                        class="progress-ring-bg"
+                                        stroke-width="10"
                                     />
-                                    <span
-                                        class="text-[28px] font-bold uppercase tracking-wider"
-                                        >Active Days</span
+                                    <circle
+                                        cx="60"
+                                        cy="60"
+                                        r="52"
+                                        fill="none"
+                                        stroke="var(--color-accent)"
+                                        stroke-width="10"
+                                        stroke-dasharray="{activeDaysPercent *
+                                            3.27} 327"
+                                        stroke-linecap="round"
+                                        transform="rotate(-90 60 60)"
+                                        class="progress-ring"
+                                    />
+                                    <text
+                                        x="60"
+                                        y="60"
+                                        text-anchor="middle"
+                                        dominant-baseline="central"
+                                        fill="var(--color-text-primary)"
+                                        style="font-size: 38px; font-weight: 900; font-family: inherit;"
+                                        >{appStore.stats?.activeDays ?? 0}</text
                                     >
-                                </div>
-                                <div
-                                    class="text-[20px] text-[var(--color-text-muted)] mt-2 whitespace-nowrap"
-                                >
-                                    {Math.round(activeDaysPercent)}% of the year
-                                </div>
+                                </svg>
                             </div>
-
-                            <!-- Day Streak -->
                             <div
-                                class="flex flex-col items-center text-center p-8 rounded-2xl consistency-card"
+                                class="flex items-center gap-3 text-[var(--color-accent)]"
                             >
-                                <div class="w-44 h-44 mb-4">
-                                    <svg
-                                        viewBox="0 0 120 120"
-                                        class="w-full h-full"
-                                    >
-                                        <circle
-                                            cx="60"
-                                            cy="60"
-                                            r="52"
-                                            fill="none"
-                                            stroke="rgba(0,0,0,0.05)"
-                                            class="progress-ring-bg"
-                                            stroke-width="10"
-                                        />
-                                        <circle
-                                            cx="60"
-                                            cy="60"
-                                            r="52"
-                                            fill="none"
-                                            stroke="#ff6b6b"
-                                            stroke-width="10"
-                                            stroke-dasharray="20 10"
-                                            stroke-linecap="round"
-                                            transform="rotate(-90 60 60)"
-                                            class="streak-ring"
-                                        />
-                                        <text
-                                            x="60"
-                                            y="60"
-                                            text-anchor="middle"
-                                            dominant-baseline="central"
-                                            fill="var(--color-text-primary)"
-                                            style="font-size: 38px; font-weight: 900; font-family: inherit;"
-                                            >{appStore.stats?.longestStreak ??
-                                                0}</text
-                                        >
-                                    </svg>
-                                </div>
-                                <div
-                                    class="flex items-center gap-3 text-[#ff6b6b]"
+                                <CalendarCheck class="w-8 h-8" weight="bold" />
+                                <span
+                                    class="text-[28px] font-bold uppercase tracking-wider"
+                                    >Active Days</span
                                 >
-                                    <Lightning class="w-8 h-8" weight="bold" />
-                                    <span
-                                        class="text-[28px] font-bold uppercase tracking-wider"
-                                        >Day Streak</span
-                                    >
-                                </div>
-                                <div
-                                    class="text-[20px] text-[var(--color-text-muted)] mt-2 whitespace-nowrap"
-                                >
-                                    most consecutive active days
-                                </div>
+                            </div>
+                            <div
+                                class="text-[20px] text-[var(--color-text-muted)] mt-2 whitespace-nowrap"
+                            >
+                                {Math.round(activeDaysPercent)}% of the year
                             </div>
                         </div>
-                    {/if}
+
+                        <!-- Day Streak -->
+                        <div
+                            class="flex flex-col items-center text-center p-8 rounded-2xl consistency-card"
+                        >
+                            <div class="w-44 h-44 mb-4">
+                                <svg
+                                    viewBox="0 0 120 120"
+                                    class="w-full h-full"
+                                >
+                                    <circle
+                                        cx="60"
+                                        cy="60"
+                                        r="52"
+                                        fill="none"
+                                        stroke="rgba(0,0,0,0.05)"
+                                        class="progress-ring-bg"
+                                        stroke-width="10"
+                                    />
+                                    <circle
+                                        cx="60"
+                                        cy="60"
+                                        r="52"
+                                        fill="none"
+                                        stroke="#ff6b6b"
+                                        stroke-width="10"
+                                        stroke-dasharray="20 10"
+                                        stroke-linecap="round"
+                                        transform="rotate(-90 60 60)"
+                                        class="streak-ring"
+                                    />
+                                    <text
+                                        x="60"
+                                        y="60"
+                                        text-anchor="middle"
+                                        dominant-baseline="central"
+                                        fill="var(--color-text-primary)"
+                                        style="font-size: 38px; font-weight: 900; font-family: inherit;"
+                                        >{appStore.stats?.longestStreak ??
+                                            0}</text
+                                    >
+                                </svg>
+                            </div>
+                            <div class="flex items-center gap-3 text-[#ff6b6b]">
+                                <Lightning class="w-8 h-8" weight="bold" />
+                                <span
+                                    class="text-[28px] font-bold uppercase tracking-wider"
+                                    >Day Streak</span
+                                >
+                            </div>
+                            <div
+                                class="text-[20px] text-[var(--color-text-muted)] mt-2 whitespace-nowrap"
+                            >
+                                most consecutive active days
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Personal Records - Horizontal Grid (matching Dashboard) -->
                     {#if appStore.records}

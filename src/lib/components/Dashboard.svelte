@@ -24,7 +24,6 @@
 		Lightning,
 		Trophy,
 		Hourglass,
-		Sparkle,
 		ArrowDown,
 		Confetti,
 		PersonSimpleRun,
@@ -37,7 +36,11 @@
 		Star,
 	} from "phosphor-svelte";
 
-	import { sportNames, sportIcons } from "$lib/constants/sports.js";
+	import {
+		sportNames,
+		sportIcons,
+		sportColors,
+	} from "$lib/constants/sports.js";
 	import { consolidateBreakdown } from "$lib/utils/activity.js";
 
 	import confetti from "canvas-confetti";
@@ -106,7 +109,7 @@
 		sortedBreakdown.reduce((sum, s) => sum + s.count, 0),
 	);
 
-	const sportColors = ["#00d4ff", "#00ff88", "#ff6b6b", "#ffd93d", "#c084fc"];
+	const circumference = 2 * Math.PI * 80;
 </script>
 
 <div
@@ -535,52 +538,47 @@
 					<div
 						class="donut-chart-container !w-[280px] !h-[280px] md:!w-[340px] md:!h-[340px]"
 					>
-						{#if true}
-							{@const circumference = 2 * Math.PI * 80}
-							<svg viewBox="0 0 200 200" class="donut-chart">
+						<svg viewBox="0 0 200 200" class="donut-chart">
+							<circle
+								cx="100"
+								cy="100"
+								r="80"
+								fill="none"
+								stroke="rgba(255,255,255,0.05)"
+								stroke-width="28"
+							/>
+							{#each sortedBreakdown as sport, i}
+								{@const percentage = sport.count / totalCount}
+								{@const offset = sortedBreakdown
+									.slice(0, i)
+									.reduce(
+										(sum, s) =>
+											sum +
+											(s.count / totalCount) *
+												circumference,
+										0,
+									)}
 								<circle
 									cx="100"
 									cy="100"
 									r="80"
 									fill="none"
-									stroke="rgba(255,255,255,0.05)"
+									stroke={sportColors[i % sportColors.length]}
 									stroke-width="28"
+									stroke-dasharray="{percentage *
+										circumference -
+										2} {circumference}"
+									stroke-dashoffset={-offset}
+									stroke-linecap="round"
+									transform="rotate(-90 100 100)"
+									class="donut-segment"
+									style="filter: drop-shadow(0 0 8px {sportColors[
+										i % sportColors.length
+									]}40);"
 								/>
-								{#each sortedBreakdown as sport, i}
-									{@const percentage =
-										sport.count / totalCount}
-									{@const offset = sortedBreakdown
-										.slice(0, i)
-										.reduce(
-											(sum, s) =>
-												sum +
-												(s.count / totalCount) *
-													circumference,
-											0,
-										)}
-									<circle
-										cx="100"
-										cy="100"
-										r="80"
-										fill="none"
-										stroke={sportColors[
-											i % sportColors.length
-										]}
-										stroke-width="28"
-										stroke-dasharray="{percentage *
-											circumference -
-											2} {circumference}"
-										stroke-dashoffset={-offset}
-										stroke-linecap="round"
-										transform="rotate(-90 100 100)"
-										class="donut-segment"
-										style="filter: drop-shadow(0 0 8px {sportColors[
-											i % sportColors.length
-										]}40);"
-									/>
-								{/each}
-							</svg>
-						{/if}
+							{/each}
+						</svg>
+
 						<div class="donut-center">
 							<div
 								class="text-4xl md:text-5xl font-black text-white leading-none"

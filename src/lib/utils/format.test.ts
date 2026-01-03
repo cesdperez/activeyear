@@ -14,18 +14,18 @@ import {
 } from './format.js';
 
 describe('formatDistance', () => {
-	it('formats all distances with one decimal', () => {
+	it('formats distances with appropriate precision', () => {
 		expect(formatDistance(42)).toBe('42.0km');
 		expect(formatDistance(99)).toBe('99.0km');
-		expect(formatDistance(100.5)).toBe('100.5km');
-		expect(formatDistance(847.345)).toBe('847.3km');
+		expect(formatDistance(100.5)).toBe('101km');
+		expect(formatDistance(847.345)).toBe('847km');
 		expect(formatDistance(42.7)).toBe('42.7km');
 		expect(formatDistance(42.4)).toBe('42.4km');
 	});
 
 	it('formats miles when unit is miles', () => {
 		expect(formatDistance(10, 'miles')).toBe('6.2mi'); // 10km ≈ 6.21...mi
-		expect(formatDistance(161, 'miles')).toBe('100.0mi'); // 161km ≈ 100.04...mi
+		expect(formatDistance(161, 'miles')).toBe('100mi'); // 161km ≈ 100.04...mi
 	});
 });
 
@@ -152,6 +152,6 @@ describe('formatActivityCount', () => {
 
 	it('uses plural for count > 1', () => {
 		expect(formatActivityCount(5, 'run')).toBe('5 runs');
-		expect(formatActivityCount(94, 'activity')).toBe('94 activitys');
+		expect(formatActivityCount(94, 'activity')).toBe('94 activities');
 	});
 });

@@ -41,3 +41,4 @@ export const sportIcons: Record<string, typeof PersonSimpleRun> = {
     cardio: Heartbeat,
     other: Target,
 };
+export const sportColors = ["#00d4ff", "#00ff88", "#ff6b6b", "#ffd93d", "#c084fc"];

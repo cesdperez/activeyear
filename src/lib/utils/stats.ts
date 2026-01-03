@@ -24,18 +24,21 @@ export function calculateYearStats(activities: Activity[]): YearStats {
         };
     }
 
-    const totalDistance = activities.reduce((sum, a) => sum + a.distance, 0);
-    const totalDuration = activities.reduce((sum, a) => sum + a.duration, 0);
-    const totalCalories = activities.reduce((sum, a) => sum + a.calories, 0);
-    const totalElevation = activities.reduce((sum, a) => sum + a.elevation, 0);
+    let totalDistance = 0;
+    let totalDuration = 0;
+    let totalCalories = 0;
+    let totalElevation = 0;
+    const uniqueDates = new Set<string>();
 
-    // Calculate active days (unique dates)
-    const uniqueDates = new Set(
-        activities.map((a) => a.date.toISOString().split('T')[0])
-    );
+    for (const a of activities) {
+        totalDistance += a.distance;
+        totalDuration += a.duration;
+        totalCalories += a.calories;
+        totalElevation += a.elevation;
+        uniqueDates.add(a.date.toISOString().split('T')[0]);
+    }
+
     const activeDays = uniqueDates.size;
-
-    // Calculate longest streak
     const longestStreak = calculateLongestStreak(activities);
 
     return {
