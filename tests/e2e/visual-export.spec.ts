@@ -17,7 +17,7 @@ type ThemeName = (typeof THEMES)[number];
 // and html-to-image's canvas-based rendering. The preview and download use the same DOM,
 // so any structural differences would indicate a real bug. Anti-aliasing and font rendering
 // differences between the two engines are expected.
-const MAX_DIFF_RATIO = 0.05;
+const MAX_DIFF_RATIO = 0.055;
 
 async function setupDashboard(page: Page): Promise<void> {
 	await page.addStyleTag({

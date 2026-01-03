@@ -361,8 +361,9 @@ describe('parseGarminCsv favorite field', () => {
 
         const result = parseGarminCsv(csvContent, 2025);
 
-        // All activities in the sample have Favorite=false
-        expect(result.activities.every((a) => a.favorite === false)).toBe(true);
+        const favorites = result.activities.filter((a) => a.favorite);
+        expect(favorites).toHaveLength(5);
+        expect(result.activities.length).toBe(8);
     });
 
     it('sets favorite to false when Favorite column is missing', () => {
