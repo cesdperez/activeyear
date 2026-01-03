@@ -26,8 +26,8 @@
 
     export async function exportAllCards(): Promise<void> {
         const baseFilename = appStore.userName
-            ? `${appStore.userName.toLowerCase().replace(/\s+/g, "-")}-2025`
-            : "activeyear-2025";
+            ? `${appStore.userName.toLowerCase().replace(/\s+/g, "-")}-${appStore.selectedYear}`
+            : `activeyear-${appStore.selectedYear}`;
 
         // Store the original slide to restore later
         const originalSlide = currentSlide;

@@ -24,12 +24,6 @@
         Mountains,
         Fire,
         Star,
-        PersonSimpleRun,
-        PersonSimpleBike,
-        PersonSimpleSwim,
-        PersonSimpleWalk,
-        Barbell,
-        PersonSimpleTaiChi,
         Target,
     } from "phosphor-svelte";
 
@@ -163,7 +157,7 @@
                             <h2
                                 class="text-[140px] font-black text-[var(--color-text-primary)] leading-[0.8] mb-2 tracking-tighter mr-[0.05em]"
                             >
-                                2025
+                                {appStore.selectedYear}
                             </h2>
                             <h1
                                 class="text-[72px] font-bold tracking-[0.15em] export-title leading-none relative z-10 uppercase text-[var(--color-text-dim)] mr-[-0.15em]"
@@ -410,7 +404,7 @@
                             <h2
                                 class="text-[140px] font-black text-[var(--color-text-primary)] leading-[0.8] mb-2 tracking-tighter mr-[0.05em]"
                             >
-                                2025
+                                {appStore.selectedYear}
                             </h2>
                             <h1
                                 class="text-[72px] font-bold tracking-[0.15em] export-title leading-none relative z-10 uppercase text-[var(--color-text-dim)] mr-[-0.15em]"
@@ -862,7 +856,7 @@
                             <h2
                                 class="text-[140px] font-black text-[var(--color-text-primary)] leading-[0.8] mb-2 tracking-tighter mr-[0.05em]"
                             >
-                                2025
+                                {appStore.selectedYear}
                             </h2>
                             <h1
                                 class="text-[72px] font-bold tracking-[0.15em] export-title leading-none relative z-10 uppercase text-[var(--color-text-dim)] mr-[-0.15em]"

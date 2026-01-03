@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -41,7 +40,6 @@ test.describe('Upload Flow', () => {
         // Wait for dashboard to appear
         await expect(page.getByRole('heading', { name: 'Your 2025' })).toBeVisible({ timeout: 10000 });
 
-        // Check core stats are displayed
         // Check core stats are displayed
         await expect(page.getByText('Total Distance').first()).toBeVisible();
         await expect(page.getByText('Time Active').first()).toBeVisible();
