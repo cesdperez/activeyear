@@ -7,6 +7,7 @@ export type ActivityType =
 	| 'strength'
 	| 'yoga'
 	| 'cardio'
+	| 'rowing'
 	| 'other';
 
 export interface Activity {
