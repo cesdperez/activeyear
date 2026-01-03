@@ -13,7 +13,6 @@ import type {
     SportBreakdown,
     WeeklyPattern,
     ParseError,
-    AspectRatio,
     Theme,
     SummaryMetric,
     Unit
@@ -21,19 +20,6 @@ import type {
 
 export type AppStatus = 'idle' | 'parsing' | 'ready' | 'error';
 
-interface AppState {
-    activities: Activity[];
-    stats: YearStats | null;
-    records: PersonalRecords | null;
-    breakdown: SportBreakdown[];
-    status: AppStatus;
-    error: string | null;
-    parseErrors: ParseError[];
-    // Export state
-    userName: string;
-    theme: Theme;
-    userPfp: string | null;
-}
 
 function createAppStore() {
     let activities = $state<Activity[]>([]);

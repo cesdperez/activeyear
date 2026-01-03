@@ -1,6 +1,6 @@
 <script lang="ts">
     import { appStore } from "$lib/stores/app.svelte.js";
-    import ExportCard, { getExportElement } from "./ExportCard.svelte";
+    import ExportCard from "./ExportCard.svelte";
     import { exportToPng } from "$lib/utils/export.js";
     import { CaretLeft, CaretRight } from "phosphor-svelte";
     import type { CardVariant } from "$lib/types/index.js";
@@ -18,6 +18,10 @@
             | 0
             | 1
             | 2;
+    }
+
+    function getExportElement(): HTMLElement | null {
+        return document.getElementById("export-card");
     }
 
     export async function exportAllCards(): Promise<void> {
