@@ -41,29 +41,8 @@
         Target,
     } from "phosphor-svelte";
 
-    // Sport icons mapping (using Phosphor for bold, activity-specific icons)
-    const sportIcons: Record<string, typeof PersonSimpleRun> = {
-        running: PersonSimpleRun,
-        cycling: PersonSimpleBike,
-        swimming: PersonSimpleSwim,
-        walking: PersonSimpleWalk,
-        hiking: Mountains,
-        strength: Barbell,
-        yoga: PersonSimpleTaiChi,
-        other: Target,
-    };
-
-    // Sport type display names
-    const sportNames: Record<string, string> = {
-        running: "Running",
-        cycling: "Cycling",
-        swimming: "Swimming",
-        walking: "Walking",
-        hiking: "Hiking",
-        strength: "Strength",
-        yoga: "Yoga",
-        other: "Other",
-    };
+    import { sportNames, sportIcons } from "$lib/constants/sports.js";
+    import { consolidateBreakdown } from "$lib/utils/activity.js";
 
     // Base dimensions for 9:16 aspect ratio
     let dimensions = $derived(getExportDimensions());
@@ -93,42 +72,13 @@
     });
 
     // Consolidate small sports (less than 1 hour) into "other"
-    const ONE_HOUR_IN_SECONDS = 3600;
-    let consolidatedBreakdown = $derived(() => {
-        const breakdown = appStore.breakdown || [];
-        const result: typeof breakdown = [];
-        let otherEntry: (typeof breakdown)[0] | null = null;
-
-        for (const sport of breakdown) {
-            if (sport.type === "other") {
-                otherEntry = { ...sport };
-            } else if (sport.duration < ONE_HOUR_IN_SECONDS) {
-                if (!otherEntry) {
-                    otherEntry = {
-                        type: "other",
-                        distance: 0,
-                        duration: 0,
-                        count: 0,
-                    };
-                }
-                otherEntry.distance += sport.distance;
-                otherEntry.duration += sport.duration;
-                otherEntry.count += sport.count;
-            } else {
-                result.push(sport);
-            }
-        }
-
-        if (otherEntry && otherEntry.count > 0) {
-            result.push(otherEntry);
-        }
-
-        return result;
-    });
+    let consolidatedBreakdownData = $derived(
+        consolidateBreakdown(appStore.breakdown || []),
+    );
 
     // Top 5 sports for the card (from consolidated breakdown)
     let topSports = $derived(
-        [...consolidatedBreakdown()]
+        [...consolidatedBreakdownData]
             .sort(
                 (a, b) =>
                     b[appStore.breakdownMetric] - a[appStore.breakdownMetric],
