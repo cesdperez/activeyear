@@ -1,20 +1,22 @@
 <script lang="ts">
     import { appStore } from "$lib/stores/app.svelte.js";
-    import ExportCard from "./ExportCard.svelte";
+    import SummaryCard from "./SummaryCard.svelte";
+    import BreakdownCard from "./BreakdownCard.svelte";
+    import HighlightsCard from "./HighlightsCard.svelte";
     import { exportToPng } from "$lib/utils/export.js";
     import { CaretLeft, CaretRight } from "phosphor-svelte";
-    import type { CardVariant } from "$lib/types/index.js";
 
     let currentSlide = $state<0 | 1 | 2>(0);
-    const slides: CardVariant[] = ["summary", "breakdown", "highlights"];
     const slideLabels = ["Summary", "Breakdown", "Highlights"];
 
+    const SLIDE_COUNT = 3;
+
     function nextSlide() {
-        currentSlide = ((currentSlide + 1) % slides.length) as 0 | 1 | 2;
+        currentSlide = ((currentSlide + 1) % SLIDE_COUNT) as 0 | 1 | 2;
     }
 
     function prevSlide() {
-        currentSlide = ((currentSlide - 1 + slides.length) % slides.length) as
+        currentSlide = ((currentSlide - 1 + SLIDE_COUNT) % SLIDE_COUNT) as
             | 0
             | 1
             | 2;
@@ -70,7 +72,13 @@
 <div class="carousel-container">
     <!-- Card Display -->
     <div class="carousel-card">
-        <ExportCard variant={slides[currentSlide]} />
+        {#if currentSlide === 0}
+            <SummaryCard />
+        {:else if currentSlide === 1}
+            <BreakdownCard />
+        {:else}
+            <HighlightsCard />
+        {/if}
     </div>
 
     <!-- Navigation Controls -->
@@ -85,7 +93,7 @@
 
         <!-- Dots -->
         <div class="carousel-dots">
-            {#each slides as _, i}
+            {#each { length: SLIDE_COUNT } as _, i}
                 <button
                     class="dot {currentSlide === i ? 'active' : ''}"
                     onclick={() => (currentSlide = i as 0 | 1 | 2)}
@@ -101,7 +109,7 @@
 
     <!-- Slide Label -->
     <div class="slide-label">
-        {slideLabels[currentSlide]} ({currentSlide + 1}/{slides.length})
+        {slideLabels[currentSlide]} ({currentSlide + 1}/{SLIDE_COUNT})
     </div>
 </div>
 
