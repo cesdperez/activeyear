@@ -30,6 +30,9 @@ const ACTIVITY_TYPE_MAP: Record<string, ActivityType> = {
     Cardio: 'cardio',
     CrossFit: 'cardio',
     HIIT: 'cardio',
+    Rowing: 'rowing',
+    'Indoor Rowing': 'rowing',
+    'Track Running': 'running',
     Padel: 'other',
     Skating: 'other',
     'Ice Skating': 'other',
@@ -37,11 +40,13 @@ const ACTIVITY_TYPE_MAP: Record<string, ActivityType> = {
     'Rock Climbing': 'other'
 };
 
-// Activity types where distances are recorded in meters (not km)
 const DISTANCE_IN_METERS_TYPES = new Set([
     'Pool Swim',
     'Open Water Swimming',
-    'Swimming'
+    'Swimming',
+    'Indoor Rowing',
+    'Rowing',
+    'Track Running'
 ]);
 
 /**
