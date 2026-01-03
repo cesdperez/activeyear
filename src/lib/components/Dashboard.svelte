@@ -155,7 +155,7 @@
 		<h1
 			class="text-5xl md:text-7xl font-bold mb-6 glow-text tracking-tight"
 		>
-			Your 2025
+			Your {appStore.selectedYear}
 		</h1>
 		<div
 			class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[var(--color-surface-elevated)] border border-[rgba(255,255,255,0.05)]"
