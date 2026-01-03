@@ -37,41 +37,24 @@
 		Star,
 	} from "phosphor-svelte";
 
-	// Sport type display names
-	const sportNames: Record<string, string> = {
-		running: "Running",
-		cycling: "Cycling",
-		swimming: "Swimming",
-		walking: "Walking",
-		hiking: "Hiking",
-		strength: "Strength",
-		yoga: "Yoga",
-		other: "Other",
-	};
-
-	// Sport icons mapping (using Phosphor for bold, activity-specific icons)
-	const sportIcons: Record<string, typeof PersonSimpleRun> = {
-		running: PersonSimpleRun,
-		cycling: PersonSimpleBike,
-		swimming: PersonSimpleSwim,
-		walking: PersonSimpleWalk,
-		hiking: Mountains,
-		strength: Barbell,
-		yoga: PersonSimpleTaiChi,
-		other: Target,
-	};
+	import { sportNames, sportIcons } from "$lib/constants/sports.js";
+	import { consolidateBreakdown } from "$lib/utils/activity.js";
 
 	import confetti from "canvas-confetti";
 
 	$effect(() => {
 		if (appStore.confettiEnabled) {
-			startConfetti();
+			const cleanup = startConfetti();
+			return cleanup;
 		}
 	});
 
 	function startConfetti() {
+		let timeoutId: ReturnType<typeof setTimeout>;
+		let active = true;
+
 		(function frame() {
-			if (!appStore.confettiEnabled) return;
+			if (!appStore.confettiEnabled || !active) return;
 
 			confetti({
 				particleCount: 1,
@@ -89,51 +72,24 @@
 				disableForReducedMotion: true,
 			});
 
-			setTimeout(frame, 140);
+			timeoutId = setTimeout(frame, 140);
 		})();
+
+		return () => {
+			active = false;
+			clearTimeout(timeoutId);
+		};
 	}
 
 	let breakdownMetric = $derived(appStore.breakdownMetric);
 
 	// Consolidate small sports (less than 1 hour) into "other"
-	const ONE_HOUR_IN_SECONDS = 3600;
-	const consolidatedBreakdown = $derived(() => {
-		const breakdown = appStore.breakdown || [];
-		const result: typeof breakdown = [];
-		let otherEntry: (typeof breakdown)[0] | null = null;
-
-		for (const sport of breakdown) {
-			if (sport.type === "other") {
-				// Keep track of existing "other" entry
-				otherEntry = { ...sport };
-			} else if (sport.duration < ONE_HOUR_IN_SECONDS) {
-				// Consolidate small sports into "other"
-				if (!otherEntry) {
-					otherEntry = {
-						type: "other",
-						distance: 0,
-						duration: 0,
-						count: 0,
-					};
-				}
-				otherEntry.distance += sport.distance;
-				otherEntry.duration += sport.duration;
-				otherEntry.count += sport.count;
-			} else {
-				result.push(sport);
-			}
-		}
-
-		// Add the consolidated "other" if it exists
-		if (otherEntry && otherEntry.count > 0) {
-			result.push(otherEntry);
-		}
-
-		return result;
-	});
+	const consolidatedBreakdownData = $derived(
+		consolidateBreakdown(appStore.breakdown || []),
+	);
 
 	const sortedBreakdown = $derived(
-		[...consolidatedBreakdown()].sort(
+		[...consolidatedBreakdownData].sort(
 			(a, b) => b[breakdownMetric] - a[breakdownMetric],
 		),
 	);
