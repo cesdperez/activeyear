@@ -3,7 +3,7 @@
     import SummaryCard from "./SummaryCard.svelte";
     import BreakdownCard from "./BreakdownCard.svelte";
     import HighlightsCard from "./HighlightsCard.svelte";
-    import { exportToPng } from "$lib/utils/export.js";
+    import { exportToPng, getThemeBackgroundColor } from "$lib/utils/export.js";
     import { CaretLeft, CaretRight } from "phosphor-svelte";
 
     let currentSlide = $state<0 | 1 | 2>(0);
@@ -31,6 +31,8 @@
             ? `${appStore.userName.toLowerCase().replace(/\s+/g, "-")}-${appStore.selectedYear}`
             : `activeyear-${appStore.selectedYear}`;
 
+        const backgroundColor = getThemeBackgroundColor(appStore.theme);
+
         // Store the original slide to restore later
         const originalSlide = currentSlide;
 
@@ -41,6 +43,7 @@
         if (summaryEl) {
             await exportToPng(summaryEl, {
                 filename: `${baseFilename}-summary`,
+                backgroundColor,
             });
         }
 
@@ -51,6 +54,7 @@
         if (breakdownEl) {
             await exportToPng(breakdownEl, {
                 filename: `${baseFilename}-breakdown`,
+                backgroundColor,
             });
         }
 
@@ -61,6 +65,7 @@
         if (highlightsEl) {
             await exportToPng(highlightsEl, {
                 filename: `${baseFilename}-highlights`,
+                backgroundColor,
             });
         }
 

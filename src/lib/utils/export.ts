@@ -1,9 +1,17 @@
 import { toPng } from 'html-to-image';
+import type { Theme } from '$lib/types/index.js';
 
 export interface ExportOptions {
     filename?: string;
     scale?: number;
+    backgroundColor?: string;
 }
+
+const THEME_BACKGROUNDS: Record<Theme, string> = {
+    neon: '#0a0a0b',
+    minimalist: '#fdfdfd',
+    retro: '#1e1b4b'
+};
 
 /**
  * Export an HTML element to PNG and trigger download
@@ -12,14 +20,14 @@ export async function exportToPng(
     element: HTMLElement,
     options: ExportOptions = {}
 ): Promise<void> {
-    const { filename = 'activeyear-2025', scale = 2 } = options;
+    const { filename = 'activeyear-2025', scale = 2, backgroundColor = THEME_BACKGROUNDS.neon } = options;
 
     try {
         const dataUrl = await toPng(element, {
             // High quality settings
             pixelRatio: scale,
             // Ensure background is captured
-            backgroundColor: '#0a0a0b',
+            backgroundColor,
             // Proper font handling
             cacheBust: true,
             // Skip elements that shouldn't be in export
@@ -53,4 +61,8 @@ export function getExportDimensions(): {
 } {
     const baseWidth = 1080;
     return { width: baseWidth, height: Math.round((baseWidth * 16) / 9) };
+}
+
+export function getThemeBackgroundColor(theme: Theme): string {
+    return THEME_BACKGROUNDS[theme];
 }
