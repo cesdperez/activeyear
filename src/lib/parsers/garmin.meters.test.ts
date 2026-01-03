@@ -38,4 +38,37 @@ describe('Garmin Parser - Meter-based Activities', () => {
         expect(activity.type).toBe('rowing');
         expect(activity.distance).toBe(5.0);
     });
+
+    it('correctly handles Paddlesport distance in meters (SUP)', () => {
+        const csv = 'Activity Type,Date,Title,Distance,Calories,Time\n' +
+            'SUP,2025-07-15 10:00:00,Summer SUP,"3,500",250,01:10:00';
+
+        const result = parseGarminCsv(csv, 2025);
+        expect(result.activities).toHaveLength(1);
+        const activity = result.activities[0];
+        expect(activity.type).toBe('paddling');
+        expect(activity.distance).toBe(3.5);
+    });
+
+    it('correctly handles Paddlesport distance in meters (Kayaking)', () => {
+        const csv = 'Activity Type,Date,Title,Distance,Calories,Time\n' +
+            'Kayaking,2025-08-10 14:00:00,Lake Kayak,"8,200",400,01:45:00';
+
+        const result = parseGarminCsv(csv, 2025);
+        expect(result.activities).toHaveLength(1);
+        const activity = result.activities[0];
+        expect(activity.type).toBe('paddling');
+        expect(activity.distance).toBe(8.2);
+    });
+
+    it('correctly handles Indoor Track distance in meters', () => {
+        const csv = 'Activity Type,Date,Title,Distance,Calories,Time\n' +
+            'Indoor Track,2025-02-15 18:00:00,Indoor Track Session,"2,400",180,00:15:00';
+
+        const result = parseGarminCsv(csv, 2025);
+        expect(result.activities).toHaveLength(1);
+        const activity = result.activities[0];
+        expect(activity.type).toBe('running');
+        expect(activity.distance).toBe(2.4);
+    });
 });

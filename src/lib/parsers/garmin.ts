@@ -33,6 +33,11 @@ const ACTIVITY_TYPE_MAP: Record<string, ActivityType> = {
     Rowing: 'rowing',
     'Indoor Rowing': 'rowing',
     'Track Running': 'running',
+    'Indoor Track': 'running',
+    'Stand Up Paddleboarding': 'paddling',
+    SUP: 'paddling',
+    Kayaking: 'paddling',
+    Canoeing: 'paddling',
     Padel: 'other',
     Skating: 'other',
     'Ice Skating': 'other',
@@ -46,7 +51,12 @@ const DISTANCE_IN_METERS_TYPES = new Set([
     'Swimming',
     'Indoor Rowing',
     'Rowing',
-    'Track Running'
+    'Track Running',
+    'Indoor Track',
+    'Stand Up Paddleboarding',
+    'SUP',
+    'Kayaking',
+    'Canoeing'
 ]);
 
 /**
