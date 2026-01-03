@@ -206,6 +206,35 @@ export function isInYear(date: Date, year: number): boolean {
 }
 
 /**
+ * Deduplicate headers in a CSV string to prevent PapaParse warnings
+ */
+function deduplicateHeaders(csvContent: string): string {
+    const lines = csvContent.split(/\r?\n/);
+    if (lines.length === 0) return csvContent;
+
+    const headerLine = lines[0];
+    const parseResult = Papa.parse<string[]>(headerLine, { header: false });
+    const headers = parseResult.data[0];
+
+    if (!headers) return csvContent;
+
+    const seen = new Set<string>();
+    const deduplicatedHeaders = headers.map(h => {
+        const trimmed = h.trim();
+        let final = trimmed;
+        let i = 1;
+        while (seen.has(final)) {
+            final = `${trimmed}_${i++}`;
+        }
+        seen.add(final);
+        return final;
+    });
+
+    lines[0] = Papa.unparse([deduplicatedHeaders]);
+    return lines.join('\n');
+}
+
+/**
  * Parse a Garmin CSV string and return activities for the specified year
  */
 export function parseGarminCsv(csvContent: string, targetYear: number = 2025): ParseResult {
@@ -251,7 +280,7 @@ export function parseGarminCsv(csvContent: string, targetYear: number = 2025): P
     }
 
 
-    const parseResult = Papa.parse<GarminRawActivity>(processedContent, {
+    const parseResult = Papa.parse<GarminRawActivity>(deduplicateHeaders(processedContent), {
         header: true,
         skipEmptyLines: true,
         transformHeader: (header) => header.trim()
