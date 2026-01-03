@@ -26,12 +26,6 @@
 		Hourglass,
 		ArrowDown,
 		Confetti,
-		PersonSimpleRun,
-		PersonSimpleBike,
-		PersonSimpleSwim,
-		PersonSimpleWalk,
-		Barbell,
-		PersonSimpleTaiChi,
 		Target,
 		Star,
 	} from "phosphor-svelte";
