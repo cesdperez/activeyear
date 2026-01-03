@@ -266,10 +266,9 @@ test.describe('Export Visual Fidelity', () => {
 	}
 
 	test.describe('Theme variations', () => {
-		// Test summary card with all themes (minimal coverage approach)
-		// Note: The comparison between screenshot and download may show high differences
-		// for non-neon themes because html-to-image uses a hardcoded dark backgroundColor.
-		// This is a known limitation - the download snapshots still verify consistency.
+		// Test summary card with all themes.
+		// Note: html-to-image renders text and gradients differently than Chrome's native renderer,
+		// so non-neon themes have higher thresholds. The download snapshots still verify consistency.
 		for (const theme of THEMES) {
 			test(`summary card with ${theme} theme: download matches preview`, async ({ page }) => {
 				await setupDashboard(page);
@@ -281,8 +280,7 @@ test.describe('Export Visual Fidelity', () => {
 
 				const { diffRatio, diffPixels, diffImage } = compareImages(screenshotBuffer, downloadBuffer);
 
-				// For neon theme, expect tight match. For other themes, be more lenient
-				// due to backgroundColor differences in html-to-image export
+				// Neon theme has tighter tolerance; other themes have rendering differences with html-to-image
 				const threshold = theme === 'neon' ? MAX_DIFF_RATIO : 0.65;
 
 				if (diffRatio > threshold) {
