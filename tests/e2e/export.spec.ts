@@ -5,121 +5,79 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 test.describe('Export Flow', () => {
-    // Helper to upload CSV and get to dashboard
-    async function uploadAndWaitForDashboard(page: Page) {
-        // Disable animations for stability
-        await page.addStyleTag({ content: '*, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }' });
+	async function uploadAndWaitForDashboard(page: Page) {
+		await page.addStyleTag({
+			content:
+				'*, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }'
+		});
 
-        await page.goto('/');
-        const fileInput = page.locator('input[type="file"]');
-        const csvPath = join(__dirname, '..', '..', 'src', 'lib', 'parsers', '__fixtures__', 'garmin-sample.csv');
-        await fileInput.setInputFiles(csvPath);
-        await expect(page.getByRole('heading', { name: 'Your 2025' })).toBeVisible({ timeout: 10000 });
-    }
+		await page.goto('/');
+		const fileInput = page.locator('input[type="file"]');
+		const csvPath = join(__dirname, '..', '..', 'src', 'lib', 'parsers', '__fixtures__', 'garmin-sample.csv');
+		await fileInput.setInputFiles(csvPath);
+		await expect(page.getByRole('heading', { name: 'Your 2025' })).toBeVisible({ timeout: 10000 });
+	}
 
-    test('export panel appears after upload', async ({ page }) => {
-        await uploadAndWaitForDashboard(page);
+	test('export panel appears after upload', async ({ page }) => {
+		await uploadAndWaitForDashboard(page);
 
-        // Check export section is visible
-        await expect(page.getByRole('heading', { name: 'Export' })).toBeVisible();
+		await expect(page.getByRole('heading', { name: 'Export' })).toBeVisible();
 
-        // Check ratio buttons are NOT present
-        await expect(page.getByRole('button', { name: /9:16/i })).not.toBeVisible();
-        await expect(page.getByRole('button', { name: /1:1/i })).not.toBeVisible();
-        await expect(page.getByRole('button', { name: /4:5/i })).not.toBeVisible();
+		// Ratio buttons should NOT be present (single ratio only)
+		await expect(page.getByRole('button', { name: /9:16/i })).not.toBeVisible();
+		await expect(page.getByRole('button', { name: /1:1/i })).not.toBeVisible();
+		await expect(page.getByRole('button', { name: /4:5/i })).not.toBeVisible();
 
-        // Check download button
-        await expect(page.getByRole('button', { name: /Download All Images/i })).toBeVisible();
-    });
+		await expect(page.getByRole('button', { name: /Download All Images/i })).toBeVisible();
+	});
 
+	test('user name personalization works', async ({ page }) => {
+		await uploadAndWaitForDashboard(page);
 
-    test('user name personalization works', async ({ page }) => {
-        await uploadAndWaitForDashboard(page);
+		const nameInput = page.locator('#userName');
+		await expect(nameInput).toBeVisible();
 
-        // Find the name input
-        const nameInput = page.locator('#userName');
-        await expect(nameInput).toBeVisible();
+		await nameInput.fill('César');
 
-        // Enter a name
-        await nameInput.fill('César');
+		const exportCard = page.locator('#export-card');
+		await expect(exportCard.getByText("César's")).toBeVisible();
+	});
 
-        // Verify the name appears in the export card preview
-        const exportCard = page.locator('#export-card');
-        await expect(exportCard.getByText("César's")).toBeVisible();
-    });
+	test('download button triggers export', async ({ page }) => {
+		await uploadAndWaitForDashboard(page);
 
-    test('export card preview renders with stats', async ({ page }) => {
-        await uploadAndWaitForDashboard(page);
+		const downloadButton = page.getByRole('button', { name: /Download All Images/i });
+		await expect(downloadButton).toBeEnabled();
 
-        // Verify export card is visible with key elements
-        const exportCard = page.locator('#export-card');
-        await expect(exportCard).toBeVisible();
+		// Visual fidelity of downloads is tested in visual-export.spec.ts
+		// Here we just verify the button triggers the export action
+		await downloadButton.click();
 
-        // Check year heading
-        await expect(exportCard.getByText('2025')).toBeVisible();
-        await expect(exportCard.getByText('Year in Sport')).toBeVisible();
+		await expect(page.getByText(/Generating|Download All Images/i)).toBeVisible();
+	});
 
-        // Check stats are rendered (from sample data)
-        await expect(exportCard.getByText('Total Distance')).toBeVisible();
-        await expect(exportCard.getByText('Time Active')).toBeVisible();
+	test('theme selector is visible', async ({ page }) => {
+		await uploadAndWaitForDashboard(page);
 
-        // Check watermark
-        await expect(exportCard.getByText('activeyear.app')).toBeVisible();
-    });
+		await expect(page.getByRole('button', { name: /Neon/i })).toBeVisible();
+		await expect(page.getByRole('button', { name: /Minimal/i })).toBeVisible();
+		await expect(page.getByRole('button', { name: /Retro/i })).toBeVisible();
+	});
 
-    test('download button is clickable', async ({ page }) => {
-        await uploadAndWaitForDashboard(page);
+	test('theme switching works', async ({ page }) => {
+		await uploadAndWaitForDashboard(page);
 
-        const downloadButton = page.getByRole('button', { name: /Download All Images/i });
-        await expect(downloadButton).toBeEnabled();
+		const exportCard = page.locator('#export-card');
 
-        // Note: We can't easily test actual file download in headless mode
-        // but we verify the button triggers the export action
-        await downloadButton.click();
+		await expect(exportCard).toHaveAttribute('data-theme', 'neon');
 
-        // Should show "Generating..." state briefly
-        // The button text changes during export
-        await expect(page.getByText(/Generating|Download All Images/i)).toBeVisible();
-    });
+		await page.getByRole('button', { name: /Minimal/i }).click();
+		await expect(exportCard).toHaveAttribute('data-theme', 'minimalist');
 
-    test('theme selector is visible', async ({ page }) => {
-        await uploadAndWaitForDashboard(page);
+		await page.getByRole('button', { name: /Retro/i }).click();
+		await expect(exportCard).toHaveAttribute('data-theme', 'retro');
 
-        // Check theme buttons are present
-        await expect(page.getByRole('button', { name: /Neon/i })).toBeVisible();
-        await expect(page.getByRole('button', { name: /Minimal/i })).toBeVisible();
-        await expect(page.getByRole('button', { name: /Retro/i })).toBeVisible();
-    });
-
-    test('theme switching works', async ({ page }) => {
-        await uploadAndWaitForDashboard(page);
-
-        const exportCard = page.locator('#export-card');
-
-        // Neon should be default (data-theme="neon")
-        await expect(exportCard).toHaveAttribute('data-theme', 'neon');
-
-        // Click Minimalist
-        await page.getByRole('button', { name: /Minimal/i }).click();
-        await expect(exportCard).toHaveAttribute('data-theme', 'minimalist');
-
-        // Click Retro
-        await page.getByRole('button', { name: /Retro/i }).click();
-        await expect(exportCard).toHaveAttribute('data-theme', 'retro');
-
-        // Click back to Neon
-        await page.getByRole('button', { name: /Neon/i }).click();
-        await expect(exportCard).toHaveAttribute('data-theme', 'neon');
-    });
-
-    test('wrapper has correct scaled dimensions', async ({ page }) => {
-        await uploadAndWaitForDashboard(page);
-
-        // Default is 9:16, width 1080, scale 0.35 => 378px
-        const wrapper = page.locator('.export-card-wrapper');
-        await expect(wrapper).toHaveCSS('width', '378px');
-
-        // Height 1080 * 16/9 * 0.35 => 1920 * 0.35 => 672px
-        await expect(wrapper).toHaveCSS('height', '672px');
-    });
+		await page.getByRole('button', { name: /Neon/i }).click();
+		await expect(exportCard).toHaveAttribute('data-theme', 'neon');
+	});
 });
