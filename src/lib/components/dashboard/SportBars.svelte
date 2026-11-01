@@ -21,10 +21,9 @@
 		{@const percentage = (value / maxMetricValue) * 100}
 		{@const color = sportColors[i % sportColors.length]}
 
-		<!-- Svelte scopes @keyframes, so this inline name never matches the one below and the bars do not animate. -->
 		<div
 			class="flex flex-col gap-2 group"
-			style="animation: fadeInUp 0.4s ease-out forwards; animation-delay: {600 +
+			style="animation: fadeInUp 0.4s ease-out both; animation-delay: {600 +
 				i * 50}ms"
 		>
 			<div class="flex justify-between items-center">
@@ -59,7 +58,8 @@
 </div>
 
 <style>
-	@keyframes fadeInUp {
+	/* Global because Svelte renames scoped keyframes, and the inline animation refers to this name. */
+	@keyframes -global-fadeInUp {
 		from {
 			opacity: 0;
 			transform: translateY(10px);
