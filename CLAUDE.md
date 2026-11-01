@@ -14,6 +14,7 @@ pnpm check                                 # Type checking
 ## Testing Strategy
 - **E2E tests** (`tests/e2e/`): Primary coverage for user flows. Avoid duplicating in unit tests.
 - **Unit tests** (`*.test.ts`): Edge cases, complex logic, and scenarios too slow for E2E.
+- E2E runs against `pnpm preview` (`wrangler pages dev` on the build), so `_headers` and the CSP are enforced. Playwright reuses whatever already listens on port 4173, and `workerd` can outlive a killed `wrangler`: stop both before a run on a new build.
 - After changes: run `pnpm test:run` and `pnpm check`. Before merging to main: run `pnpm test:all`.
 
 ## Code Style
@@ -28,7 +29,9 @@ pnpm check                                 # Type checking
 ## Deployment
 Cloudflare Pages auto-deploys on push to `main` (Git integration, no CI pipeline). Do not push unless explicitly requested.
 
-The app is fully prerendered and the worker is routed no paths, so `_headers` is the only source of security headers. `csp-script-hashes.ts` adds the hash of SvelteKit's inline bootstrap script to the CSP at build time; any other inline script will be blocked. `pnpm preview` and E2E serve the build through `wrangler pages dev`, so the CSP is enforced in tests. Playwright reuses whatever already listens on port 4173, and `workerd` can outlive a killed `wrangler`, so stop both before trusting a run on a new build.
+Security headers:
+- The app is fully prerendered and the worker is routed no paths, so `_headers` is the only source of security headers.
+- `csp-script-hashes.ts` adds the hash of SvelteKit's inline bootstrap script to the CSP at build time. Any other inline script is blocked.
 
 Solo project, kept simple: there is no CI, so run the checks above locally before pushing. Add new automated checks as local git hooks rather than a CI workflow.
 

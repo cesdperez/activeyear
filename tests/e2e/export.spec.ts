@@ -1,8 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { uploadSample } from './helpers.js';
 
 test.describe('Export Flow', () => {
 	async function uploadAndWaitForDashboard(page: Page) {
@@ -11,11 +8,7 @@ test.describe('Export Flow', () => {
 				'*, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }'
 		});
 
-		await page.goto('/');
-		const fileInput = page.locator('input[type="file"]');
-		const csvPath = join(__dirname, '..', '..', 'src', 'lib', 'parsers', '__fixtures__', 'garmin-sample.csv');
-		await fileInput.setInputFiles(csvPath);
-		await expect(page.getByRole('heading', { name: 'Your 2026' })).toBeVisible({ timeout: 10000 });
+		await uploadSample(page);
 	}
 
 	test('export panel appears after upload', async ({ page }) => {

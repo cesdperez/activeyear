@@ -1,8 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { uploadSample } from './helpers.js';
 
 const BEACON_URL = 'https://static.cloudflareinsights.com/beacon.min.js';
 const RUM_URL = 'https://cloudflareinsights.com/cdn-cgi/rum';
@@ -14,13 +11,6 @@ function recordCspViolations(page: Page): string[] {
 		if (message.text().includes('Content Security Policy')) violations.push(message.text());
 	});
 	return violations;
-}
-
-async function uploadAndWaitForDashboard(page: Page): Promise<void> {
-	await page.goto('/');
-	const csvPath = join(__dirname, '..', '..', 'src', 'lib', 'parsers', '__fixtures__', 'garmin-sample.csv');
-	await page.locator('input[type="file"]').setInputFiles(csvPath);
-	await expect(page.getByRole('heading', { name: 'Your 2026' })).toBeVisible({ timeout: 10000 });
 }
 
 test.describe('Content Security Policy', () => {
@@ -45,7 +35,7 @@ test.describe('Content Security Policy', () => {
 
 	test('upload, confetti and PNG export run without violations', async ({ page }) => {
 		const violations = recordCspViolations(page);
-		await uploadAndWaitForDashboard(page);
+		await uploadSample(page);
 		await page.getByRole('button', { name: 'Toggle celebration confetti' }).click();
 
 		const downloads: string[] = [];

@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { PNG } from 'pngjs';
 import pixelmatch from 'pixelmatch';
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { uploadSample } from './helpers.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -25,11 +26,7 @@ async function setupDashboard(page: Page): Promise<void> {
 			'*, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }'
 	});
 
-	await page.goto('/');
-	const fileInput = page.locator('input[type="file"]');
-	const csvPath = join(__dirname, '..', '..', 'src', 'lib', 'parsers', '__fixtures__', 'garmin-sample.csv');
-	await fileInput.setInputFiles(csvPath);
-	await expect(page.getByRole('heading', { name: 'Your 2026' })).toBeVisible({ timeout: 10000 });
+	await uploadSample(page);
 }
 
 async function navigateToSlide(page: Page, slideIndex: number): Promise<void> {

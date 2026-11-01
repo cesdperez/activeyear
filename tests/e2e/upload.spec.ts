@@ -1,8 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { DASHBOARD_HEADING, SAMPLE_CSV } from './helpers.js';
 
 test.describe('Upload Flow', () => {
     test('home page displays upload UI', async ({ page }) => {
@@ -13,7 +10,7 @@ test.describe('Upload Flow', () => {
 
         // Check main heading
         await expect(page.getByRole('heading', { name: 'ActiveYear' })).toBeVisible();
-        await expect(page.getByText('Your 2026 in Sport')).toBeVisible();
+        await expect(page.getByText(`${DASHBOARD_HEADING} in Sport`)).toBeVisible();
 
         // Check upload zone
         await expect(page.getByText('Drop your Garmin CSV here')).toBeVisible();
@@ -35,12 +32,11 @@ test.describe('Upload Flow', () => {
         const fileInput = page.locator('input[type="file"]');
 
         // Upload the sample CSV file
-        const csvPath = join(__dirname, '..', '..', 'src', 'lib', 'parsers', '__fixtures__', 'garmin-sample.csv');
 
-        await fileInput.setInputFiles(csvPath);
+        await fileInput.setInputFiles(SAMPLE_CSV);
 
         // Wait for dashboard to appear
-        await expect(page.getByRole('heading', { name: 'Your 2026' })).toBeVisible({ timeout: 10000 });
+        await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible({ timeout: 10000 });
 
         // Check core stats are displayed
         await expect(page.getByText('Total Distance').first()).toBeVisible();
@@ -57,12 +53,11 @@ test.describe('Upload Flow', () => {
         await page.goto('/');
 
         const fileInput = page.locator('input[type="file"]');
-        const csvPath = join(__dirname, '..', '..', 'src', 'lib', 'parsers', '__fixtures__', 'garmin-sample.csv');
 
-        await fileInput.setInputFiles(csvPath);
+        await fileInput.setInputFiles(SAMPLE_CSV);
 
         // Wait for dashboard
-        await expect(page.getByRole('heading', { name: 'Your 2026' })).toBeVisible({ timeout: 10000 });
+        await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible({ timeout: 10000 });
 
         // Click reset button
         await page.getByRole('button', { name: 'Upload different file' }).click();
