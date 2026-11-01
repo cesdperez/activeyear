@@ -194,14 +194,20 @@ describe('donutCentre', () => {
 });
 
 describe('weeklyBars', () => {
-	it('scales bars to the busiest day and flags the two busiest days', () => {
+	it('scales bars to the busiest day and flags the two busiest days with their ties', () => {
 		const pattern: WeeklyPattern = [10, 5, 0, 20, 10, 1, 0];
 
 		const bars = weeklyBars(pattern, 100);
 
 		expect(bars.map((b) => b.heightPercent)).toEqual([50, 25, 0, 100, 50, 5, 0]);
 		expect(bars.map((b) => b.barHeight)).toEqual([50, 25, 8, 100, 50, 8, 8]);
-		expect(bars.map((b) => b.isTopDay)).toEqual([true, false, false, true, false, false, false]);
+		expect(bars.map((b) => b.isTopDay)).toEqual([true, false, false, true, true, false, false]);
+	});
+
+	it('flags every day tied with the second busiest', () => {
+		const bars = weeklyBars([3, 1, 1, 1, 1, 3, 3], 100);
+
+		expect(bars.map((b) => b.isTopDay)).toEqual([true, false, false, false, false, true, true]);
 	});
 });
 
