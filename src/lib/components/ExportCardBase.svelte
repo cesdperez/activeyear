@@ -6,6 +6,7 @@
     import ExportPreviewScale from "./export/ExportPreviewScale.svelte";
     import ExportCardBackground from "./export/ExportCardBackground.svelte";
     import ExportCardHeader from "./export/ExportCardHeader.svelte";
+    import ExportCardWatermark from "./export/ExportCardWatermark.svelte";
 
     let {
         variant,
@@ -47,14 +48,7 @@
                 <!-- Variant-specific content -->
                 {@render children()}
 
-                <!-- Watermark -->
-                <div class="mt-auto pt-8 text-center">
-                    <p
-                        class="text-[24px] text-[var(--color-text-dim)] font-medium tracking-widest"
-                    >
-                        activeyear.app
-                    </p>
-                </div>
+                <ExportCardWatermark />
             </div>
         </div>
 </ExportPreviewScale>
