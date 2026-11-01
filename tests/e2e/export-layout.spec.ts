@@ -177,6 +177,36 @@ test.describe('Export card layout', () => {
 		});
 	}
 
+	test('weekly bars stand out from the Minimal background', async ({ page }) => {
+		await uploadCsv(page, garminCsv(favourites(3, (i) => `Run ${i}`)));
+		await page.getByRole('button', { name: /Minimal/i }).click();
+		await showSlide(page, 1);
+		await expect(page.locator('#export-card')).toHaveAttribute('data-theme', 'minimalist');
+
+		const ratios = await page.locator('#export-card .weekly-bar').evaluateAll((bars) => {
+			const background = [253, 253, 253];
+			const luminance = (rgb: number[]) => {
+				const [r, g, b] = rgb.map((c) => {
+					const s = c / 255;
+					return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+				});
+				return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+			};
+			return bars
+				.filter((bar) => (bar as HTMLElement).offsetHeight > 0)
+				.map((bar) => {
+					const style = getComputedStyle(bar);
+					const alpha = Number(style.opacity);
+					const [r, g, b] = (style.backgroundColor.match(/[\d.]+/g) ?? []).map(Number);
+					const rgb = [r, g, b].map((c, i) => c * alpha + background[i] * (1 - alpha));
+					const [hi, lo] = [luminance(rgb), luminance(background)].sort((x, y) => y - x);
+					return (hi + 0.05) / (lo + 0.05);
+				});
+		});
+		expect(ratios.length).toBeGreaterThan(0);
+		expect(Math.min(...ratios)).toBeGreaterThanOrEqual(3);
+	});
+
 	test('donut slices leave a visible gap between them', async ({ page }) => {
 		await uploadCsv(
 			page,
