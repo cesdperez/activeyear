@@ -10,7 +10,7 @@
 	<section data-testid="personal-records" class="mb-16">
 		<SectionHeading title="Personal Records" />
 
-		<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+		<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
 			<RecordCards {records} {unit} variant="dashboard" delay={450} />
 		</div>
 	</section>

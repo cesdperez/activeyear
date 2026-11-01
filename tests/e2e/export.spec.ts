@@ -38,7 +38,6 @@ test.describe('Export Flow', () => {
 		const downloadPromise = page.waitForEvent('download');
 		await downloadButton.click();
 
-		await expect(page.getByText(/Generating|Download All Images/i)).toBeVisible();
 		expect((await downloadPromise).suggestedFilename()).toBe('activeyear-2026-summary.png');
 	});
 

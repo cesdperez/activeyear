@@ -37,7 +37,7 @@
 							: 'flex h-8 w-8 items-center justify-center rounded-lg'}
 						style="background: {color}20; color: {color};"
 					>
-						<IconComponent class="h-5 w-5" weight="bold" />
+						<IconComponent class="h-5 w-5" weight="bold" aria-hidden="true" />
 					</div>
 					<span
 						class={isDashboard
