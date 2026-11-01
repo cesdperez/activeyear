@@ -4,7 +4,7 @@
 	import SectionHeading from './SectionHeading.svelte';
 	import BreakdownMetricToggle from './BreakdownMetricToggle.svelte';
 	import SportDonut from '#lib/components/widgets/SportDonut.svelte';
-	import SportBars from './SportBars.svelte';
+	import SportBars from '#lib/components/widgets/SportBars.svelte';
 
 	const metric = $derived(appStore.breakdownMetric);
 
@@ -21,7 +21,7 @@
 
 		<div class="flex flex-col items-center gap-12 lg:flex-row lg:items-start">
 			<SportDonut variant="dashboard" sports={sortedBreakdown} totalActivities={totalCount} />
-			<SportBars sports={sortedBreakdown} {metric} />
+			<SportBars variant="dashboard" sports={sortedBreakdown} {metric} />
 		</div>
 	</section>
 {/if}
