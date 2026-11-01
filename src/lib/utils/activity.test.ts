@@ -31,10 +31,11 @@ describe('consolidateBreakdown', () => {
 		});
 	});
 
-	it('should merge with existing "other" entry', () => {
+	it('should merge the folded sports with an existing "other" entry', () => {
 		const input: SportBreakdown[] = [
 			{ type: 'running', distance: 10, duration: 3600, count: 1 },
 			{ type: 'swimming', distance: 1, duration: 1800, count: 1 },
+			{ type: 'walking', distance: 2, duration: 1200, count: 1 },
 			{ type: 'other', distance: 5, duration: 5000, count: 2 }
 		];
 		const result = consolidateBreakdown(input);
@@ -42,9 +43,9 @@ describe('consolidateBreakdown', () => {
 		expect(result).toContainEqual({ type: 'running', distance: 10, duration: 3600, count: 1 });
 		expect(result).toContainEqual({
 			type: 'other',
-			distance: 6,
-			duration: 6800,
-			count: 3
+			distance: 8,
+			duration: 8000,
+			count: 4
 		});
 	});
 
@@ -52,18 +53,25 @@ describe('consolidateBreakdown', () => {
 		expect(consolidateBreakdown([])).toEqual([]);
 	});
 
-	it('should handle only small sports', () => {
+	it('should keep a single short sport named instead of folding it alone', () => {
+		const input: SportBreakdown[] = [
+			{ type: 'running', distance: 10, duration: 3600, count: 1 },
+			{ type: 'swimming', distance: 1, duration: 1800, count: 1 },
+			{ type: 'other', distance: 5, duration: 5000, count: 2 }
+		];
+		expect(consolidateBreakdown(input)).toEqual(input);
+	});
+
+	it('should keep a lone short sport named', () => {
+		const input: SportBreakdown[] = [{ type: 'running', distance: 4, duration: 1200, count: 1 }];
+		expect(consolidateBreakdown(input)).toEqual(input);
+	});
+
+	it('should keep only small sports named rather than fold them all into "other"', () => {
 		const input: SportBreakdown[] = [
 			{ type: 'swimming', distance: 1, duration: 1800, count: 1 },
 			{ type: 'walking', distance: 2, duration: 1200, count: 1 }
 		];
-		const result = consolidateBreakdown(input);
-		expect(result).toHaveLength(1);
-		expect(result[0]).toEqual({
-			type: 'other',
-			distance: 3,
-			duration: 3000,
-			count: 2
-		});
+		expect(consolidateBreakdown(input)).toEqual(input);
 	});
 });

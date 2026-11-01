@@ -1,45 +1,30 @@
 import type { SportBreakdown } from '#lib/types/index.js';
 import { ONE_HOUR_IN_SECONDS } from '../constants/time.js';
 
+/** Sums the given entries into one "other" entry. */
+export function mergeIntoOther(sports: SportBreakdown[]): SportBreakdown {
+	return sports.reduce<SportBreakdown>(
+		(sum, s) => ({
+			type: 'other',
+			distance: sum.distance + s.distance,
+			duration: sum.duration + s.duration,
+			count: sum.count + s.count
+		}),
+		{ type: 'other', distance: 0, duration: 0, count: 0 }
+	);
+}
+
 /**
- * Consolidates sports with less than 1 hour of total duration into an "other" category.
+ * Folds sports with less than 1 hour of total duration into an "other" category, unless that
+ * would fold a single sport or leave no named sport.
  */
 export function consolidateBreakdown(breakdown: SportBreakdown[]): SportBreakdown[] {
-	const result: SportBreakdown[] = [];
-	let otherEntry: SportBreakdown | null = null;
+	const named = breakdown.filter((s) => s.type !== 'other');
+	const minor = named.filter((s) => s.duration < ONE_HOUR_IN_SECONDS);
+	const folded = minor.length > 1 && minor.length < named.length ? minor : [];
 
-	for (const sport of breakdown) {
-		if (sport.type === 'other') {
-			// Keep track of existing "other" entry
-			if (!otherEntry) {
-				otherEntry = { ...sport };
-			} else {
-				otherEntry.distance += sport.distance;
-				otherEntry.duration += sport.duration;
-				otherEntry.count += sport.count;
-			}
-		} else if (sport.duration < ONE_HOUR_IN_SECONDS) {
-			// Consolidate small sports into "other"
-			if (!otherEntry) {
-				otherEntry = {
-					type: 'other',
-					distance: 0,
-					duration: 0,
-					count: 0
-				};
-			}
-			otherEntry.distance += sport.distance;
-			otherEntry.duration += sport.duration;
-			otherEntry.count += sport.count;
-		} else {
-			result.push({ ...sport });
-		}
-	}
+	const kept = named.filter((s) => !folded.includes(s)).map((s) => ({ ...s }));
+	const other = mergeIntoOther([...breakdown.filter((s) => s.type === 'other'), ...folded]);
 
-	// Add the consolidated "other" if it exists
-	if (otherEntry && otherEntry.count > 0) {
-		result.push(otherEntry);
-	}
-
-	return result;
+	return other.count > 0 ? [...kept, other] : kept;
 }

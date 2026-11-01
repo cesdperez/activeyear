@@ -12,7 +12,7 @@ import {
 } from '#lib/constants/breakdown.js';
 import { OTHER_SPORT_COLOR, sportColors } from '#lib/constants/sports.js';
 import { ONE_HOUR_IN_SECONDS } from '#lib/constants/time.js';
-import { consolidateBreakdown } from './activity.js';
+import { consolidateBreakdown, mergeIntoOther } from './activity.js';
 import { donutSegments, scaledBarHeight, topIndices } from './charts.js';
 import { daysInYear } from './date.js';
 import { pluralize } from './format.js';
@@ -51,17 +51,7 @@ export function selectTopSports(
 
 	const named = ranked.filter((s) => s.type !== 'other');
 	const kept = named.slice(0, TOP_SPORTS_LIMIT - 1);
-	const other = ranked
-		.filter((s) => !kept.includes(s))
-		.reduce<SportBreakdown>(
-			(sum, s) => ({
-				type: 'other',
-				distance: sum.distance + s.distance,
-				duration: sum.duration + s.duration,
-				count: sum.count + s.count
-			}),
-			{ type: 'other', distance: 0, duration: 0, count: 0 }
-		);
+	const other = mergeIntoOther(ranked.filter((s) => !kept.includes(s)));
 
 	return [...kept, other].sort((a, b) => b[metric] - a[metric]);
 }
