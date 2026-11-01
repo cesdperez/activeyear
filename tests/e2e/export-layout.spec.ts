@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { TIMELINE_GAP } from '../../src/lib/constants/export.js';
+import { TARGET_YEAR } from '../../src/lib/constants/time.js';
 import { garminCsv, overflowingCardElements, showSlide, uploadCsv } from './helpers.js';
 
 const CARDS = ['summary', 'breakdown', 'highlights'] as const;
@@ -205,6 +206,22 @@ test.describe('Export card layout', () => {
 		});
 		expect(ratios.length).toBeGreaterThan(0);
 		expect(Math.min(...ratios)).toBeGreaterThanOrEqual(3);
+	});
+
+	test('summary card leaves out stats a yoga-only year has no value for', async ({ page }) => {
+		const yoga = [1, 2, 3].map(
+			(day) => `Yoga,${TARGET_YEAR}-03-0${day} 08:00:00,false,Yoga,--,40,00:20:00,--`
+		);
+		await uploadCsv(
+			page,
+			['Activity Type,Date,Favorite,Title,Distance,Calories,Time,Total Ascent', ...yoga].join('\n')
+		);
+		await showSlide(page, 0);
+
+		const card = page.locator('#export-card');
+		await expect(card).toContainText(/Calories/i);
+		await expect(card).not.toContainText(/Distance|Elevation|lap|Everest/i);
+		expect(await overflowingCardElements(page, '*')).toEqual([]);
 	});
 
 	test('donut slices leave a visible gap between them', async ({ page }) => {

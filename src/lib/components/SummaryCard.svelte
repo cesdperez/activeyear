@@ -31,6 +31,7 @@
 		{
 			id: 'distance',
 			label: 'Total Distance',
+			amount: appStore.stats?.totalDistance ?? 0,
 			value: formatDistance(appStore.stats?.totalDistance ?? 0, appStore.unit),
 			icon: Ruler,
 			equivalent: `🌍 ${formatEarthLaps(appStore.stats?.totalDistance ?? 0)}`
@@ -38,6 +39,7 @@
 		{
 			id: 'elevation',
 			label: 'Elevation',
+			amount: appStore.stats?.totalElevation ?? 0,
 			value: formatElevation(appStore.stats?.totalElevation ?? 0, appStore.unit),
 			icon: Mountains,
 			equivalent: `🏔️ ${formatEverests(appStore.stats?.totalElevation ?? 0)}`
@@ -45,6 +47,7 @@
 		{
 			id: 'duration',
 			label: 'Time Active',
+			amount: appStore.stats?.totalDuration ?? 0,
 			value: formatDuration(appStore.stats?.totalDuration ?? 0),
 			icon: Timer,
 			equivalent: `💍 ${formatLotRMarathons(appStore.stats?.totalDuration ?? 0)}`
@@ -52,6 +55,7 @@
 		{
 			id: 'calories',
 			label: 'Calories',
+			amount: appStore.stats?.totalCalories ?? 0,
 			value: formatCalories(appStore.stats?.totalCalories ?? 0),
 			icon: Fire,
 			equivalent: `🍕 ${formatPizzaSlices(appStore.stats?.totalCalories ?? 0)}`
@@ -60,7 +64,13 @@
 
 	let heroStat = $derived(allStats.find((s) => s.id === appStore.summaryMetric) || allStats[0]);
 
-	let supportingStats = $derived(allStats.filter((s) => s.id !== heroStat.id));
+	let supportingStats = $derived(allStats.filter((s) => s.id !== heroStat.id && s.amount > 0));
+
+	// Middle cells draw both dividers so they sit right against the middle stat.
+	function dividerClass(index: number, count: number): string {
+		if (count === 2 && index === 1) return 'border-l';
+		return index > 0 && index < count - 1 ? 'border-r border-l' : '';
+	}
 </script>
 
 <ExportCardBase variant="summary" title="YEAR IN SPORT">
@@ -170,10 +180,16 @@
 		<div class="mb-[72px] h-2 w-64 rounded-full bg-[var(--color-accent)] opacity-40"></div>
 
 		<!-- Supporting Stats Row -->
-		<div class="grid w-full grid-cols-3 gap-4">
+		<div
+			class="grid w-full gap-4"
+			style="grid-template-columns: repeat({supportingStats.length}, minmax(0, 1fr));"
+		>
 			{#each supportingStats as stat, i (stat.id)}
 				<div
-					class="overflow-visible text-center {i === 1 ? 'border-r border-l border-white/10' : ''}"
+					class="overflow-visible border-white/10 text-center {dividerClass(
+						i,
+						supportingStats.length
+					)}"
 				>
 					<stat.icon
 						class="mx-auto mb-3 h-12 w-12 text-[var(--color-text-dim)]"
