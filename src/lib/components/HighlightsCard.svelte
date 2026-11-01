@@ -2,7 +2,7 @@
 	import { tick } from 'svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import { formatDistance, formatDuration, pluralize } from '#lib/utils/format.js';
-	import { isCompactHighlights, timelineGap } from '#lib/utils/export.js';
+	import { timelineGap } from '#lib/utils/export.js';
 	import { HIGHLIGHTS_LIMIT, TIMELINE_GAP } from '#lib/constants/export.js';
 	import { Star, Target } from 'phosphor-svelte';
 	import { sportNames, sportIcons } from '#lib/constants/sports.js';
@@ -36,9 +36,8 @@
 			.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 	);
 	let hiddenCount = $derived(appStore.highlights.length - highlights.length);
-	let compact = $derived(
-		isCompactHighlights(appStore.highlights.slice(0, HIGHLIGHTS_LIMIT).map(titleOf))
-	);
+	let compact = $state(false);
+	let fitRun = 0;
 
 	function titleOf(fav: Activity): string {
 		return fav.title || sportNames[fav.type] || 'Activity';
@@ -46,15 +45,32 @@
 
 	// How titles wrap depends on the rendered font, so only the DOM knows how many items fit.
 	async function fitToCard() {
+		const run = ++fitRun;
+		const isStale = () => run !== fitRun;
+		await fitItems(isStale);
+		if (!isStale()) spreadItems();
+	}
+
+	async function fitItems(isStale: () => boolean) {
+		compact = false;
 		limit = HIGHLIGHTS_LIMIT;
 		gap = TIMELINE_GAP.min;
 		await tick();
-		while (area && list && limit > 1 && list.scrollHeight > area.clientHeight) {
+		if (isStale()) return;
+		compact = overflows();
+		await tick();
+		while (!isStale() && limit > 1 && overflows()) {
 			limit -= 1;
 			await tick();
 		}
-		if (!area || !list) return;
+	}
 
+	function overflows(): boolean {
+		return !!area && !!list && list.scrollHeight > area.clientHeight;
+	}
+
+	function spreadItems() {
+		if (!area || !list) return;
 		const items = [...list.querySelectorAll<HTMLElement>(':scope > .timeline-item')];
 		const itemsHeight = items.reduce((sum, el) => sum + el.offsetHeight, 0);
 		gap = timelineGap(area.clientHeight, itemsHeight, items.length);
@@ -80,7 +96,7 @@
 				</div>
 			</div>
 		{:else}
-			<div bind:this={area} class="relative flex min-h-0 flex-1 flex-col justify-center">
+			<div bind:this={area} class="fit-area relative flex min-h-0 flex-1 flex-col justify-center">
 				<div bind:this={list} class="relative flex w-full flex-col" style="gap: {gap}px;">
 					<div
 						class="timeline-line absolute left-[60px] w-[4px]"
@@ -173,3 +189,11 @@
 		{/if}
 	</div>
 </ExportCardBase>
+
+<style>
+	/* Reduced motion gives every change a 0.01ms transition, which fitToCard would measure before it ends. */
+	.fit-area,
+	.fit-area :global(*) {
+		transition: none !important;
+	}
+</style>

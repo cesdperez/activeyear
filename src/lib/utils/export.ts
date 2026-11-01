@@ -1,13 +1,6 @@
 import { domToPng } from 'modern-screenshot';
 import type { Theme } from '#lib/types/index.js';
-import {
-	HIGHLIGHT_TITLE_WRAPS_AFTER_CHARS,
-	HIGHLIGHTS_COMPACT_FROM,
-	HIGHLIGHTS_COMPACT_LONG_TITLES_FROM,
-	NAME_FONT_SIZE,
-	NAME_LONG_AFTER_CHARS,
-	TIMELINE_GAP
-} from '#lib/constants/export.js';
+import { NAME_FONT_SIZE, NAME_LONG_AFTER_CHARS, TIMELINE_GAP } from '#lib/constants/export.js';
 import { inlinedFontFaceCss, loadAppFonts } from './fonts.js';
 
 export interface ExportOptions {
@@ -83,15 +76,6 @@ export function exportFileStem(name: string, year: number): string {
 
 export function nameFontSize(name: string): number {
 	return name.length > NAME_LONG_AFTER_CHARS ? NAME_FONT_SIZE.long : NAME_FONT_SIZE.short;
-}
-
-/** Many highlights, or several whose titles wrap, only fit the card in the compact layout. */
-export function isCompactHighlights(titles: string[]): boolean {
-	if (titles.length >= HIGHLIGHTS_COMPACT_FROM) return true;
-	return (
-		titles.length >= HIGHLIGHTS_COMPACT_LONG_TITLES_FROM &&
-		titles.some((t) => t.length > HIGHLIGHT_TITLE_WRAPS_AFTER_CHARS)
-	);
 }
 
 /** Gap between timeline items so they spread over `available` height, within sensible bounds. */
