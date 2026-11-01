@@ -90,12 +90,13 @@ export function sportDonutSegments(
 	circumference: number,
 	variant: WidgetVariant
 ): SportDonutSegment[] {
-	return donutSegments(
-		sports.map((s) => s[metric]),
-		circumference
-	)
+	const values = sports.map((s) => s[metric]);
+	// A lone slice is the whole ring; a gap would leave a slit at 12 o'clock.
+	const gap = values.filter((v) => v > 0).length > 1 ? DONUT_SEGMENT_GAP[variant] : 0;
+
+	return donutSegments(values, circumference)
 		.map(({ share, offset }, i) => ({
-			length: share * circumference - DONUT_SEGMENT_GAP[variant],
+			length: share * circumference - gap,
 			offset,
 			color: colors[sports[i].type]
 		}))

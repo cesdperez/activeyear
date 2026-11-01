@@ -128,6 +128,14 @@ describe('sportDonutSegments', () => {
 		]);
 	});
 
+	it('draws a single sport as a closed ring with no gap', () => {
+		const single = [sport({ count: 4 })];
+
+		expect(
+			sportDonutSegments(single, sportColorsFor(single), 'count', 100, 'export')
+		).toMatchObject([{ dashArray: '100 100', offset: 0 }]);
+	});
+
 	it('leaves out slices too small to outlast the gap', () => {
 		const withSliver = [sport({ count: 97 }), sport({ type: 'cycling', count: 3 })];
 
