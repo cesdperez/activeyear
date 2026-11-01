@@ -8,9 +8,13 @@
 	import { CaretLeft, CaretRight } from 'phosphor-svelte';
 
 	let currentSlide = $state<0 | 1 | 2>(0);
+	let isExporting = $state(false);
 	const slideLabels = ['Summary', 'Breakdown', 'Highlights'];
 
 	const SLIDE_COUNT = 3;
+	const SWIPE_THRESHOLD_PX = 50;
+
+	let swipeStart: { x: number; y: number } | null = null;
 
 	function nextSlide() {
 		currentSlide = ((currentSlide + 1) % SLIDE_COUNT) as 0 | 1 | 2;
@@ -18,6 +22,33 @@
 
 	function prevSlide() {
 		currentSlide = ((currentSlide - 1 + SLIDE_COUNT) % SLIDE_COUNT) as 0 | 1 | 2;
+	}
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (isExporting) return;
+		if (event.key === 'ArrowRight') nextSlide();
+		else if (event.key === 'ArrowLeft') prevSlide();
+		else return;
+		event.preventDefault();
+	}
+
+	function handlePointerDown(event: PointerEvent) {
+		if (!event.isPrimary) return;
+		swipeStart = { x: event.clientX, y: event.clientY };
+	}
+
+	function handlePointerUp(event: PointerEvent) {
+		if (!swipeStart || isExporting) {
+			swipeStart = null;
+			return;
+		}
+		const dx = event.clientX - swipeStart.x;
+		const dy = event.clientY - swipeStart.y;
+		swipeStart = null;
+
+		if (Math.abs(dx) < SWIPE_THRESHOLD_PX || Math.abs(dx) <= Math.abs(dy)) return;
+		if (dx < 0) nextSlide();
+		else prevSlide();
 	}
 
 	function getExportElement(): HTMLElement | null {
@@ -30,51 +61,43 @@
 			: `activeyear-${TARGET_YEAR}`;
 
 		const backgroundColor = getThemeBackgroundColor(appStore.theme);
-
-		// Store the original slide to restore later
 		const originalSlide = currentSlide;
+		isExporting = true;
 
-		// Export summary card
-		currentSlide = 0;
-		await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for render
-		const summaryEl = getExportElement();
-		if (summaryEl) {
-			await exportToPng(summaryEl, {
-				filename: `${baseFilename}-summary`,
-				backgroundColor
-			});
+		try {
+			for (const [index, label] of slideLabels.entries()) {
+				currentSlide = index as 0 | 1 | 2;
+				await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for render
+				const cardEl = getExportElement();
+				if (cardEl) {
+					await exportToPng(cardEl, {
+						filename: `${baseFilename}-${label.toLowerCase()}`,
+						backgroundColor
+					});
+				}
+			}
+		} finally {
+			currentSlide = originalSlide;
+			isExporting = false;
 		}
-
-		// Export breakdown card
-		currentSlide = 1;
-		await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for render
-		const breakdownEl = getExportElement();
-		if (breakdownEl) {
-			await exportToPng(breakdownEl, {
-				filename: `${baseFilename}-breakdown`,
-				backgroundColor
-			});
-		}
-
-		// Export highlights card
-		currentSlide = 2;
-		await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for render
-		const highlightsEl = getExportElement();
-		if (highlightsEl) {
-			await exportToPng(highlightsEl, {
-				filename: `${baseFilename}-highlights`,
-				backgroundColor
-			});
-		}
-
-		// Restore original slide
-		currentSlide = originalSlide;
 	}
 </script>
 
-<div class="carousel-container">
-	<!-- Card Display -->
-	<div class="carousel-card">
+<!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
+<section
+	class="carousel-container"
+	aria-label="Export card preview"
+	aria-roledescription="carousel"
+	tabindex="0"
+	onkeydown={handleKeydown}
+>
+	<div
+		class="carousel-card"
+		role="presentation"
+		onpointerdown={handlePointerDown}
+		onpointerup={handlePointerUp}
+		onpointercancel={() => (swipeStart = null)}
+	>
 		{#if currentSlide === 0}
 			<SummaryCard />
 		{:else if currentSlide === 1}
@@ -84,33 +107,38 @@
 		{/if}
 	</div>
 
-	<!-- Navigation Controls -->
 	<div class="carousel-nav">
-		<button onclick={prevSlide} class="nav-button" aria-label="Previous slide">
-			<CaretLeft class="h-5 w-5" weight="bold" />
+		<button
+			onclick={prevSlide}
+			disabled={isExporting}
+			class="nav-button"
+			aria-label="Previous slide"
+		>
+			<CaretLeft class="h-5 w-5" weight="bold" aria-hidden="true" />
 		</button>
 
-		<!-- Dots -->
 		<div class="carousel-dots">
 			{#each { length: SLIDE_COUNT }, i}
 				<button
 					class="dot {currentSlide === i ? 'active' : ''}"
+					aria-current={currentSlide === i ? 'true' : undefined}
 					onclick={() => (currentSlide = i as 0 | 1 | 2)}
+					disabled={isExporting}
 					aria-label="Go to slide {i + 1}"
 				></button>
 			{/each}
 		</div>
 
-		<button onclick={nextSlide} class="nav-button" aria-label="Next slide">
-			<CaretRight class="h-5 w-5" weight="bold" />
+		<button onclick={nextSlide} disabled={isExporting} class="nav-button" aria-label="Next slide">
+			<CaretRight class="h-5 w-5" weight="bold" aria-hidden="true" />
 		</button>
 	</div>
 
-	<!-- Slide Label -->
-	<div class="slide-label">
+	<!-- Silent while exporting, which flips through every slide. -->
+	<div class="slide-label" aria-live={isExporting ? 'off' : 'polite'} aria-atomic="true">
 		{slideLabels[currentSlide]} ({currentSlide + 1}/{SLIDE_COUNT})
 	</div>
-</div>
+</section>
 
 <style>
 	.carousel-container {
@@ -160,26 +188,52 @@
 
 	.carousel-dots {
 		display: flex;
-		gap: 0.5rem;
 	}
 
 	.dot {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.75rem;
+		height: 2.75rem;
+		padding: 0;
+		background: none;
+		border: none;
+		cursor: pointer;
+	}
+
+	.dot::before {
+		content: '';
 		width: 0.625rem;
 		height: 0.625rem;
 		border-radius: 9999px;
 		background: var(--color-text-dim);
-		border: none;
-		cursor: pointer;
 		transition: all 0.2s ease-out;
 	}
 
-	.dot.active {
+	.dot.active::before {
 		background: var(--color-accent);
 		transform: scale(1.2);
 	}
 
-	.dot:hover:not(.active) {
+	.dot:hover:not(.active)::before {
 		background: var(--color-text-muted);
+	}
+
+	.dot:disabled,
+	.nav-button:disabled {
+		cursor: not-allowed;
+	}
+
+	@media (forced-colors: active) {
+		.dot::before {
+			border: 1px solid CanvasText;
+		}
+
+		.dot.active::before {
+			forced-color-adjust: none;
+			background: CanvasText;
+		}
 	}
 
 	.slide-label {
