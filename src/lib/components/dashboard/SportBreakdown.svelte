@@ -16,7 +16,7 @@
 </script>
 
 {#if breakdown.length > 0}
-	<section>
+	<section data-testid="sport-breakdown">
 		<div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
 			<SectionHeading title="By Sport" class="flex-1" />
 			<BreakdownMetricToggle />

@@ -10,6 +10,7 @@
 		Your {TARGET_YEAR}
 	</h1>
 	<div
+		data-testid="activity-summary"
 		class="inline-flex items-center gap-3 rounded-full border border-[rgba(255,255,255,0.05)] bg-[var(--color-surface-elevated)] px-4 py-2"
 	>
 		<span class="font-mono font-bold text-[var(--color-accent)]">{activityCount}</span>

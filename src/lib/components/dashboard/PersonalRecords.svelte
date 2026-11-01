@@ -9,7 +9,7 @@
 </script>
 
 {#if records}
-	<section class="mb-16">
+	<section data-testid="personal-records" class="mb-16">
 		<SectionHeading title="Personal Records" />
 
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-3">

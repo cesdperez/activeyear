@@ -1,37 +1,26 @@
 import { test, expect } from '@playwright/test';
+import { DASHBOARD_HEADING } from './helpers.js';
 
-test.describe('Demo Mode', () => {
-	test.beforeEach(async ({ page }) => {
-		await page.goto('/');
-	});
+test('demo link fills the dashboard with demo data', async ({ page }) => {
+	await page.goto('/');
+	await page.getByRole('button', { name: /demo data/i }).click();
 
-	test('loads demo data when clicking the link', async ({ page }) => {
-		// Find and click the demo link
-		const demoLink = page.getByRole('button', { name: /demo data/i });
-		await expect(demoLink).toBeVisible();
-		await demoLink.click();
+	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
+	await expect(page.getByTestId('activity-summary')).toHaveText(
+		/245\s+activities across\s+180\s+active days/
+	);
 
-		// Verify dashboard loads
-		// Main grid stats (4 cards)
-		await expect(
-			page.locator('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 .stat-card')
-		).toHaveCount(4);
+	const mainStats = page.getByTestId('main-stats');
+	for (const label of ['Total Distance', 'Elevation Gained', 'Time Active', 'Calories Burned']) {
+		await expect(mainStats.getByText(label)).toBeVisible();
+	}
 
-		// Sports breakdown - verify sport bars are present (yoga may be consolidated into "other")
-		const sportBars = page.locator('.space-y-6 .group');
-		const count = await sportBars.count();
-		expect(count).toBeGreaterThanOrEqual(4);
+	const sportBreakdown = page.getByTestId('sport-breakdown');
+	for (const sport of ['Running', 'Strength', 'Cycling']) {
+		await expect(sportBreakdown.getByText(sport, { exact: true })).toBeVisible();
+	}
 
-		// Verify specific demo data values
-		const labels = page.locator('.stat-label');
-		// Total stats (4) + PR labels (3) = 7 (Consistency stats don't use .stat-label class)
-		await expect(labels).toHaveCount(7);
-
-		// Check if one of them contains 'Total Distance' and make sure it is visible
-		await expect(labels.filter({ hasText: 'Total Distance' })).toBeVisible();
-
-		// Verify data in header (proves store is loaded and dashboard rendered)
-		await expect(page.getByText('245').first()).toBeVisible(); // Activity Count
-		await expect(page.getByText('180').first()).toBeVisible(); // Active Days
-	});
+	const records = page.getByTestId('personal-records');
+	await expect(records.getByText('Century Ride Achievement').first()).toBeVisible();
+	await expect(records.getByText('Summit Sunrise Hike')).toBeVisible();
 });
