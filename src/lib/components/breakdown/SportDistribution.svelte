@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SportDonut from './SportDonut.svelte';
+	import SportDonut from '#lib/components/widgets/SportDonut.svelte';
 	import SportBars from './SportBars.svelte';
 	import type { BreakdownMetric, SportBreakdown } from '#lib/types/index.js';
 
@@ -15,6 +15,6 @@
 </script>
 
 <div class="mb-32 flex items-center gap-12 px-4">
-	<SportDonut {sports} {totalActivities} />
+	<SportDonut variant="export" {sports} {totalActivities} />
 	<SportBars {sports} {metric} />
 </div>

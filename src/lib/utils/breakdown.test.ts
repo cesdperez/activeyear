@@ -79,12 +79,19 @@ describe('selectTopSports', () => {
 });
 
 describe('sportDonutSegments', () => {
-	it('splits the circumference by activity count with a 4 unit gap', () => {
-		const segments = sportDonutSegments([sport({ count: 3 }), sport({ count: 1 })], 100);
+	const sports = [sport({ count: 3 }), sport({ count: 1 })];
 
-		expect(segments).toEqual([
+	it('splits the circumference by activity count with a 4 unit gap on export cards', () => {
+		expect(sportDonutSegments(sports, 100, 'export')).toEqual([
 			{ dashArray: '71 100', offset: 0 },
 			{ dashArray: '21 100', offset: 75 }
+		]);
+	});
+
+	it('uses a 2 unit gap on the dashboard', () => {
+		expect(sportDonutSegments(sports, 100, 'dashboard')).toEqual([
+			{ dashArray: '73 100', offset: 0 },
+			{ dashArray: '23 100', offset: 75 }
 		]);
 	});
 });

@@ -1,4 +1,9 @@
-import type { BreakdownMetric, SportBreakdown, WeeklyPattern } from '#lib/types/index.js';
+import type {
+	BreakdownMetric,
+	SportBreakdown,
+	WeeklyPattern,
+	WidgetVariant
+} from '#lib/types/index.js';
 import {
 	DONUT_SEGMENT_GAP,
 	MIN_WEEKLY_BAR_HEIGHT,
@@ -33,13 +38,14 @@ export function selectTopSports(
 /** Donut segments sized by activity count, each starting where the previous one ends. */
 export function sportDonutSegments(
 	sports: SportBreakdown[],
-	circumference: number
+	circumference: number,
+	variant: WidgetVariant
 ): SportDonutSegment[] {
 	return donutSegments(
 		sports.map((s) => s.count),
 		circumference
 	).map(({ share, offset }) => ({
-		dashArray: `${share * circumference - DONUT_SEGMENT_GAP} ${circumference}`,
+		dashArray: `${share * circumference - DONUT_SEGMENT_GAP[variant]} ${circumference}`,
 		offset
 	}));
 }

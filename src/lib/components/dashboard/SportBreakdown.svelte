@@ -3,12 +3,13 @@
 	import { rankSports } from '#lib/utils/breakdown.js';
 	import SectionHeading from './SectionHeading.svelte';
 	import BreakdownMetricToggle from './BreakdownMetricToggle.svelte';
-	import SportDonutChart from './SportDonutChart.svelte';
+	import SportDonut from '#lib/components/widgets/SportDonut.svelte';
 	import SportBars from './SportBars.svelte';
 
 	const metric = $derived(appStore.breakdownMetric);
 
 	const sortedBreakdown = $derived(rankSports(appStore.breakdown || [], metric));
+	const totalCount = $derived(sortedBreakdown.reduce((sum, s) => sum + s.count, 0));
 </script>
 
 {#if appStore.breakdown.length > 0}
@@ -19,7 +20,7 @@
 		</div>
 
 		<div class="flex flex-col items-center gap-12 lg:flex-row lg:items-start">
-			<SportDonutChart sports={sortedBreakdown} />
+			<SportDonut variant="dashboard" sports={sortedBreakdown} totalActivities={totalCount} />
 			<SportBars sports={sortedBreakdown} {metric} />
 		</div>
 	</section>
