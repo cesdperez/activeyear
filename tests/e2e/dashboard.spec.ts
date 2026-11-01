@@ -129,6 +129,16 @@ for (const width of [320, 360, 768, 1024, 1280, 1920]) {
 		).toEqual([]);
 		expect(await overflowingElements(page.getByTestId('weekly-pattern-row'))).toEqual([]);
 	});
+
+	test(`main stat values share one font size at ${width}px`, async ({ page }) => {
+		await page.setViewportSize({ width, height: 900 });
+		await openDemo(page);
+		const sizes = await page
+			.locator('[data-testid="main-stats"] .stat-value')
+			.evaluateAll((values) => values.map((value) => getComputedStyle(value).fontSize));
+		expect(sizes).toHaveLength(4);
+		expect(new Set(sizes).size).toBe(1);
+	});
 }
 
 const LONG_TITLES = [
