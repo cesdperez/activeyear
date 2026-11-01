@@ -43,7 +43,7 @@
 					stroke-width="28"
 					stroke-dasharray={segment.dashArray}
 					stroke-dashoffset={-segment.offset}
-					stroke-linecap="round"
+					stroke-linecap="butt"
 					transform="rotate(-90 100 100)"
 					class="donut-segment"
 					style="filter: drop-shadow(0 0 8px {color}40);"

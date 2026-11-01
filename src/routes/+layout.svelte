@@ -11,9 +11,16 @@
 	import '@fontsource/jetbrains-mono/latin-ext-700.css';
 	import '../app.css';
 
+	import { onMount } from 'svelte';
 	import MetaTags from '#lib/components/MetaTags.svelte';
+	import { loadAppFonts } from '#lib/utils/fonts.js';
 
 	let { children } = $props();
+
+	// Fetch every face up front, so a later offline export still finds them; export reports failures.
+	onMount(() => {
+		loadAppFonts().catch(() => {});
+	});
 </script>
 
 <MetaTags />

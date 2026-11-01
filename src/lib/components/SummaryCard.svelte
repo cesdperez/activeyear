@@ -132,6 +132,7 @@
 			</svg>
 		</div>
 
+		<div class="avatar-glow"></div>
 		<div class="avatar-container">
 			{#if appStore.userPfp}
 				<img src={appStore.userPfp} alt="Profile" class="h-full w-full rounded-full object-cover" />

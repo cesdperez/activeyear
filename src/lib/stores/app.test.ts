@@ -84,6 +84,35 @@ describe('appStore', () => {
 		expect(appStore.weeklyPattern).toEqual(calculateWeeklyPattern(demoActivities));
 	});
 
+	it('focuses the summary on the first stat with a value when the data loads', async () => {
+		appStore.summaryMetric = 'distance';
+
+		await appStore.processFile(
+			csvFile(
+				`Activity Type,Date,Title,Distance,Calories,Time,Total Ascent\nYoga,${TARGET_YEAR}-03-01 08:00:00,Yoga,0.0,200,01:00:00,0`
+			)
+		);
+
+		expect(appStore.summaryMetric).toBe('duration');
+	});
+
+	it('keeps the focused stat when the loaded data has a value for it', () => {
+		appStore.summaryMetric = 'calories';
+
+		appStore.loadDemoData();
+
+		expect(appStore.summaryMetric).toBe('calories');
+	});
+
+	it.each([
+		['  Ana  ', 'Ana'],
+		['   ', '']
+	])('shows the name %j as %j', (name, shown) => {
+		appStore.userName = name;
+
+		expect(appStore.displayName).toBe(shown);
+	});
+
 	it('reset clears results and the profile picture but keeps export preferences', () => {
 		appStore.loadDemoData();
 		appStore.userPfp = 'data:image/png;base64,x';

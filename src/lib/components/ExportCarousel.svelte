@@ -4,7 +4,7 @@
 	import SummaryCard from './SummaryCard.svelte';
 	import BreakdownCard from './BreakdownCard.svelte';
 	import HighlightsCard from './HighlightsCard.svelte';
-	import { exportToPng, getThemeBackgroundColor } from '#lib/utils/export.js';
+	import { exportFileStem, exportToPng, getThemeBackgroundColor } from '#lib/utils/export.js';
 	import { CaretLeft, CaretRight } from 'phosphor-svelte';
 
 	let currentSlide = $state<0 | 1 | 2>(0);
@@ -56,9 +56,7 @@
 	}
 
 	export async function exportAllCards(): Promise<void> {
-		const baseFilename = appStore.userName
-			? `${appStore.userName.toLowerCase().replace(/\s+/g, '-')}-${TARGET_YEAR}`
-			: `activeyear-${TARGET_YEAR}`;
+		const baseFilename = exportFileStem(appStore.displayName, TARGET_YEAR);
 
 		const backgroundColor = getThemeBackgroundColor(appStore.theme);
 		const originalSlide = currentSlide;

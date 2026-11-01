@@ -1,13 +1,16 @@
 <script lang="ts">
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 
+	import { nameFontSize } from '#lib/utils/export.js';
+
 	let { title, userName }: { title: string; userName: string } = $props();
 </script>
 
 <header class="relative mb-[130px] text-center">
 	{#if userName}
 		<p
-			class="relative z-10 mr-[-0.1em] mb-2 text-[42px] leading-none font-bold tracking-widest text-[var(--color-accent)] uppercase"
+			class="export-name relative z-10 mr-[-0.1em] mb-2 line-clamp-2 leading-[1.1] font-bold tracking-widest [overflow-wrap:anywhere] text-[var(--color-accent)] uppercase"
+			style="font-size: {nameFontSize(userName)}px;"
 		>
 			{userName}'s
 		</p>

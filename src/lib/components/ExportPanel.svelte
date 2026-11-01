@@ -12,6 +12,7 @@
 		Fire
 	} from 'phosphor-svelte';
 	import type { Theme, SummaryMetric } from '#lib/types/index.js';
+	import { USER_NAME_MAX_LENGTH } from '#lib/constants/export.js';
 
 	let isExporting = $state(false);
 	let exportError = $state<string | null>(null);
@@ -127,6 +128,7 @@
 					id="userName"
 					autocomplete="name"
 					bind:value={appStore.userName}
+					maxlength={USER_NAME_MAX_LENGTH}
 					disabled={isExporting}
 					placeholder="César"
 					class="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[var(--color-surface-elevated)] px-4 py-3 text-white placeholder-zinc-400 transition-colors focus:border-[var(--color-accent)] focus:outline-none"

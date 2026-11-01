@@ -4,6 +4,7 @@ import type {
 	PersonalRecord,
 	PersonalRecords,
 	SportBreakdown,
+	SummaryMetric,
 	WeeklyPattern,
 	YearStats
 } from '../types/index.js';
@@ -162,4 +163,19 @@ export function calculateWeeklyPattern(activities: Activity[]): WeeklyPattern {
 	}
 
 	return pattern;
+}
+
+const SUMMARY_METRIC_TOTALS: [SummaryMetric, keyof YearStats][] = [
+	['distance', 'totalDistance'],
+	['elevation', 'totalElevation'],
+	['duration', 'totalDuration'],
+	['calories', 'totalCalories']
+];
+
+/** Keeps `current` when it has a value, otherwise the first summary stat, in panel order, that does. */
+export function summaryMetricWithValue(stats: YearStats, current: SummaryMetric): SummaryMetric {
+	const withValue = SUMMARY_METRIC_TOTALS.filter(([, total]) => stats[total] > 0).map(
+		([metric]) => metric
+	);
+	return withValue.includes(current) ? current : (withValue[0] ?? current);
 }
