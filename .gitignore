@@ -29,8 +29,3 @@ vite.config.ts.timestamp-*
 /playwright-report
 /test-results
 
-# Agents
-.opencode
-GEMINI.md
-CLAUDE.md
-
