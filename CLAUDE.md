@@ -9,6 +9,8 @@ pnpm test:run -t "formatDuration"          # Unit tests matching a name
 pnpm test:e2e                              # All E2E tests
 pnpm test:e2e tests/e2e/upload.spec.ts     # One E2E file
 pnpm check                                 # Type checking
+pnpm lint                                  # Prettier check and ESLint
+pnpm format                                # Prettier write
 ```
 
 `pnpm test` starts vitest in watch mode; use `test:run` so the command exits.
@@ -39,7 +41,12 @@ Security headers:
 - The app is fully prerendered and the worker is routed no paths, so `_headers` is the only source of security headers.
 - `csp-script-hashes.ts` adds the hash of SvelteKit's inline bootstrap script to the CSP at build time. Any other inline script is blocked.
 
-Solo project, kept simple: there is no CI, so run the checks above locally before pushing. Add new automated checks as local git hooks rather than a CI workflow.
+Solo project, kept simple: there is no CI. Local git hooks run the checks instead, set up by `simple-git-hooks` in `package.json` and installed by `pnpm install` through `prepare`:
+
+- `pre-commit`: `lint-staged` runs Prettier and ESLint on the staged files.
+- `pre-push`: `pnpm check` and `pnpm test:run`.
+
+E2E needs a build and port 4173, so it stays out of the hooks: run `pnpm test:all` before pushing to `main`. Put new automated checks in these hooks, not a CI workflow. After editing the hook config, run `pnpm exec simple-git-hooks`, because the installed hooks only change when it runs.
 
 ## Context
 
