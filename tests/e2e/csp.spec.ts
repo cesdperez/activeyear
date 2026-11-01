@@ -36,7 +36,7 @@ test.describe('Content Security Policy', () => {
 	test('upload, confetti and PNG export run without violations', async ({ page }) => {
 		const violations = recordCspViolations(page);
 		await uploadSample(page);
-		await page.getByRole('button', { name: 'Toggle celebration confetti' }).click();
+		await page.getByRole('button', { name: 'Celebration confetti' }).click();
 
 		const downloads: string[] = [];
 		page.on('download', (download) => downloads.push(download.suggestedFilename()));
