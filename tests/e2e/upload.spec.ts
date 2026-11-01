@@ -43,18 +43,20 @@ test.describe('Upload Flow', () => {
 		await expect(page.getByText('Drop your Garmin CSV here')).toBeVisible();
 	});
 
-	test('explains why an unreadable CSV was rejected', async ({ page }) => {
+	test('explains why an export without target year activities was rejected', async ({ page }) => {
 		await page.goto('/');
 
 		await page.locator('input[type="file"]').setInputFiles({
-			name: 'actividades.csv',
+			name: 'activities.csv',
 			mimeType: 'text/csv',
 			buffer: Buffer.from(
-				'Tipo de actividad,Fecha,Título,Distancia\nCarrera,2026-01-01 08:00:00,Run,10.0'
+				`Activity Type,Date,Title,Distance\nRunning,${TARGET_YEAR - 1}-03-01 08:00:00,Run,10.0`
 			)
 		});
 
-		await expect(page.getByText(/set to English/)).toBeVisible({ timeout: 10000 });
+		await expect(page.getByText(`No ${TARGET_YEAR} activities found in the file`)).toBeVisible({
+			timeout: 10000
+		});
 		await expect(page.getByText('Click to try again')).toBeVisible();
 	});
 });
