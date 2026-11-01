@@ -18,26 +18,18 @@
         sportIcons,
         sportColors,
     } from "#lib/constants/sports.js";
-    import { consolidateBreakdown } from "#lib/utils/activity.js";
+    import {
+        selectTopSports,
+        donutSegments,
+        weeklyBars,
+        activeDaysPercent as yearShare,
+    } from "#lib/utils/breakdown.js";
     import ExportCardBase from "./ExportCardBase.svelte";
 
     let currentTheme = $derived(appStore.theme);
 
-    let consolidatedBreakdownData = $derived(
-        consolidateBreakdown(appStore.breakdown || []),
-    );
-
     let topSports = $derived(
-        [...consolidatedBreakdownData]
-            .sort(
-                (a, b) =>
-                    b[appStore.breakdownMetric] - a[appStore.breakdownMetric],
-            )
-            .slice(0, 4),
-    );
-
-    let topSportsCount = $derived(
-        topSports.reduce((sum, s) => sum + s.count, 0),
+        selectTopSports(appStore.breakdown || [], appStore.breakdownMetric),
     );
 
     let totalActivities = $derived(appStore.stats?.activityCount ?? 0);
@@ -47,10 +39,12 @@
     );
 
     const activeDaysPercent = $derived(
-        Math.min(((appStore.stats?.activeDays ?? 0) / 365) * 100, 100),
+        yearShare(appStore.stats?.activeDays ?? 0),
     );
 
     const circumference = 2 * Math.PI * 80;
+
+    let segments = $derived(donutSegments(topSports, circumference));
 </script>
 
 <ExportCardBase variant="breakdown" title="BREAKDOWN">
@@ -72,17 +66,7 @@
                             stroke-width="28"
                         />
                         <!-- Sport segments -->
-                        {#each topSports as sport, i}
-                            {@const percentage = sport.count / topSportsCount}
-                            {@const offset = topSports
-                                .slice(0, i)
-                                .reduce(
-                                    (sum, s) =>
-                                        sum +
-                                        (s.count / topSportsCount) *
-                                            circumference,
-                                    0,
-                                )}
+                        {#each segments as segment, i}
                             <circle
                                 cx="100"
                                 cy="100"
@@ -90,9 +74,8 @@
                                 fill="none"
                                 stroke={sportColors[i % sportColors.length]}
                                 stroke-width="28"
-                                stroke-dasharray="{percentage * circumference -
-                                    4} {circumference}"
-                                stroke-dashoffset={-offset}
+                                stroke-dasharray={segment.dashArray}
+                                stroke-dashoffset={-segment.offset}
                                 stroke-linecap="round"
                                 transform="rotate(-90 100 100)"
                                 class="donut-segment"
@@ -175,14 +158,8 @@
 
     <!-- Weekly Activity Pattern -->
     {#if appStore.weeklyPattern.some((v) => v > 0)}
-        {@const maxDay = Math.max(...appStore.weeklyPattern, 1)}
         {@const dayLabels = ["M", "T", "W", "T", "F", "S", "S"]}
         {@const barContainerHeight = 100}
-        {@const sortedIndices = appStore.weeklyPattern
-            .map((count, idx) => ({ count, idx }))
-            .sort((a, b) => b.count - a.count)
-            .slice(0, 2)
-            .map((item) => item.idx)}
         <div class="mb-16 px-2">
             <div
                 class="text-[18px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest mb-4 text-center"
@@ -193,13 +170,7 @@
                 class="flex items-end justify-between gap-3"
                 style="height: {barContainerHeight + 28}px;"
             >
-                {#each appStore.weeklyPattern as count, i}
-                    {@const heightPercent = (count / maxDay) * 100}
-                    {@const barHeight = Math.max(
-                        (heightPercent / 100) * barContainerHeight,
-                        8,
-                    )}
-                    {@const isTopDay = sortedIndices.includes(i)}
+                {#each weeklyBars(appStore.weeklyPattern, barContainerHeight) as { heightPercent, barHeight, isTopDay }, i}
                     <div
                         class="flex-1 flex flex-col items-center justify-end gap-2"
                     >

@@ -74,6 +74,8 @@ export type AspectRatio = '9:16';
 
 export type CardVariant = 'summary' | 'breakdown' | 'highlights';
 
+export type BreakdownMetric = 'count' | 'duration';
+
 export type SummaryMetric = 'distance' | 'elevation' | 'duration' | 'calories';
 
 export type Unit = 'km' | 'miles';
