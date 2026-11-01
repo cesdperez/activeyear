@@ -3,7 +3,8 @@ import {
 	calculateYearStats,
 	calculatePersonalRecords,
 	calculateSportBreakdown,
-	calculateWeeklyPattern
+	calculateWeeklyPattern,
+	summaryMetricWithValue
 } from '../utils/stats.js';
 import { TARGET_YEAR } from '../constants/time.js';
 import { demoActivities } from '../data/demo.js';
@@ -33,12 +34,17 @@ class AppStore {
 	#parseErrors = $state<ParseError[]>([]);
 
 	userName = $state<string>('');
+	#displayName = $derived(this.userName.trim());
 	theme = $state<Theme>('neon');
 	userPfp = $state<string | null>(null);
 	confettiEnabled = $state<boolean>(false);
 	summaryMetric = $state<SummaryMetric>('distance');
 	unit = $state<Unit>('km');
 	breakdownMetric = $state<BreakdownMetric>('count');
+
+	get displayName() {
+		return this.#displayName;
+	}
 
 	get activities() {
 		return this.#activities;
@@ -108,9 +114,8 @@ class AppStore {
 				return;
 			}
 
-			this.#activities = result.activities;
+			this.#load(result.activities);
 			this.#parseErrors = result.errors;
-			this.#status = 'ready';
 		} catch (err) {
 			this.#fail(err instanceof Error ? err.message : 'Failed to parse file');
 		}
@@ -118,7 +123,12 @@ class AppStore {
 
 	loadDemoData() {
 		this.reset();
-		this.#activities = demoActivities;
+		this.#load(demoActivities);
+	}
+
+	#load(activities: Activity[]) {
+		this.#activities = activities;
+		if (this.#stats) this.summaryMetric = summaryMetricWithValue(this.#stats, this.summaryMetric);
 		this.#status = 'ready';
 	}
 

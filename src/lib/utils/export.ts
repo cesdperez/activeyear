@@ -54,6 +54,11 @@ export function getExportDimensions(): {
 	return { width: baseWidth, height: Math.round((baseWidth * 16) / 9) };
 }
 
+/** File name stem for the downloaded cards. `name` must already be trimmed. */
+export function exportFileStem(name: string, year: number): string {
+	return name ? `${name.toLowerCase().replace(/\s+/g, '-')}-${year}` : `activeyear-${year}`;
+}
+
 export function getThemeBackgroundColor(theme: Theme): string {
 	return THEME_BACKGROUNDS[theme];
 }
