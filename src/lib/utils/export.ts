@@ -2,7 +2,7 @@ import { domToPng } from 'modern-screenshot';
 import type { Theme } from '#lib/types/index.js';
 
 export interface ExportOptions {
-    filename?: string;
+    filename: string;
     scale?: number;
     backgroundColor?: string;
 }
@@ -18,9 +18,9 @@ const THEME_BACKGROUNDS: Record<Theme, string> = {
  */
 export async function exportToPng(
     element: HTMLElement,
-    options: ExportOptions = {}
+    options: ExportOptions
 ): Promise<void> {
-    const { filename = 'activeyear-2025', scale = 2, backgroundColor = THEME_BACKGROUNDS.neon } = options;
+    const { filename, scale = 2, backgroundColor = THEME_BACKGROUNDS.neon } = options;
 
     try {
         const dataUrl = await domToPng(element, {

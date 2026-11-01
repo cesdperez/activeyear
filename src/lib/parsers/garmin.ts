@@ -6,6 +6,7 @@ import type {
     ParseError,
     ParseResult
 } from '../types/index.js';
+import { TARGET_YEAR } from '../constants/time.js';
 
 const ACTIVITY_TYPE_MAP: Record<string, ActivityType> = {
     Running: 'running',
@@ -237,7 +238,7 @@ function deduplicateHeaders(csvContent: string): string {
 /**
  * Parse a Garmin CSV string and return activities for the specified year
  */
-export function parseGarminCsv(csvContent: string, targetYear: number = 2025): ParseResult {
+export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_YEAR): ParseResult {
     const activities: Activity[] = [];
     const errors: ParseError[] = [];
 

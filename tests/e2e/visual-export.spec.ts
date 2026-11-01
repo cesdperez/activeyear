@@ -29,7 +29,7 @@ async function setupDashboard(page: Page): Promise<void> {
 	const fileInput = page.locator('input[type="file"]');
 	const csvPath = join(__dirname, '..', '..', 'src', 'lib', 'parsers', '__fixtures__', 'garmin-sample.csv');
 	await fileInput.setInputFiles(csvPath);
-	await expect(page.getByRole('heading', { name: 'Your 2025' })).toBeVisible({ timeout: 10000 });
+	await expect(page.getByRole('heading', { name: 'Your 2026' })).toBeVisible({ timeout: 10000 });
 }
 
 async function navigateToSlide(page: Page, slideIndex: number): Promise<void> {

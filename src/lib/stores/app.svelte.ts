@@ -5,6 +5,7 @@ import {
     calculateSportBreakdown,
     calculateWeeklyPattern
 } from '../utils/stats.js';
+import { TARGET_YEAR } from '../constants/time.js';
 import { demoStats, demoRecords, demoBreakdown, demoHighlights } from '../data/demo.js';
 import type {
     Activity,
@@ -38,7 +39,7 @@ function createAppStore() {
     let confettiEnabled = $state<boolean>(false);
     let summaryMetric = $state<SummaryMetric>('distance');
     let unit = $state<Unit>('km');
-    let selectedYear = $state<number>(2025);
+    let selectedYear = $state<number>(TARGET_YEAR);
 
     function reset() {
         activities = [];

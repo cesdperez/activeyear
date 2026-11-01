@@ -15,7 +15,7 @@ test.describe('Export Flow', () => {
 		const fileInput = page.locator('input[type="file"]');
 		const csvPath = join(__dirname, '..', '..', 'src', 'lib', 'parsers', '__fixtures__', 'garmin-sample.csv');
 		await fileInput.setInputFiles(csvPath);
-		await expect(page.getByRole('heading', { name: 'Your 2025' })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole('heading', { name: 'Your 2026' })).toBeVisible({ timeout: 10000 });
 	}
 
 	test('export panel appears after upload', async ({ page }) => {
@@ -51,9 +51,11 @@ test.describe('Export Flow', () => {
 
 		// Visual fidelity of downloads is tested in visual-export.spec.ts
 		// Here we just verify the button triggers the export action
+		const downloadPromise = page.waitForEvent('download');
 		await downloadButton.click();
 
 		await expect(page.getByText(/Generating|Download All Images/i)).toBeVisible();
+		expect((await downloadPromise).suggestedFilename()).toBe('activeyear-2026-summary.png');
 	});
 
 	test('theme selector is visible', async ({ page }) => {

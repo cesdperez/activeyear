@@ -13,7 +13,7 @@ const createActivity = (type: string, title: string, dateStr: string): Activity 
 });
 
 export const demoStats: YearStats = {
-    totalDistance: 2025,
+    totalDistance: 2026,
     totalDuration: 540000, // 150 hours
     totalCalories: 125000,
     totalElevation: 15400,
@@ -26,7 +26,7 @@ export const demoRecords: PersonalRecords = {
     longestDistance: {
         value: 42.2,
         activity: {
-            ...createActivity('running', 'Marathon Finisher', '2025-10-12'),
+            ...createActivity('running', 'Marathon Finisher', '2026-10-12'),
             distance: 42.2,
             duration: 12600, // 3.5 hours
             calories: 2800,
@@ -36,7 +36,7 @@ export const demoRecords: PersonalRecords = {
     longestDuration: {
         value: 14400, // 4 hours
         activity: {
-            ...createActivity('cycling', 'Sunday Long Ride', '2025-06-15'),
+            ...createActivity('cycling', 'Sunday Long Ride', '2026-06-15'),
             distance: 85.0,
             duration: 14400,
             calories: 1500,
@@ -46,7 +46,7 @@ export const demoRecords: PersonalRecords = {
     biggestBurn: {
         value: 3200,
         activity: {
-            ...createActivity('hiking', 'Mountain Summit', '2025-08-01'),
+            ...createActivity('hiking', 'Mountain Summit', '2026-08-01'),
             distance: 15.0,
             duration: 21600, // 6 hours
             calories: 3200,
@@ -92,7 +92,7 @@ export const demoHighlights: Activity[] = [
     {
         type: 'running',
         title: 'New Year\'s Resolution Run',
-        date: new Date('2025-01-01'),
+        date: new Date('2026-01-01'),
         distance: 5.0,
         duration: 1800,
         calories: 350,
@@ -102,7 +102,7 @@ export const demoHighlights: Activity[] = [
     {
         type: 'cycling',
         title: 'Century Ride Achievement',
-        date: new Date('2025-03-15'),
+        date: new Date('2026-03-15'),
         distance: 160.0,
         duration: 21600,
         calories: 4200,
@@ -112,7 +112,7 @@ export const demoHighlights: Activity[] = [
     {
         type: 'running',
         title: 'First Half Marathon',
-        date: new Date('2025-04-20'),
+        date: new Date('2026-04-20'),
         distance: 21.1,
         duration: 6300,
         calories: 1450,
@@ -122,7 +122,7 @@ export const demoHighlights: Activity[] = [
     {
         type: 'hiking',
         title: 'Summit Sunrise Hike',
-        date: new Date('2025-06-21'),
+        date: new Date('2026-06-21'),
         distance: 18.5,
         duration: 25200,
         calories: 2100,
@@ -132,7 +132,7 @@ export const demoHighlights: Activity[] = [
     {
         type: 'swimming',
         title: 'Open Water 5K',
-        date: new Date('2025-07-14'),
+        date: new Date('2026-07-14'),
         distance: 5.0,
         duration: 5400,
         calories: 650,
@@ -142,7 +142,7 @@ export const demoHighlights: Activity[] = [
     {
         type: 'running',
         title: 'Marathon Finisher',
-        date: new Date('2025-10-12'),
+        date: new Date('2026-10-12'),
         distance: 42.2,
         duration: 12600,
         calories: 2800,

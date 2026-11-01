@@ -13,6 +13,7 @@ test.describe('Upload Flow', () => {
 
         // Check main heading
         await expect(page.getByRole('heading', { name: 'ActiveYear' })).toBeVisible();
+        await expect(page.getByText('Your 2026 in Sport')).toBeVisible();
 
         // Check upload zone
         await expect(page.getByText('Drop your Garmin CSV here')).toBeVisible();
@@ -24,6 +25,7 @@ test.describe('Upload Flow', () => {
 
         await expect(page.getByText('How to get your data')).toBeVisible();
         await expect(page.getByText('connect.garmin.com')).toBeVisible();
+        await expect(page.getByText('Scroll down until all 2026 activities are loaded')).toBeVisible();
     });
 
     test('processes uploaded CSV and shows dashboard', async ({ page }) => {
@@ -38,7 +40,7 @@ test.describe('Upload Flow', () => {
         await fileInput.setInputFiles(csvPath);
 
         // Wait for dashboard to appear
-        await expect(page.getByRole('heading', { name: 'Your 2025' })).toBeVisible({ timeout: 10000 });
+        await expect(page.getByRole('heading', { name: 'Your 2026' })).toBeVisible({ timeout: 10000 });
 
         // Check core stats are displayed
         await expect(page.getByText('Total Distance').first()).toBeVisible();
@@ -60,7 +62,7 @@ test.describe('Upload Flow', () => {
         await fileInput.setInputFiles(csvPath);
 
         // Wait for dashboard
-        await expect(page.getByRole('heading', { name: 'Your 2025' })).toBeVisible({ timeout: 10000 });
+        await expect(page.getByRole('heading', { name: 'Your 2026' })).toBeVisible({ timeout: 10000 });
 
         // Click reset button
         await page.getByRole('button', { name: 'Upload different file' }).click();

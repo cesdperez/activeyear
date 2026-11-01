@@ -9,6 +9,7 @@ import {
     parseGarminDate,
     isInYear
 } from './garmin.js';
+import { TARGET_YEAR } from '../constants/time.js';
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -167,10 +168,10 @@ describe('parseGarminCsv', () => {
         const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
         const csvContent = readFileSync(csvPath, 'utf-8');
 
-        const result = parseGarminCsv(csvContent, 2025);
+        const result = parseGarminCsv(csvContent, 2026);
 
         expect(result.errors).toHaveLength(0);
-        // Should exclude the 2024 activity (10 rows - 1 from 2024 = 9? Actually 9 data rows, 1 is 2024)
+        // Excludes the one activity from the previous year
         expect(result.activities).toHaveLength(8);
     });
 
@@ -178,19 +179,19 @@ describe('parseGarminCsv', () => {
         const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
         const csvContent = readFileSync(csvPath, 'utf-8');
 
+        const result2026 = parseGarminCsv(csvContent, 2026);
         const result2025 = parseGarminCsv(csvContent, 2025);
-        const result2024 = parseGarminCsv(csvContent, 2024);
 
-        expect(result2025.activities).toHaveLength(8);
-        expect(result2024.activities).toHaveLength(1);
-        expect(result2024.activities[0].title).toBe('Last Year Run');
+        expect(result2026.activities).toHaveLength(8);
+        expect(result2025.activities).toHaveLength(1);
+        expect(result2025.activities[0].title).toBe('Last Year Run');
     });
 
     it('correctly parses activity types', () => {
         const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
         const csvContent = readFileSync(csvPath, 'utf-8');
 
-        const result = parseGarminCsv(csvContent, 2025);
+        const result = parseGarminCsv(csvContent, 2026);
         const types = result.activities.map((a) => a.type);
 
         expect(types).toContain('running');
@@ -205,7 +206,7 @@ describe('parseGarminCsv', () => {
         const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
         const csvContent = readFileSync(csvPath, 'utf-8');
 
-        const result = parseGarminCsv(csvContent, 2025);
+        const result = parseGarminCsv(csvContent, 2026);
         const marathon = result.activities.find((a) => a.title === 'Valencia Marathon');
 
         expect(marathon).toBeDefined();
@@ -219,7 +220,7 @@ describe('parseGarminCsv', () => {
         const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
         const csvContent = readFileSync(csvPath, 'utf-8');
 
-        const result = parseGarminCsv(csvContent, 2025);
+        const result = parseGarminCsv(csvContent, 2026);
         const swim = result.activities.find((a) => a.type === 'swimming');
 
         expect(swim).toBeDefined();
@@ -232,7 +233,7 @@ describe('parseGarminCsv', () => {
         const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
         const csvContent = readFileSync(csvPath, 'utf-8');
 
-        const result = parseGarminCsv(csvContent, 2025);
+        const result = parseGarminCsv(csvContent, 2026);
         const yoga = result.activities.find((a) => a.type === 'yoga');
 
         expect(yoga).toBeDefined();
@@ -354,12 +355,21 @@ describe('mapActivityType extended', () => {
     });
 });
 
+describe('parseGarminCsv default year', () => {
+    it('defaults to TARGET_YEAR', () => {
+        const csv = `Activity Type,Date,Title,Distance,Calories,Time,Total Ascent\nRunning,${TARGET_YEAR}-03-01 08:00:00,Run,10.0,600,00:50:00,100\nRunning,${TARGET_YEAR - 1}-03-01 08:00:00,Old Run,10.0,600,00:50:00,100`;
+        const result = parseGarminCsv(csv);
+
+        expect(result.activities.map((a) => a.title)).toEqual(['Run']);
+    });
+});
+
 describe('parseGarminCsv favorite field', () => {
     it('parses Favorite column correctly', () => {
         const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
         const csvContent = readFileSync(csvPath, 'utf-8');
 
-        const result = parseGarminCsv(csvContent, 2025);
+        const result = parseGarminCsv(csvContent, 2026);
 
         const favorites = result.activities.filter((a) => a.favorite);
         expect(favorites).toHaveLength(5);

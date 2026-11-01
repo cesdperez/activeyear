@@ -16,7 +16,7 @@
 				<h1 class="text-4xl md:text-5xl font-bold mb-3 glow-text">
 					ActiveYear
 				</h1>
-				<p class="text-zinc-400 text-lg">Your 2025 in Sport</p>
+				<p class="text-zinc-400 text-lg">Your {appStore.selectedYear} in Sport</p>
 			</div>
 
 			<div class="w-full max-w-lg">
@@ -52,7 +52,7 @@
 					</li>
 					<li class="flex gap-2">
 						<span class="text-cyan-400 font-mono">3.</span>
-						Scroll down until all 2025 activities are loaded
+						Scroll down until all {appStore.selectedYear} activities are loaded
 					</li>
 					<li class="flex gap-2">
 						<span class="text-cyan-400 font-mono">4.</span>
