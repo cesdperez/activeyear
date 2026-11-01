@@ -254,9 +254,7 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 	});
 
 	if (firstPass.data.length > 0) {
-		// We consider it a "whole-row quoted" format if most rows have only 1 column
-		// but the file clearly has commas inside those quotes.
-		// Also handle cases where header might NOT be quoted but data rows are.
+		// Whole-row quoted format: most data rows parse as one column. The header may be unquoted.
 		const dataRows = firstPass.data.slice(1);
 		const quotedDataRows = dataRows.filter((row) => row.length === 1).length;
 

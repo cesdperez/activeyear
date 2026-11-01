@@ -46,7 +46,7 @@ Solo project, kept simple: there is no CI. Local git hooks run the checks instea
 - `pre-commit`: `lint-staged` runs Prettier and ESLint on the staged files.
 - `pre-push`: `pnpm check` and `pnpm test:run`.
 
-E2E needs a build and port 4173, so it stays out of the hooks: run `pnpm test:all` before pushing to `main`. Put new automated checks in these hooks, not a CI workflow. After editing the hook config, run `pnpm exec simple-git-hooks`, because the installed hooks only change when it runs.
+E2E needs a build and port 4173, so it stays out of the hooks (see Testing Strategy). Put new automated checks in these hooks, not a CI workflow. After editing the hook config, run `pnpm exec simple-git-hooks`, because the installed hooks only change when it runs.
 
 ## Context
 
