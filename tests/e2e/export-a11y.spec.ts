@@ -68,6 +68,11 @@ test.describe('Export panel accessibility', () => {
 		await expect(page.getByText(/upload an image file|could not be read/i)).toHaveCount(0);
 	});
 
+	test('name input autocompletes the user name', async ({ page }) => {
+		await uploadSample(page);
+		await expect(page.locator('#userName')).toHaveAttribute('autocomplete', 'name');
+	});
+
 	test('stat and theme groups are labelled and expose the selected button', async ({ page }) => {
 		await uploadSample(page);
 

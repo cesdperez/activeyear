@@ -125,10 +125,11 @@
 				<input
 					type="text"
 					id="userName"
+					autocomplete="name"
 					bind:value={appStore.userName}
 					disabled={isExporting}
 					placeholder="César"
-					class="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[var(--color-surface-elevated)] px-4 py-3 text-white placeholder-zinc-500 transition-colors focus:border-[var(--color-accent)] focus:outline-none"
+					class="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[var(--color-surface-elevated)] px-4 py-3 text-white placeholder-zinc-400 transition-colors focus:border-[var(--color-accent)] focus:outline-none"
 				/>
 			</div>
 
@@ -200,7 +201,7 @@
 								? 'bg-[var(--color-accent)] font-semibold text-[var(--color-surface)] forced-colors:outline-2 forced-colors:outline-offset-2'
 								: 'bg-[var(--color-surface-elevated)] text-zinc-400 hover:bg-[var(--color-surface-hover)] hover:text-white'}"
 						>
-							<metric.icon class="h-4 w-4" />
+							<metric.icon class="h-4 w-4" aria-hidden="true" />
 							<span class="text-sm font-bold">{metric.label}</span>
 						</button>
 					{/each}
@@ -222,7 +223,7 @@
 								: 'bg-[var(--color-surface-elevated)] text-zinc-400 hover:bg-[var(--color-surface-hover)] hover:text-white'}"
 						>
 							<div class="text-sm font-bold">{theme.label}</div>
-							<div class="text-xs opacity-70">
+							<div class="text-xs">
 								{theme.description}
 							</div>
 						</button>
@@ -251,14 +252,14 @@
 				{#if exportError}<p class="text-sm text-red-400">{exportError}</p>{/if}
 			</div>
 
-			<p class="text-xs text-zinc-500">
+			<p class="text-xs text-zinc-400">
 				Downloads three images: Summary, Breakdown, and Highlights
 			</p>
 		</div>
 
 		<!-- Right: Preview -->
 		<div class="preview-container flex w-full flex-1 flex-col items-center">
-			<div class="mb-4 text-sm text-zinc-500">Preview</div>
+			<div class="mb-4 text-sm text-zinc-400">Preview</div>
 			<div class="preview-wrapper">
 				<ExportCarousel bind:this={carouselRef} />
 			</div>
