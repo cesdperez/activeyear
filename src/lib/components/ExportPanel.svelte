@@ -1,11 +1,23 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import ExportCarousel from './ExportCarousel.svelte';
-	import { DownloadSimple, Image, Trash, Ruler, Mountains, Timer, Fire } from 'phosphor-svelte';
+	import {
+		DownloadSimple,
+		Image as ImageIcon,
+		Trash,
+		Ruler,
+		Mountains,
+		Timer,
+		Fire
+	} from 'phosphor-svelte';
 	import type { Theme, SummaryMetric } from '#lib/types/index.js';
 
 	let isExporting = $state(false);
 	let exportError = $state<string | null>(null);
+	let exportStatus = $state('');
+	let avatarError = $state<string | null>(null);
+	let avatarInput = $state<HTMLInputElement | null>(null);
 	let carouselRef = $state<{ exportAllCards: () => Promise<void> } | null>(null);
 
 	const themes: {
@@ -19,6 +31,7 @@
 	];
 
 	async function handleExport() {
+		if (isExporting) return;
 		if (!carouselRef) {
 			exportError = 'Export component not ready';
 			return;
@@ -26,10 +39,13 @@
 
 		isExporting = true;
 		exportError = null;
+		exportStatus = 'Generating images...';
 
 		try {
 			await carouselRef.exportAllCards();
+			exportStatus = 'Downloaded three images';
 		} catch (error) {
+			exportStatus = '';
 			exportError = error instanceof Error ? error.message : 'Failed to export';
 		} finally {
 			isExporting = false;
@@ -40,25 +56,52 @@
 		appStore.theme = theme;
 	}
 
-	function handleImageUpload(event: Event) {
-		const input = event.target as HTMLInputElement;
+	function readAsDataUrl(file: File): Promise<string> {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = () => resolve(reader.result as string);
+			reader.onerror = () => reject(reader.error);
+			reader.readAsDataURL(file);
+		});
+	}
+
+	// Decoded from a data URL because the CSP img-src allows data: but not blob:.
+	async function loadImageDataUrl(file: File): Promise<string | null> {
+		try {
+			const dataUrl = await readAsDataUrl(file);
+			const image = new Image();
+			image.src = dataUrl;
+			await image.decode();
+			return dataUrl;
+		} catch {
+			return null;
+		}
+	}
+
+	async function handleImageUpload(event: Event) {
+		const input = event.currentTarget as HTMLInputElement;
 		const file = input.files?.[0];
 		if (!file) return;
 
 		if (!file.type.startsWith('image/')) {
-			exportError = 'Please upload an image file';
+			avatarError = 'Please upload an image file';
 			return;
 		}
 
-		const reader = new FileReader();
-		reader.onload = (e) => {
-			appStore.userPfp = e.target?.result as string;
-		};
-		reader.readAsDataURL(file);
+		const dataUrl = await loadImageDataUrl(file);
+		if (!dataUrl) {
+			avatarError = 'That file could not be read as an image';
+			return;
+		}
+
+		avatarError = null;
+		appStore.userPfp = dataUrl;
 	}
 
-	function removeImage() {
+	async function removeImage() {
 		appStore.userPfp = null;
+		await tick();
+		avatarInput?.focus();
 	}
 </script>
 
@@ -83,6 +126,7 @@
 					type="text"
 					id="userName"
 					bind:value={appStore.userName}
+					disabled={isExporting}
 					placeholder="César"
 					class="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[var(--color-surface-elevated)] px-4 py-3 text-white placeholder-zinc-500 transition-colors focus:border-[var(--color-accent)] focus:outline-none"
 				/>
@@ -107,29 +151,36 @@
 						</div>
 						<button
 							onclick={removeImage}
+							disabled={isExporting}
 							class="p-2 text-zinc-400 transition-colors hover:text-red-400"
 							title="Remove image"
 						>
-							<Trash class="h-4 w-4" />
+							<Trash class="h-4 w-4" aria-hidden="true" />
 						</button>
 					</div>
 				{:else}
-					<div class="group relative">
+					<div class="relative">
 						<input
 							type="file"
 							id="userAvatar"
 							accept="image/*"
+							bind:this={avatarInput}
+							disabled={isExporting}
 							onchange={handleImageUpload}
-							class="hidden"
+							aria-describedby={avatarError ? 'userAvatar-error' : undefined}
+							class="peer sr-only"
 						/>
 						<label
 							for="userAvatar"
-							class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg border border-dashed border-[rgba(255,255,255,0.2)] bg-[var(--color-surface-elevated)] px-4 py-3 text-zinc-400 transition-all hover:border-[var(--color-accent)] hover:text-white"
+							class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg border border-dashed border-[rgba(255,255,255,0.2)] bg-[var(--color-surface-elevated)] px-4 py-3 text-zinc-400 transition-all peer-focus-visible:border-[var(--color-accent)] peer-focus-visible:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[color:var(--color-accent)] hover:border-[var(--color-accent)] hover:text-white"
 						>
-							<Image class="h-5 w-5" />
+							<ImageIcon class="h-5 w-5" aria-hidden="true" />
 							<span class="text-sm font-medium">Upload Image</span>
 						</label>
 					</div>
+				{/if}
+				{#if avatarError}
+					<p id="userAvatar-error" class="mt-2 text-sm text-red-400">{avatarError}</p>
 				{/if}
 			</div>
 
@@ -142,6 +193,7 @@
 					{#each [{ value: 'distance', label: 'Distance', icon: Ruler }, { value: 'elevation', label: 'Elevation', icon: Mountains }, { value: 'duration', label: 'Time', icon: Timer }, { value: 'calories', label: 'Calories', icon: Fire }] as metric (metric.value)}
 						<button
 							onclick={() => (appStore.summaryMetric = metric.value as SummaryMetric)}
+							disabled={isExporting}
 							class="flex items-center justify-center gap-2 rounded-lg px-3 py-2 transition-all duration-200 {appStore.summaryMetric ===
 							metric.value
 								? 'bg-[var(--color-accent)] font-semibold text-[var(--color-surface)]'
@@ -161,6 +213,7 @@
 					{#each themes as theme (theme.value)}
 						<button
 							onclick={() => setTheme(theme.value)}
+							disabled={isExporting}
 							class="flex-1 rounded-lg px-4 py-3 text-center transition-all duration-200 {appStore.theme ===
 							theme.value
 								? 'bg-[var(--color-accent)] font-semibold text-[var(--color-surface)]'
@@ -175,24 +228,26 @@
 				</div>
 			</div>
 
-			<!-- Download Button -->
+			<!-- aria-disabled instead of disabled keeps focus on the button while exporting. -->
 			<button
+				id="export-download"
 				onclick={handleExport}
-				disabled={isExporting}
-				class="btn-primary flex w-full items-center justify-center gap-3 text-lg disabled:cursor-not-allowed disabled:opacity-50"
+				aria-disabled={isExporting}
+				class="btn-primary flex w-full items-center justify-center gap-3 text-lg aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
 			>
 				{#if isExporting}
-					<span class="animate-spin">⏳</span>
+					<span class="animate-spin" aria-hidden="true">⏳</span>
 					Generating...
 				{:else}
-					<DownloadSimple class="h-5 w-5" weight="bold" />
+					<DownloadSimple class="h-5 w-5" weight="bold" aria-hidden="true" />
 					Download All Images
 				{/if}
 			</button>
 
-			{#if exportError}
-				<p class="text-sm text-red-400">{exportError}</p>
-			{/if}
+			<p id="export-status" role="status" class="sr-only">{exportStatus}</p>
+			<div id="export-error" role="alert" class="empty:hidden">
+				{#if exportError}<p class="text-sm text-red-400">{exportError}</p>{/if}
+			</div>
 
 			<p class="text-xs text-zinc-500">
 				Downloads three images: Summary, Breakdown, and Highlights

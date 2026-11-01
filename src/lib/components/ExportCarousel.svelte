@@ -8,6 +8,7 @@
 	import { CaretLeft, CaretRight } from 'phosphor-svelte';
 
 	let currentSlide = $state<0 | 1 | 2>(0);
+	let isExporting = $state(false);
 	const slideLabels = ['Summary', 'Breakdown', 'Highlights'];
 
 	const SLIDE_COUNT = 3;
@@ -30,45 +31,25 @@
 			: `activeyear-${TARGET_YEAR}`;
 
 		const backgroundColor = getThemeBackgroundColor(appStore.theme);
-
-		// Store the original slide to restore later
 		const originalSlide = currentSlide;
+		isExporting = true;
 
-		// Export summary card
-		currentSlide = 0;
-		await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for render
-		const summaryEl = getExportElement();
-		if (summaryEl) {
-			await exportToPng(summaryEl, {
-				filename: `${baseFilename}-summary`,
-				backgroundColor
-			});
+		try {
+			for (const [index, label] of slideLabels.entries()) {
+				currentSlide = index as 0 | 1 | 2;
+				await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for render
+				const cardEl = getExportElement();
+				if (cardEl) {
+					await exportToPng(cardEl, {
+						filename: `${baseFilename}-${label.toLowerCase()}`,
+						backgroundColor
+					});
+				}
+			}
+		} finally {
+			currentSlide = originalSlide;
+			isExporting = false;
 		}
-
-		// Export breakdown card
-		currentSlide = 1;
-		await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for render
-		const breakdownEl = getExportElement();
-		if (breakdownEl) {
-			await exportToPng(breakdownEl, {
-				filename: `${baseFilename}-breakdown`,
-				backgroundColor
-			});
-		}
-
-		// Export highlights card
-		currentSlide = 2;
-		await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for render
-		const highlightsEl = getExportElement();
-		if (highlightsEl) {
-			await exportToPng(highlightsEl, {
-				filename: `${baseFilename}-highlights`,
-				backgroundColor
-			});
-		}
-
-		// Restore original slide
-		currentSlide = originalSlide;
 	}
 </script>
 
@@ -86,8 +67,13 @@
 
 	<!-- Navigation Controls -->
 	<div class="carousel-nav">
-		<button onclick={prevSlide} class="nav-button" aria-label="Previous slide">
-			<CaretLeft class="h-5 w-5" weight="bold" />
+		<button
+			onclick={prevSlide}
+			disabled={isExporting}
+			class="nav-button"
+			aria-label="Previous slide"
+		>
+			<CaretLeft class="h-5 w-5" weight="bold" aria-hidden="true" />
 		</button>
 
 		<!-- Dots -->
@@ -96,13 +82,14 @@
 				<button
 					class="dot {currentSlide === i ? 'active' : ''}"
 					onclick={() => (currentSlide = i as 0 | 1 | 2)}
+					disabled={isExporting}
 					aria-label="Go to slide {i + 1}"
 				></button>
 			{/each}
 		</div>
 
-		<button onclick={nextSlide} class="nav-button" aria-label="Next slide">
-			<CaretRight class="h-5 w-5" weight="bold" />
+		<button onclick={nextSlide} disabled={isExporting} class="nav-button" aria-label="Next slide">
+			<CaretRight class="h-5 w-5" weight="bold" aria-hidden="true" />
 		</button>
 	</div>
 
