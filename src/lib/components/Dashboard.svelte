@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { appStore } from "#lib/stores/app.svelte.js";
-	import PersonalRecordCard from "./PersonalRecordCard.svelte";
 	import ExportPanel from "./ExportPanel.svelte";
 	import ConfettiRain from "#lib/components/dashboard/ConfettiRain.svelte";
 	import DashboardToolbar from "#lib/components/dashboard/DashboardToolbar.svelte";
@@ -8,6 +7,8 @@
 	import MainStats from "#lib/components/dashboard/MainStats.svelte";
 	import ConsistencyStats from "#lib/components/dashboard/ConsistencyStats.svelte";
 	import WeeklyPattern from "#lib/components/dashboard/WeeklyPattern.svelte";
+	import HighlightsSection from "#lib/components/dashboard/HighlightsSection.svelte";
+	import PersonalRecords from "#lib/components/dashboard/PersonalRecords.svelte";
 	import {
 		formatDistance,
 		formatDuration,
@@ -69,148 +70,8 @@
 
 	<WeeklyPattern />
 
-	<!-- Favorite Activities Section -->
-	<section class="mb-16">
-		<div class="flex items-end gap-4 mb-8">
-			<h2 class="text-3xl font-bold tracking-tight">Highlights</h2>
-			<div
-				class="h-px flex-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent opacity-20 mb-2"
-			></div>
-		</div>
-
-		{#if appStore.highlights.length > 0}
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-				{#each appStore.highlights as fav, i}
-					{@const IconComponent = sportIcons[fav.type] ?? Target}
-					<div
-						class="stat-card p-4 flex items-center gap-4 group"
-						style="animation-delay: {450 + i * 50}ms"
-					>
-						<div
-							class="w-12 h-12 rounded-xl flex items-center justify-center bg-[var(--color-accent)]/10 text-[var(--color-accent)] shrink-0"
-						>
-							<IconComponent class="w-6 h-6" weight="bold" />
-						</div>
-						<div class="flex-1 min-w-0">
-							<div class="flex items-center gap-2 mb-1">
-								<Star
-									class="w-4 h-4 text-yellow-500"
-									weight="fill"
-								/>
-								<span
-									class="font-bold text-white truncate"
-									title={fav.title}
-								>
-									{fav.title ||
-										sportNames[fav.type] ||
-										"Activity"}
-								</span>
-							</div>
-							<div
-								class="flex items-center gap-3 text-sm text-[var(--color-text-muted)]"
-							>
-								{#if fav.distance > 0}
-									<span class="font-mono"
-										>{formatDistance(
-											fav.distance,
-											appStore.unit,
-										)}</span
-									>
-								{/if}
-								<span class="font-mono"
-									>{formatDuration(fav.duration)}</span
-								>
-								<span
-									class="px-2 py-0.5 rounded-full bg-[var(--color-surface-elevated)] text-xs uppercase tracking-wider"
-								>
-									{sportNames[fav.type] ?? fav.type}
-								</span>
-							</div>
-						</div>
-					</div>
-				{/each}
-			</div>
-		{:else}
-			<div
-				class="stat-card p-8 flex flex-col items-center justify-center text-center"
-				style="animation-delay: 450ms"
-			>
-				<div
-					class="w-20 h-20 rounded-full flex items-center justify-center bg-[var(--color-accent)]/10 mb-6"
-				>
-					<Star class="w-10 h-10 text-yellow-500" weight="fill" />
-				</div>
-				<p class="text-lg text-[var(--color-text-muted)] mb-4">
-					No highlights yet
-				</p>
-				<p class="text-sm text-[var(--color-text-muted)] max-w-md">
-					Mark activities as favorites in Garmin Connect by tapping
-					the star icon on any activity, then re-export your data to
-					see them here.
-				</p>
-			</div>
-		{/if}
-	</section>
-
-	<!-- Personal Records Section -->
-	{#if appStore.records}
-		<section class="mb-16">
-			<div class="flex items-end gap-4 mb-8">
-				<h2 class="text-3xl font-bold tracking-tight">
-					Personal Records
-				</h2>
-				<div
-					class="h-px flex-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent opacity-20 mb-2"
-				></div>
-			</div>
-
-			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-				{#if appStore.records.longestDistance}
-					<PersonalRecordCard
-						value={formatDistance(
-							appStore.records.longestDistance.value,
-							appStore.unit,
-						)}
-						label="Longest Distance"
-						detail={appStore.records.longestDistance.activity.title}
-						delay={450}
-					>
-						{#snippet icon()}
-							<Trophy weight="fill" />
-						{/snippet}
-					</PersonalRecordCard>
-				{/if}
-				{#if appStore.records.longestDuration}
-					<PersonalRecordCard
-						value={formatDuration(
-							appStore.records.longestDuration.value,
-						)}
-						label="Longest Duration"
-						detail={appStore.records.longestDuration.activity.title}
-						delay={500}
-					>
-						{#snippet icon()}
-							<Hourglass weight="fill" />
-						{/snippet}
-					</PersonalRecordCard>
-				{/if}
-				{#if appStore.records.biggestBurn}
-					<PersonalRecordCard
-						value={formatCalories(
-							appStore.records.biggestBurn.value,
-						)}
-						label="Biggest Burn"
-						detail={appStore.records.biggestBurn.activity.title}
-						delay={550}
-					>
-						{#snippet icon()}
-							<Fire weight="fill" />
-						{/snippet}
-					</PersonalRecordCard>
-				{/if}
-			</div>
-		</section>
-	{/if}
+	<HighlightsSection />
+	<PersonalRecords />
 
 	<!-- Sport Breakdown -->
 	{#if appStore.breakdown.length > 0}
