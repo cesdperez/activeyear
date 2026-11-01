@@ -1,12 +1,14 @@
 import { domToPng } from 'modern-screenshot';
 import type { Theme } from '#lib/types/index.js';
 import { NAME_FONT_SIZE, NAME_LONG_AFTER_CHARS, TIMELINE_GAP } from '#lib/constants/export.js';
-import { inlinedFontFaceCss, loadAppFonts } from './fonts.js';
+import { inlinedFontFaceCss } from './fonts.js';
 
 export interface ExportOptions {
 	filename: string;
 	scale?: number;
 	backgroundColor?: string;
+	/** Export even when the app fonts cannot be embedded, letting the image fall back. */
+	allowFallbackFonts?: boolean;
 }
 
 const THEME_BACKGROUNDS: Record<Theme, string> = {
@@ -19,11 +21,18 @@ const THEME_BACKGROUNDS: Record<Theme, string> = {
  * Export an HTML element to PNG and trigger download
  */
 export async function exportToPng(element: HTMLElement, options: ExportOptions): Promise<void> {
-	const { filename, scale = 2, backgroundColor = THEME_BACKGROUNDS.neon } = options;
+	const {
+		filename,
+		scale = 2,
+		backgroundColor = THEME_BACKGROUNDS.neon,
+		allowFallbackFonts = false
+	} = options;
 
-	await loadAppFonts();
 	// Left to itself, modern-screenshot refetches every font file and silently skips failures.
-	const fontCss = await inlinedFontFaceCss();
+	const fontCss = await inlinedFontFaceCss().catch((error) => {
+		if (allowFallbackFonts) return undefined;
+		throw error;
+	});
 
 	try {
 		const dataUrl = await domToPng(element, {
@@ -33,7 +42,7 @@ export async function exportToPng(element: HTMLElement, options: ExportOptions):
 			scale,
 			style: { textRendering: 'geometricPrecision' },
 			backgroundColor,
-			font: { cssText: fontCss },
+			font: fontCss ? { cssText: fontCss } : undefined,
 			filter: (node) => !(node instanceof HTMLElement && node.dataset.exportIgnore),
 			onCloneEachNode: keepLineClamp
 		});

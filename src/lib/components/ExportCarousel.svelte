@@ -55,7 +55,7 @@
 		return document.getElementById('export-card');
 	}
 
-	export async function exportAllCards(): Promise<void> {
+	export async function exportAllCards({ allowFallbackFonts = false } = {}): Promise<void> {
 		const baseFilename = exportFileStem(appStore.displayName, TARGET_YEAR);
 
 		const backgroundColor = getThemeBackgroundColor(appStore.theme);
@@ -70,7 +70,8 @@
 				if (cardEl) {
 					await exportToPng(cardEl, {
 						filename: `${baseFilename}-${label.toLowerCase()}`,
-						backgroundColor
+						backgroundColor,
+						allowFallbackFonts
 					});
 				}
 			}

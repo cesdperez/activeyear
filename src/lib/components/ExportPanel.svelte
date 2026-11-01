@@ -13,13 +13,16 @@
 	} from 'phosphor-svelte';
 	import type { Theme, SummaryMetric } from '#lib/types/index.js';
 	import { USER_NAME_MAX_LENGTH } from '#lib/constants/export.js';
+	import { FontsUnavailableError } from '#lib/utils/fonts.js';
 
 	let isExporting = $state(false);
-	let exportError = $state<string | null>(null);
+	let exportError = $state<{ message: string; fontsUnavailable: boolean } | null>(null);
 	let exportStatus = $state('');
 	let avatarError = $state<string | null>(null);
 	let avatarInput = $state<HTMLInputElement | null>(null);
-	let carouselRef = $state<{ exportAllCards: () => Promise<void> } | null>(null);
+	let carouselRef = $state<{
+		exportAllCards: (options?: { allowFallbackFonts?: boolean }) => Promise<void>;
+	} | null>(null);
 
 	const themes: {
 		value: Theme;
@@ -31,10 +34,10 @@
 		{ value: 'retro', label: 'Retro', description: '8-bit' }
 	];
 
-	async function handleExport() {
+	async function handleExport(allowFallbackFonts = false) {
 		if (isExporting) return;
 		if (!carouselRef) {
-			exportError = 'Export component not ready';
+			exportError = { message: 'Export component not ready', fontsUnavailable: false };
 			return;
 		}
 
@@ -43,11 +46,14 @@
 		exportStatus = 'Generating images...';
 
 		try {
-			await carouselRef.exportAllCards();
+			await carouselRef.exportAllCards({ allowFallbackFonts });
 			exportStatus = 'Downloaded three images';
 		} catch (error) {
 			exportStatus = '';
-			exportError = error instanceof Error ? error.message : 'Failed to export';
+			exportError = {
+				message: error instanceof Error ? error.message : 'Failed to export',
+				fontsUnavailable: error instanceof FontsUnavailableError
+			};
 		} finally {
 			isExporting = false;
 		}
@@ -236,7 +242,7 @@
 			<!-- aria-disabled instead of disabled keeps focus on the button while exporting. -->
 			<button
 				id="export-download"
-				onclick={handleExport}
+				onclick={() => handleExport()}
 				aria-disabled={isExporting}
 				class="btn-primary flex w-full items-center justify-center gap-3 text-lg aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
 			>
@@ -251,7 +257,17 @@
 
 			<p id="export-status" role="status" class="sr-only">{exportStatus}</p>
 			<div id="export-error" role="alert" class="empty:hidden">
-				{#if exportError}<p class="text-sm text-red-400">{exportError}</p>{/if}
+				{#if exportError}
+					<p class="text-sm text-red-400">{exportError.message}</p>
+					{#if exportError.fontsUnavailable}
+						<button
+							onclick={() => handleExport(true)}
+							class="mt-2 text-sm font-semibold text-[var(--color-accent)] underline underline-offset-4 hover:text-white"
+						>
+							Export with fallback fonts
+						</button>
+					{/if}
+				{/if}
 			</div>
 
 			<p class="text-xs text-zinc-400">
