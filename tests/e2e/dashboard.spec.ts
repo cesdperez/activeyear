@@ -175,3 +175,10 @@ for (const width of [320, 1024, 1280]) {
 		expect(clipped).toEqual([]);
 	});
 }
+
+test('Upload different file button is named without its decorative glyph', async ({ page }) => {
+	await openDemo(page);
+	await expect(
+		page.getByRole('button', { name: 'Upload different file', exact: true })
+	).toBeVisible();
+});
