@@ -16,7 +16,7 @@ export function formatDistance(km: number, unit: Unit = 'km'): string {
 	const suffix = unit === 'miles' ? 'mi' : 'km';
 
 	if (value >= 100) {
-		return `${Math.round(value)}${suffix}`;
+		return `${Math.round(value).toLocaleString('en-US')}${suffix}`;
 	}
 	return `${value.toFixed(1)}${suffix}`;
 }
@@ -40,9 +40,7 @@ export function formatDuration(seconds: number): string {
  * Format calories with thousands separator
  */
 export function formatCalories(calories: number): string {
-	return Math.round(calories / 100) * 100 > 0
-		? `${Math.round(calories).toLocaleString('en-US')}kcal`
-		: '0kcal';
+	return `${Math.round(calories).toLocaleString('en-US')}kcal`;
 }
 
 /**
@@ -106,7 +104,7 @@ export function calculatePizzaSlices(calories: number): number {
  */
 export function formatPizzaSlices(calories: number): string {
 	const slices = calculatePizzaSlices(calories);
-	return `${slices.toLocaleString('en-US')} pizza slices burnt`;
+	return `${slices.toLocaleString('en-US')} pizza ${pluralize(slices, 'slice', 'slices')} burnt`;
 }
 
 /** `singular` when English treats `count` as one, `plural` otherwise. */
