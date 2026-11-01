@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { appStore } from '#lib/stores/app.svelte.js';
+	import { UPLOAD_ZONE_ID } from '#lib/constants/dom.js';
 	import { UploadSimple, Warning, SpinnerGap, ShieldCheck } from 'phosphor-svelte';
+
+	let { loading = $bindable(false) }: { loading?: boolean } = $props();
 
 	let isDragOver = $state(false);
 	let fileInput: HTMLInputElement;
-	let isArtificialDelay = $state(false);
 	let currentPhrase = $state('');
 
 	const FUNNY_PHRASES = [
@@ -29,6 +31,7 @@
 		'Checking the weather forecast...',
 		'Calibrating the heart rate monitor...'
 	];
+
 	function handleDragOver(event: DragEvent) {
 		event.preventDefault();
 		isDragOver = true;
@@ -39,96 +42,102 @@
 		isDragOver = false;
 	}
 
-	async function startArtificialDelay() {
-		isArtificialDelay = true;
-		const phraseInterval = setInterval(() => {
-			currentPhrase = FUNNY_PHRASES[Math.floor(Math.random() * FUNNY_PHRASES.length)];
-		}, 1000);
-
-		// Set initial phrase
-		currentPhrase = FUNNY_PHRASES[Math.floor(Math.random() * FUNNY_PHRASES.length)];
-
-		await new Promise((resolve) => setTimeout(resolve, 5000));
-
-		clearInterval(phraseInterval);
-		isArtificialDelay = false;
+	function randomPhrase() {
+		return FUNNY_PHRASES[Math.floor(Math.random() * FUNNY_PHRASES.length)];
 	}
 
-	async function handleDrop(event: DragEvent) {
+	async function showLoadingPhrases() {
+		currentPhrase = randomPhrase();
+		const phraseInterval = setInterval(() => (currentPhrase = randomPhrase()), 1000);
+		await new Promise((resolve) => setTimeout(resolve, 5000));
+		clearInterval(phraseInterval);
+	}
+
+	async function upload(file: File) {
+		if (loading) return;
+		loading = true;
+		await showLoadingPhrases();
+		await appStore.processFile(file);
+		loading = false;
+	}
+
+	function handleDrop(event: DragEvent) {
 		event.preventDefault();
 		isDragOver = false;
 
 		const file = event.dataTransfer?.files[0];
-		if (file) {
-			await startArtificialDelay();
-			await appStore.processFile(file);
-		}
+		if (file) upload(file);
 	}
 
-	async function handleFileSelect(event: Event) {
+	function handleFileSelect(event: Event) {
 		const target = event.target as HTMLInputElement;
 		const file = target.files?.[0];
-		if (file) {
-			await startArtificialDelay();
-			await appStore.processFile(file);
-		}
+		// Without the reset, picking the same file again after an error fires no change event.
+		target.value = '';
+		if (file) upload(file);
 	}
 
 	function triggerFileInput() {
-		fileInput?.click();
+		if (!loading) fileInput?.click();
 	}
 </script>
 
-<div
-	class="upload-zone group flex min-h-[300px] cursor-pointer flex-col items-center justify-center p-8 md:p-12"
+<input
+	bind:this={fileInput}
+	type="file"
+	accept=".csv"
+	class="hidden"
+	onchange={handleFileSelect}
+	id="file-upload"
+/>
+
+<button
+	type="button"
+	id={UPLOAD_ZONE_ID}
+	class="upload-zone group flex min-h-[300px] w-full cursor-pointer flex-col items-center justify-center p-8 text-center md:p-12"
 	class:dragover={isDragOver}
-	role="button"
-	tabindex="0"
+	aria-disabled={loading}
 	ondragover={handleDragOver}
 	ondragleave={handleDragLeave}
 	ondrop={handleDrop}
 	onclick={triggerFileInput}
-	onkeydown={(e) => e.key === 'Enter' && triggerFileInput()}
 >
-	<input
-		bind:this={fileInput}
-		type="file"
-		accept=".csv"
-		class="hidden"
-		onchange={handleFileSelect}
-		id="file-upload"
-	/>
+	{#if loading}
+		<span class="mb-4 block">
+			<SpinnerGap
+				class="mx-auto h-12 w-12 animate-spin text-[var(--color-accent)]"
+				weight="bold"
+				aria-hidden="true"
+			/>
+		</span>
+		<span class="block animate-pulse text-lg text-[var(--color-text-muted)]">
+			{currentPhrase}
+		</span>
+	{:else if appStore.status === 'error'}
+		<span class="mb-4 block">
+			<Warning class="mx-auto h-12 w-12 text-red-500" weight="bold" aria-hidden="true" />
+		</span>
+		<span class="mb-2 block text-lg text-red-500">{appStore.error}</span>
+		<span class="block text-sm text-[var(--color-text-dim)]">Click to try again</span>
+	{:else}
+		<span class="mb-4 block">
+			<UploadSimple
+				class="mx-auto h-12 w-12 text-[var(--color-text-dim)] transition-colors duration-300 group-hover:text-[var(--color-accent)]"
+				weight="bold"
+				aria-hidden="true"
+			/>
+		</span>
+		<span class="mb-1 block text-lg text-[var(--color-text-primary)]"
+			>Drop your Garmin CSV here</span
+		>
+		<span class="mb-4 block text-sm text-[var(--color-text-muted)]">or click to browse</span>
+		<span class="flex items-center justify-center gap-1.5 text-xs text-[var(--color-text-dim)]">
+			<ShieldCheck class="h-3.5 w-3.5" weight="bold" aria-hidden="true" />
+			Your data never leaves this browser
+		</span>
+	{/if}
+</button>
 
-	<div class="text-center">
-		{#if appStore.status === 'parsing' || isArtificialDelay}
-			<div class="mb-4">
-				<SpinnerGap
-					class="mx-auto h-12 w-12 animate-spin text-[var(--color-accent)]"
-					weight="bold"
-				/>
-			</div>
-			<p class="animate-pulse text-lg text-[var(--color-text-muted)]">
-				{isArtificialDelay ? currentPhrase : 'Analyzing activities...'}
-			</p>
-		{:else if appStore.status === 'error'}
-			<div class="mb-4">
-				<Warning class="mx-auto h-12 w-12 text-red-500" weight="bold" />
-			</div>
-			<p class="mb-2 text-lg text-red-500">{appStore.error}</p>
-			<p class="text-sm text-[var(--color-text-dim)]">Click to try again</p>
-		{:else}
-			<div class="mb-4">
-				<UploadSimple
-					class="mx-auto h-12 w-12 text-[var(--color-text-dim)] transition-colors duration-300 group-hover:text-[var(--color-accent)]"
-					weight="bold"
-				/>
-			</div>
-			<p class="mb-1 text-lg text-[var(--color-text-primary)]">Drop your Garmin CSV here</p>
-			<p class="mb-4 text-sm text-[var(--color-text-muted)]">or click to browse</p>
-			<p class="flex items-center justify-center gap-1.5 text-xs text-[var(--color-text-dim)]">
-				<ShieldCheck class="h-3.5 w-3.5" weight="bold" />
-				Your data never leaves this browser
-			</p>
-		{/if}
-	</div>
-</div>
+<!-- A button's children are presentational, so live regions must sit outside it. -->
+<p role="status" class="sr-only">{loading ? 'Analyzing activities...' : ''}</p>
+<p role="alert" class="sr-only">{!loading && appStore.status === 'error' ? appStore.error : ''}</p>

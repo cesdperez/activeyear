@@ -1,6 +1,16 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { TARGET_YEAR } from '../../src/lib/constants/time.js';
 import { DASHBOARD_HEADING, uploadSample } from './helpers.js';
+
+async function uploadFileWithoutTargetYear(page: Page) {
+	await page.locator('input[type="file"]').setInputFiles({
+		name: 'activities.csv',
+		mimeType: 'text/csv',
+		buffer: Buffer.from(
+			`Activity Type,Date,Title,Distance\nRunning,${TARGET_YEAR - 1}-03-01,Run,10.0`
+		)
+	});
+}
 
 test.describe('Upload Flow', () => {
 	test('home page displays upload UI', async ({ page }) => {
@@ -46,17 +56,78 @@ test.describe('Upload Flow', () => {
 	test('explains why an export without target year activities was rejected', async ({ page }) => {
 		await page.goto('/');
 
-		await page.locator('input[type="file"]').setInputFiles({
-			name: 'activities.csv',
-			mimeType: 'text/csv',
-			buffer: Buffer.from(
-				`Activity Type,Date,Title,Distance\nRunning,${TARGET_YEAR - 1}-03-01 08:00:00,Run,10.0`
-			)
-		});
+		await uploadFileWithoutTargetYear(page);
 
-		await expect(page.getByText(`No ${TARGET_YEAR} activities found in the file`)).toBeVisible({
-			timeout: 10000
-		});
+		await expect(
+			page.getByRole('button', { name: `No ${TARGET_YEAR} activities found in the file` })
+		).toBeVisible({ timeout: 10000 });
 		await expect(page.getByText('Click to try again')).toBeVisible();
+	});
+});
+
+test.describe('Upload accessibility', () => {
+	const uploadZone = (page: Page) =>
+		page.getByRole('button', { name: /Drop your Garmin CSV here/ });
+	const demoButton = (page: Page) => page.getByRole('button', { name: /demo data/ });
+
+	test('Space on the upload zone opens the file picker', async ({ page }) => {
+		await page.goto('/');
+		await uploadZone(page).focus();
+
+		const fileChooser = page.waitForEvent('filechooser');
+		await page.keyboard.press('Space');
+
+		await fileChooser;
+	});
+
+	test('announces loading progress and errors', async ({ page }) => {
+		await page.goto('/');
+		await uploadFileWithoutTargetYear(page);
+
+		await expect(page.getByRole('status')).toHaveText('Analyzing activities...');
+		await expect(page.getByRole('alert')).toHaveText(
+			`No ${TARGET_YEAR} activities found in the file`,
+			{ timeout: 10000 }
+		);
+	});
+
+	test('blocks the demo while a file loads', async ({ page }) => {
+		await page.goto('/');
+		await uploadFileWithoutTargetYear(page);
+
+		await expect(demoButton(page)).toBeDisabled();
+		await expect(page.getByRole('alert')).not.toBeEmpty({ timeout: 10000 });
+		await expect(demoButton(page)).toBeEnabled();
+	});
+
+	test('accepts the same file again after an error', async ({ page }) => {
+		await page.goto('/');
+		await uploadFileWithoutTargetYear(page);
+
+		await expect(page.getByRole('alert')).not.toBeEmpty({ timeout: 10000 });
+		await expect(page.locator('input[type="file"]')).toHaveValue('');
+	});
+
+	test('moves focus to the dashboard heading after an upload', async ({ page }) => {
+		await uploadSample(page);
+
+		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeFocused();
+	});
+
+	test('moves focus to the dashboard heading after loading the demo', async ({ page }) => {
+		await page.goto('/');
+		await demoButton(page).click();
+
+		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeFocused();
+	});
+
+	test('moves focus to the upload zone after choosing to upload a different file', async ({
+		page
+	}) => {
+		await uploadSample(page);
+		await page.getByRole('button', { name: 'Upload different file' }).click();
+
+		await expect(uploadZone(page)).toBeFocused();
+		await expect(demoButton(page)).toBeEnabled();
 	});
 });
