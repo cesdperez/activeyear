@@ -28,6 +28,8 @@ pnpm check                                 # Type checking
 ## Deployment
 Cloudflare Pages auto-deploys on push to `main` (Git integration, no CI pipeline). Do not push unless explicitly requested.
 
+The app is fully prerendered and the worker is routed no paths, so `_headers` is the only source of security headers. `csp-script-hashes.ts` adds the hash of SvelteKit's inline bootstrap script to the CSP at build time; any other inline script will be blocked. `pnpm preview` and E2E serve the build through `wrangler pages dev`, so the CSP is enforced in tests. Playwright reuses whatever already listens on port 4173, and `workerd` can outlive a killed `wrangler`, so stop both before trusting a run on a new build.
+
 Solo project, kept simple: there is no CI, so run the checks above locally before pushing. Add new automated checks as local git hooks rather than a CI workflow.
 
 ## Context
