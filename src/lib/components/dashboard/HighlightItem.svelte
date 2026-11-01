@@ -22,9 +22,9 @@
 		<IconComponent class="h-6 w-6" weight="bold" aria-hidden="true" />
 	</div>
 	<div class="min-w-0 flex-1">
-		<div class="mb-1 flex items-center gap-2">
-			<Star class="h-4 w-4 shrink-0 text-yellow-500" weight="fill" aria-hidden="true" />
-			<span class="truncate font-bold text-white" title={activity.title}>
+		<div class="mb-1 flex items-start gap-2">
+			<Star class="mt-1 h-4 w-4 shrink-0 text-yellow-500" weight="fill" aria-hidden="true" />
+			<span class="line-clamp-3 font-bold wrap-anywhere text-white" title={activity.title}>
 				{activity.title || sportNames[activity.type] || 'Activity'}
 			</span>
 		</div>

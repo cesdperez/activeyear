@@ -11,9 +11,20 @@
 		highlight?: boolean;
 		delay?: number;
 		equivalent?: string;
+		/** Character count the value is sized for; pass the row's longest so values share one size. */
+		fitChars?: number;
 	}
 
-	let { value, label, detail, icon, highlight = false, delay = 0, equivalent }: Props = $props();
+	let {
+		value,
+		label,
+		detail,
+		icon,
+		highlight = false,
+		delay = 0,
+		equivalent,
+		fitChars
+	}: Props = $props();
 
 	const animate = !prefersReducedMotion.current;
 	let opacity = spring(animate ? 0 : 1, { stiffness: 0.1, damping: 0.6 });
@@ -51,7 +62,7 @@
 
 		<div
 			class="stat-value fit-value mb-2 leading-none tracking-tight text-[var(--color-text-primary)]"
-			style:--fit-chars={value.length}
+			style:--fit-chars={fitChars ?? value.length}
 			style:--fit-max="3rem"
 		>
 			{value}

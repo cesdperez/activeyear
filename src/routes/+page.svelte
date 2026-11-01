@@ -22,7 +22,7 @@
 				<FileUpload bind:loading={uploading} />
 				<div class="mt-4 text-center">
 					<button
-						class="text-sm text-zinc-400 transition-colors duration-200 hover:text-cyan-400 disabled:cursor-not-allowed disabled:opacity-50"
+						class="text-sm text-balance text-zinc-400 transition-colors duration-200 hover:text-cyan-400 disabled:cursor-not-allowed disabled:opacity-50"
 						disabled={uploading}
 						onclick={() => appStore.loadDemoData()}
 					>
@@ -33,7 +33,7 @@
 
 			<div class="mt-12 max-w-md text-center">
 				<h2 class="mb-4 text-sm font-medium text-zinc-300">How to get your data</h2>
-				<ol class="space-y-2 text-left text-sm text-zinc-400">
+				<ol class="space-y-2 text-left text-sm text-pretty text-zinc-400">
 					<li class="flex gap-2">
 						<span class="font-mono text-cyan-400">1.</span>
 						Log in at
