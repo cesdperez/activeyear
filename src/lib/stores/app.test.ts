@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { appStore } from './app.svelte.js';
-import { demoStats, demoHighlights } from '../data/demo.js';
+import { demoActivities } from '../data/demo.js';
+import { calculateYearStats } from '../utils/stats.js';
 
 describe('appStore', () => {
 	beforeEach(() => {
@@ -28,13 +29,21 @@ describe('appStore', () => {
 		expect(appStore.error).toContain("couldn't recognise this file");
 	});
 
-	it('loads demo data and derives highlights from favorite activities', () => {
+	it('derives stats and highlights from the demo activities', () => {
 		appStore.loadDemoData();
 
 		expect(appStore.status).toBe('ready');
-		expect(appStore.stats).toEqual(demoStats);
-		expect(appStore.highlights).toEqual(demoHighlights.filter((a) => a.favorite));
+		expect(appStore.stats).toEqual(calculateYearStats(demoActivities));
+		expect(appStore.highlights).toEqual(demoActivities.filter((a) => a.favorite));
 		expect(appStore.highlights.length).toBeGreaterThan(0);
+	});
+
+	it('derives records, breakdown and weekly pattern from the demo activities', () => {
+		appStore.loadDemoData();
+
+		expect(appStore.records?.longestDistance?.activity.title).toBe('Century Ride Achievement');
+		expect(appStore.breakdown.reduce((sum, s) => sum + s.count, 0)).toBe(245);
+		expect(appStore.weeklyPattern.reduce((sum, n) => sum + n, 0)).toBe(245);
 	});
 
 	it('reset clears results and the profile picture but keeps export preferences', () => {
@@ -46,6 +55,10 @@ describe('appStore', () => {
 		appStore.reset();
 
 		expect(appStore.status).toBe('idle');
+		expect(appStore.stats).toBeNull();
+		expect(appStore.records).toBeNull();
+		expect(appStore.breakdown).toEqual([]);
+		expect(appStore.weeklyPattern).toEqual([0, 0, 0, 0, 0, 0, 0]);
 		expect(appStore.highlights).toEqual([]);
 		expect(appStore.userPfp).toBeNull();
 		expect(appStore.userName).toBe('Ana');

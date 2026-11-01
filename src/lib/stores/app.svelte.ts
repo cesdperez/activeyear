@@ -6,13 +6,9 @@ import {
 	calculateWeeklyPattern
 } from '../utils/stats.js';
 import { TARGET_YEAR } from '../constants/time.js';
-import { demoStats, demoRecords, demoBreakdown, demoHighlights } from '../data/demo.js';
+import { demoActivities } from '../data/demo.js';
 import type {
 	Activity,
-	YearStats,
-	PersonalRecords,
-	SportBreakdown,
-	WeeklyPattern,
 	ParseError,
 	Theme,
 	SummaryMetric,
@@ -22,16 +18,15 @@ import type {
 
 export type AppStatus = 'idle' | 'parsing' | 'ready' | 'error';
 
-const EMPTY_WEEKLY_PATTERN: WeeklyPattern = [0, 0, 0, 0, 0, 0, 0];
-const DEMO_WEEKLY_PATTERN: WeeklyPattern = [45, 38, 42, 35, 28, 52, 48];
-
 class AppStore {
 	#activities = $state<Activity[]>([]);
 	#highlights = $derived(this.#activities.filter((a) => a.favorite));
-	#stats = $state<YearStats | null>(null);
-	#records = $state<PersonalRecords | null>(null);
-	#breakdown = $state<SportBreakdown[]>([]);
-	#weeklyPattern = $state<WeeklyPattern>([...EMPTY_WEEKLY_PATTERN]);
+	#stats = $derived(this.#activities.length > 0 ? calculateYearStats(this.#activities) : null);
+	#records = $derived(
+		this.#activities.length > 0 ? calculatePersonalRecords(this.#activities) : null
+	);
+	#breakdown = $derived(calculateSportBreakdown(this.#activities));
+	#weeklyPattern = $derived(calculateWeeklyPattern(this.#activities));
 	#status = $state<AppStatus>('idle');
 	#error = $state<string | null>(null);
 	#parseErrors = $state<ParseError[]>([]);
@@ -82,10 +77,6 @@ class AppStore {
 
 	reset() {
 		this.#activities = [];
-		this.#stats = null;
-		this.#records = null;
-		this.#breakdown = [];
-		this.#weeklyPattern = [...EMPTY_WEEKLY_PATTERN];
 		this.#status = 'idle';
 		this.#error = null;
 		this.#parseErrors = [];
@@ -120,10 +111,6 @@ class AppStore {
 
 			this.#activities = result.activities;
 			this.#parseErrors = result.errors;
-			this.#stats = calculateYearStats(result.activities);
-			this.#records = calculatePersonalRecords(result.activities);
-			this.#breakdown = calculateSportBreakdown(result.activities);
-			this.#weeklyPattern = calculateWeeklyPattern(result.activities);
 			this.#status = 'ready';
 		} catch (err) {
 			this.#fail(err instanceof Error ? err.message : 'Failed to parse file');
@@ -132,11 +119,7 @@ class AppStore {
 
 	loadDemoData() {
 		this.reset();
-		this.#stats = demoStats;
-		this.#records = demoRecords;
-		this.#breakdown = demoBreakdown;
-		this.#weeklyPattern = [...DEMO_WEEKLY_PATTERN];
-		this.#activities = demoHighlights;
+		this.#activities = demoActivities;
 		this.#status = 'ready';
 	}
 
