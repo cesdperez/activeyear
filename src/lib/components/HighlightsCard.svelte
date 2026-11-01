@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { tick } from 'svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
-	import { formatDistance, formatDuration, pluralize } from '#lib/utils/format.js';
+	import { formatCount, formatDistance, formatDuration, pluralize } from '#lib/utils/format.js';
 	import { isCompactHighlights, timelineGap } from '#lib/utils/export.js';
 	import { HIGHLIGHTS_LIMIT, TIMELINE_GAP } from '#lib/constants/export.js';
 	import { Star, Target } from 'phosphor-svelte';
@@ -167,7 +167,7 @@
 
 			{#if hiddenCount > 0}
 				<div class="mt-6 text-center text-[20px] text-[var(--color-text-muted)]">
-					+{hiddenCount} more {pluralize(hiddenCount, 'highlight', 'highlights')}
+					+{formatCount(hiddenCount)} more {pluralize(hiddenCount, 'highlight', 'highlights')}
 				</div>
 			{/if}
 		{/if}

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { sportNames, sportIcons } from '#lib/constants/sports.js';
 	import type { SportColors } from '#lib/utils/breakdown.js';
-	import { formatDuration } from '#lib/utils/format.js';
+	import { formatCount, formatDuration } from '#lib/utils/format.js';
 	import type { BreakdownMetric, SportBreakdown, WidgetVariant } from '#lib/types/index.js';
 
 	let {
@@ -24,7 +24,7 @@
 	{#each sports as sport, i (sport.type)}
 		{@const IconComponent = sportIcons[sport.type]}
 		{@const value = sport[metric]}
-		{@const formattedValue = metric === 'count' ? value : formatDuration(value)}
+		{@const formattedValue = metric === 'count' ? formatCount(value) : formatDuration(value)}
 		{@const percentage = (value / maxValue) * 100}
 		{@const color = colors[sport.type]}
 

@@ -11,6 +11,7 @@ import {
 	calculateEverests,
 	calculatePizzaSlices,
 	formatActivityCount,
+	formatCount,
 	pluralize
 } from './format.js';
 
@@ -49,6 +50,10 @@ describe('formatDuration', () => {
 		expect(formatDuration(3600)).toBe('1h 0m');
 		expect(formatDuration(5400)).toBe('1h 30m');
 		expect(formatDuration(12888)).toBe('3h 34m');
+	});
+
+	it('groups thousands of hours', () => {
+		expect(formatDuration(1194 * 3600 + 33 * 60)).toBe('1,194h 33m');
 	});
 
 	it('returns 0m for zero duration', () => {
@@ -168,7 +173,18 @@ describe('pluralize', () => {
 	});
 });
 
+describe('formatCount', () => {
+	it('groups thousands like the other stats', () => {
+		expect(formatCount(7)).toBe('7');
+		expect(formatCount(1008)).toBe('1,008');
+	});
+});
+
 describe('formatActivityCount', () => {
+	it('groups thousands', () => {
+		expect(formatActivityCount(1008, 'activity')).toBe('1,008 activities');
+	});
+
 	it('uses singular for count of 1', () => {
 		expect(formatActivityCount(1, 'run')).toBe('1 run');
 	});

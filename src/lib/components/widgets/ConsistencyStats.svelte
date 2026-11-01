@@ -3,18 +3,19 @@
 	import { CalendarCheck, Lightning, type IconComponentProps } from 'phosphor-svelte';
 	import { activeDaysPercent } from '#lib/utils/breakdown.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
+	import { formatCount } from '#lib/utils/format.js';
 	import type { WidgetVariant } from '#lib/types/index.js';
 
 	interface DashboardStat {
 		Icon: Component<IconComponentProps>;
-		value: number;
+		value: string;
 		label: string;
 		delay: number;
 	}
 
 	interface ExportStat {
 		Icon: Component<IconComponentProps>;
-		value: number;
+		value: string;
 		ringStroke: string;
 		ringDashArray: string;
 		ringClass: string;
@@ -115,13 +116,13 @@
 	>
 		{@render dashboardStat({
 			Icon: CalendarCheck,
-			value: activeDays,
+			value: formatCount(activeDays),
 			label: 'Active Days',
 			delay: 350
 		})}
 		{@render dashboardStat({
 			Icon: Lightning,
-			value: longestStreak,
+			value: formatCount(longestStreak),
 			label: 'most consecutive active days',
 			delay: 400
 		})}
@@ -130,7 +131,7 @@
 	<div class="mb-16 grid grid-cols-2 gap-8">
 		{@render exportStat({
 			Icon: CalendarCheck,
-			value: activeDays,
+			value: formatCount(activeDays),
 			ringStroke: 'var(--color-accent)',
 			ringDashArray: `${yearPercent * 3.27} 327`,
 			ringClass: 'progress-ring',
@@ -140,7 +141,7 @@
 		})}
 		{@render exportStat({
 			Icon: Lightning,
-			value: longestStreak,
+			value: formatCount(longestStreak),
 			ringStroke: '#ff6b6b',
 			ringDashArray: '20 10',
 			ringClass: 'streak-ring',

@@ -17,7 +17,7 @@ export function formatDistance(km: number, unit: Unit = 'km'): string {
 
 	const oneDecimal = value.toFixed(1);
 	if (Number(oneDecimal) >= 100) {
-		return `${Math.round(value).toLocaleString('en-US')}${suffix}`;
+		return `${formatCount(Math.round(value))}${suffix}`;
 	}
 	return `${oneDecimal}${suffix}`;
 }
@@ -34,7 +34,12 @@ export function formatDuration(seconds: number): string {
 	if (hours === 0) {
 		return `${minutes}m`;
 	}
-	return `${hours}h ${minutes}m`;
+	return `${formatCount(hours)}h ${minutes}m`;
+}
+
+/** Whole number with thousands separators, matching the other stats. */
+export function formatCount(count: number): string {
+	return count.toLocaleString('en-US');
 }
 
 /**
@@ -128,7 +133,7 @@ export function formatActivityCount(count: number, type: string): string {
 	};
 
 	const pluralType = rule === 'one' ? type : (plurals[type.toLowerCase()] ?? `${type}s`);
-	return `${count} ${pluralType}`;
+	return `${formatCount(count)} ${pluralType}`;
 }
 
 const LOTR_MARATHON_SECONDS = 42960; // 11h 56m (Extended Editions total)
