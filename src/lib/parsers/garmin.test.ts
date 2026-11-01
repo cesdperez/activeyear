@@ -98,7 +98,9 @@ describe('parseGarminElevation', () => {
 describe('mapActivityType', () => {
 	it.each([
 		['Running', 'running'],
+		['Virtual Run', 'running'],
 		['Indoor Cycling', 'cycling'],
+		['Gravel/Unpaved Cycling', 'cycling'],
 		['Virtual Cycling', 'cycling'],
 		['Pool Swim', 'swimming'],
 		['Open Water Swimming', 'swimming'],
