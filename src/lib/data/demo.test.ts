@@ -11,6 +11,10 @@ describe('demoActivities', () => {
 		expect(stats.activeDays).toBe(180);
 	});
 
+	it('adds up to exactly 150 hours', () => {
+		expect(stats.totalDuration).toBe(150 * 3600);
+	});
+
 	it('has a 12 day longest streak', () => {
 		expect(stats.longestStreak).toBe(12);
 	});

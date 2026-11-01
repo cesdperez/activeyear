@@ -17,6 +17,8 @@ const DEMO_SEED = 2292;
 const ACTIVE_DAYS = 180;
 const DOUBLE_SESSION_DAYS = 65;
 const LONGEST_STREAK = 12;
+// A round total keeps the Time Active card on one line.
+const TOTAL_DURATION = 150 * 60 * 60;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /** Monday first, like `WeeklyPattern`: busy weekends, quiet Fridays. */
@@ -280,10 +282,25 @@ function regularSessions(fixedDays: number[], random: () => number): Activity[] 
 	});
 }
 
+function sumDurations(activities: Activity[]): number {
+	return activities.reduce((sum, a) => sum + a.duration, 0);
+}
+
+/** Scales the durations to add up to `total`, giving the rounding remainder to the last one. */
+function withTotalDuration(activities: Activity[], total: number): Activity[] {
+	const ratio = total / sumDurations(activities);
+	const scaled = activities.map((a) => ({ ...a, duration: Math.round(a.duration * ratio) }));
+	scaled[scaled.length - 1].duration += total - sumDurations(scaled);
+	return scaled;
+}
+
 function buildDemoActivities(): Activity[] {
 	const fixed = [...highlights, ...keySessions];
 	const fixedDays = fixed.map((a) => indexOfDate(a.date));
-	const regular = regularSessions(fixedDays, seededRandom(DEMO_SEED));
+	const regular = withTotalDuration(
+		regularSessions(fixedDays, seededRandom(DEMO_SEED)),
+		TOTAL_DURATION - sumDurations(fixed)
+	);
 
 	return [...fixed, ...regular].sort((a, b) => a.date.getTime() - b.date.getTime());
 }
