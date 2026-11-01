@@ -6,7 +6,11 @@
 </script>
 
 <header class="mb-16 text-center md:mb-24">
-	<h1 class="glow-text mb-6 text-5xl font-bold tracking-tight md:text-7xl">
+	<h1
+		class="glow-text mb-6 text-5xl font-bold tracking-tight md:text-7xl"
+		tabindex="-1"
+		{@attach (heading) => heading.focus()}
+	>
 		Your {TARGET_YEAR}
 	</h1>
 	<div
