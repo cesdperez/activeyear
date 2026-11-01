@@ -127,7 +127,7 @@ describe('sportDonutSegments', () => {
 		]);
 	});
 
-	it('leaves out slices too small to outlast the gap, since a round cap would still draw a dot', () => {
+	it('leaves out slices too small to outlast the gap', () => {
 		const withSliver = [sport({ count: 97 }), sport({ type: 'cycling', count: 3 })];
 
 		const segments = sportDonutSegments(withSliver, 'count', 100, 'export');
