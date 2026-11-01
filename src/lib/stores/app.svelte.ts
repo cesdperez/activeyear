@@ -42,7 +42,6 @@ class AppStore {
 	confettiEnabled = $state<boolean>(false);
 	summaryMetric = $state<SummaryMetric>('distance');
 	unit = $state<Unit>('km');
-	selectedYear = $state<number>(TARGET_YEAR);
 	breakdownMetric = $state<BreakdownMetric>('count');
 
 	get activities() {
@@ -104,7 +103,7 @@ class AppStore {
 
 		try {
 			const content = await file.text();
-			const result = parseGarminCsv(content, this.selectedYear);
+			const result = parseGarminCsv(content, TARGET_YEAR);
 
 			const wrongLanguage = result.errors.find((e) => e.type === 'wrong-language');
 			if (wrongLanguage) {
@@ -113,7 +112,7 @@ class AppStore {
 			}
 
 			if (result.activities.length === 0) {
-				this.#fail(`No ${this.selectedYear} activities found in the file`, result.errors);
+				this.#fail(`No ${TARGET_YEAR} activities found in the file`, result.errors);
 				return;
 			}
 

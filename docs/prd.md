@@ -6,7 +6,7 @@ Browser-only "Year in Sport" infographic generator. Users upload activity data (
 
 **Positioning:** _If Strava Wrapped is a summary, ActiveYear is a trophy._
 
-**Scope:** one season, `TARGET_YEAR` in `src/lib/constants/time.ts`. Multi-year CSVs are filtered to the selected year.
+**Scope:** one season, `TARGET_YEAR` in `src/lib/constants/time.ts`. Multi-year CSVs are filtered to that year.
 
 ---
 

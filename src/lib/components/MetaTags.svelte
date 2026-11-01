@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { TARGET_YEAR } from '#lib/constants/time.js';
 
-	let title = $derived(`ActiveYear - Your ${appStore.selectedYear} in Sport`);
+	let title = $derived(`ActiveYear - Your ${TARGET_YEAR} in Sport`);
 	let description =
 		'Transform your Garmin activity data into beautiful, shareable infographics. Private and secure: all processing happens in your browser, so your data never leaves your device.';
 	let url = 'https://activeyear.app';

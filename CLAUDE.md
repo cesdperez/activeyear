@@ -27,7 +27,7 @@ pnpm format                                # Prettier write
 - **Svelte 5 runes**: Use `$state`, `$derived` in `.svelte.ts` files for stores
 - **Imports**: `#lib/...` for `src/lib` (the `package.json` imports alias), and a `.js` extension on local imports (`from './format.js'`)
 - **Types**: Define in `src/lib/types/index.ts`
-- **Constants**: UPPER_SNAKE_CASE, define in `src/lib/constants/`. The season year is `TARGET_YEAR` in `src/lib/constants/time.ts`; derive year copy from it or from `selectedYear`, never a literal year.
+- **Constants**: UPPER_SNAKE_CASE, define in `src/lib/constants/`. The season year is `TARGET_YEAR` in `src/lib/constants/time.ts`; derive year copy from it, never a literal year.
 - **Functions**: Single level of abstraction principle; keep utils pure with no side effects
 - **Error types**: Use discriminated unions (`type: 'error-code'`)
 - **Comments**: Only when non-obvious; avoid redundant explanations

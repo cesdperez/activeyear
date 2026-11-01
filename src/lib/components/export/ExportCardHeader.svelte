@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 
 	let { title }: { title: string } = $props();
@@ -16,7 +17,7 @@
 		<h2
 			class="mr-[0.05em] mb-2 text-[140px] leading-[0.8] font-black tracking-tighter text-[var(--color-text-primary)]"
 		>
-			{appStore.selectedYear}
+			{TARGET_YEAR}
 		</h2>
 		<h1
 			class="export-title relative z-10 mr-[-0.15em] text-[72px] leading-none font-bold tracking-[0.15em] text-[var(--color-text-dim)] uppercase"

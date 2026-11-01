@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import FileUpload from '#lib/components/FileUpload.svelte';
 	import Dashboard from '#lib/components/Dashboard.svelte';
@@ -12,7 +13,7 @@
 		<div class="flex min-h-screen flex-col items-center justify-center px-4">
 			<div class="mb-8 text-center">
 				<h1 class="glow-text mb-3 text-4xl font-bold md:text-5xl">ActiveYear</h1>
-				<p class="text-lg text-zinc-400">Your {appStore.selectedYear} in Sport</p>
+				<p class="text-lg text-zinc-400">Your {TARGET_YEAR} in Sport</p>
 			</div>
 
 			<div class="w-full max-w-lg">
@@ -45,7 +46,7 @@
 					</li>
 					<li class="flex gap-2">
 						<span class="font-mono text-cyan-400">3.</span>
-						Scroll down until all {appStore.selectedYear} activities are loaded
+						Scroll down until all {TARGET_YEAR} activities are loaded
 					</li>
 					<li class="flex gap-2">
 						<span class="font-mono text-cyan-400">4.</span>

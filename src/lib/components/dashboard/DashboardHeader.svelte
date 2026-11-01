@@ -1,11 +1,12 @@
 <script lang="ts">
+	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import { ArrowDown } from 'phosphor-svelte';
 </script>
 
 <header class="mb-16 text-center md:mb-24">
 	<h1 class="glow-text mb-6 text-5xl font-bold tracking-tight md:text-7xl">
-		Your {appStore.selectedYear}
+		Your {TARGET_YEAR}
 	</h1>
 	<div
 		class="inline-flex items-center gap-3 rounded-full border border-[rgba(255,255,255,0.05)] bg-[var(--color-surface-elevated)] px-4 py-2"

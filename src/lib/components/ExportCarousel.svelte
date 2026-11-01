@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import SummaryCard from './SummaryCard.svelte';
 	import BreakdownCard from './BreakdownCard.svelte';
@@ -25,8 +26,8 @@
 
 	export async function exportAllCards(): Promise<void> {
 		const baseFilename = appStore.userName
-			? `${appStore.userName.toLowerCase().replace(/\s+/g, '-')}-${appStore.selectedYear}`
-			: `activeyear-${appStore.selectedYear}`;
+			? `${appStore.userName.toLowerCase().replace(/\s+/g, '-')}-${TARGET_YEAR}`
+			: `activeyear-${TARGET_YEAR}`;
 
 		const backgroundColor = getThemeBackgroundColor(appStore.theme);
 
