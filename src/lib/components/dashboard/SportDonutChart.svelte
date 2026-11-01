@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { sportColors } from "#lib/constants/sports.js";
-	import { donutSegments } from "#lib/utils/charts.js";
-	import type { SportBreakdown } from "#lib/types/index.js";
+	import { sportColors } from '#lib/constants/sports.js';
+	import { donutSegments } from '#lib/utils/charts.js';
+	import type { SportBreakdown } from '#lib/types/index.js';
 
 	interface Props {
 		sports: SportBreakdown[];
@@ -15,15 +15,13 @@
 	const segments = $derived(
 		donutSegments(
 			sports.map((s) => s.count),
-			circumference,
-		),
+			circumference
+		)
 	);
 </script>
 
-<div class="shrink-0 relative">
-	<div
-		class="donut-chart-container !w-[280px] !h-[280px] md:!w-[340px] md:!h-[340px]"
-	>
+<div class="relative shrink-0">
+	<div class="donut-chart-container !h-[280px] !w-[280px] md:!h-[340px] md:!w-[340px]">
 		<svg viewBox="0 0 200 200" class="donut-chart">
 			<circle
 				cx="100"
@@ -42,8 +40,7 @@
 					fill="none"
 					stroke={color}
 					stroke-width="28"
-					stroke-dasharray="{segment.share * circumference -
-						2} {circumference}"
+					stroke-dasharray="{segment.share * circumference - 2} {circumference}"
 					stroke-dashoffset={-segment.offset}
 					stroke-linecap="round"
 					transform="rotate(-90 100 100)"
@@ -54,11 +51,11 @@
 		</svg>
 
 		<div class="donut-center">
-			<div class="text-4xl md:text-5xl font-black text-white leading-none">
+			<div class="text-4xl leading-none font-black text-white md:text-5xl">
 				{totalCount}
 			</div>
 			<div
-				class="text-xs md:text-sm font-bold text-[var(--color-text-muted)] uppercase tracking-widest mt-1"
+				class="mt-1 text-xs font-bold tracking-widest text-[var(--color-text-muted)] uppercase md:text-sm"
 			>
 				Activities
 			</div>

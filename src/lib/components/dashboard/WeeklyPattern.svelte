@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { appStore } from "#lib/stores/app.svelte.js";
-	import { WEEKDAY_LABELS } from "#lib/constants/time.js";
-	import { weeklyBars } from "#lib/utils/breakdown.js";
-	import SectionHeading from "./SectionHeading.svelte";
+	import { appStore } from '#lib/stores/app.svelte.js';
+	import { WEEKDAY_LABELS } from '#lib/constants/time.js';
+	import { weeklyBars } from '#lib/utils/breakdown.js';
+	import SectionHeading from './SectionHeading.svelte';
 
 	const barContainerHeight = 160;
 
@@ -20,8 +20,8 @@
 		>
 			{#each appStore.weeklyPattern as count, i}
 				{@const { barHeight, isTopDay } = bars[i]}
-				<div class="flex-1 flex flex-col items-center justify-end gap-3">
-					<span class="text-sm font-mono text-[var(--color-text-muted)]">
+				<div class="flex flex-1 flex-col items-center justify-end gap-3">
+					<span class="font-mono text-sm text-[var(--color-text-muted)]">
 						{count}
 					</span>
 					<div
@@ -35,9 +35,7 @@
 							: 'var(--color-accent-glow)'};"
 						style:animation-delay="{i * 50}ms"
 					></div>
-					<span
-						class="text-sm font-bold text-[var(--color-text-muted)] uppercase tracking-wider"
-					>
+					<span class="text-sm font-bold tracking-wider text-[var(--color-text-muted)] uppercase">
 						{WEEKDAY_LABELS[i]}
 					</span>
 				</div>

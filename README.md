@@ -18,14 +18,14 @@
 
 ## 📖 Overview
 
-**ActiveYear** is a web tool that takes your Garmin (and maybe next year Strava) activity export CSVs and generates beautiful, social-media-ready stats cards for your year in sport. 
+**ActiveYear** is a web tool that takes your Garmin (and maybe next year Strava) activity export CSVs and generates beautiful, social-media-ready stats cards for your year in sport.
 
 Whether you're a runner, cyclist, or multi-sport athlete, visualize your hard work with themes like **Neon**, **Minimalist**, and **Retro**.
 
 ## ✨ Features
 
 - **🔒 Privacy First**: All data processing happens **100% in your browser**. Your CSV never leaves your device.
-- **📊 Deep Insights**: 
+- **📊 Deep Insights**:
   - **Activity Breakdown**: Distance, time, and count per sport.
   - **Fun Stats**: "Earth Laps", "Everests Climbed", and "Pizza Index" (calories burned).
   - **Consistency**: Tracking active streaks and monthly distribution.
@@ -62,4 +62,5 @@ pnpm test:e2e
 ```
 
 ## 📄 License
+
 This project is open source and available under the simple MIT license.

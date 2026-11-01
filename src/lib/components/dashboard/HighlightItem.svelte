@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { appStore } from "#lib/stores/app.svelte.js";
-	import { sportNames, sportIcons } from "#lib/constants/sports.js";
-	import { formatDistance, formatDuration } from "#lib/utils/format.js";
-	import type { Activity } from "#lib/types/index.js";
-	import { Target, Star } from "phosphor-svelte";
+	import { appStore } from '#lib/stores/app.svelte.js';
+	import { sportNames, sportIcons } from '#lib/constants/sports.js';
+	import { formatDistance, formatDuration } from '#lib/utils/format.js';
+	import type { Activity } from '#lib/types/index.js';
+	import { Target, Star } from 'phosphor-svelte';
 
 	interface Props {
 		activity: Activity;
@@ -15,33 +15,26 @@
 	const IconComponent = $derived(sportIcons[activity.type] ?? Target);
 </script>
 
-<div
-	class="stat-card p-4 flex items-center gap-4 group"
-	style="animation-delay: {delay}ms"
->
+<div class="stat-card group flex items-center gap-4 p-4" style="animation-delay: {delay}ms">
 	<div
-		class="w-12 h-12 rounded-xl flex items-center justify-center bg-[var(--color-accent)]/10 text-[var(--color-accent)] shrink-0"
+		class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[var(--color-accent)]/10 text-[var(--color-accent)]"
 	>
-		<IconComponent class="w-6 h-6" weight="bold" />
+		<IconComponent class="h-6 w-6" weight="bold" />
 	</div>
-	<div class="flex-1 min-w-0">
-		<div class="flex items-center gap-2 mb-1">
-			<Star class="w-4 h-4 text-yellow-500" weight="fill" />
-			<span class="font-bold text-white truncate" title={activity.title}>
-				{activity.title || sportNames[activity.type] || "Activity"}
+	<div class="min-w-0 flex-1">
+		<div class="mb-1 flex items-center gap-2">
+			<Star class="h-4 w-4 text-yellow-500" weight="fill" />
+			<span class="truncate font-bold text-white" title={activity.title}>
+				{activity.title || sportNames[activity.type] || 'Activity'}
 			</span>
 		</div>
-		<div
-			class="flex items-center gap-3 text-sm text-[var(--color-text-muted)]"
-		>
+		<div class="flex items-center gap-3 text-sm text-[var(--color-text-muted)]">
 			{#if activity.distance > 0}
-				<span class="font-mono"
-					>{formatDistance(activity.distance, appStore.unit)}</span
-				>
+				<span class="font-mono">{formatDistance(activity.distance, appStore.unit)}</span>
 			{/if}
 			<span class="font-mono">{formatDuration(activity.duration)}</span>
 			<span
-				class="px-2 py-0.5 rounded-full bg-[var(--color-surface-elevated)] text-xs uppercase tracking-wider"
+				class="rounded-full bg-[var(--color-surface-elevated)] px-2 py-0.5 text-xs tracking-wider uppercase"
 			>
 				{sportNames[activity.type] ?? activity.type}
 			</span>

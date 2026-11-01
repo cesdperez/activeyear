@@ -2,11 +2,12 @@
 
 ## Design Philosophy
 
-**Core Principle:** *Achievement, not information.*
+**Core Principle:** _Achievement, not information._
 
 ActiveYear celebrates athletic accomplishment. Every design decision should make users feel proud of their year. We're building trophies, not dashboards.
 
 **Guiding Questions:**
+
 - Does this make the user feel like an athlete?
 - Would someone screenshot this unprompted?
 - Does it feel earned, not generated?
@@ -30,15 +31,16 @@ Use CSS variables for all colors. Define in `:root` with theme-specific override
 
 ```css
 :root {
-  --color-surface: #0a0a0b;
-  --color-text-primary: #fafafa;
-  --color-text-muted: #71717a;
-  --color-accent: #22d3ee;
-  --color-accent-glow: rgba(34, 211, 238, 0.4);
+	--color-surface: #0a0a0b;
+	--color-text-primary: #fafafa;
+	--color-text-muted: #71717a;
+	--color-accent: #22d3ee;
+	--color-accent-glow: rgba(34, 211, 238, 0.4);
 }
 ```
 
 **Rules:**
+
 - One dominant accent per theme. Never split attention.
 - Text contrast minimum: 7:1 for stats, 4.5:1 for labels
 - Glow/gradient effects use accent color at 20-40% opacity
@@ -47,6 +49,7 @@ Use CSS variables for all colors. Define in `:root` with theme-specific override
 ### Typography
 
 **Display Font:** Use a distinctive, characterful typeface for headlines and stats. Avoid generic sans-serifs (Inter, Roboto, Arial). Consider:
+
 - Geometric: Clash Display, Satoshi, General Sans
 - Technical: JetBrains Mono, Space Mono (for data)
 - Expressive: Cabinet Grotesk, Switzer, Outfit
@@ -54,15 +57,17 @@ Use CSS variables for all colors. Define in `:root` with theme-specific override
 **Body Font:** Pair with a readable sans-serif that shares DNA with the display choice.
 
 **Hierarchy:**
-| Element | Size | Weight | Tracking |
-|---------|------|--------|----------|
-| Hero stat | 4rem+ | 700-900 | -0.02em |
-| Section header | 1.5rem | 600 | 0 |
-| Stat value | 2.5rem | 700 | -0.01em |
-| Stat label | 0.875rem | 500 | 0.05em (uppercase) |
-| Body text | 1rem | 400 | 0 |
+
+| Element        | Size     | Weight  | Tracking           |
+| -------------- | -------- | ------- | ------------------ |
+| Hero stat      | 4rem+    | 700-900 | -0.02em            |
+| Section header | 1.5rem   | 600     | 0                  |
+| Stat value     | 2.5rem   | 700     | -0.01em            |
+| Stat label     | 0.875rem | 500     | 0.05em (uppercase) |
+| Body text      | 1rem     | 400     | 0                  |
 
 **Rules:**
+
 - Stats are the headline. Make them unmissable.
 - Labels in uppercase with letter-spacing feel more "badge-like"
 - Never use more than 2 typefaces per theme
@@ -79,7 +84,7 @@ Each theme is a complete visual system. Users switch themes, not individual colo
 
 - **Background:** Near-black (#0a0a0b) with subtle noise texture (2-3% opacity)
 - **Accent:** Electric cyan (#22d3ee) or hot magenta (#f472b6)
-- **Effects:** 
+- **Effects:**
   - Glow on stats: `text-shadow: 0 0 30px var(--color-accent-glow)`
   - Gradient borders: `linear-gradient(135deg, accent 0%, transparent 60%)`
   - Scanline overlay (optional): repeating horizontal lines at 5% opacity
@@ -116,6 +121,7 @@ Each theme is a complete visual system. Users switch themes, not individual colo
 The atomic unit of ActiveYear. Must be instantly readable and screenshot-worthy.
 
 **Structure:**
+
 ```
 ┌─────────────────────┐
 │     STAT VALUE      │  ← Largest, boldest
@@ -125,6 +131,7 @@ The atomic unit of ActiveYear. Must be instantly readable and screenshot-worthy.
 ```
 
 **Rules:**
+
 - Value always dominates. 3x-4x larger than label.
 - Round aggressively for impact: "847 km" not "847.32 km"
 - One idea per card. No compound stats.
@@ -134,6 +141,7 @@ The atomic unit of ActiveYear. Must be instantly readable and screenshot-worthy.
 Badge-like treatment. These are achievements, not data points.
 
 **Visual Cues:**
+
 - Icon or trophy symbol
 - Distinct background (slight elevation or border)
 - Date/activity context as secondary info
@@ -149,12 +157,14 @@ For upload/processing states:
 ### Buttons
 
 **Primary (Download/Export):**
+
 - Full accent color background
 - High contrast text
 - Generous padding (1rem 2rem minimum)
 - Hover: slight lift (translateY -2px) + shadow increase
 
 **Secondary (Theme/Ratio toggles):**
+
 - Ghost style or subtle background
 - Border for definition
 - Active state clearly distinguished
@@ -167,22 +177,24 @@ For upload/processing states:
 
 **Mobile-first.** The card is the product; it must be perfect at 375px.
 
-| Breakpoint | Behavior |
-|------------|----------|
-| < 640px | Single column. Stacked cards. Full-bleed export preview. |
-| 640-1024px | 2-column grid for stats. Preview centered. |
-| > 1024px | Sidebar controls + main preview area. |
+| Breakpoint | Behavior                                                 |
+| ---------- | -------------------------------------------------------- |
+| < 640px    | Single column. Stacked cards. Full-bleed export preview. |
+| 640-1024px | 2-column grid for stats. Preview centered.               |
+| > 1024px   | Sidebar controls + main preview area.                    |
 
 ### Export Canvas
 
 The shareable image. This is what users actually care about.
 
 **Layout Principles:**
+
 - Visual hierarchy: Name/year → Hero stat → Supporting stats → Watermark
 - Safe zones: 5% padding from edges for platform cropping
 - Watermark: Bottom-right, subtle but legible. `activeyear.app` in muted text.
 
 **Aspect Ratios:**
+
 - 9:16 (1080×1920): Vertical stack, maximum stat size
 - 1:1 (1080×1080): Compact grid, balanced composition
 - 4:5 (1080×1350): Hybrid, slight vertical emphasis
@@ -199,13 +211,14 @@ Stats should feel revealed, not rendered.
 
 ```svelte
 <script>
-  import { spring } from 'svelte/motion';
-  const value = spring(0, { stiffness: 0.1, damping: 0.4 });
-  onMount(() => value.set(targetValue));
+	import { spring } from 'svelte/motion';
+	const value = spring(0, { stiffness: 0.1, damping: 0.4 });
+	onMount(() => value.set(targetValue));
 </script>
 ```
 
 **Stagger Pattern:**
+
 - Hero stat: 0ms delay
 - Primary stats: 100ms delay each
 - Secondary stats: 200ms delay each
@@ -225,10 +238,12 @@ Stats should feel revealed, not rendered.
 - Respect `prefers-reduced-motion`:
   ```css
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      transition-duration: 0.01ms !important;
-    }
+  	*,
+  	*::before,
+  	*::after {
+  		animation-duration: 0.01ms !important;
+  		transition-duration: 0.01ms !important;
+  	}
   }
   ```
 
@@ -248,8 +263,8 @@ Stats should feel revealed, not rendered.
 
 ```css
 :focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+	outline: 2px solid var(--color-accent);
+	outline-offset: 2px;
 }
 ```
 
@@ -260,10 +275,12 @@ Stats should feel revealed, not rendered.
 ### Icons
 
 Use a consistent icon set. Recommendations:
+
 - Lucide (clean, customizable stroke width)
 - Phosphor (multiple weights)
 
 **Rules:**
+
 - Stroke width consistent across all icons (1.5-2px)
 - Size proportional to adjacent text (1.25em default)
 - Accent color for interactive, muted for decorative
@@ -283,11 +300,13 @@ Use a consistent icon set. Recommendations:
 Confident, concise, celebratory.
 
 **Do:**
+
 - "847 km" (clean, proud)
 - "2.3 Everests climbed" (achievement framing)
 - "Your data never leaves this browser" (direct reassurance)
 
 **Don't:**
+
 - "You ran a total of 847.32 kilometers this year!" (verbose, try-hard)
 - "2.3x the elevation of Mount Everest" (explaining the joke)
 - "We take your privacy seriously..." (corporate speak)
@@ -325,14 +344,14 @@ Confident, concise, celebratory.
 
 Avoid these common pitfalls:
 
-| Anti-Pattern | Why It Fails | Do Instead |
-|--------------|--------------|------------|
-| Gradient soup | Feels AI-generated, no hierarchy | One accent, applied consistently |
-| Stat overload | Dilutes impact, decision fatigue | Curate ruthlessly. 6-8 stats max per card. |
-| Generic icons | Feels like a template | Custom or none. Icons should earn their place. |
-| Centered everything | Passive, lifeless | Intentional alignment. Asymmetry creates energy. |
-| Thin fonts for stats | Hard to read, feels weak | Bold weights for numbers. Stats are headlines. |
-| Drop shadows everywhere | Dated, noisy | Reserve for intentional elevation. |
+| Anti-Pattern            | Why It Fails                     | Do Instead                                       |
+| ----------------------- | -------------------------------- | ------------------------------------------------ |
+| Gradient soup           | Feels AI-generated, no hierarchy | One accent, applied consistently                 |
+| Stat overload           | Dilutes impact, decision fatigue | Curate ruthlessly. 6-8 stats max per card.       |
+| Generic icons           | Feels like a template            | Custom or none. Icons should earn their place.   |
+| Centered everything     | Passive, lifeless                | Intentional alignment. Asymmetry creates energy. |
+| Thin fonts for stats    | Hard to read, feels weak         | Bold weights for numbers. Stats are headlines.   |
+| Drop shadows everywhere | Dated, noisy                     | Reserve for intentional elevation.               |
 
 ---
 
@@ -341,22 +360,26 @@ Avoid these common pitfalls:
 Quick-reference values for common needs:
 
 ### Spacing Scale (rem)
+
 `0.25 | 0.5 | 0.75 | 1 | 1.5 | 2 | 3 | 4 | 6 | 8`
 
 ### Border Radius
+
 - Cards: `0.75rem` (Neon/Minimalist), `0` (Retro)
 - Buttons: `0.5rem`
 - Pills/tags: `9999px`
 
 ### Shadows
+
 ```css
---shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
---shadow-md: 0 4px 6px rgba(0,0,0,0.1);
---shadow-lg: 0 10px 15px rgba(0,0,0,0.15);
+--shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+--shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+--shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
 --shadow-glow: 0 0 30px var(--color-accent-glow);
 ```
 
 ### Transitions
+
 ```css
 --transition-fast: 150ms ease-out;
 --transition-base: 200ms ease-out;

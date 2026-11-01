@@ -1,31 +1,31 @@
 <script lang="ts">
-    import type { Snippet } from "svelte";
-    import type { CardVariant } from "#lib/types/index.js";
-    import ExportPreviewScale from "./export/ExportPreviewScale.svelte";
-    import ExportCardSurface from "./export/ExportCardSurface.svelte";
-    import ExportCardBackground from "./export/ExportCardBackground.svelte";
-    import ExportCardHeader from "./export/ExportCardHeader.svelte";
-    import ExportCardWatermark from "./export/ExportCardWatermark.svelte";
+	import type { Snippet } from 'svelte';
+	import type { CardVariant } from '#lib/types/index.js';
+	import ExportPreviewScale from './export/ExportPreviewScale.svelte';
+	import ExportCardSurface from './export/ExportCardSurface.svelte';
+	import ExportCardBackground from './export/ExportCardBackground.svelte';
+	import ExportCardHeader from './export/ExportCardHeader.svelte';
+	import ExportCardWatermark from './export/ExportCardWatermark.svelte';
 
-    let {
-        variant,
-        title,
-        children,
-    }: {
-        variant: CardVariant;
-        title: string;
-        children: Snippet;
-    } = $props();
+	let {
+		variant,
+		title,
+		children
+	}: {
+		variant: CardVariant;
+		title: string;
+		children: Snippet;
+	} = $props();
 </script>
 
 <ExportPreviewScale>
-    <ExportCardSurface {variant}>
-        <ExportCardBackground />
+	<ExportCardSurface {variant}>
+		<ExportCardBackground />
 
-        <div class="relative z-10 h-full flex flex-col p-14">
-            <ExportCardHeader {title} />
-            {@render children()}
-            <ExportCardWatermark />
-        </div>
-    </ExportCardSurface>
+		<div class="relative z-10 flex h-full flex-col p-14">
+			<ExportCardHeader {title} />
+			{@render children()}
+			<ExportCardWatermark />
+		</div>
+	</ExportCardSurface>
 </ExportPreviewScale>

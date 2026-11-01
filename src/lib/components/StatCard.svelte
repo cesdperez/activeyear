@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import { spring } from "svelte/motion";
-	import type { Snippet } from "svelte";
+	import { onMount } from 'svelte';
+	import { spring } from 'svelte/motion';
+	import type { Snippet } from 'svelte';
 
 	interface Props {
 		value: string;
@@ -13,15 +13,7 @@
 		equivalent?: string;
 	}
 
-	let {
-		value,
-		label,
-		detail,
-		icon,
-		highlight = false,
-		delay = 0,
-		equivalent,
-	}: Props = $props();
+	let { value, label, detail, icon, highlight = false, delay = 0, equivalent }: Props = $props();
 
 	// Animation state
 	let opacity = spring(0, { stiffness: 0.1, damping: 0.6 });
@@ -39,19 +31,19 @@
 </script>
 
 <div
-	class="stat-card p-6 md:p-8 flex flex-col justify-between h-full relative overflow-hidden group"
+	class="stat-card group relative flex h-full flex-col justify-between overflow-hidden p-6 md:p-8"
 	class:glow-border={highlight}
 	style="opacity: {$opacity}; transform: scale({$scale});"
 >
 	<!-- Decorative accent gradient -->
 	<div
-		class="absolute -top-12 -right-12 w-24 h-24 bg-[var(--color-accent)] opacity-[0.03] blur-3xl rounded-full pointer-events-none group-hover:opacity-[0.07] transition-opacity duration-300"
+		class="pointer-events-none absolute -top-12 -right-12 h-24 w-24 rounded-full bg-[var(--color-accent)] opacity-[0.03] blur-3xl transition-opacity duration-300 group-hover:opacity-[0.07]"
 	></div>
 
 	<div class="mb-6">
 		{#if icon}
 			<div
-				class="icon-container mb-4 text-[var(--color-text-muted)] group-hover:text-[var(--color-accent)] transition-colors duration-300"
+				class="icon-container mb-4 text-[var(--color-text-muted)] transition-colors duration-300 group-hover:text-[var(--color-accent)]"
 			>
 				{@render icon()}
 			</div>
@@ -60,7 +52,7 @@
 		<div
 			class="stat-value {value.length > 10
 				? 'text-2xl sm:text-3xl lg:text-4xl'
-				: 'text-3xl sm:text-4xl lg:text-5xl'} text-[var(--color-text-primary)] leading-none tracking-tight mb-2"
+				: 'text-3xl sm:text-4xl lg:text-5xl'} mb-2 leading-none tracking-tight text-[var(--color-text-primary)]"
 		>
 			{value}
 		</div>
@@ -72,15 +64,13 @@
 		</div>
 
 		{#if detail}
-			<div class="text-sm text-[var(--color-text-muted)] font-medium">
+			<div class="text-sm font-medium text-[var(--color-text-muted)]">
 				{detail}
 			</div>
 		{/if}
 
 		{#if equivalent}
-			<div
-				class="text-sm font-medium text-[var(--color-accent)] mt-2 opacity-90"
-			>
+			<div class="mt-2 text-sm font-medium text-[var(--color-accent)] opacity-90">
 				{equivalent}
 			</div>
 		{/if}

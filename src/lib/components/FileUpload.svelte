@@ -1,38 +1,33 @@
 <script lang="ts">
-	import { appStore } from "#lib/stores/app.svelte.js";
-	import {
-		UploadSimple,
-		Warning,
-		SpinnerGap,
-		ShieldCheck,
-	} from "phosphor-svelte";
+	import { appStore } from '#lib/stores/app.svelte.js';
+	import { UploadSimple, Warning, SpinnerGap, ShieldCheck } from 'phosphor-svelte';
 
 	let isDragOver = $state(false);
 	let fileInput: HTMLInputElement;
 	let isArtificialDelay = $state(false);
-	let currentPhrase = $state("");
+	let currentPhrase = $state('');
 
 	const FUNNY_PHRASES = [
-		"Warming up the calves...",
-		"Inflating the tires...",
-		"Finding the GPS signal...",
-		"Chasing down segments...",
-		"Hydrating the data...",
-		"Lacing up the shoes...",
-		"Greasing the chain...",
-		"Stretching the glutes...",
-		"Calculating VO2 max...",
-		"Eating a pre-run banana...",
-		"Tightening the cleats...",
-		"Checking the wind direction...",
-		"Refilling the water bottles...",
-		"Syncing with the satellites...",
-		"Polishing the frame...",
-		"Adjusting the saddle height...",
-		"Loading the power meter...",
-		"Applying anti-chafe cream...",
-		"Checking the weather forecast...",
-		"Calibrating the heart rate monitor...",
+		'Warming up the calves...',
+		'Inflating the tires...',
+		'Finding the GPS signal...',
+		'Chasing down segments...',
+		'Hydrating the data...',
+		'Lacing up the shoes...',
+		'Greasing the chain...',
+		'Stretching the glutes...',
+		'Calculating VO2 max...',
+		'Eating a pre-run banana...',
+		'Tightening the cleats...',
+		'Checking the wind direction...',
+		'Refilling the water bottles...',
+		'Syncing with the satellites...',
+		'Polishing the frame...',
+		'Adjusting the saddle height...',
+		'Loading the power meter...',
+		'Applying anti-chafe cream...',
+		'Checking the weather forecast...',
+		'Calibrating the heart rate monitor...'
 	];
 	function handleDragOver(event: DragEvent) {
 		event.preventDefault();
@@ -47,13 +42,11 @@
 	async function startArtificialDelay() {
 		isArtificialDelay = true;
 		const phraseInterval = setInterval(() => {
-			currentPhrase =
-				FUNNY_PHRASES[Math.floor(Math.random() * FUNNY_PHRASES.length)];
+			currentPhrase = FUNNY_PHRASES[Math.floor(Math.random() * FUNNY_PHRASES.length)];
 		}, 1000);
 
 		// Set initial phrase
-		currentPhrase =
-			FUNNY_PHRASES[Math.floor(Math.random() * FUNNY_PHRASES.length)];
+		currentPhrase = FUNNY_PHRASES[Math.floor(Math.random() * FUNNY_PHRASES.length)];
 
 		await new Promise((resolve) => setTimeout(resolve, 5000));
 
@@ -87,7 +80,7 @@
 </script>
 
 <div
-	class="upload-zone p-8 md:p-12 cursor-pointer group flex flex-col items-center justify-center min-h-[300px]"
+	class="upload-zone group flex min-h-[300px] cursor-pointer flex-col items-center justify-center p-8 md:p-12"
 	class:dragover={isDragOver}
 	role="button"
 	tabindex="0"
@@ -95,7 +88,7 @@
 	ondragleave={handleDragLeave}
 	ondrop={handleDrop}
 	onclick={triggerFileInput}
-	onkeydown={(e) => e.key === "Enter" && triggerFileInput()}
+	onkeydown={(e) => e.key === 'Enter' && triggerFileInput()}
 >
 	<input
 		bind:this={fileInput}
@@ -107,41 +100,33 @@
 	/>
 
 	<div class="text-center">
-		{#if appStore.status === "parsing" || isArtificialDelay}
+		{#if appStore.status === 'parsing' || isArtificialDelay}
 			<div class="mb-4">
 				<SpinnerGap
-					class="w-12 h-12 mx-auto text-[var(--color-accent)] animate-spin"
+					class="mx-auto h-12 w-12 animate-spin text-[var(--color-accent)]"
 					weight="bold"
 				/>
 			</div>
-			<p class="text-lg text-[var(--color-text-muted)] animate-pulse">
-				{isArtificialDelay ? currentPhrase : "Analyzing activities..."}
+			<p class="animate-pulse text-lg text-[var(--color-text-muted)]">
+				{isArtificialDelay ? currentPhrase : 'Analyzing activities...'}
 			</p>
-		{:else if appStore.status === "error"}
+		{:else if appStore.status === 'error'}
 			<div class="mb-4">
-				<Warning class="w-12 h-12 mx-auto text-red-500" weight="bold" />
+				<Warning class="mx-auto h-12 w-12 text-red-500" weight="bold" />
 			</div>
-			<p class="text-lg text-red-500 mb-2">{appStore.error}</p>
-			<p class="text-sm text-[var(--color-text-dim)]">
-				Click to try again
-			</p>
+			<p class="mb-2 text-lg text-red-500">{appStore.error}</p>
+			<p class="text-sm text-[var(--color-text-dim)]">Click to try again</p>
 		{:else}
 			<div class="mb-4">
 				<UploadSimple
-					class="w-12 h-12 mx-auto text-[var(--color-text-dim)] group-hover:text-[var(--color-accent)] transition-colors duration-300"
+					class="mx-auto h-12 w-12 text-[var(--color-text-dim)] transition-colors duration-300 group-hover:text-[var(--color-accent)]"
 					weight="bold"
 				/>
 			</div>
-			<p class="text-lg text-[var(--color-text-primary)] mb-1">
-				Drop your Garmin CSV here
-			</p>
-			<p class="text-sm text-[var(--color-text-muted)] mb-4">
-				or click to browse
-			</p>
-			<p
-				class="text-xs text-[var(--color-text-dim)] flex items-center justify-center gap-1.5"
-			>
-				<ShieldCheck class="w-3.5 h-3.5" weight="bold" />
+			<p class="mb-1 text-lg text-[var(--color-text-primary)]">Drop your Garmin CSV here</p>
+			<p class="mb-4 text-sm text-[var(--color-text-muted)]">or click to browse</p>
+			<p class="flex items-center justify-center gap-1.5 text-xs text-[var(--color-text-dim)]">
+				<ShieldCheck class="h-3.5 w-3.5" weight="bold" />
 				Your data never leaves this browser
 			</p>
 		{/if}

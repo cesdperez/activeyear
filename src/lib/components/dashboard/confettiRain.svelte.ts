@@ -29,11 +29,11 @@ function startConfetti() {
 			origin: {
 				x: Math.random(),
 				// since they fall down, start a bit above the screen
-				y: -0.1,
+				y: -0.1
 			},
 			colors: ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'],
 			shapes: ['circle', 'square'],
-			disableForReducedMotion: true,
+			disableForReducedMotion: true
 		});
 
 		timeoutId = setTimeout(frame, 140);

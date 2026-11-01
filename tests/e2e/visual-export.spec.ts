@@ -99,7 +99,10 @@ function scaleDownImage(buffer: Buffer, scaleFactor: number): Buffer {
 			const srcY = y * scaleFactor;
 
 			// Average the 2x2 block of source pixels
-			let r = 0, g = 0, b = 0, a = 0;
+			let r = 0,
+				g = 0,
+				b = 0,
+				a = 0;
 			for (let dy = 0; dy < scaleFactor; dy++) {
 				for (let dx = 0; dx < scaleFactor; dx++) {
 					const sx = Math.min(srcX + dx, src.width - 1);
@@ -144,7 +147,9 @@ async function captureSpecificCardDownload(page: Page, cardIndex: number): Promi
 	// Get the download for our specific card
 	const download = downloads[cardIndex];
 	if (!download) {
-		throw new Error(`Download for card index ${cardIndex} not found. Got ${downloads.length} downloads.`);
+		throw new Error(
+			`Download for card index ${cardIndex} not found. Got ${downloads.length} downloads.`
+		);
 	}
 
 	const downloadPath = await download.path();
@@ -155,7 +160,10 @@ async function captureSpecificCardDownload(page: Page, cardIndex: number): Promi
 	return readFileSync(downloadPath);
 }
 
-function compareImages(screenshotBuffer: Buffer, downloadBuffer: Buffer): { diffRatio: number; diffPixels: number; diffImage: Buffer } {
+function compareImages(
+	screenshotBuffer: Buffer,
+	downloadBuffer: Buffer
+): { diffRatio: number; diffPixels: number; diffImage: Buffer } {
 	const screenshot = PNG.sync.read(screenshotBuffer);
 	let download = PNG.sync.read(downloadBuffer);
 
@@ -193,10 +201,17 @@ function compareImages(screenshotBuffer: Buffer, downloadBuffer: Buffer): { diff
 
 	const diff = new PNG({ width, height });
 
-	const diffPixels = pixelmatch(croppedScreenshot.data, croppedDownload.data, diff.data, width, height, {
-		threshold: 0.2, // Color difference threshold - slightly relaxed for anti-aliasing
-		alpha: 0.5 // Blend factor of unchanged pixels in diff output
-	});
+	const diffPixels = pixelmatch(
+		croppedScreenshot.data,
+		croppedDownload.data,
+		diff.data,
+		width,
+		height,
+		{
+			threshold: 0.2, // Color difference threshold - slightly relaxed for anti-aliasing
+			alpha: 0.5 // Blend factor of unchanged pixels in diff output
+		}
+	);
 
 	const totalPixels = width * height;
 	const diffRatio = diffPixels / totalPixels;
@@ -244,7 +259,10 @@ test.describe('Export Visual Fidelity', () => {
 				const debugDir = join(__dirname, '..', '..', 'test-results', 'debug');
 				mkdirSync(debugDir, { recursive: true });
 				writeFileSync(join(debugDir, `${cardName}-screenshot.png`), screenshotBuffer);
-				writeFileSync(join(debugDir, `${cardName}-download-scaled.png`), scaleDownImage(downloadBuffer, 2));
+				writeFileSync(
+					join(debugDir, `${cardName}-download-scaled.png`),
+					scaleDownImage(downloadBuffer, 2)
+				);
 				writeFileSync(join(debugDir, `${cardName}-diff.png`), diffImage);
 			}
 
@@ -279,7 +297,10 @@ test.describe('Export Visual Fidelity', () => {
 				const screenshotBuffer = await captureExportCardAtFullResolution(page);
 				const downloadBuffer = await captureSpecificCardDownload(page, 0);
 
-				const { diffRatio, diffPixels, diffImage } = compareImages(screenshotBuffer, downloadBuffer);
+				const { diffRatio, diffPixels, diffImage } = compareImages(
+					screenshotBuffer,
+					downloadBuffer
+				);
 
 				// Neon theme has tighter tolerance; other themes have rendering differences with modern-screenshot
 				const threshold = theme === 'neon' ? MAX_DIFF_RATIO : 0.65;
@@ -288,7 +309,10 @@ test.describe('Export Visual Fidelity', () => {
 					const debugDir = join(__dirname, '..', '..', 'test-results', 'debug');
 					mkdirSync(debugDir, { recursive: true });
 					writeFileSync(join(debugDir, `${theme}-screenshot.png`), screenshotBuffer);
-					writeFileSync(join(debugDir, `${theme}-download-scaled.png`), scaleDownImage(downloadBuffer, 2));
+					writeFileSync(
+						join(debugDir, `${theme}-download-scaled.png`),
+						scaleDownImage(downloadBuffer, 2)
+					);
 					writeFileSync(join(debugDir, `${theme}-diff.png`), diffImage);
 				}
 

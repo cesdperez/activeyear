@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { appStore } from "#lib/stores/app.svelte.js";
-	import { CalendarCheck, Lightning } from "phosphor-svelte";
-	import ConsistencyStatCard from "./ConsistencyStatCard.svelte";
+	import { appStore } from '#lib/stores/app.svelte.js';
+	import { CalendarCheck, Lightning } from 'phosphor-svelte';
+	import ConsistencyStatCard from './ConsistencyStatCard.svelte';
 </script>
 
-<div class="grid grid-cols-2 gap-4 md:gap-6 mb-16 max-w-2xl mx-auto">
+<div class="mx-auto mb-16 grid max-w-2xl grid-cols-2 gap-4 md:gap-6">
 	<ConsistencyStatCard
 		Icon={CalendarCheck}
 		value={appStore.stats?.activeDays ?? 0}

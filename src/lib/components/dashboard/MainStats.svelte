@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { appStore } from "#lib/stores/app.svelte.js";
-	import StatCard from "#lib/components/StatCard.svelte";
+	import { appStore } from '#lib/stores/app.svelte.js';
+	import StatCard from '#lib/components/StatCard.svelte';
 	import {
 		formatDistance,
 		formatDuration,
@@ -9,12 +9,12 @@
 		formatEarthLaps,
 		formatEverests,
 		formatPizzaSlices,
-		formatLotRMarathons,
-	} from "#lib/utils/format.js";
-	import { Ruler, Timer, Fire, Mountains } from "phosphor-svelte";
+		formatLotRMarathons
+	} from '#lib/utils/format.js';
+	import { Ruler, Timer, Fire, Mountains } from 'phosphor-svelte';
 </script>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
 	<StatCard
 		value={formatDistance(appStore.stats?.totalDistance ?? 0, appStore.unit)}
 		label="Total Distance"

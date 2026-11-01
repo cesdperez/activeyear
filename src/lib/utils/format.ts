@@ -12,119 +12,119 @@ const METERS_TO_FEET = 3.28084;
  * - 100+: no decimals
  */
 export function formatDistance(km: number, unit: Unit = 'km'): string {
-    const value = unit === 'miles' ? km * KM_TO_MILES : km;
-    const suffix = unit === 'miles' ? 'mi' : 'km';
+	const value = unit === 'miles' ? km * KM_TO_MILES : km;
+	const suffix = unit === 'miles' ? 'mi' : 'km';
 
-    if (value >= 100) {
-        return `${Math.round(value)}${suffix}`;
-    }
-    return `${value.toFixed(1)}${suffix}`;
+	if (value >= 100) {
+		return `${Math.round(value)}${suffix}`;
+	}
+	return `${value.toFixed(1)}${suffix}`;
 }
 
 /**
  * Format duration in seconds to "Xh Ym" format
  */
 export function formatDuration(seconds: number): string {
-    if (seconds <= 0) return '0m';
+	if (seconds <= 0) return '0m';
 
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
+	const hours = Math.floor(seconds / 3600);
+	const minutes = Math.floor((seconds % 3600) / 60);
 
-    if (hours === 0) {
-        return `${minutes}m`;
-    }
-    return `${hours}h ${minutes}m`;
+	if (hours === 0) {
+		return `${minutes}m`;
+	}
+	return `${hours}h ${minutes}m`;
 }
 
 /**
  * Format calories with thousands separator
  */
 export function formatCalories(calories: number): string {
-    return Math.round(calories / 100) * 100 > 0
-        ? `${Math.round(calories).toLocaleString('en-US')}kcal`
-        : '0kcal';
+	return Math.round(calories / 100) * 100 > 0
+		? `${Math.round(calories).toLocaleString('en-US')}kcal`
+		: '0kcal';
 }
 
 /**
  * Format elevation rounded to nearest 10m (or 50ft)
  */
 export function formatElevation(meters: number, unit: Unit = 'km'): string {
-    if (unit === 'miles') {
-        const feet = meters * METERS_TO_FEET;
-        const rounded = Math.round(feet / 50) * 50; // Round to nearest 50ft
-        return `${rounded.toLocaleString('en-US')}ft`;
-    }
-    const rounded = Math.round(meters / 10) * 10;
-    return `${rounded.toLocaleString('en-US')}m`;
+	if (unit === 'miles') {
+		const feet = meters * METERS_TO_FEET;
+		const rounded = Math.round(feet / 50) * 50; // Round to nearest 50ft
+		return `${rounded.toLocaleString('en-US')}ft`;
+	}
+	const rounded = Math.round(meters / 10) * 10;
+	return `${rounded.toLocaleString('en-US')}m`;
 }
 
 /**
  * Calculate Earth laps from total distance in km
  */
 export function calculateEarthLaps(distanceKm: number): number {
-    return distanceKm / EARTH_CIRCUMFERENCE_KM;
+	return distanceKm / EARTH_CIRCUMFERENCE_KM;
 }
 
 /**
  * Format Earth laps for display
  */
 export function formatEarthLaps(distanceKm: number): string {
-    const laps = calculateEarthLaps(distanceKm);
-    if (laps < 1.0) {
-        return `${(laps * 100).toFixed(1)}% of a lap around the globe`;
-    }
-    return `${laps.toFixed(2)}x laps around the globe`;
+	const laps = calculateEarthLaps(distanceKm);
+	if (laps < 1.0) {
+		return `${(laps * 100).toFixed(1)}% of a lap around the globe`;
+	}
+	return `${laps.toFixed(2)}x laps around the globe`;
 }
 
 /**
  * Calculate Everests climbed from total elevation in meters
  */
 export function calculateEverests(elevationM: number): number {
-    return elevationM / EVEREST_HEIGHT_M;
+	return elevationM / EVEREST_HEIGHT_M;
 }
 
 /**
  * Format Everests for display
  */
 export function formatEverests(elevationM: number): string {
-    const everests = calculateEverests(elevationM);
-    if (everests < 1.0) {
-        return `${(everests * 100).toFixed(0)}% the height of Mt. Everest`;
-    }
-    return `${everests.toFixed(1)}x the height of Mt. Everest`;
+	const everests = calculateEverests(elevationM);
+	if (everests < 1.0) {
+		return `${(everests * 100).toFixed(0)}% the height of Mt. Everest`;
+	}
+	return `${everests.toFixed(1)}x the height of Mt. Everest`;
 }
 
 /**
  * Calculate pizza slices from calories
  */
 export function calculatePizzaSlices(calories: number): number {
-    return Math.round(calories / PIZZA_SLICE_CALORIES);
+	return Math.round(calories / PIZZA_SLICE_CALORIES);
 }
 
 /**
  * Format pizza slices for display
  */
 export function formatPizzaSlices(calories: number): string {
-    const slices = calculatePizzaSlices(calories);
-    return `${slices.toLocaleString('en-US')} pizza slices burnt`;
+	const slices = calculatePizzaSlices(calories);
+	return `${slices.toLocaleString('en-US')} pizza slices burnt`;
 }
 
 export function formatActivityCount(count: number, type: string): string {
-    const pluralRules = new Intl.PluralRules('en-US');
-    const rule = pluralRules.select(count);
+	const pluralRules = new Intl.PluralRules('en-US');
+	const rule = pluralRules.select(count);
 
-    // Simple mapping for now, but better than just adding 's'
-    const plurals: Record<string, string> = {
-        'activity': 'activities',
-        'swim': 'swims',
-        'run': 'runs',
-        'ride': 'rides',
-        'walk': 'walks',
-        'workout': 'workouts',
-    };
+	// Simple mapping for now, but better than just adding 's'
+	const plurals: Record<string, string> = {
+		activity: 'activities',
+		swim: 'swims',
+		run: 'runs',
+		ride: 'rides',
+		walk: 'walks',
+		workout: 'workouts'
+	};
 
-    const pluralType = rule === 'one' ? type : (plurals[type.toLowerCase()] ?? `${type}s`);
-    return `${count} ${pluralType}`;
+	const pluralType = rule === 'one' ? type : (plurals[type.toLowerCase()] ?? `${type}s`);
+	return `${count} ${pluralType}`;
 }
 
 const LOTR_MARATHON_SECONDS = 42960; // 11h 56m (Extended Editions total)
@@ -133,13 +133,13 @@ const LOTR_MARATHON_SECONDS = 42960; // 11h 56m (Extended Editions total)
  * Calculate LotR marathons from seconds
  */
 export function calculateLotRMarathons(seconds: number): number {
-    return seconds / LOTR_MARATHON_SECONDS;
+	return seconds / LOTR_MARATHON_SECONDS;
 }
 
 /**
  * Format LotR marathons for display
  */
 export function formatLotRMarathons(seconds: number): string {
-    const marathons = calculateLotRMarathons(seconds);
-    return `${marathons.toFixed(1)} LotR marathons`;
+	const marathons = calculateLotRMarathons(seconds);
+	return `${marathons.toFixed(1)} LotR marathons`;
 }
