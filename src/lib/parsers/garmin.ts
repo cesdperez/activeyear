@@ -6,7 +6,11 @@ import type {
 	ParseError,
 	ParseResult
 } from '../types/index.js';
+import type { ActivityParser } from './index.js';
 import { TARGET_YEAR } from '../constants/time.js';
+
+// Garmin localises headers, so other languages miss these.
+const KEY_HEADERS = ['Activity Type', 'Date', 'Distance'];
 
 const ACTIVITY_TYPE_MAP: Record<string, ActivityType> = {
 	Running: 'running',
@@ -284,10 +288,8 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 		transformHeader: (header) => header.trim()
 	});
 
-	// Check if the expected headers are present (detect wrong language)
-	const expectedHeaders = ['Activity Type', 'Date', 'Distance'];
 	const actualHeaders = parseResult.meta.fields || [];
-	const missingHeaders = expectedHeaders.filter((h) => !actualHeaders.includes(h));
+	const missingHeaders = KEY_HEADERS.filter((h) => !actualHeaders.includes(h));
 
 	if (missingHeaders.length > 1) {
 		// If multiple key headers are missing, it's likely the wrong language
@@ -365,3 +367,14 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 
 	return { activities, errors };
 }
+
+// Substring match on the raw first line, so it also holds when each row is wrapped in quotes.
+function hasGarminHeaders(csvContent: string): boolean {
+	const firstLine = csvContent.slice(0, csvContent.search(/\r?\n|$/));
+	return KEY_HEADERS.filter((h) => firstLine.includes(h)).length > 1;
+}
+
+export const garminParser: ActivityParser = {
+	detect: hasGarminHeaders,
+	parse: parseGarminCsv
+};

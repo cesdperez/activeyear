@@ -21,6 +21,13 @@ describe('appStore', () => {
 		expect(appStore.error).toBe('Please upload a CSV file');
 	});
 
+	it('rejects a CSV in a format no parser recognises', async () => {
+		await appStore.processFile(new File(['name,score\nAna,3'], 'scores.csv'));
+
+		expect(appStore.status).toBe('error');
+		expect(appStore.error).toContain("couldn't recognise this file");
+	});
+
 	it('loads demo data and derives highlights from favorite activities', () => {
 		appStore.loadDemoData();
 

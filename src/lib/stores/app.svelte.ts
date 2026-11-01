@@ -1,4 +1,4 @@
-import { parseGarminCsv } from '../parsers/garmin.js';
+import { parseActivityCsv } from '../parsers/index.js';
 import {
 	calculateYearStats,
 	calculatePersonalRecords,
@@ -103,11 +103,13 @@ class AppStore {
 
 		try {
 			const content = await file.text();
-			const result = parseGarminCsv(content, TARGET_YEAR);
+			const result = parseActivityCsv(content, TARGET_YEAR);
 
-			const wrongLanguage = result.errors.find((e) => e.type === 'wrong-language');
-			if (wrongLanguage) {
-				this.#fail(wrongLanguage.message || 'Wrong language', result.errors);
+			const unreadable = result.errors.find(
+				(e) => e.type === 'wrong-language' || e.type === 'unsupported-format'
+			);
+			if (unreadable) {
+				this.#fail(unreadable.message, result.errors);
 				return;
 			}
 
