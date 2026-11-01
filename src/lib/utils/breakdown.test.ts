@@ -212,13 +212,28 @@ describe('donutCentre', () => {
 		});
 	});
 
-	it('shows the total hours in time mode', () => {
+	it('shows the total whole hours in time mode, like Time Active', () => {
 		expect(donutCentre([sport({ duration: 7200 }), sport({ duration: 5400 })], 'duration')).toEqual(
-			{ value: '4', label: 'Hours' }
+			{ value: '3', label: 'Hours' }
 		);
+		expect(donutCentre([sport({ duration: 1194 * 3600 + 33 * 60 })], 'duration')).toEqual({
+			value: '1,194',
+			label: 'Hours'
+		});
 		expect(donutCentre([sport({ duration: 3600 })], 'duration')).toEqual({
 			value: '1',
 			label: 'Hour'
+		});
+	});
+
+	it('shows minutes when the total is under an hour', () => {
+		expect(donutCentre([sport({ duration: 1200 })], 'duration')).toEqual({
+			value: '20',
+			label: 'Minutes'
+		});
+		expect(donutCentre([sport({ duration: 60 })], 'duration')).toEqual({
+			value: '1',
+			label: 'Minute'
 		});
 	});
 

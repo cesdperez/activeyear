@@ -12,7 +12,7 @@ import {
 	TOP_SPORTS_LIMIT
 } from '#lib/constants/breakdown.js';
 import { OTHER_SPORT_COLOR, sportColors, sportNames } from '#lib/constants/sports.js';
-import { ONE_HOUR_IN_SECONDS } from '#lib/constants/time.js';
+import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '#lib/constants/time.js';
 import { consolidateBreakdown, mergeIntoOther } from './activity.js';
 import { donutSegments, scaledBarHeight, topIndices } from './charts.js';
 import { daysInYear } from './date.js';
@@ -113,7 +113,12 @@ export function donutCentre(sports: SportBreakdown[], metric: BreakdownMetric): 
 	const total = sports.reduce((sum, s) => sum + s[metric], 0);
 
 	if (metric === 'duration') {
-		const hours = Math.round(total / ONE_HOUR_IN_SECONDS);
+		// Floored so the centre agrees with formatDuration in Time Active.
+		const hours = Math.floor(total / ONE_HOUR_IN_SECONDS);
+		if (hours === 0) {
+			const minutes = Math.floor(total / ONE_MINUTE_IN_SECONDS);
+			return { value: minutes.toString(), label: pluralize(minutes, 'Minute', 'Minutes') };
+		}
 		return { value: hours.toLocaleString('en-US'), label: pluralize(hours, 'Hour', 'Hours') };
 	}
 	return {
