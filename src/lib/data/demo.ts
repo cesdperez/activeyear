@@ -1,4 +1,5 @@
 import { TARGET_YEAR } from '../constants/time.js';
+import { daysInYear } from '../utils/date.js';
 import type { Activity, ActivityType } from '../types/index.js';
 
 interface SessionPlan {
@@ -73,25 +74,23 @@ const REGULAR_SESSIONS: SessionPlan[] = [
 	}
 ];
 
-// Noon UTC keeps the same calendar day in local time, which the weekly pattern reads.
+// Local noon, because the weekly pattern reads the local weekday.
+// In every timezone each day still lands on its own UTC date, which active days count.
 function dayOfYear(index: number): Date {
-	return new Date(Date.UTC(TARGET_YEAR, 0, 1 + index, 12));
+	return new Date(TARGET_YEAR, 0, 1 + index, 12);
 }
 
 function onDate(month: number, day: number): Date {
-	return new Date(Date.UTC(TARGET_YEAR, month - 1, day, 12));
+	return new Date(TARGET_YEAR, month - 1, day, 12);
 }
 
+// Rounding absorbs the hour a daylight saving change adds or removes.
 function indexOfDate(date: Date): number {
 	return Math.round((date.getTime() - dayOfYear(0).getTime()) / DAY_MS);
 }
 
 function mondayFirstWeekday(index: number): number {
-	return (dayOfYear(index).getUTCDay() + 6) % 7;
-}
-
-function daysInTargetYear(): number {
-	return indexOfDate(new Date(Date.UTC(TARGET_YEAR + 1, 0, 1, 12)));
+	return (dayOfYear(index).getDay() + 6) % 7;
 }
 
 function seededRandom(seed: number): () => number {
@@ -228,7 +227,7 @@ function pickActiveDays(fixedDays: number[], random: () => number): Set<number> 
 	const block = streakBlock();
 	const active = new Set([...fixedDays, ...block]);
 	const blockEdges = new Set([block[0] - 1, block[block.length - 1] + 1]);
-	const candidates = Array.from({ length: daysInTargetYear() }, (_, i) => i).filter(
+	const candidates = Array.from({ length: daysInYear(TARGET_YEAR) }, (_, i) => i).filter(
 		(i) => !active.has(i) && !blockEdges.has(i)
 	);
 

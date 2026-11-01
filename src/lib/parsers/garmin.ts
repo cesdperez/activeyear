@@ -1,12 +1,12 @@
 import Papa from 'papaparse';
 import type {
 	Activity,
+	ActivityParser,
 	ActivityType,
 	GarminRawActivity,
 	ParseError,
 	ParseResult
 } from '../types/index.js';
-import type { ActivityParser } from './index.js';
 import { TARGET_YEAR } from '../constants/time.js';
 
 // Garmin localises headers, so other languages miss these.

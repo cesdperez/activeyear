@@ -64,12 +64,14 @@
 					{value}
 				</div>
 
-				<div
-					class="mt-2 flex items-center gap-1.5 truncate border-t border-[rgba(255,255,255,0.05)] pt-2 text-xs text-[var(--color-text-muted)]"
-				>
-					<span class="h-1 w-1 rounded-full bg-[var(--color-accent)] opacity-50"></span>
-					{activityTitle}
-				</div>
+				{#if activityTitle}
+					<div
+						class="mt-2 flex items-center gap-1.5 truncate border-t border-[rgba(255,255,255,0.05)] pt-2 text-xs text-[var(--color-text-muted)]"
+					>
+						<span class="h-1 w-1 rounded-full bg-[var(--color-accent)] opacity-50"></span>
+						{activityTitle}
+					</div>
+				{/if}
 			</div>
 		</div>
 

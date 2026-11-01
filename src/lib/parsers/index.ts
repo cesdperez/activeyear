@@ -1,10 +1,5 @@
-import type { ParseResult } from '#lib/types/index.js';
+import type { ActivityParser, ParseResult } from '#lib/types/index.js';
 import { garminParser } from './garmin.js';
-
-export interface ActivityParser {
-	detect(csvContent: string): boolean;
-	parse(csvContent: string, year: number): ParseResult;
-}
 
 const PARSERS: ActivityParser[] = [garminParser];
 

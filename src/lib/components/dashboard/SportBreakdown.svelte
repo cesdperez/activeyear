@@ -6,10 +6,13 @@
 	import SportDonut from '#lib/components/widgets/SportDonut.svelte';
 	import SportBars from '#lib/components/widgets/SportBars.svelte';
 
-	let { breakdown, metric }: { breakdown: SportBreakdown[]; metric: BreakdownMetric } = $props();
+	let {
+		breakdown,
+		metric,
+		totalActivities
+	}: { breakdown: SportBreakdown[]; metric: BreakdownMetric; totalActivities: number } = $props();
 
 	const sortedBreakdown = $derived(rankSports(breakdown, metric));
-	const totalCount = $derived(sortedBreakdown.reduce((sum, s) => sum + s.count, 0));
 </script>
 
 {#if breakdown.length > 0}
@@ -20,7 +23,7 @@
 		</div>
 
 		<div class="flex flex-col items-center gap-12 lg:flex-row lg:items-start">
-			<SportDonut variant="dashboard" sports={sortedBreakdown} totalActivities={totalCount} />
+			<SportDonut variant="dashboard" sports={sortedBreakdown} {totalActivities} />
 			<SportBars variant="dashboard" sports={sortedBreakdown} {metric} />
 		</div>
 	</section>

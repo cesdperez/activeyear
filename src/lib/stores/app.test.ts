@@ -1,7 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { appStore } from './app.svelte.js';
 import { demoActivities } from '../data/demo.js';
-import { calculateYearStats } from '../utils/stats.js';
+import {
+	calculatePersonalRecords,
+	calculateSportBreakdown,
+	calculateWeeklyPattern,
+	calculateYearStats
+} from '../utils/stats.js';
 
 describe('appStore', () => {
 	beforeEach(() => {
@@ -41,9 +46,9 @@ describe('appStore', () => {
 	it('derives records, breakdown and weekly pattern from the demo activities', () => {
 		appStore.loadDemoData();
 
-		expect(appStore.records?.longestDistance?.activity.title).toBe('Century Ride Achievement');
-		expect(appStore.breakdown.reduce((sum, s) => sum + s.count, 0)).toBe(245);
-		expect(appStore.weeklyPattern.reduce((sum, n) => sum + n, 0)).toBe(245);
+		expect(appStore.records).toEqual(calculatePersonalRecords(demoActivities));
+		expect(appStore.breakdown).toEqual(calculateSportBreakdown(demoActivities));
+		expect(appStore.weeklyPattern).toEqual(calculateWeeklyPattern(demoActivities));
 	});
 
 	it('reset clears results and the profile picture but keeps export preferences', () => {

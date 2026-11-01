@@ -30,7 +30,11 @@
 	<WeeklyPattern variant="dashboard" pattern={appStore.weeklyPattern} />
 	<HighlightsSection highlights={appStore.highlights} unit={appStore.unit} />
 	<PersonalRecords records={appStore.records} unit={appStore.unit} />
-	<SportBreakdown breakdown={appStore.breakdown} metric={appStore.breakdownMetric} />
+	<SportBreakdown
+		breakdown={appStore.breakdown}
+		metric={appStore.breakdownMetric}
+		totalActivities={appStore.stats?.activityCount ?? 0}
+	/>
 	<ExportPanel />
 	<UploadAnotherFile />
 </div>

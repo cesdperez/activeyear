@@ -86,6 +86,12 @@ export interface ParseResult {
 	errors: ParseError[];
 }
 
+/** Reads one export format; `detect` decides whether `parse` should handle the file. */
+export interface ActivityParser {
+	detect(csvContent: string): boolean;
+	parse(csvContent: string, year: number): ParseResult;
+}
+
 export interface ParseError {
 	type:
 		| 'invalid-date'

@@ -1,6 +1,10 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { demoActivities } from './demo.js';
-import { calculatePersonalRecords, calculateYearStats } from '#lib/utils/stats.js';
+import {
+	calculatePersonalRecords,
+	calculateWeeklyPattern,
+	calculateYearStats
+} from '#lib/utils/stats.js';
 import { TARGET_YEAR } from '#lib/constants/time.js';
 
 describe('demoActivities', () => {
@@ -20,7 +24,7 @@ describe('demoActivities', () => {
 	});
 
 	it('takes place within the target year', () => {
-		const years = new Set(demoActivities.map((a) => a.date.getUTCFullYear()));
+		const years = new Set(demoActivities.map((a) => a.date.getFullYear()));
 
 		expect([...years]).toEqual([TARGET_YEAR]);
 	});
@@ -31,5 +35,28 @@ describe('demoActivities', () => {
 		expect(records.longestDistance?.activity.title).toBe('Century Ride Achievement');
 		expect(records.longestDuration?.activity.title).toBe('Summit Sunrise Hike');
 		expect(records.biggestBurn?.activity.title).toBe('Century Ride Achievement');
+	});
+
+	describe('in other timezones', () => {
+		const originalTz = process.env.TZ;
+		const weeklyPattern = calculateWeeklyPattern(demoActivities);
+
+		afterEach(() => {
+			process.env.TZ = originalTz;
+		});
+
+		it.each(['Pacific/Kiritimati', 'Pacific/Pago_Pago', 'America/New_York'])(
+			'keeps the same weekly pattern and day counts in %s',
+			async (timeZone) => {
+				process.env.TZ = timeZone;
+				vi.resetModules();
+				const { demoActivities: shifted } = await import('./demo.js');
+				const shiftedStats = calculateYearStats(shifted);
+
+				expect(calculateWeeklyPattern(shifted)).toEqual(weeklyPattern);
+				expect(shiftedStats.activeDays).toBe(180);
+				expect(shiftedStats.longestStreak).toBe(12);
+			}
+		);
 	});
 });

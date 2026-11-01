@@ -12,6 +12,7 @@ import {
 } from '#lib/constants/breakdown.js';
 import { consolidateBreakdown } from './activity.js';
 import { donutSegments, scaledBarHeight, topIndices } from './charts.js';
+import { daysInYear } from './date.js';
 
 export interface SportDonutSegment {
 	dashArray: string;
@@ -60,11 +61,6 @@ export function weeklyBars(pattern: WeeklyPattern, containerHeight: number): Wee
 		barHeight: scaledBarHeight(count, maxDay, containerHeight, MIN_WEEKLY_BAR_HEIGHT),
 		isTopDay: topDays.includes(i)
 	}));
-}
-
-function daysInYear(year: number): number {
-	const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-	return isLeapYear ? 366 : 365;
 }
 
 export function activeDaysPercent(activeDays: number, year: number): number {

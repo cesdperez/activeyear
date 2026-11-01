@@ -46,8 +46,6 @@ Solo project, kept simple: there is no CI. Local git hooks run the checks instea
 - `pre-commit`: `lint-staged` runs Prettier and ESLint on the staged files.
 - `pre-push`: `pnpm check` and `pnpm test:run`.
 
-`verify-deps-before-run=error` in `.npmrc` makes every `pnpm <script>` stop with "Run pnpm install" when `node_modules` no longer matches `pnpm-lock.yaml`. Without it, stale packages fail later with misleading errors such as "Cannot find module $app/tsconfig".
-
 E2E needs a build and port 4173, so it stays out of the hooks (see Testing Strategy). Put new automated checks in these hooks, not a CI workflow. After editing the hook config, run `pnpm exec simple-git-hooks`, because the installed hooks only change when it runs.
 
 ## Context

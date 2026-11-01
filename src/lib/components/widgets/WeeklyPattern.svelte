@@ -14,7 +14,6 @@
 		theme
 	}: { pattern: WeeklyPatternData; variant: WidgetVariant; theme?: Theme } = $props();
 
-	const exportDayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 	const barContainerHeight = $derived(variant === 'dashboard' ? 160 : 100);
 
 	const hasActivity = $derived(pattern.some((v) => v > 0));
@@ -75,7 +74,7 @@
 								: 0.4 + (heightPercent / 100) * 0.6};"
 						></div>
 						<span class="text-[16px] font-bold text-[var(--color-text-muted)]">
-							{exportDayLabels[i]}
+							{WEEKDAY_LABELS[i][0]}
 						</span>
 					</div>
 				{/each}
