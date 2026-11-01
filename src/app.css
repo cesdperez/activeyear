@@ -186,6 +186,7 @@ body {
 	letter-spacing: 0.05em;
 	text-transform: uppercase;
 	color: var(--color-text-muted);
+	text-wrap: balance;
 }
 
 /* Icon Styles */

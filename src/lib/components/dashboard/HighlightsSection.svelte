@@ -27,7 +27,7 @@
 				<Star class="h-10 w-10 text-yellow-500" weight="fill" aria-hidden="true" />
 			</div>
 			<p class="mb-4 text-lg text-[var(--color-text-muted)]">No highlights yet</p>
-			<p class="max-w-md text-sm text-[var(--color-text-muted)]">
+			<p class="max-w-md text-sm text-balance text-[var(--color-text-muted)]">
 				Mark activities as favorites in Garmin Connect by tapping the star icon on any activity,
 				then re-export your data to see them here.
 			</p>

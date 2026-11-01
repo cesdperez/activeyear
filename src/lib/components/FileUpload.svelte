@@ -127,7 +127,7 @@
 				aria-hidden="true"
 			/>
 		</span>
-		<span class="mb-1 block text-lg text-[var(--color-text-primary)]"
+		<span class="mb-1 block text-lg text-balance text-[var(--color-text-primary)]"
 			>Drop your Garmin CSV here</span
 		>
 		<span class="mb-4 block text-sm text-[var(--color-text-muted)]">or click to browse</span>

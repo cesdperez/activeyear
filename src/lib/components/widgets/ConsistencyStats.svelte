@@ -46,7 +46,7 @@
 				{value}
 			</div>
 			<div
-				class="text-xs font-medium tracking-wider text-[var(--color-text-muted)] uppercase md:text-sm"
+				class="text-xs font-medium tracking-wider text-balance text-[var(--color-text-muted)] uppercase md:text-sm"
 			>
 				{label}
 			</div>
