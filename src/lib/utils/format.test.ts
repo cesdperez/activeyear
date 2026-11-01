@@ -32,6 +32,11 @@ describe('formatDistance', () => {
 	it('groups thousands like the other stats', () => {
 		expect(formatDistance(16241.4)).toBe('16,241km');
 	});
+
+	it('drops the decimal when the value rounds up to 100', () => {
+		expect(formatDistance(99.96)).toBe('100km');
+		expect(formatDistance(99.94)).toBe('99.9km');
+	});
 });
 
 describe('formatDuration', () => {

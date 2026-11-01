@@ -15,10 +15,11 @@ export function formatDistance(km: number, unit: Unit = 'km'): string {
 	const value = unit === 'miles' ? km * KM_TO_MILES : km;
 	const suffix = unit === 'miles' ? 'mi' : 'km';
 
-	if (value >= 100) {
+	const oneDecimal = value.toFixed(1);
+	if (Number(oneDecimal) >= 100) {
 		return `${Math.round(value).toLocaleString('en-US')}${suffix}`;
 	}
-	return `${value.toFixed(1)}${suffix}`;
+	return `${oneDecimal}${suffix}`;
 }
 
 /**
