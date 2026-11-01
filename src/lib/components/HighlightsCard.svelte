@@ -1,8 +1,12 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
-	import { formatDistance, formatDuration } from '#lib/utils/format.js';
+	import { formatDistance, formatDuration, pluralize } from '#lib/utils/format.js';
+	import { isCompactHighlights, timelineGap } from '#lib/utils/export.js';
+	import { HIGHLIGHTS_LIMIT, TIMELINE_GAP } from '#lib/constants/export.js';
 	import { Star, Target } from 'phosphor-svelte';
 	import { sportNames, sportIcons } from '#lib/constants/sports.js';
+	import type { Activity } from '#lib/types/index.js';
 	import ExportCardBase from './ExportCardBase.svelte';
 
 	const monthNames = [
@@ -20,15 +24,55 @@
 		'DEC'
 	];
 
+	let limit = $state(HIGHLIGHTS_LIMIT);
+	let gap = $state(TIMELINE_GAP.min);
+	let lineInset = $state({ top: 45, bottom: 45 });
+	let area = $state<HTMLElement>();
+	let list = $state<HTMLElement>();
+
 	let highlights = $derived(
 		appStore.highlights
-			.slice(0, 10)
+			.slice(0, limit)
 			.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 	);
+	let hiddenCount = $derived(appStore.highlights.length - highlights.length);
+	let compact = $derived(
+		isCompactHighlights(appStore.highlights.slice(0, HIGHLIGHTS_LIMIT).map(titleOf))
+	);
+
+	function titleOf(fav: Activity): string {
+		return fav.title || sportNames[fav.type] || 'Activity';
+	}
+
+	// How titles wrap depends on the rendered font, so only the DOM knows how many items fit.
+	async function fitToCard() {
+		limit = HIGHLIGHTS_LIMIT;
+		gap = TIMELINE_GAP.min;
+		await tick();
+		while (area && list && limit > 1 && list.scrollHeight > area.clientHeight) {
+			limit -= 1;
+			await tick();
+		}
+		if (!area || !list) return;
+
+		const items = [...list.querySelectorAll<HTMLElement>(':scope > .timeline-item')];
+		const itemsHeight = items.reduce((sum, el) => sum + el.offsetHeight, 0);
+		gap = timelineGap(area.clientHeight, itemsHeight, items.length);
+		lineInset = {
+			top: (items[0]?.offsetHeight ?? 0) / 2,
+			bottom: (items.at(-1)?.offsetHeight ?? 0) / 2
+		};
+	}
+
+	$effect(() => {
+		void [appStore.highlights, appStore.displayName, appStore.theme, appStore.unit, area, list];
+		fitToCard();
+		document.fonts.ready.then(fitToCard);
+	});
 </script>
 
 <ExportCardBase variant="highlights" title="HIGHLIGHTS">
-	<div class="-mt-[52px] flex flex-1 flex-col px-6">
+	<div class="-mt-[52px] flex min-h-0 flex-1 flex-col px-6">
 		{#if highlights.length === 0}
 			<div class="flex flex-1 items-center justify-center">
 				<div class="text-center text-[28px] text-[var(--color-text-muted)]">
@@ -36,25 +80,19 @@
 				</div>
 			</div>
 		{:else}
-			<!-- Timeline Container -->
-			<div class="relative flex flex-1 flex-col justify-center">
-				<!-- Timeline Items -->
-				<div
-					class="relative flex w-full flex-col"
-					style="gap: {Math.min(
-						160,
-						Math.max(32, (1250 - highlights.length * 120) / Math.max(highlights.length - 1, 1))
-					)}px;"
-				>
-					<!-- Vertical Timeline Line -->
-					<div class="timeline-line absolute top-[45px] bottom-[45px] left-[60px] w-[4px]"></div>
+			<div bind:this={area} class="relative flex min-h-0 flex-1 flex-col justify-center">
+				<div bind:this={list} class="relative flex w-full flex-col" style="gap: {gap}px;">
+					<div
+						class="timeline-line absolute left-[60px] w-[4px]"
+						style="top: {lineInset.top}px; bottom: {lineInset.bottom}px;"
+					></div>
 					{#each highlights as fav, i (i)}
 						{@const IconComponent = sportIcons[fav.type] ?? Target}
 						{@const date = new Date(fav.date)}
 						{@const month = monthNames[date.getMonth()]}
 						{@const day = date.getDate()}
 
-						<div class="relative flex items-center gap-6">
+						<div class="timeline-item relative flex shrink-0 items-center gap-6">
 							<!-- Date Column -->
 							<div class="w-[48px] shrink-0 text-center">
 								<div class="text-[14px] font-bold tracking-widest text-[var(--color-accent)]">
@@ -74,40 +112,35 @@
 
 							<!-- Activity Card -->
 							<div
-								class="flex flex-1 items-center {highlights.length < 7
-									? 'gap-8 p-8'
-									: 'gap-4 p-4'} timeline-card rounded-2xl"
+								class="flex min-w-0 flex-1 items-center {compact
+									? 'gap-4 p-4'
+									: 'gap-8 p-8'} timeline-card rounded-2xl"
 							>
 								<div
-									class="{highlights.length < 7
-										? 'h-16 w-16 rounded-2xl'
-										: 'h-12 w-12 rounded-xl'} flex shrink-0 items-center justify-center bg-[var(--color-accent)]/20 text-[var(--color-accent)]"
+									class="{compact
+										? 'h-12 w-12 rounded-xl'
+										: 'h-16 w-16 rounded-2xl'} flex shrink-0 items-center justify-center bg-[var(--color-accent)]/20 text-[var(--color-accent)]"
 								>
-									<IconComponent
-										class={highlights.length < 7 ? 'h-8 w-8' : 'h-6 w-6'}
-										weight="bold"
-									/>
+									<IconComponent class={compact ? 'h-6 w-6' : 'h-8 w-8'} weight="bold" />
 								</div>
 								<div class="min-w-0 flex-1">
 									<div class="mb-1 flex items-center gap-2">
 										<Star
-											class="{highlights.length < 7
-												? 'h-6 w-6'
-												: 'h-4 w-4'} shrink-0 text-yellow-500"
+											class="{compact ? 'h-4 w-4' : 'h-6 w-6'} shrink-0 text-yellow-500"
 											weight="fill"
 										/>
 										<div
-											class="{highlights.length < 7
-												? 'text-[32px]'
-												: 'text-[22px]'} line-clamp-2 min-w-0 flex-1 font-bold text-[var(--color-text-primary)]"
+											class="{compact
+												? 'text-[22px]'
+												: 'text-[32px]'} highlight-title line-clamp-2 min-w-0 flex-1 font-bold [overflow-wrap:anywhere] text-[var(--color-text-primary)]"
 										>
-											{fav.title || sportNames[fav.type] || 'Activity'}
+											{titleOf(fav)}
 										</div>
 									</div>
 									<div
-										class="flex flex-wrap items-center gap-x-3 gap-y-1 {highlights.length < 7
-											? 'text-[22px]'
-											: 'text-[16px]'} text-[var(--color-text-muted)]"
+										class="flex flex-wrap items-center gap-x-3 gap-y-1 {compact
+											? 'text-[16px]'
+											: 'text-[22px]'} text-[var(--color-text-muted)]"
 									>
 										{#if fav.distance > 0}
 											<span class="font-mono">
@@ -130,9 +163,9 @@
 				</div>
 			</div>
 
-			{#if appStore.highlights.length > 10}
+			{#if hiddenCount > 0}
 				<div class="mt-6 text-center text-[20px] text-[var(--color-text-muted)]">
-					+{appStore.highlights.length - 10} more highlights
+					+{hiddenCount} more {pluralize(hiddenCount, 'highlight', 'highlights')}
 				</div>
 			{/if}
 		{/if}
