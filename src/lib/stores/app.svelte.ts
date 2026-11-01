@@ -21,177 +21,129 @@ import type {
 
 export type AppStatus = 'idle' | 'parsing' | 'ready' | 'error';
 
+const EMPTY_WEEKLY_PATTERN: WeeklyPattern = [0, 0, 0, 0, 0, 0, 0];
+const DEMO_WEEKLY_PATTERN: WeeklyPattern = [45, 38, 42, 35, 28, 52, 48];
 
-function createAppStore() {
-    let activities = $state<Activity[]>([]);
-    let stats = $state<YearStats | null>(null);
-    let records = $state<PersonalRecords | null>(null);
-    let breakdown = $state<SportBreakdown[]>([]);
-    let weeklyPattern = $state<WeeklyPattern>([0, 0, 0, 0, 0, 0, 0]);
-    let status = $state<AppStatus>('idle');
-    let error = $state<string | null>(null);
-    let parseErrors = $state<ParseError[]>([]);
+class AppStore {
+    #activities = $state<Activity[]>([]);
+    #highlights = $derived(this.#activities.filter(a => a.favorite));
+    #stats = $state<YearStats | null>(null);
+    #records = $state<PersonalRecords | null>(null);
+    #breakdown = $state<SportBreakdown[]>([]);
+    #weeklyPattern = $state<WeeklyPattern>([...EMPTY_WEEKLY_PATTERN]);
+    #status = $state<AppStatus>('idle');
+    #error = $state<string | null>(null);
+    #parseErrors = $state<ParseError[]>([]);
 
-    // Export state
-    let userName = $state<string>('');
-    let theme = $state<Theme>('neon');
-    let userPfp = $state<string | null>(null);
-    let confettiEnabled = $state<boolean>(false);
-    let summaryMetric = $state<SummaryMetric>('distance');
-    let unit = $state<Unit>('km');
-    let selectedYear = $state<number>(TARGET_YEAR);
+    userName = $state<string>('');
+    theme = $state<Theme>('neon');
+    userPfp = $state<string | null>(null);
+    confettiEnabled = $state<boolean>(false);
+    summaryMetric = $state<SummaryMetric>('distance');
+    unit = $state<Unit>('km');
+    selectedYear = $state<number>(TARGET_YEAR);
+    breakdownMetric = $state<'count' | 'duration'>('count');
 
-    function reset() {
-        activities = [];
-        stats = null;
-        records = null;
-        breakdown = [];
-        weeklyPattern = [0, 0, 0, 0, 0, 0, 0];
-        status = 'idle';
-        error = null;
-        parseErrors = [];
-        userPfp = null;
+    get activities() {
+        return this.#activities;
     }
 
-    async function processFile(file: File) {
+    get highlights() {
+        return this.#highlights;
+    }
+
+    get stats() {
+        return this.#stats;
+    }
+
+    get records() {
+        return this.#records;
+    }
+
+    get breakdown() {
+        return this.#breakdown;
+    }
+
+    get weeklyPattern() {
+        return this.#weeklyPattern;
+    }
+
+    get status() {
+        return this.#status;
+    }
+
+    get error() {
+        return this.#error;
+    }
+
+    get parseErrors() {
+        return this.#parseErrors;
+    }
+
+    reset() {
+        this.#activities = [];
+        this.#stats = null;
+        this.#records = null;
+        this.#breakdown = [];
+        this.#weeklyPattern = [...EMPTY_WEEKLY_PATTERN];
+        this.#status = 'idle';
+        this.#error = null;
+        this.#parseErrors = [];
+        this.userPfp = null;
+    }
+
+    async processFile(file: File) {
         if (!file.name.endsWith('.csv')) {
-            status = 'error';
-            error = 'Please upload a CSV file';
+            this.#fail('Please upload a CSV file');
             return;
         }
 
-        status = 'parsing';
-        error = null;
+        this.#status = 'parsing';
+        this.#error = null;
 
         try {
             const content = await file.text();
-            const result = parseGarminCsv(content, selectedYear);
+            const result = parseGarminCsv(content, this.selectedYear);
 
-            if (result.errors.some(e => e.type === 'wrong-language')) {
-                status = 'error';
-                error = result.errors.find(e => e.type === 'wrong-language')?.message || 'Wrong language';
-                parseErrors = result.errors;
+            const wrongLanguage = result.errors.find(e => e.type === 'wrong-language');
+            if (wrongLanguage) {
+                this.#fail(wrongLanguage.message || 'Wrong language', result.errors);
                 return;
             }
 
             if (result.activities.length === 0) {
-                status = 'error';
-                error = `No ${selectedYear} activities found in the file`;
-                parseErrors = result.errors;
+                this.#fail(`No ${this.selectedYear} activities found in the file`, result.errors);
                 return;
             }
 
-            activities = result.activities;
-            parseErrors = result.errors;
-
-            // Calculate all stats
-            stats = calculateYearStats(activities);
-            records = calculatePersonalRecords(activities);
-            breakdown = calculateSportBreakdown(activities);
-            weeklyPattern = calculateWeeklyPattern(activities);
-
-            status = 'ready';
+            this.#activities = result.activities;
+            this.#parseErrors = result.errors;
+            this.#stats = calculateYearStats(result.activities);
+            this.#records = calculatePersonalRecords(result.activities);
+            this.#breakdown = calculateSportBreakdown(result.activities);
+            this.#weeklyPattern = calculateWeeklyPattern(result.activities);
+            this.#status = 'ready';
         } catch (err) {
-            status = 'error';
-            error = err instanceof Error ? err.message : 'Failed to parse file';
+            this.#fail(err instanceof Error ? err.message : 'Failed to parse file');
         }
     }
 
-    function loadDemoData() {
-        reset();
-        stats = demoStats;
-        records = demoRecords;
-        breakdown = demoBreakdown;
-        // Demo weekly pattern - typical distribution
-        weeklyPattern = [45, 38, 42, 35, 28, 52, 48];
-        // Load demo highlights as activities
-        activities = demoHighlights;
-        status = 'ready';
+    loadDemoData() {
+        this.reset();
+        this.#stats = demoStats;
+        this.#records = demoRecords;
+        this.#breakdown = demoBreakdown;
+        this.#weeklyPattern = [...DEMO_WEEKLY_PATTERN];
+        this.#activities = demoHighlights;
+        this.#status = 'ready';
     }
 
-    // UI state
-    let breakdownMetric = $state<'count' | 'duration'>('count');
-
-    return {
-        get activities() {
-            return activities;
-        },
-        get highlights() {
-            return activities.filter(a => a.favorite);
-        },
-        get stats() {
-            return stats;
-        },
-        get records() {
-            return records;
-        },
-        get breakdown() {
-            return breakdown;
-        },
-        get weeklyPattern() {
-            return weeklyPattern;
-        },
-        get status() {
-            return status;
-        },
-        get error() {
-            return error;
-        },
-        get parseErrors() {
-            return parseErrors;
-        },
-        get userName() {
-            return userName;
-        },
-        set userName(value: string) {
-            userName = value;
-        },
-        get theme() {
-            return theme;
-        },
-        set theme(value: Theme) {
-            theme = value;
-        },
-        get userPfp() {
-            return userPfp;
-        },
-        set userPfp(value: string | null) {
-            userPfp = value;
-        },
-        reset,
-        processFile,
-        loadDemoData,
-        get confettiEnabled() {
-            return confettiEnabled;
-        },
-        set confettiEnabled(value: boolean) {
-            confettiEnabled = value;
-        },
-        get breakdownMetric() {
-            return breakdownMetric;
-        },
-        set breakdownMetric(value: 'count' | 'duration') {
-            breakdownMetric = value;
-        },
-        get summaryMetric() {
-            return summaryMetric;
-        },
-        set summaryMetric(value: SummaryMetric) {
-            summaryMetric = value;
-        },
-        get unit() {
-            return unit;
-        },
-        set unit(value: Unit) {
-            unit = value;
-        },
-        get selectedYear() {
-            return selectedYear;
-        },
-        set selectedYear(value: number) {
-            selectedYear = value;
-        }
-    };
+    // Leaves parseErrors untouched when none are given, matching the CSV-extension and thrown-error paths.
+    #fail(message: string, parseErrors?: ParseError[]) {
+        this.#status = 'error';
+        this.#error = message;
+        if (parseErrors) this.#parseErrors = parseErrors;
+    }
 }
 
-export const appStore = createAppStore();
+export const appStore = new AppStore();
