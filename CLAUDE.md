@@ -20,6 +20,7 @@ pnpm format                                # Prettier write
 - **E2E tests** (`tests/e2e/`): Primary coverage for user flows. Avoid duplicating in unit tests.
 - **Unit tests** (`*.test.ts`): Edge cases, complex logic, and scenarios too slow for E2E.
 - E2E runs against `pnpm preview` (`wrangler pages dev` on the build), so `_headers` and the CSP are enforced. Playwright reuses whatever already listens on port 4173, and `workerd` can outlive a killed `wrangler`: stop both before a run on a new build.
+- A running `wrangler pages dev` keeps serving the old build after `pnpm build`; restart it. Parallel E2E runs (several worktrees) each need their own port through an uncommitted config override of `baseURL` and `webServer`, or they test each other's builds. The config has a Chromium project only; a WebKit run needs an override and `npx playwright install webkit`.
 - After changes: run `pnpm test:run` and `pnpm check`. Before merging to main: run `pnpm test:all`.
 
 ## Code Style
