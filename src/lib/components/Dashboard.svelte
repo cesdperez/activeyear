@@ -5,7 +5,7 @@
 	import DashboardHeader from '#lib/components/dashboard/DashboardHeader.svelte';
 	import MainStats from '#lib/components/dashboard/MainStats.svelte';
 	import ConsistencyStats from '#lib/components/widgets/ConsistencyStats.svelte';
-	import WeeklyPattern from '#lib/components/dashboard/WeeklyPattern.svelte';
+	import WeeklyPattern from '#lib/components/widgets/WeeklyPattern.svelte';
 	import HighlightsSection from '#lib/components/dashboard/HighlightsSection.svelte';
 	import PersonalRecords from '#lib/components/dashboard/PersonalRecords.svelte';
 	import SportBreakdown from '#lib/components/dashboard/SportBreakdown.svelte';
@@ -24,7 +24,7 @@
 		activeDays={appStore.stats?.activeDays ?? 0}
 		longestStreak={appStore.stats?.longestStreak ?? 0}
 	/>
-	<WeeklyPattern />
+	<WeeklyPattern variant="dashboard" pattern={appStore.weeklyPattern} />
 	<HighlightsSection />
 	<PersonalRecords />
 	<SportBreakdown />
