@@ -2,14 +2,14 @@
 	import { appStore } from "#lib/stores/app.svelte.js";
 	import { WEEKDAY_LABELS } from "#lib/constants/time.js";
 	import { scaledBarHeight, topIndices } from "#lib/utils/charts.js";
+	import { MIN_WEEKLY_BAR_HEIGHT, TOP_DAYS_COUNT } from "#lib/constants/breakdown.js";
 	import SectionHeading from "./SectionHeading.svelte";
 
 	const barContainerHeight = 160;
-	const minBarHeight = 8;
 
 	const hasActivity = $derived(appStore.weeklyPattern.some((v) => v > 0));
 	const maxDay = $derived(Math.max(...appStore.weeklyPattern, 1));
-	const topDays = $derived(topIndices(appStore.weeklyPattern, 2));
+	const topDays = $derived(topIndices(appStore.weeklyPattern, TOP_DAYS_COUNT));
 </script>
 
 {#if hasActivity}
@@ -25,7 +25,7 @@
 					count,
 					maxDay,
 					barContainerHeight,
-					minBarHeight,
+					MIN_WEEKLY_BAR_HEIGHT,
 				)}
 				{@const isTopDay = topDays.includes(i)}
 				<div class="flex-1 flex flex-col items-center justify-end gap-3">

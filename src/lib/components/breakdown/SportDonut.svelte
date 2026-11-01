@@ -1,6 +1,6 @@
 <script lang="ts">
     import { sportColors } from "#lib/constants/sports.js";
-    import { donutSegments } from "#lib/utils/breakdown.js";
+    import { sportDonutSegments } from "#lib/utils/breakdown.js";
     import type { SportBreakdown } from "#lib/types/index.js";
 
     let {
@@ -11,7 +11,7 @@
     // Matches the r="80" of the circles below.
     const circumference = 2 * Math.PI * 80;
 
-    let segments = $derived(donutSegments(sports, circumference));
+    let segments = $derived(sportDonutSegments(sports, circumference));
 </script>
 
 <div class="shrink-0 relative">

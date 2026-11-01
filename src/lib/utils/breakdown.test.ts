@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
     selectTopSports,
-    donutSegments,
+    sportDonutSegments,
     weeklyBars,
     activeDaysPercent,
 } from './breakdown.js';
@@ -57,9 +57,9 @@ describe('selectTopSports', () => {
     });
 });
 
-describe('donutSegments', () => {
+describe('sportDonutSegments', () => {
     it('splits the circumference by activity count with a 4 unit gap', () => {
-        const segments = donutSegments(
+        const segments = sportDonutSegments(
             [sport({ count: 3 }), sport({ count: 1 })],
             100,
         );
