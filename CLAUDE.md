@@ -53,5 +53,4 @@ E2E needs a build and port 4173, so it stays out of the hooks (see Testing Strat
 
 ## Context
 
-- Refer to `docs/prd.md` for product requirements when relevant to the task.
-- Refer to `docs/design_guidelines.md` when making any UI changes (components, layouts, text, colors, animations).
+- Refer to `docs/DESIGN.md` when making any UI changes (components, layouts, text, colors, animations).
