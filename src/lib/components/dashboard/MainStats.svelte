@@ -16,7 +16,7 @@
 	let { stats, unit }: { stats: YearStats | null; unit: Unit } = $props();
 </script>
 
-<div data-testid="main-stats" class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+<div data-testid="main-stats" class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
 	<StatCard
 		value={formatDistance(stats?.totalDistance ?? 0, unit)}
 		label="Total Distance"
@@ -24,7 +24,7 @@
 		equivalent={`🌍 ${formatEarthLaps(stats?.totalDistance ?? 0)}`}
 	>
 		{#snippet icon()}
-			<Ruler weight="bold" />
+			<Ruler weight="bold" aria-hidden="true" />
 		{/snippet}
 	</StatCard>
 
@@ -35,7 +35,7 @@
 		equivalent={`🏔️ ${formatEverests(stats?.totalElevation ?? 0)}`}
 	>
 		{#snippet icon()}
-			<Mountains weight="bold" />
+			<Mountains weight="bold" aria-hidden="true" />
 		{/snippet}
 	</StatCard>
 
@@ -46,7 +46,7 @@
 		equivalent={`💍 ${formatLotRMarathons(stats?.totalDuration ?? 0)}`}
 	>
 		{#snippet icon()}
-			<Timer weight="bold" />
+			<Timer weight="bold" aria-hidden="true" />
 		{/snippet}
 	</StatCard>
 
@@ -57,7 +57,7 @@
 		equivalent={`🍕 ${formatPizzaSlices(stats?.totalCalories ?? 0)}`}
 	>
 		{#snippet icon()}
-			<Fire weight="bold" />
+			<Fire weight="bold" aria-hidden="true" />
 		{/snippet}
 	</StatCard>
 </div>

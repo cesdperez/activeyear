@@ -19,11 +19,11 @@
 	<div
 		class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[var(--color-accent)]/10 text-[var(--color-accent)]"
 	>
-		<IconComponent class="h-6 w-6" weight="bold" />
+		<IconComponent class="h-6 w-6" weight="bold" aria-hidden="true" />
 	</div>
 	<div class="min-w-0 flex-1">
 		<div class="mb-1 flex items-center gap-2">
-			<Star class="h-4 w-4 text-yellow-500" weight="fill" />
+			<Star class="h-4 w-4 shrink-0 text-yellow-500" weight="fill" aria-hidden="true" />
 			<span class="truncate font-bold text-white" title={activity.title}>
 				{activity.title || sportNames[activity.type] || 'Activity'}
 			</span>

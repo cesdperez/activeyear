@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, type Component } from 'svelte';
-	import { spring } from 'svelte/motion';
+	import { prefersReducedMotion, spring } from 'svelte/motion';
 	import type { IconComponentProps } from 'phosphor-svelte';
 	import type { WidgetVariant } from '#lib/types/index.js';
 
@@ -16,10 +16,12 @@
 
 	let { icon: Icon, value, label, activityTitle, variant, delay = 0 }: Props = $props();
 
-	let opacity = spring(0, { stiffness: 0.1, damping: 0.6 });
-	let scale = spring(0.95, { stiffness: 0.15, damping: 0.5 });
+	const animate = !prefersReducedMotion.current;
+	let opacity = spring(animate ? 0 : 1, { stiffness: 0.1, damping: 0.6 });
+	let scale = spring(animate ? 0.95 : 1, { stiffness: 0.15, damping: 0.5 });
 
 	onMount(() => {
+		if (!animate) return;
 		const timer = setTimeout(() => {
 			opacity.set(1);
 			scale.set(1);
@@ -47,29 +49,29 @@
 				class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[rgba(255,255,255,0.05)] bg-[var(--color-surface-hover)] text-[var(--color-gold)] shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:border-[rgba(250,204,21,0.3)]"
 			>
 				<div class="icon-inner">
-					<Icon weight="fill" />
+					<Icon weight="fill" aria-hidden="true" />
 				</div>
 			</div>
 
-			<div class="min-w-0 flex-1">
+			<div class="@container min-w-0 flex-1">
 				<div class="stat-label mb-1 text-xs tracking-wider opacity-70">
 					{label}
 				</div>
 
 				<div
-					class="stat-value {value.length > 12
-						? 'text-xl md:text-2xl'
-						: 'text-2xl md:text-3xl'} group-hover:glow-text mb-1 text-white transition-all duration-300"
+					class="stat-value fit-value group-hover:glow-text mb-1 text-white transition-all duration-300"
+					style:--fit-chars={value.length}
+					style:--fit-max="1.875rem"
 				>
 					{value}
 				</div>
 
 				{#if activityTitle}
 					<div
-						class="mt-2 flex items-center gap-1.5 truncate border-t border-[rgba(255,255,255,0.05)] pt-2 text-xs text-[var(--color-text-muted)]"
+						class="mt-2 flex items-center gap-1.5 border-t border-[rgba(255,255,255,0.05)] pt-2 text-xs text-[var(--color-text-muted)]"
 					>
-						<span class="h-1 w-1 rounded-full bg-[var(--color-accent)] opacity-50"></span>
-						{activityTitle}
+						<span class="h-1 w-1 shrink-0 rounded-full bg-[var(--color-accent)] opacity-50"></span>
+						<span class="min-w-0 truncate" title={activityTitle}>{activityTitle}</span>
 					</div>
 				{/if}
 			</div>
@@ -82,7 +84,7 @@
 {:else}
 	<div class="record-card-compact">
 		<div class="record-icon-compact">
-			<Icon class="h-14 w-14" weight="fill" />
+			<Icon class="h-14 w-14" weight="fill" aria-hidden="true" />
 		</div>
 		<div
 			class="text-[42px] leading-tight font-black whitespace-nowrap text-[var(--color-text-primary)]"

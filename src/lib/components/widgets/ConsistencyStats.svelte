@@ -39,9 +39,9 @@
 		style="animation-delay: {delay}ms"
 	>
 		<div class="shrink-0 text-[var(--color-accent)]">
-			<Icon class="h-6 w-6 md:h-8 md:w-8" weight="bold" />
+			<Icon class="h-6 w-6 md:h-8 md:w-8" weight="bold" aria-hidden="true" />
 		</div>
-		<div>
+		<div class="min-w-0">
 			<div class="text-2xl leading-none font-bold text-white md:text-3xl">
 				{value}
 			</div>
@@ -99,7 +99,7 @@
 			</svg>
 		</div>
 		<div class="flex items-center gap-3 {colorClass}">
-			<Icon class="h-8 w-8" weight="bold" />
+			<Icon class="h-8 w-8" weight="bold" aria-hidden="true" />
 			<span class="text-[28px] font-bold tracking-wider uppercase">{label}</span>
 		</div>
 		<div class="mt-2 text-[20px] whitespace-nowrap text-[var(--color-text-muted)]">
@@ -109,7 +109,10 @@
 {/snippet}
 
 {#if variant === 'dashboard'}
-	<div class="mx-auto mb-16 grid max-w-2xl grid-cols-2 gap-4 md:gap-6">
+	<div
+		data-testid="consistency-stats"
+		class="mx-auto mb-16 grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6"
+	>
 		{@render dashboardStat({
 			Icon: CalendarCheck,
 			value: activeDays,
