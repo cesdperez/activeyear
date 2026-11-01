@@ -84,6 +84,14 @@ body {
 	letter-spacing: -0.02em;
 }
 
+/* One-line value that shrinks to fit the nearest inline-size container.
+   Set --fit-chars to the text length and --fit-max to the largest size.
+   0.65em covers a monospace advance plus the fallback font's rounding. */
+.fit-value {
+	white-space: nowrap;
+	font-size: min(var(--fit-max), 100cqi / (var(--fit-chars) * 0.65));
+}
+
 /* Glow Text Effect */
 .glow-text {
 	background: linear-gradient(to bottom, #fff 20%, #ccc 100%);

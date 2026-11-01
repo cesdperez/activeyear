@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { spring } from 'svelte/motion';
+	import { prefersReducedMotion, spring } from 'svelte/motion';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
@@ -15,12 +15,12 @@
 
 	let { value, label, detail, icon, highlight = false, delay = 0, equivalent }: Props = $props();
 
-	// Animation state
-	let opacity = spring(0, { stiffness: 0.1, damping: 0.6 });
-	let scale = spring(0.95, { stiffness: 0.15, damping: 0.5 });
+	const animate = !prefersReducedMotion.current;
+	let opacity = spring(animate ? 0 : 1, { stiffness: 0.1, damping: 0.6 });
+	let scale = spring(animate ? 0.95 : 1, { stiffness: 0.15, damping: 0.5 });
 
 	onMount(() => {
-		// Staggered entry animation
+		if (!animate) return;
 		const timer = setTimeout(() => {
 			opacity.set(1);
 			scale.set(1);
@@ -31,7 +31,7 @@
 </script>
 
 <div
-	class="stat-card group relative flex h-full flex-col justify-between overflow-hidden p-6 md:p-8"
+	class="stat-card group @container relative flex h-full flex-col justify-between overflow-hidden p-6 md:p-8"
 	class:glow-border={highlight}
 	style="opacity: {$opacity}; transform: scale({$scale});"
 >
@@ -50,9 +50,9 @@
 		{/if}
 
 		<div
-			class="stat-value {value.length > 10
-				? 'text-2xl sm:text-3xl lg:text-4xl'
-				: 'text-3xl sm:text-4xl lg:text-5xl'} mb-2 leading-none tracking-tight text-[var(--color-text-primary)]"
+			class="stat-value fit-value mb-2 leading-none tracking-tight text-[var(--color-text-primary)]"
+			style:--fit-chars={value.length}
+			style:--fit-max="3rem"
 		>
 			{value}
 		</div>
