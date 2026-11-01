@@ -14,13 +14,11 @@
     } from "phosphor-svelte";
     import {
         selectTopSports,
-        weeklyBars,
         activeDaysPercent as yearShare,
     } from "#lib/utils/breakdown.js";
     import ExportCardBase from "./ExportCardBase.svelte";
     import SportDistribution from "./breakdown/SportDistribution.svelte";
-
-    let currentTheme = $derived(appStore.theme);
+    import WeeklyPatternChart from "./breakdown/WeeklyPatternChart.svelte";
 
     let topSports = $derived(
         selectTopSports(appStore.breakdown || [], appStore.breakdownMetric),
@@ -42,42 +40,11 @@
         />
     {/if}
 
-    <!-- Weekly Activity Pattern -->
     {#if appStore.weeklyPattern.some((v) => v > 0)}
-        {@const dayLabels = ["M", "T", "W", "T", "F", "S", "S"]}
-        {@const barContainerHeight = 100}
-        <div class="mb-16 px-2">
-            <div
-                class="text-[18px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest mb-4 text-center"
-            >
-                When You Train
-            </div>
-            <div
-                class="flex items-end justify-between gap-3"
-                style="height: {barContainerHeight + 28}px;"
-            >
-                {#each weeklyBars(appStore.weeklyPattern, barContainerHeight) as { heightPercent, barHeight, isTopDay }, i}
-                    <div
-                        class="flex-1 flex flex-col items-center justify-end gap-2"
-                    >
-                        <div
-                            class="w-full rounded-t-lg transition-all weekly-bar"
-                            style="height: {barHeight}px; background: {isTopDay
-                                ? '#00ff88'
-                                : 'var(--color-accent)'}; opacity: {currentTheme ===
-                            'minimalist'
-                                ? 0.8
-                                : 0.4 + (heightPercent / 100) * 0.6};"
-                        ></div>
-                        <span
-                            class="text-[16px] font-bold text-[var(--color-text-muted)]"
-                        >
-                            {dayLabels[i]}
-                        </span>
-                    </div>
-                {/each}
-            </div>
-        </div>
+        <WeeklyPatternChart
+            pattern={appStore.weeklyPattern}
+            theme={appStore.theme}
+        />
     {/if}
 
     <!-- Consistency Stats with Progress Rings -->
