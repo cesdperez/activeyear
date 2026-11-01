@@ -136,3 +136,75 @@ test.describe('Export panel accessibility', () => {
 		await expect(page.locator('#export-download')).not.toHaveAttribute('aria-disabled', 'true');
 	});
 });
+
+test.describe('Export carousel', () => {
+	test('is a labelled region whose slide label is announced politely', async ({ page }) => {
+		await uploadSample(page);
+
+		const carousel = page.getByRole('region', { name: /card preview/i });
+		await expect(carousel).toBeVisible();
+		await expect(carousel.getByText('Summary (1/3)')).toHaveAttribute('aria-live', 'polite');
+	});
+
+	test('dots mark the current slide and have a 24px hit area', async ({ page }) => {
+		await uploadSample(page);
+
+		await expect(page.getByRole('button', { name: 'Go to slide 1' })).toHaveAttribute(
+			'aria-current',
+			'true'
+		);
+		await page.getByRole('button', { name: 'Go to slide 3' }).click();
+		await expect(page.getByRole('button', { name: 'Go to slide 3' })).toHaveAttribute(
+			'aria-current',
+			'true'
+		);
+		await expect(page.getByRole('button', { name: 'Go to slide 1' })).not.toHaveAttribute(
+			'aria-current'
+		);
+
+		for (const dot of await page.locator('.carousel-dots .dot').all()) {
+			const box = await dot.boundingBox();
+			expect(box?.width).toBeGreaterThanOrEqual(24);
+			expect(box?.height).toBeGreaterThanOrEqual(24);
+		}
+	});
+
+	test('arrow keys change slides when the carousel has focus', async ({ page }) => {
+		await uploadSample(page);
+
+		const carousel = page.getByRole('region', { name: /card preview/i });
+		await carousel.focus();
+		await page.keyboard.press('ArrowRight');
+		await expect(carousel.getByText('Breakdown (2/3)')).toBeVisible();
+		await page.keyboard.press('ArrowLeft');
+		await page.keyboard.press('ArrowLeft');
+		await expect(carousel.getByText('Highlights (3/3)')).toBeVisible();
+	});
+
+	test('horizontal swipe changes slides and a mostly vertical drag does not', async ({ page }) => {
+		await uploadSample(page);
+
+		const card = page.locator('.carousel-card');
+		await card.scrollIntoViewIfNeeded();
+		const box = await card.boundingBox();
+		if (!box) throw new Error('carousel card not rendered');
+		const centerX = box.x + box.width / 2;
+		const centerY = box.y + box.height / 2;
+
+		async function drag(dx: number, dy: number) {
+			await page.mouse.move(centerX, centerY);
+			await page.mouse.down();
+			await page.mouse.move(centerX + dx, centerY + dy, { steps: 5 });
+			await page.mouse.up();
+		}
+
+		await drag(-120, 10);
+		await expect(page.getByText('Breakdown (2/3)')).toBeVisible();
+
+		await drag(60, 150);
+		await expect(page.getByText('Breakdown (2/3)')).toBeVisible();
+
+		await drag(120, 0);
+		await expect(page.getByText('Summary (1/3)')).toBeVisible();
+	});
+});
