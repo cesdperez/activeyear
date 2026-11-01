@@ -68,6 +68,36 @@ test.describe('Export panel accessibility', () => {
 		await expect(page.getByText(/upload an image file|could not be read/i)).toHaveCount(0);
 	});
 
+	test('stat and theme groups are labelled and expose the selected button', async ({ page }) => {
+		await uploadSample(page);
+
+		const statGroup = page.getByRole('group', { name: /Focused Stat/ });
+		await expect(statGroup.getByRole('button', { name: 'Distance' })).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+		await statGroup.getByRole('button', { name: 'Time' }).click();
+		await expect(statGroup.getByRole('button', { name: 'Time' })).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+		await expect(statGroup.getByRole('button', { name: 'Distance' })).toHaveAttribute(
+			'aria-pressed',
+			'false'
+		);
+
+		const themeGroup = page.getByRole('group', { name: 'Theme' });
+		await themeGroup.getByRole('button', { name: /Retro/ }).click();
+		await expect(themeGroup.getByRole('button', { name: /Retro/ })).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+		await expect(themeGroup.getByRole('button', { name: /Neon/ })).toHaveAttribute(
+			'aria-pressed',
+			'false'
+		);
+	});
+
 	test('download keeps focus and reports progress and completion in a status region', async ({
 		page
 	}) => {

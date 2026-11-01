@@ -186,17 +186,18 @@
 
 			<!-- Summary Metric Selector -->
 			<div>
-				<span class="mb-2 block text-sm font-medium text-zinc-400">
+				<span id="summary-metric-label" class="mb-2 block text-sm font-medium text-zinc-400">
 					Focused Stat (Summary Card)
 				</span>
-				<div class="grid grid-cols-2 gap-2">
+				<div role="group" aria-labelledby="summary-metric-label" class="grid grid-cols-2 gap-2">
 					{#each [{ value: 'distance', label: 'Distance', icon: Ruler }, { value: 'elevation', label: 'Elevation', icon: Mountains }, { value: 'duration', label: 'Time', icon: Timer }, { value: 'calories', label: 'Calories', icon: Fire }] as metric (metric.value)}
 						<button
 							onclick={() => (appStore.summaryMetric = metric.value as SummaryMetric)}
+							aria-pressed={appStore.summaryMetric === metric.value}
 							disabled={isExporting}
 							class="flex items-center justify-center gap-2 rounded-lg px-3 py-2 transition-all duration-200 {appStore.summaryMetric ===
 							metric.value
-								? 'bg-[var(--color-accent)] font-semibold text-[var(--color-surface)]'
+								? 'bg-[var(--color-accent)] font-semibold text-[var(--color-surface)] forced-colors:outline-2 forced-colors:outline-offset-2'
 								: 'bg-[var(--color-surface-elevated)] text-zinc-400 hover:bg-[var(--color-surface-hover)] hover:text-white'}"
 						>
 							<metric.icon class="h-4 w-4" />
@@ -208,15 +209,16 @@
 
 			<!-- Theme Selector -->
 			<div>
-				<span class="mb-2 block text-sm font-medium text-zinc-400"> Theme </span>
-				<div class="flex gap-2">
+				<span id="theme-label" class="mb-2 block text-sm font-medium text-zinc-400">Theme</span>
+				<div role="group" aria-labelledby="theme-label" class="flex gap-2">
 					{#each themes as theme (theme.value)}
 						<button
 							onclick={() => setTheme(theme.value)}
+							aria-pressed={appStore.theme === theme.value}
 							disabled={isExporting}
 							class="flex-1 rounded-lg px-4 py-3 text-center transition-all duration-200 {appStore.theme ===
 							theme.value
-								? 'bg-[var(--color-accent)] font-semibold text-[var(--color-surface)]'
+								? 'bg-[var(--color-accent)] font-semibold text-[var(--color-surface)] forced-colors:outline-2 forced-colors:outline-offset-2'
 								: 'bg-[var(--color-surface-elevated)] text-zinc-400 hover:bg-[var(--color-surface-hover)] hover:text-white'}"
 						>
 							<div class="text-sm font-bold">{theme.label}</div>
