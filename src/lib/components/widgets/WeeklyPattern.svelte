@@ -14,6 +14,14 @@
 		theme
 	}: { pattern: WeeklyPatternData; variant: WidgetVariant; theme?: Theme } = $props();
 
+	const TOP_DAY_FILL = { solid: '#00ff88', faded: '#00ff8840', glow: '#00ff8830' };
+	// A hex alpha suffix is invalid after var(), so fading the accent needs color-mix.
+	const ACCENT_FILL = {
+		solid: 'var(--color-accent)',
+		faded: 'color-mix(in srgb, var(--color-accent) 25%, transparent)',
+		glow: 'var(--color-accent-glow)'
+	};
+
 	const barContainerHeight = $derived(variant === 'dashboard' ? 160 : 100);
 
 	const hasActivity = $derived(pattern.some((v) => v > 0));
@@ -26,26 +34,25 @@
 			<SectionHeading title="When You Train" />
 
 			<div
-				class="flex items-end justify-between gap-4 px-4"
+				data-testid="weekly-pattern-row"
+				class="flex items-end justify-between gap-1 sm:gap-4 sm:px-4"
 				style="height: {barContainerHeight + 60}px;"
 			>
 				{#each bars as { barHeight, isTopDay }, i (i)}
+					{@const fill = isTopDay ? TOP_DAY_FILL : ACCENT_FILL}
 					<div class="flex flex-1 flex-col items-center justify-end gap-3">
 						<span class="font-mono text-sm text-[var(--color-text-muted)]">
 							{pattern[i]}
 						</span>
 						<div
+							data-testid="weekly-pattern-bar"
 							class="w-full rounded-t-xl transition-all duration-500 ease-out"
-							style="height: {barHeight}px; background: linear-gradient(to top, {isTopDay
-								? '#00ff88'
-								: 'var(--color-accent)'}, {isTopDay
-								? '#00ff8840'
-								: 'var(--color-accent)40'}); box-shadow: 0 0 20px {isTopDay
-								? '#00ff8830'
-								: 'var(--color-accent-glow)'};"
+							style="height: {barHeight}px; background: linear-gradient(to top, {fill.solid}, {fill.faded}); box-shadow: 0 0 20px {fill.glow};"
 							style:animation-delay="{i * 50}ms"
 						></div>
-						<span class="text-sm font-bold tracking-wider text-[var(--color-text-muted)] uppercase">
+						<span
+							class="text-xs font-bold tracking-wide text-[var(--color-text-muted)] uppercase sm:text-sm sm:tracking-wider"
+						>
 							{WEEKDAY_LABELS[i]}
 						</span>
 					</div>
