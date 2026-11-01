@@ -1,0 +1,5 @@
+export const PREVIEW_MAX_SCALE = 0.35;
+export const PREVIEW_MAX_WIDTH = 400;
+export const PREVIEW_MOBILE_BREAKPOINT = 640;
+export const PREVIEW_MOBILE_PADDING = 48;
+export const PREVIEW_DESKTOP_PADDING = 80;

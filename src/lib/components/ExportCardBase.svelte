@@ -1,7 +1,9 @@
 <script lang="ts">
+    import type { Snippet } from "svelte";
     import { appStore } from "#lib/stores/app.svelte.js";
     import { getExportDimensions } from "#lib/utils/export.js";
     import type { CardVariant } from "#lib/types/index.js";
+    import ExportPreviewScale from "./export/ExportPreviewScale.svelte";
 
     let {
         variant,
@@ -10,27 +12,10 @@
     }: {
         variant: CardVariant;
         title: string;
-        children: import("svelte").Snippet;
+        children: Snippet;
     } = $props();
 
     let dimensions = $derived(getExportDimensions());
-
-    let scale = $state(0.35);
-
-    $effect(() => {
-        if (typeof window === "undefined") return;
-
-        function updateScale() {
-            const padding = window.innerWidth < 640 ? 48 : 80;
-            const availableWidth = Math.min(window.innerWidth - padding, 400);
-            const targetScale = availableWidth / 1080;
-            scale = Math.min(0.35, targetScale);
-        }
-
-        updateScale();
-        window.addEventListener("resize", updateScale);
-        return () => window.removeEventListener("resize", updateScale);
-    });
 
     let currentTheme = $derived(appStore.theme);
 
@@ -41,18 +26,9 @@
             retro: "theme-retro",
         }[currentTheme],
     );
-
-    let scaledWidth = $derived(dimensions.width * scale);
-    let scaledHeight = $derived(dimensions.height * scale);
 </script>
 
-<div
-    class="export-card-wrapper"
-    style="width: {scaledWidth}px; height: {scaledHeight}px;"
->
-    <div
-        style="width: {dimensions.width}px; height: {dimensions.height}px; transform: scale({scale}); transform-origin: top left;"
-    >
+<ExportPreviewScale>
         <div
             class="export-card {themeClasses}"
             id="export-card"
@@ -109,15 +85,9 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
+</ExportPreviewScale>
 
 <style>
-    .export-card-wrapper {
-        margin-left: auto;
-        margin-right: auto;
-    }
-
     .export-card {
         background: var(--color-surface);
         position: relative;
