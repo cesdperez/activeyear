@@ -13,6 +13,11 @@ describe('topIndices', () => {
 	it('returns every index when there are fewer values than requested', () => {
 		expect(topIndices([4], 2)).toEqual([0]);
 	});
+
+	it('never picks a zero value', () => {
+		expect(topIndices([0, 0, 3, 0], 2)).toEqual([2]);
+		expect(topIndices([0, 0], 2)).toEqual([]);
+	});
 });
 
 describe('scaledBarHeight', () => {
