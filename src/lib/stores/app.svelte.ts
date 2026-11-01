@@ -16,7 +16,8 @@ import type {
     ParseError,
     Theme,
     SummaryMetric,
-    Unit
+    Unit,
+    BreakdownMetric
 } from '../types/index.js';
 
 export type AppStatus = 'idle' | 'parsing' | 'ready' | 'error';
@@ -42,7 +43,7 @@ class AppStore {
     summaryMetric = $state<SummaryMetric>('distance');
     unit = $state<Unit>('km');
     selectedYear = $state<number>(TARGET_YEAR);
-    breakdownMetric = $state<'count' | 'duration'>('count');
+    breakdownMetric = $state<BreakdownMetric>('count');
 
     get activities() {
         return this.#activities;

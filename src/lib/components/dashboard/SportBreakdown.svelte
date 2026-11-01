@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { appStore } from "#lib/stores/app.svelte.js";
-	import { consolidateBreakdown } from "#lib/utils/activity.js";
+	import { rankSports } from "#lib/utils/breakdown.js";
 	import SectionHeading from "./SectionHeading.svelte";
 	import BreakdownMetricToggle from "./BreakdownMetricToggle.svelte";
 	import SportDonutChart from "./SportDonutChart.svelte";
@@ -8,13 +8,7 @@
 
 	const metric = $derived(appStore.breakdownMetric);
 
-	const consolidatedBreakdown = $derived(
-		consolidateBreakdown(appStore.breakdown || []),
-	);
-
-	const sortedBreakdown = $derived(
-		[...consolidatedBreakdown].sort((a, b) => b[metric] - a[metric]),
-	);
+	const sortedBreakdown = $derived(rankSports(appStore.breakdown || [], metric));
 </script>
 
 {#if appStore.breakdown.length > 0}

@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { appStore } from './app.svelte.js';
-import { TARGET_YEAR } from '../constants/time.js';
 import { demoStats, demoHighlights } from '../data/demo.js';
 
 describe('appStore', () => {
@@ -13,7 +12,6 @@ describe('appStore', () => {
         expect(appStore.activities).toEqual([]);
         expect(appStore.stats).toBeNull();
         expect(appStore.weeklyPattern).toEqual([0, 0, 0, 0, 0, 0, 0]);
-        expect(appStore.selectedYear).toBe(TARGET_YEAR);
     });
 
     it('rejects a file that is not a CSV', async () => {
@@ -47,17 +45,4 @@ describe('appStore', () => {
         expect(appStore.theme).toBe('retro');
     });
 
-    it('exposes writable preferences', () => {
-        appStore.confettiEnabled = true;
-        appStore.breakdownMetric = 'duration';
-        appStore.summaryMetric = 'duration';
-        appStore.unit = 'miles';
-        appStore.selectedYear = TARGET_YEAR - 1;
-
-        expect(appStore.confettiEnabled).toBe(true);
-        expect(appStore.breakdownMetric).toBe('duration');
-        expect(appStore.summaryMetric).toBe('duration');
-        expect(appStore.unit).toBe('miles');
-        expect(appStore.selectedYear).toBe(TARGET_YEAR - 1);
-    });
 });

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+    rankSports,
     selectTopSports,
     sportDonutSegments,
     weeklyBars,
@@ -13,6 +14,26 @@ const sport = (overrides: Partial<SportBreakdown>): SportBreakdown => ({
     duration: 7200,
     count: 1,
     ...overrides,
+});
+
+describe('rankSports', () => {
+    it('ranks every consolidated sport by the chosen metric without a limit', () => {
+        const breakdown = [
+            sport({ type: 'running', count: 5 }),
+            sport({ type: 'cycling', count: 9 }),
+            sport({ type: 'swimming', count: 3 }),
+            sport({ type: 'hiking', count: 7 }),
+            sport({ type: 'yoga', count: 1 }),
+        ];
+
+        expect(rankSports(breakdown, 'count').map((s) => s.type)).toEqual([
+            'cycling',
+            'hiking',
+            'running',
+            'swimming',
+            'yoga',
+        ]);
+    });
 });
 
 describe('selectTopSports', () => {

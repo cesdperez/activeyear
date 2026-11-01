@@ -20,13 +20,15 @@ export interface WeeklyBar {
     isTopDay: boolean;
 }
 
+export function rankSports(breakdown: SportBreakdown[], metric: BreakdownMetric): SportBreakdown[] {
+    return consolidateBreakdown(breakdown).sort((a, b) => b[metric] - a[metric]);
+}
+
 export function selectTopSports(
     breakdown: SportBreakdown[],
     metric: BreakdownMetric,
 ): SportBreakdown[] {
-    return consolidateBreakdown(breakdown)
-        .sort((a, b) => b[metric] - a[metric])
-        .slice(0, TOP_SPORTS_LIMIT);
+    return rankSports(breakdown, metric).slice(0, TOP_SPORTS_LIMIT);
 }
 
 /** Donut segments sized by activity count, each starting where the previous one ends. */
