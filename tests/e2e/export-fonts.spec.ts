@@ -19,16 +19,16 @@ function diffRatio(a: Buffer, b: Buffer): number {
 }
 
 test.describe('Export fonts', () => {
-	test.skip(
-		({ browserName }) => browserName !== 'chromium',
-		'Offline font caching is checked in Chromium'
-	);
-
 	test('cards exported offline use the same fonts as online', async ({
 		page,
 		context,
-		browser
+		browser,
+		browserName
 	}) => {
+		test.skip(
+			browserName !== 'chromium',
+			'WebKit leaves one page face in error offline; the next test covers its export'
+		);
 		const online = await browser.newPage();
 		await online.goto('/');
 		await loadDemo(online);
@@ -49,6 +49,26 @@ test.describe('Export fonts', () => {
 		);
 		expect(faces.filter((f) => !f.endsWith('loaded'))).toEqual([]);
 		expect(diffRatio(reference, offline)).toBeLessThan(MAX_DIFF_RATIO);
+	});
+
+	test('cards exported after font requests start failing keep their fonts', async ({
+		page,
+		browser
+	}) => {
+		const online = await browser.newPage();
+		await online.goto('/');
+		await loadDemo(online);
+		await online.evaluate(() => document.fonts.ready);
+		const [reference] = await downloadAllCards(online);
+		await online.close();
+
+		await page.goto('/');
+		await page.waitForLoadState('networkidle');
+		await page.route(/\.woff2?$/, (route) => route.abort());
+		await loadDemo(page);
+		const [blocked] = await downloadAllCards(page);
+
+		expect(diffRatio(reference, blocked)).toBeLessThan(MAX_DIFF_RATIO);
 	});
 
 	test('export reports fonts that cannot load instead of saving fallback text', async ({

@@ -8,7 +8,7 @@ import {
 	NAME_LONG_AFTER_CHARS,
 	TIMELINE_GAP
 } from '#lib/constants/export.js';
-import { loadAppFonts } from './fonts.js';
+import { inlinedFontFaceCss, loadAppFonts } from './fonts.js';
 
 export interface ExportOptions {
 	filename: string;
@@ -28,8 +28,9 @@ const THEME_BACKGROUNDS: Record<Theme, string> = {
 export async function exportToPng(element: HTMLElement, options: ExportOptions): Promise<void> {
 	const { filename, scale = 2, backgroundColor = THEME_BACKGROUNDS.neon } = options;
 
-	// modern-screenshot embeds fonts by refetching them and skips any it cannot fetch.
 	await loadAppFonts();
+	// Left to itself, modern-screenshot refetches every font file and silently skips failures.
+	const fontCss = await inlinedFontFaceCss();
 
 	try {
 		const dataUrl = await domToPng(element, {
@@ -39,7 +40,7 @@ export async function exportToPng(element: HTMLElement, options: ExportOptions):
 			scale,
 			style: { textRendering: 'geometricPrecision' },
 			backgroundColor,
-			// No font.preferredFormat: modern-screenshot 4.7 then drops the src of every other @font-face.
+			font: { cssText: fontCss },
 			filter: (node) => !(node instanceof HTMLElement && node.dataset.exportIgnore),
 			onCloneEachNode: keepLineClamp
 		});

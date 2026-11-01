@@ -13,13 +13,15 @@
 
 	import { onMount } from 'svelte';
 	import MetaTags from '#lib/components/MetaTags.svelte';
-	import { loadAppFonts } from '#lib/utils/fonts.js';
+	import { inlinedFontFaceCss, loadAppFonts } from '#lib/utils/fonts.js';
 
 	let { children } = $props();
 
-	// Fetch every face up front, so a later offline export still finds them; export reports failures.
+	// Fetch every face up front, so a later offline export still has them; export reports failures.
 	onMount(() => {
-		loadAppFonts().catch(() => {});
+		loadAppFonts()
+			.then(inlinedFontFaceCss)
+			.catch(() => {});
 	});
 </script>
 
