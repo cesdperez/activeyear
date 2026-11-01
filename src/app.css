@@ -140,7 +140,7 @@ body {
 	transition: all var(--transition-base);
 }
 
-.upload-zone:hover,
+.upload-zone:not([aria-disabled='true']):hover,
 .upload-zone.dragover {
 	border-color: var(--color-accent);
 	background: var(--color-accent-subtle);

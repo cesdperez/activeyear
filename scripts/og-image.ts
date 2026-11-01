@@ -20,6 +20,7 @@ const COMPOSITION_CSS = `
 		padding-bottom: 0 !important;
 	}
 	header, [data-testid='main-stats'] { margin: 0 !important; }
+	[data-testid='main-stats'] { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
 	* { transition: none !important; }
 	.stat-card { padding: 24px !important; justify-content: flex-start !important; }
 	.stat-value { font-size: 2rem !important; }
