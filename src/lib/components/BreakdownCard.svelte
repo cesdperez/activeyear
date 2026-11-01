@@ -11,20 +11,14 @@
         Trophy,
         Hourglass,
         Fire,
-        Target,
     } from "phosphor-svelte";
     import {
-        sportNames,
-        sportIcons,
-        sportColors,
-    } from "#lib/constants/sports.js";
-    import {
         selectTopSports,
-        donutSegments,
         weeklyBars,
         activeDaysPercent as yearShare,
     } from "#lib/utils/breakdown.js";
     import ExportCardBase from "./ExportCardBase.svelte";
+    import SportDistribution from "./breakdown/SportDistribution.svelte";
 
     let currentTheme = $derived(appStore.theme);
 
@@ -34,126 +28,18 @@
 
     let totalActivities = $derived(appStore.stats?.activityCount ?? 0);
 
-    const maxSportCount = $derived(
-        Math.max(...topSports.map((s) => s[appStore.breakdownMetric]), 1),
-    );
-
     const activeDaysPercent = $derived(
         yearShare(appStore.stats?.activeDays ?? 0),
     );
-
-    const circumference = 2 * Math.PI * 80;
-
-    let segments = $derived(donutSegments(topSports, circumference));
 </script>
 
 <ExportCardBase variant="breakdown" title="BREAKDOWN">
-    <!-- Radial Sport Distribution Chart -->
     {#if topSports.length > 0}
-        <div class="flex items-center gap-12 mb-32 px-4">
-            <!-- Left: Radial Sport Distribution Chart -->
-            <div class="shrink-0 relative">
-                <div class="donut-chart-container !w-[280px] !h-[280px]">
-                    <svg viewBox="0 0 200 200" class="donut-chart">
-                        <!-- Background circle -->
-                        <circle
-                            cx="100"
-                            cy="100"
-                            r="80"
-                            fill="none"
-                            stroke="rgba(0,0,0,0.05)"
-                            class="donut-bg"
-                            stroke-width="28"
-                        />
-                        <!-- Sport segments -->
-                        {#each segments as segment, i}
-                            <circle
-                                cx="100"
-                                cy="100"
-                                r="80"
-                                fill="none"
-                                stroke={sportColors[i % sportColors.length]}
-                                stroke-width="28"
-                                stroke-dasharray={segment.dashArray}
-                                stroke-dashoffset={-segment.offset}
-                                stroke-linecap="round"
-                                transform="rotate(-90 100 100)"
-                                class="donut-segment"
-                                style="filter: drop-shadow(0 0 8px {sportColors[
-                                    i % sportColors.length
-                                ]}40);"
-                            />
-                        {/each}
-                        <text
-                            x="100"
-                            y="95"
-                            text-anchor="middle"
-                            dominant-baseline="central"
-                            fill="var(--color-text-primary)"
-                            style="font-size: 52px; font-weight: 900; font-family: inherit;"
-                            >{totalActivities}</text
-                        >
-                        <text
-                            x="100"
-                            y="130"
-                            text-anchor="middle"
-                            dominant-baseline="central"
-                            fill="var(--color-text-muted)"
-                            style="font-size: 14px; font-weight: 700; font-family: inherit; letter-spacing: 0.1em; text-transform: uppercase;"
-                            >Activities</text
-                        >
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Right: Sport Bars -->
-            <div class="flex-1 space-y-6">
-                {#each topSports as sport, i}
-                    {@const IconComponent = sportIcons[sport.type] ?? Target}
-                    {@const value = sport[appStore.breakdownMetric]}
-                    {@const percentage = (value / maxSportCount) * 100}
-                    {@const color = sportColors[i % sportColors.length]}
-
-                    <div class="flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-8 h-8 rounded-lg flex items-center justify-center"
-                                    style="background: {color}20; color: {color};"
-                                >
-                                    <IconComponent
-                                        class="w-5 h-5"
-                                        weight="bold"
-                                    />
-                                </div>
-                                <span
-                                    class="text-[24px] font-bold text-[var(--color-text-primary)] uppercase tracking-wide"
-                                >
-                                    {sportNames[sport.type] ?? sport.type}
-                                </span>
-                            </div>
-                            <div class="text-right">
-                                <div
-                                    class="text-[22px] font-bold text-[var(--color-text-primary)] leading-none whitespace-nowrap"
-                                >
-                                    {appStore.breakdownMetric === "count"
-                                        ? value
-                                        : formatDuration(value)}
-                                </div>
-                            </div>
-                        </div>
-                        <div
-                            class="h-3 bg-[rgba(0,0,0,0.05)] sport-bar-bg rounded-full overflow-hidden"
-                        >
-                            <div
-                                class="h-full rounded-full transition-all duration-500"
-                                style="width: {percentage}%; background: {color}; filter: drop-shadow(0 0 4px {color}40);"
-                            ></div>
-                        </div>
-                    </div>
-                {/each}
-            </div>
-        </div>
+        <SportDistribution
+            sports={topSports}
+            metric={appStore.breakdownMetric}
+            {totalActivities}
+        />
     {/if}
 
     <!-- Weekly Activity Pattern -->
