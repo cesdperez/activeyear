@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { sportNames, sportIcons, sportColors } from '#lib/constants/sports.js';
+	import { sportNames, sportIcons } from '#lib/constants/sports.js';
+	import { sportColorsFor } from '#lib/utils/breakdown.js';
 	import { formatDuration } from '#lib/utils/format.js';
 	import type { BreakdownMetric, SportBreakdown, WidgetVariant } from '#lib/types/index.js';
 
@@ -11,6 +12,7 @@
 
 	const isDashboard = $derived(variant === 'dashboard');
 	const maxValue = $derived(Math.max(...sports.map((s) => s[metric]), 1));
+	const colors = $derived(sportColorsFor(sports));
 </script>
 
 <div class={isDashboard ? 'w-full max-w-2xl flex-1 space-y-6' : 'flex-1 space-y-6'}>
@@ -19,7 +21,7 @@
 		{@const value = sport[metric]}
 		{@const formattedValue = metric === 'count' ? value : formatDuration(value)}
 		{@const percentage = (value / maxValue) * 100}
-		{@const color = sportColors[i % sportColors.length]}
+		{@const color = colors[i]}
 
 		<div
 			class={isDashboard ? 'group flex flex-col gap-2' : 'flex flex-col gap-2'}

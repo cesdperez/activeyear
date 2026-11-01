@@ -109,6 +109,11 @@ export function formatPizzaSlices(calories: number): string {
 	return `${slices.toLocaleString('en-US')} pizza slices burnt`;
 }
 
+/** `singular` when English treats `count` as one, `plural` otherwise. */
+export function pluralize(count: number, singular: string, plural: string): string {
+	return new Intl.PluralRules('en-US').select(count) === 'one' ? singular : plural;
+}
+
 export function formatActivityCount(count: number, type: string): string {
 	const pluralRules = new Intl.PluralRules('en-US');
 	const rule = pluralRules.select(count);

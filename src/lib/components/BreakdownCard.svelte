@@ -12,11 +12,7 @@
 
 <ExportCardBase variant="breakdown" title="BREAKDOWN">
 	{#if topSports.length > 0}
-		<SportDistribution
-			sports={topSports}
-			metric={appStore.breakdownMetric}
-			totalActivities={appStore.stats?.activityCount ?? 0}
-		/>
+		<SportDistribution sports={topSports} metric={appStore.breakdownMetric} />
 	{/if}
 
 	<WeeklyPattern variant="export" pattern={appStore.weeklyPattern} theme={appStore.theme} />

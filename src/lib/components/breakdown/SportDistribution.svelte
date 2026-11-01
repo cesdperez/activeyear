@@ -3,18 +3,10 @@
 	import SportBars from '#lib/components/widgets/SportBars.svelte';
 	import type { BreakdownMetric, SportBreakdown } from '#lib/types/index.js';
 
-	let {
-		sports,
-		metric,
-		totalActivities
-	}: {
-		sports: SportBreakdown[];
-		metric: BreakdownMetric;
-		totalActivities: number;
-	} = $props();
+	let { sports, metric }: { sports: SportBreakdown[]; metric: BreakdownMetric } = $props();
 </script>
 
 <div class="mb-32 flex items-center gap-12 px-4">
-	<SportDonut variant="export" {sports} {totalActivities} />
+	<SportDonut variant="export" {sports} {metric} />
 	<SportBars variant="export" {sports} {metric} />
 </div>

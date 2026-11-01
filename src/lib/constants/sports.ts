@@ -42,4 +42,18 @@ export const sportIcons: Record<ActivityType, typeof PersonSimpleRun> = {
 	cardio: Heartbeat,
 	other: Target
 };
-export const sportColors = ['#00d4ff', '#00ff88', '#ff6b6b', '#ffd93d', '#c084fc'];
+// One colour per sport type except "other", so no two slices share a colour.
+export const sportColors = [
+	'#00d4ff',
+	'#00ff88',
+	'#ff6b6b',
+	'#ffd93d',
+	'#c084fc',
+	'#fb923c',
+	'#f472b6',
+	'#4d7cff',
+	'#a3e635',
+	'#2dd4bf'
+];
+
+export const OTHER_SPORT_COLOR = '#94a3b8';
