@@ -130,7 +130,8 @@ class AppStore {
 
 	#load(activities: Activity[]) {
 		this.#activities = activities;
-		if (this.#stats) this.summaryMetric = summaryMetricWithValue(this.#stats, this.summaryMetric);
+		if (this.#stats)
+			this.summaryMetric = summaryMetricWithValue(this.#stats, this.summaryMetric, this.unit);
 		this.#status = 'ready';
 	}
 
