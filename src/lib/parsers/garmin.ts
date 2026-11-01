@@ -89,8 +89,7 @@ export function parseGarminTime(timeStr: string): number {
 function cleanNumericString(str: string): string {
 	if (!str || str === '--') return '0';
 
-	// Remove all whitespace
-	let cleaned = str.trim();
+	const cleaned = str.trim();
 
 	const hasComma = cleaned.includes(',');
 	const hasDot = cleaned.includes('.');
@@ -258,7 +257,6 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 		// We consider it a "whole-row quoted" format if most rows have only 1 column
 		// but the file clearly has commas inside those quotes.
 		// Also handle cases where header might NOT be quoted but data rows are.
-		const rowsWithOneColumn = firstPass.data.filter((row) => row.length === 1);
 		const dataRows = firstPass.data.slice(1);
 		const quotedDataRows = dataRows.filter((row) => row.length === 1).length;
 
