@@ -105,6 +105,15 @@ body {
 	outline-offset: 2px;
 }
 
+/* Forced colours paint every background as Canvas, which hides the pressed toggle. */
+@media (forced-colors: active) {
+	[aria-pressed='true'] {
+		forced-color-adjust: none;
+		background-color: Highlight;
+		color: HighlightText;
+	}
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
 	*,
