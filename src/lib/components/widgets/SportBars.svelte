@@ -1,27 +1,32 @@
 <script lang="ts">
 	import { sportNames, sportIcons } from '#lib/constants/sports.js';
-	import { sportColorsFor } from '#lib/utils/breakdown.js';
-	import { formatDuration } from '#lib/utils/format.js';
+	import type { SportColors } from '#lib/utils/breakdown.js';
+	import { formatCount, formatDuration } from '#lib/utils/format.js';
 	import type { BreakdownMetric, SportBreakdown, WidgetVariant } from '#lib/types/index.js';
 
 	let {
 		sports,
+		colors,
 		metric,
 		variant
-	}: { sports: SportBreakdown[]; metric: BreakdownMetric; variant: WidgetVariant } = $props();
+	}: {
+		sports: SportBreakdown[];
+		colors: SportColors;
+		metric: BreakdownMetric;
+		variant: WidgetVariant;
+	} = $props();
 
 	const isDashboard = $derived(variant === 'dashboard');
 	const maxValue = $derived(Math.max(...sports.map((s) => s[metric]), 1));
-	const colors = $derived(sportColorsFor(sports));
 </script>
 
 <div class={isDashboard ? 'w-full max-w-2xl flex-1 space-y-6' : 'flex-1 space-y-6'}>
 	{#each sports as sport, i (sport.type)}
 		{@const IconComponent = sportIcons[sport.type]}
 		{@const value = sport[metric]}
-		{@const formattedValue = metric === 'count' ? value : formatDuration(value)}
+		{@const formattedValue = metric === 'count' ? formatCount(value) : formatDuration(value)}
 		{@const percentage = (value / maxValue) * 100}
-		{@const color = colors[i]}
+		{@const color = colors[sport.type]}
 
 		<div
 			class={isDashboard ? 'group flex flex-col gap-2' : 'flex flex-col gap-2'}

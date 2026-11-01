@@ -5,9 +5,11 @@ import type {
 	PersonalRecords,
 	SportBreakdown,
 	SummaryMetric,
+	Unit,
 	WeeklyPattern,
 	YearStats
 } from '../types/index.js';
+import { formatCalories, formatDistance, formatDuration, formatElevation } from './format.js';
 
 /**
  * Calculate aggregate year stats from activities
@@ -165,17 +167,24 @@ export function calculateWeeklyPattern(activities: Activity[]): WeeklyPattern {
 	return pattern;
 }
 
-const SUMMARY_METRIC_TOTALS: [SummaryMetric, keyof YearStats][] = [
-	['distance', 'totalDistance'],
-	['elevation', 'totalElevation'],
-	['duration', 'totalDuration'],
-	['calories', 'totalCalories']
+const SUMMARY_METRIC_DISPLAY: [SummaryMetric, (stats: YearStats, unit: Unit) => string][] = [
+	['distance', (stats, unit) => formatDistance(stats.totalDistance, unit)],
+	['elevation', (stats, unit) => formatElevation(stats.totalElevation, unit)],
+	['duration', (stats) => formatDuration(stats.totalDuration)],
+	['calories', (stats) => formatCalories(stats.totalCalories)]
 ];
 
-/** Keeps `current` when it has a value, otherwise the first summary stat, in panel order, that does. */
-export function summaryMetricWithValue(stats: YearStats, current: SummaryMetric): SummaryMetric {
-	const withValue = SUMMARY_METRIC_TOTALS.filter(([, total]) => stats[total] > 0).map(
-		([metric]) => metric
-	);
+/**
+ * Keeps `current` when it displays a non-zero value, otherwise the first summary stat, in panel
+ * order, that does.
+ */
+export function summaryMetricWithValue(
+	stats: YearStats,
+	current: SummaryMetric,
+	unit: Unit
+): SummaryMetric {
+	const withValue = SUMMARY_METRIC_DISPLAY.filter(([, display]) =>
+		/[1-9]/.test(display(stats, unit))
+	).map(([metric]) => metric);
 	return withValue.includes(current) ? current : (withValue[0] ?? current);
 }

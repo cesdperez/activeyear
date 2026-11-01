@@ -22,7 +22,9 @@ export type AppStatus = 'idle' | 'parsing' | 'ready' | 'error';
 class AppStore {
 	// Raw because the list is only ever replaced whole, and the derived stats read every activity.
 	#activities = $state.raw<Activity[]>([]);
-	#highlights = $derived(this.#activities.filter((a) => a.favorite));
+	#highlights = $derived(
+		this.#activities.filter((a) => a.favorite).sort((a, b) => a.date.getTime() - b.date.getTime())
+	);
 	#stats = $derived(this.#activities.length > 0 ? calculateYearStats(this.#activities) : null);
 	#records = $derived(
 		this.#activities.length > 0 ? calculatePersonalRecords(this.#activities) : null
@@ -128,7 +130,8 @@ class AppStore {
 
 	#load(activities: Activity[]) {
 		this.#activities = activities;
-		if (this.#stats) this.summaryMetric = summaryMetricWithValue(this.#stats, this.summaryMetric);
+		if (this.#stats)
+			this.summaryMetric = summaryMetricWithValue(this.#stats, this.summaryMetric, this.unit);
 		this.#status = 'ready';
 	}
 

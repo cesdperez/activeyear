@@ -1,18 +1,24 @@
 <script lang="ts">
-	import { donutCentre, sportDonutSegments } from '#lib/utils/breakdown.js';
+	import { donutCentre, sportDonutSegments, type SportColors } from '#lib/utils/breakdown.js';
 	import type { BreakdownMetric, SportBreakdown, WidgetVariant } from '#lib/types/index.js';
 
 	let {
 		sports,
+		colors,
 		metric,
 		variant
-	}: { sports: SportBreakdown[]; metric: BreakdownMetric; variant: WidgetVariant } = $props();
+	}: {
+		sports: SportBreakdown[];
+		colors: SportColors;
+		metric: BreakdownMetric;
+		variant: WidgetVariant;
+	} = $props();
 
 	// Matches the r="80" of the circles below.
 	const circumference = 2 * Math.PI * 80;
 
 	const isDashboard = $derived(variant === 'dashboard');
-	const segments = $derived(sportDonutSegments(sports, metric, circumference, variant));
+	const segments = $derived(sportDonutSegments(sports, colors, metric, circumference, variant));
 	const centre = $derived(donutCentre(sports, metric));
 </script>
 
