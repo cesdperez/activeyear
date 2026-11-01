@@ -12,9 +12,9 @@ const THEMES = ['neon', 'minimalist', 'retro'] as const;
 
 type ThemeName = (typeof THEMES)[number];
 
-// Allow up to 6% pixel difference between preview screenshot and downloaded image.
+// Allow up to 5.5% pixel difference between preview screenshot and downloaded image.
 // This accounts for rendering differences between Chrome's native renderer (Playwright screenshot)
-// and html-to-image's canvas-based rendering. The preview and download use the same DOM,
+// and modern-screenshot's canvas-based rendering. The preview and download use the same DOM,
 // so any structural differences would indicate a real bug. Anti-aliasing and font rendering
 // differences between the two engines are expected.
 const MAX_DIFF_RATIO = 0.055;
@@ -52,8 +52,7 @@ async function captureExportCardAtFullResolution(page: Page): Promise<Buffer> {
 	const exportCard = page.locator('#export-card');
 
 	// The export card is at full resolution (1080x1920) but the parent applies a scale transform.
-	// We need to capture the card at its native size, matching what html-to-image captures.
-	// html-to-image uses pixelRatio: 2 so we need to match that.
+	// We need to capture the card at its native size, matching what modern-screenshot captures.
 
 	// Get the wrapper and remove the scale transform temporarily
 	const wrapper = page.locator('.export-card-wrapper');
@@ -163,7 +162,7 @@ function compareImages(screenshotBuffer: Buffer, downloadBuffer: Buffer): { diff
 	const screenshot = PNG.sync.read(screenshotBuffer);
 	let download = PNG.sync.read(downloadBuffer);
 
-	// The download is at 2x resolution (pixelRatio: 2 in html-to-image)
+	// The download is at 2x resolution (scale: 2 in exportToPng)
 	// Scale it down to match the screenshot resolution (allow small rounding differences)
 	// Determine the scale factor (e.g. 2x, 4x)
 	const widthRatio = download.width / screenshot.width;
@@ -272,7 +271,7 @@ test.describe('Export Visual Fidelity', () => {
 
 	test.describe('Theme variations', () => {
 		// Test summary card with all themes.
-		// Note: html-to-image renders text and gradients differently than Chrome's native renderer,
+		// Note: modern-screenshot renders text and gradients differently than Chrome's native renderer,
 		// so non-neon themes have higher thresholds. The download snapshots still verify consistency.
 		for (const theme of THEMES) {
 			test(`summary card with ${theme} theme: download matches preview`, async ({ page }) => {
@@ -285,7 +284,7 @@ test.describe('Export Visual Fidelity', () => {
 
 				const { diffRatio, diffPixels, diffImage } = compareImages(screenshotBuffer, downloadBuffer);
 
-				// Neon theme has tighter tolerance; other themes have rendering differences with html-to-image
+				// Neon theme has tighter tolerance; other themes have rendering differences with modern-screenshot
 				const threshold = theme === 'neon' ? MAX_DIFF_RATIO : 0.65;
 
 				if (diffRatio > threshold) {

@@ -1,4 +1,4 @@
-import { toPng } from 'html-to-image';
+import { domToPng } from 'modern-screenshot';
 import type { Theme } from '#lib/types/index.js';
 
 export interface ExportOptions {
@@ -23,27 +23,15 @@ export async function exportToPng(
     const { filename = 'activeyear-2025', scale = 2, backgroundColor = THEME_BACKGROUNDS.neon } = options;
 
     try {
-        const dataUrl = await toPng(element, {
-            // High quality settings
-            pixelRatio: scale,
-            style: {
-                'text-rendering': 'geometricPrecision',
-                '-webkit-font-smoothing': 'antialiased',
-                '-moz-osx-font-smoothing': 'grayscale'
-            } as any,
-            // Ensure background is captured
+        const dataUrl = await domToPng(element, {
+            // The preview applies a CSS scale transform; size from layout, not the scaled rect.
+            width: element.offsetWidth,
+            height: element.offsetHeight,
+            scale,
+            style: { textRendering: 'geometricPrecision' },
             backgroundColor,
-            // Proper font handling
-            fontEmbedCSS: '@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap");',
-            cacheBust: true,
-            // Skip elements that shouldn't be in export
-            filter: (node) => {
-                // Skip hidden elements
-                if (node instanceof HTMLElement && node.dataset.exportIgnore) {
-                    return false;
-                }
-                return true;
-            },
+            // No font.preferredFormat: modern-screenshot 4.7 then drops the src of every other @font-face.
+            filter: (node) => !(node instanceof HTMLElement && node.dataset.exportIgnore)
         });
 
         // Create download link

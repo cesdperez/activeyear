@@ -14,9 +14,9 @@ Browser-only "Year in Sport" infographic generator. Users upload activity data (
 
 | Layer | Technology | Rationale |
 |-------|------------|-----------|
-| Framework | SvelteKit 2 + Svelte 5 | Runes for reactive state; stable since Oct 2024 |
+| Framework | SvelteKit 3 + Svelte 5 | Runes for reactive state |
 | CSV Parsing | PapaParse | Industry standard, streaming support, 13k+ stars |
-| Screenshot | html-to-image | Battle-tested (58k dependents), full CSS support, ~12KB |
+| Screenshot | modern-screenshot | Embeds same-origin @font-face fonts and renders SVG filters like the live preview |
 | Animation | svelte/motion (built-in) | Native Spring/Tween classes, zero bundle cost |
 | Styling | Tailwind CSS 4 | CSS-first config, Oxide engine, stable since Jan 2025 |
 
