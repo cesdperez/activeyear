@@ -10,7 +10,7 @@ export default defineConfig({
 		tailwindcss(),
 		sveltekit({
 			preprocess: vitePreprocess(),
-			adapter: adapter()
+			adapter: adapter({ routes: { include: ['/*'], exclude: ['/*'] } })
 		}),
 		svelteTesting()
 	],
