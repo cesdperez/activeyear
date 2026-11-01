@@ -24,7 +24,7 @@
 			<div
 				class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[var(--color-accent)]/10"
 			>
-				<Star class="h-10 w-10 text-yellow-500" weight="fill" />
+				<Star class="h-10 w-10 text-yellow-500" weight="fill" aria-hidden="true" />
 			</div>
 			<p class="mb-4 text-lg text-[var(--color-text-muted)]">No highlights yet</p>
 			<p class="max-w-md text-sm text-[var(--color-text-muted)]">
