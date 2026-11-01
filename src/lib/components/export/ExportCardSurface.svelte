@@ -62,24 +62,50 @@
 		border-radius: 9999px;
 		background: var(--color-surface-elevated);
 		border: 4px solid var(--color-accent);
-		box-shadow: 0 0 30px var(--color-accent-glow);
 		padding: 4px;
 		overflow: hidden;
 		position: relative;
 		z-index: 20;
 	}
 
+	/* Glows are gradients, not box-shadows: WebKit exports draw blurred box-shadows as hard blocks. */
+	:global(.avatar-glow) {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: 470px;
+		height: 470px;
+		transform: translate(-50%, -50%);
+		border-radius: 9999px;
+		background: radial-gradient(
+			circle closest-side,
+			var(--color-accent-glow) 82%,
+			transparent 100%
+		);
+		z-index: 15;
+	}
+
 	.theme-minimalist :global(.avatar-container) {
 		background: #fff;
 		border: 4px solid #000;
-		box-shadow: none;
+	}
+
+	.theme-minimalist :global(.avatar-glow) {
+		display: none;
 	}
 
 	.theme-retro :global(.avatar-container) {
 		background: #2e2660;
 		border: 6px solid #ff00cc;
-		box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3);
 		border-radius: 20%;
+	}
+
+	.theme-retro :global(.avatar-glow) {
+		width: 400px;
+		height: 400px;
+		transform: translate(calc(-50% + 8px), calc(-50% + 8px));
+		border-radius: 20%;
+		background: rgba(0, 0, 0, 0.3);
 	}
 
 	.theme-retro :global(.avatar-container img) {
@@ -273,7 +299,22 @@
 	:global(.timeline-node) {
 		background: var(--color-surface);
 		border: 3px solid var(--color-accent);
-		box-shadow: 0 0 12px var(--color-accent-glow);
+		--node-glow: var(--color-accent-glow);
+	}
+
+	:global(.timeline-node)::before {
+		content: '';
+		position: absolute;
+		inset: -15px;
+		border-radius: 9999px;
+		background: radial-gradient(
+			circle closest-side,
+			transparent 44%,
+			var(--node-glow) 48%,
+			transparent 100%
+		);
+		/* Paints above the node's own background, so the gradient stays clear inside the ring. */
+		z-index: -1;
 	}
 
 	:global(.timeline-card) {
@@ -289,7 +330,7 @@
 	.theme-minimalist :global(.timeline-node) {
 		background: #fff;
 		border-color: #000;
-		box-shadow: none;
+		--node-glow: transparent;
 	}
 
 	.theme-minimalist :global(.timeline-node > div) {
@@ -314,7 +355,7 @@
 
 	.theme-retro :global(.timeline-node) {
 		border-color: #ff00cc;
-		box-shadow: 0 0 16px rgba(255, 0, 204, 0.6);
+		--node-glow: rgba(255, 0, 204, 0.6);
 	}
 
 	.theme-retro :global(.timeline-card) {
