@@ -1,6 +1,6 @@
 import { test, expect, type Download, type Page } from '@playwright/test';
 import { readFileSync } from 'fs';
-import { uploadSample } from './helpers.js';
+import { showSlide, uploadSample } from './helpers.js';
 
 const VALID_PNG = {
 	name: 'avatar.png',
@@ -186,6 +186,26 @@ test.describe('Export panel accessibility', () => {
 		await expect(page.getByRole('button', { name: 'Next slide' })).toBeEnabled();
 		await expect(page.locator('#export-download')).not.toHaveAttribute('aria-disabled', 'true');
 	});
+});
+
+test.describe('Export card semantics', () => {
+	for (const slide of [0, 1, 2]) {
+		test(`card ${slide + 1} hides its icons and adds no headings to the page`, async ({ page }) => {
+			await uploadSample(page);
+			await showSlide(page, slide);
+			const card = page.locator('#export-card');
+
+			const unnamedImages = await card.evaluate(
+				(el) =>
+					[...el.querySelectorAll('svg[role="img"]:not([aria-label])')].filter(
+						(svg) => !svg.closest('[aria-hidden="true"]')
+					).length
+			);
+			expect(unnamedImages).toBe(0);
+			await expect(card.getByRole('heading')).toHaveCount(0);
+			await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+		});
+	}
 });
 
 test.describe('Export carousel', () => {

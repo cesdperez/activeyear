@@ -139,7 +139,7 @@
 			{:else}
 				{@const TopIcon = topSportIcon}
 				<div class="flex h-full w-full items-center justify-center text-[var(--color-accent)]">
-					<TopIcon class="h-56 w-56" weight="bold" />
+					<TopIcon class="h-56 w-56" weight="bold" aria-hidden="true" />
 				</div>
 			{/if}
 		</div>
@@ -149,7 +149,7 @@
 	<div class="flex flex-1 flex-col items-center justify-start gap-4 text-center">
 		<div class="mb-[60px]">
 			<div class="mb-4 flex items-center justify-center gap-4 text-[var(--color-accent)]">
-				<heroStat.icon class="h-16 w-16" weight="bold" />
+				<heroStat.icon class="h-16 w-16" weight="bold" aria-hidden="true" />
 			</div>
 			<div
 				class="stat-value text-[140px] leading-none font-bold -tracking-[0.04em] text-[var(--color-text-primary)]"
@@ -175,7 +175,11 @@
 				<div
 					class="overflow-visible text-center {i === 1 ? 'border-r border-l border-white/10' : ''}"
 				>
-					<stat.icon class="mx-auto mb-3 h-12 w-12 text-[var(--color-text-dim)]" weight="bold" />
+					<stat.icon
+						class="mx-auto mb-3 h-12 w-12 text-[var(--color-text-dim)]"
+						weight="bold"
+						aria-hidden="true"
+					/>
 					<div
 						class="stat-value text-[48px] leading-none font-bold text-[var(--color-text-primary)]"
 					>

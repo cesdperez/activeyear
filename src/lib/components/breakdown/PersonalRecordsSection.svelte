@@ -10,11 +10,11 @@
 		<div
 			class="h-1 flex-1 bg-gradient-to-l from-[var(--color-accent)] to-transparent opacity-30"
 		></div>
-		<h2
+		<p
 			class="text-[44px] font-bold tracking-widest whitespace-nowrap text-[var(--color-text-primary)] uppercase"
 		>
 			Personal Records
-		</h2>
+		</p>
 		<div
 			class="h-1 flex-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent opacity-30"
 		></div>

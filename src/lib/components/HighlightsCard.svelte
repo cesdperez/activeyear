@@ -133,7 +133,11 @@
 										? 'h-12 w-12 rounded-xl'
 										: 'h-16 w-16 rounded-2xl'} flex shrink-0 items-center justify-center bg-[var(--color-accent)]/20 text-[var(--color-accent)]"
 								>
-									<IconComponent class={compact ? 'h-6 w-6' : 'h-8 w-8'} weight="bold" />
+									<IconComponent
+										class={compact ? 'h-6 w-6' : 'h-8 w-8'}
+										weight="bold"
+										aria-hidden="true"
+									/>
 								</div>
 								<div class="min-w-0 flex-1">
 									<div class="mb-1 flex items-center gap-2">
@@ -142,6 +146,7 @@
 												? 'h-4 w-4'
 												: 'h-6 w-6'} highlight-star shrink-0 text-yellow-500"
 											weight="fill"
+											aria-hidden="true"
 										/>
 										<div
 											class="{compact
