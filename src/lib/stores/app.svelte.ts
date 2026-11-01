@@ -96,9 +96,7 @@ class AppStore {
 			const content = await file.text();
 			const result = parseActivityCsv(content, TARGET_YEAR);
 
-			const unreadable = result.errors.find(
-				(e) => e.type === 'wrong-language' || e.type === 'unsupported-format'
-			);
+			const unreadable = result.errors.find((e) => e.type === 'unsupported-format');
 			if (unreadable) {
 				this.#fail(unreadable.message, result.errors);
 				return;

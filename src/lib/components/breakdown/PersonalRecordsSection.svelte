@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { Trophy, Hourglass, Fire } from 'phosphor-svelte';
-	import { formatDistance, formatDuration, formatCalories } from '#lib/utils/format.js';
 	import type { PersonalRecords, Unit } from '#lib/types/index.js';
-	import RecordCard from '#lib/components/widgets/RecordCard.svelte';
+	import RecordCards from '#lib/components/widgets/RecordCards.svelte';
 
 	let { records, unit }: { records: PersonalRecords; unit: Unit } = $props();
 </script>
@@ -23,32 +21,6 @@
 	</div>
 
 	<div class="grid grid-cols-3 gap-6">
-		{#if records.longestDistance}
-			<RecordCard
-				variant="export"
-				icon={Trophy}
-				value={formatDistance(records.longestDistance.value, unit)}
-				label="Longest Distance"
-				activityTitle={records.longestDistance.activity.title}
-			/>
-		{/if}
-		{#if records.longestDuration}
-			<RecordCard
-				variant="export"
-				icon={Hourglass}
-				value={formatDuration(records.longestDuration.value)}
-				label="Longest Duration"
-				activityTitle={records.longestDuration.activity.title}
-			/>
-		{/if}
-		{#if records.biggestBurn}
-			<RecordCard
-				variant="export"
-				icon={Fire}
-				value={formatCalories(records.biggestBurn.value)}
-				label="Biggest Burn"
-				activityTitle={records.biggestBurn.activity.title}
-			/>
-		{/if}
+		<RecordCards {records} {unit} variant="export" />
 	</div>
 </div>

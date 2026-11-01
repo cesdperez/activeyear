@@ -288,24 +288,6 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 		transformHeader: (header) => header.trim()
 	});
 
-	const actualHeaders = parseResult.meta.fields || [];
-	const missingHeaders = KEY_HEADERS.filter((h) => !actualHeaders.includes(h));
-
-	if (missingHeaders.length > 1) {
-		// If multiple key headers are missing, it's likely the wrong language
-		return {
-			activities: [],
-			errors: [
-				{
-					type: 'wrong-language',
-					row: 0,
-					message:
-						"Is your Garmin Connect in English? We couldn't find the expected headers. Please export your CSV in English."
-				}
-			]
-		};
-	}
-
 	if (parseResult.errors.length > 0) {
 		parseResult.errors.forEach((error) => {
 			errors.push({
@@ -370,7 +352,7 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 
 // Substring match on the raw first line, so it also holds when each row is wrapped in quotes.
 function hasGarminHeaders(csvContent: string): boolean {
-	const firstLine = csvContent.slice(0, csvContent.search(/\r?\n|$/));
+	const firstLine = csvContent.trimStart().split(/\r?\n/, 1)[0];
 	return KEY_HEADERS.filter((h) => firstLine.includes(h)).length > 1;
 }
 

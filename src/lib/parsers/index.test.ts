@@ -20,6 +20,13 @@ describe('parseActivityCsv', () => {
 		expect(parseActivityCsv(csv, 2025).activities).toHaveLength(1);
 	});
 
+	it('detects a Garmin export that starts with a blank line', () => {
+		const csv =
+			'\nActivity Type,Date,Title,Distance,Calories,Time,Total Ascent\nRunning,2025-03-01 08:00:00,Run,10.0,600,00:50:00,100';
+
+		expect(parseActivityCsv(csv, 2025).activities).toHaveLength(1);
+	});
+
 	it('rejects a CSV that no parser recognises', () => {
 		const spanishGarminCsv =
 			'Tipo de actividad,Fecha,Título,Distancia\nCarrera,2025-01-01 08:00:00,Run,10.0';

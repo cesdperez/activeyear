@@ -205,20 +205,6 @@ describe('parseGarminCsv', () => {
 		);
 		expect(result.activities).toHaveLength(0);
 	});
-
-	it('detects non-English headers and returns wrong-language error', () => {
-		const spanishCsv =
-			'Tipo de actividad,Fecha,Título,Distancia,Calorías,Tiempo,Ascenso total\nCarrera,2025-01-01 08:00:00,Morning Run,10.0,600,00:50:00,100';
-		const result = parseGarminCsv(spanishCsv, 2025);
-
-		expect(result.activities).toHaveLength(0);
-		expect(result.errors).toEqual([
-			expect.objectContaining({
-				type: 'wrong-language',
-				message: expect.stringContaining('English')
-			})
-		]);
-	});
 });
 
 describe('parseGarminCsv with garmin-sample-2.csv', () => {

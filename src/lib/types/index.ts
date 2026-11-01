@@ -93,13 +93,7 @@ export interface ActivityParser {
 }
 
 export interface ParseError {
-	type:
-		| 'invalid-date'
-		| 'invalid-number'
-		| 'missing-column'
-		| 'wrong-language'
-		| 'unsupported-format'
-		| 'unknown';
+	type: 'invalid-date' | 'invalid-number' | 'missing-column' | 'unsupported-format' | 'unknown';
 	row: number;
 	message: string;
 }

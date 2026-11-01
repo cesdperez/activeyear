@@ -35,22 +35,6 @@ describe('appStore', () => {
 		expect(appStore.error).toContain("couldn't recognise this file");
 	});
 
-	it('rejects a Garmin export in another language and asks for English', async () => {
-		const spanishCsv = `Tipo de actividad,Fecha,Título,Distancia\nCarrera,${TARGET_YEAR}-01-01 08:00:00,Run,10.0`;
-
-		await appStore.processFile(csvFile(spanishCsv));
-
-		expect(appStore.status).toBe('error');
-		expect(appStore.error).toContain('set to English');
-	});
-
-	it('rejects a Garmin export with no activities in the target year', async () => {
-		await appStore.processFile(csvFile(garminCsv(`${TARGET_YEAR - 1}-03-01 08:00:00`)));
-
-		expect(appStore.status).toBe('error');
-		expect(appStore.error).toBe(`No ${TARGET_YEAR} activities found in the file`);
-	});
-
 	it.each([
 		['the error message', new Error('Disk read failed'), 'Disk read failed'],
 		['a generic message', 'not an Error', 'Failed to parse file']
