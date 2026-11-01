@@ -170,6 +170,7 @@ test.describe('Export panel accessibility', () => {
 	}) => {
 		await uploadSample(page);
 		await page.getByRole('button', { name: 'Go to slide 2' }).click();
+		await expect(page.getByText('Breakdown (2/3)')).toBeVisible();
 		await page.evaluate(() => {
 			const fail = () => {
 				throw new Error('canvas unavailable');
