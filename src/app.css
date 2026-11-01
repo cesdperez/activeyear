@@ -140,7 +140,7 @@ body {
 	transition: all var(--transition-base);
 }
 
-.upload-zone:hover,
+.upload-zone:not([aria-disabled='true']):hover,
 .upload-zone.dragover {
 	border-color: var(--color-accent);
 	background: var(--color-accent-subtle);
@@ -186,6 +186,7 @@ body {
 	letter-spacing: 0.05em;
 	text-transform: uppercase;
 	color: var(--color-text-muted);
+	text-wrap: balance;
 }
 
 /* Icon Styles */

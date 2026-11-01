@@ -3,18 +3,19 @@
 	import { CalendarCheck, Lightning, type IconComponentProps } from 'phosphor-svelte';
 	import { activeDaysPercent } from '#lib/utils/breakdown.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
+	import { formatCount, formatPercentOfYear, pluralize } from '#lib/utils/format.js';
 	import type { WidgetVariant } from '#lib/types/index.js';
 
 	interface DashboardStat {
 		Icon: Component<IconComponentProps>;
-		value: number;
+		value: string;
 		label: string;
 		delay: number;
 	}
 
 	interface ExportStat {
 		Icon: Component<IconComponentProps>;
-		value: number;
+		value: string;
 		ringStroke: string;
 		ringDashArray: string;
 		ringClass: string;
@@ -31,6 +32,10 @@
 	}: { activeDays: number; longestStreak: number; variant: WidgetVariant } = $props();
 
 	const yearPercent = $derived(activeDaysPercent(activeDays, TARGET_YEAR));
+	const activeDaysLabel = $derived(pluralize(activeDays, 'Active Day', 'Active Days'));
+	const streakCaption = $derived(
+		pluralize(longestStreak, 'most consecutive active day', 'most consecutive active days')
+	);
 </script>
 
 {#snippet dashboardStat({ Icon, value, label, delay }: DashboardStat)}
@@ -46,7 +51,7 @@
 				{value}
 			</div>
 			<div
-				class="text-xs font-medium tracking-wider text-[var(--color-text-muted)] uppercase md:text-sm"
+				class="text-xs font-medium tracking-wider text-balance text-[var(--color-text-muted)] uppercase md:text-sm"
 			>
 				{label}
 			</div>
@@ -115,14 +120,14 @@
 	>
 		{@render dashboardStat({
 			Icon: CalendarCheck,
-			value: activeDays,
-			label: 'Active Days',
+			value: formatCount(activeDays),
+			label: activeDaysLabel,
 			delay: 350
 		})}
 		{@render dashboardStat({
 			Icon: Lightning,
-			value: longestStreak,
-			label: 'most consecutive active days',
+			value: formatCount(longestStreak),
+			label: streakCaption,
 			delay: 400
 		})}
 	</div>
@@ -130,23 +135,23 @@
 	<div class="mb-16 grid grid-cols-2 gap-8">
 		{@render exportStat({
 			Icon: CalendarCheck,
-			value: activeDays,
+			value: formatCount(activeDays),
 			ringStroke: 'var(--color-accent)',
 			ringDashArray: `${yearPercent * 3.27} 327`,
 			ringClass: 'progress-ring',
 			colorClass: 'text-[var(--color-accent)]',
-			label: 'Active Days',
-			caption: `${Math.round(yearPercent)}% of the year`
+			label: activeDaysLabel,
+			caption: `${formatPercentOfYear(yearPercent)} of the year`
 		})}
 		{@render exportStat({
 			Icon: Lightning,
-			value: longestStreak,
+			value: formatCount(longestStreak),
 			ringStroke: '#ff6b6b',
 			ringDashArray: '20 10',
 			ringClass: 'streak-ring',
 			colorClass: 'streak-label text-[#ff6b6b]',
 			label: 'Day Streak',
-			caption: 'most consecutive active days'
+			caption: streakCaption
 		})}
 	</div>
 {/if}

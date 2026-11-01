@@ -4,7 +4,8 @@ import {
 	calculateLongestStreak,
 	calculatePersonalRecords,
 	calculateSportBreakdown,
-	calculateWeeklyPattern
+	calculateWeeklyPattern,
+	summaryMetricWithValue
 } from './stats.js';
 import type { Activity } from '../types/index.js';
 
@@ -318,5 +319,41 @@ describe('calculateWeeklyPattern', () => {
 		expect(pattern[2]).toBe(0);
 		expect(pattern[3]).toBe(0);
 		expect(pattern[4]).toBe(0);
+	});
+});
+
+describe('summaryMetricWithValue', () => {
+	const statsOf = (overrides: Partial<Activity>) =>
+		calculateYearStats([createActivity({ distance: 0, elevation: 0, calories: 0, ...overrides })]);
+
+	it('keeps the current stat when it has a value', () => {
+		expect(summaryMetricWithValue(statsOf({ calories: 200 }), 'duration', 'km')).toBe('duration');
+	});
+
+	it('skips a stat that would display as zero', () => {
+		const stats = statsOf({ duration: 30, calories: 200 });
+
+		expect(summaryMetricWithValue(stats, 'duration', 'km')).toBe('calories');
+		expect(
+			summaryMetricWithValue(statsOf({ distance: 0.04, calories: 200 }), 'distance', 'km')
+		).toBe('duration');
+		expect(
+			summaryMetricWithValue(
+				statsOf({ duration: 0, elevation: 4, calories: 200 }),
+				'elevation',
+				'km'
+			)
+		).toBe('calories');
+	});
+
+	it('judges distance and elevation in the chosen unit', () => {
+		const stats = statsOf({ duration: 0, elevation: 6, calories: 200 });
+
+		expect(summaryMetricWithValue(stats, 'elevation', 'km')).toBe('elevation');
+		expect(summaryMetricWithValue(stats, 'elevation', 'miles')).toBe('calories');
+	});
+
+	it('keeps the current stat when no stat has a value', () => {
+		expect(summaryMetricWithValue(statsOf({ duration: 30 }), 'distance', 'km')).toBe('distance');
 	});
 });

@@ -11,6 +11,8 @@ import {
 	calculateEverests,
 	calculatePizzaSlices,
 	formatActivityCount,
+	formatCount,
+	formatPercentOfYear,
 	pluralize
 } from './format.js';
 
@@ -32,6 +34,11 @@ describe('formatDistance', () => {
 	it('groups thousands like the other stats', () => {
 		expect(formatDistance(16241.4)).toBe('16,241km');
 	});
+
+	it('drops the decimal when the value rounds up to 100', () => {
+		expect(formatDistance(99.96)).toBe('100km');
+		expect(formatDistance(99.94)).toBe('99.9km');
+	});
 });
 
 describe('formatDuration', () => {
@@ -44,6 +51,10 @@ describe('formatDuration', () => {
 		expect(formatDuration(3600)).toBe('1h 0m');
 		expect(formatDuration(5400)).toBe('1h 30m');
 		expect(formatDuration(12888)).toBe('3h 34m');
+	});
+
+	it('groups thousands of hours', () => {
+		expect(formatDuration(1194 * 3600 + 33 * 60)).toBe('1,194h 33m');
 	});
 
 	it('returns 0m for zero duration', () => {
@@ -163,7 +174,29 @@ describe('pluralize', () => {
 	});
 });
 
+describe('formatCount', () => {
+	it('groups thousands like the other stats', () => {
+		expect(formatCount(7)).toBe('7');
+		expect(formatCount(1008)).toBe('1,008');
+	});
+});
+
+describe('formatPercentOfYear', () => {
+	it('rounds to a whole percent', () => {
+		expect(formatPercentOfYear(20.4)).toBe('20%');
+		expect(formatPercentOfYear(0)).toBe('0%');
+	});
+
+	it('shows a non-zero share under one percent as <1%', () => {
+		expect(formatPercentOfYear(0.27)).toBe('<1%');
+	});
+});
+
 describe('formatActivityCount', () => {
+	it('groups thousands', () => {
+		expect(formatActivityCount(1008, 'activity')).toBe('1,008 activities');
+	});
+
 	it('uses singular for count of 1', () => {
 		expect(formatActivityCount(1, 'run')).toBe('1 run');
 	});

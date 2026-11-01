@@ -15,10 +15,11 @@ export function formatDistance(km: number, unit: Unit = 'km'): string {
 	const value = unit === 'miles' ? km * KM_TO_MILES : km;
 	const suffix = unit === 'miles' ? 'mi' : 'km';
 
-	if (value >= 100) {
-		return `${Math.round(value).toLocaleString('en-US')}${suffix}`;
+	const oneDecimal = value.toFixed(1);
+	if (Number(oneDecimal) >= 100) {
+		return `${formatCount(Math.round(value))}${suffix}`;
 	}
-	return `${value.toFixed(1)}${suffix}`;
+	return `${oneDecimal}${suffix}`;
 }
 
 /**
@@ -33,7 +34,18 @@ export function formatDuration(seconds: number): string {
 	if (hours === 0) {
 		return `${minutes}m`;
 	}
-	return `${hours}h ${minutes}m`;
+	return `${formatCount(hours)}h ${minutes}m`;
+}
+
+/** Whole number with thousands separators, matching the other stats. */
+export function formatCount(count: number): string {
+	return count.toLocaleString('en-US');
+}
+
+/** Whole percent, but "<1%" for a share that is above zero and would round to 0%. */
+export function formatPercentOfYear(percent: number): string {
+	if (percent > 0 && percent < 0.5) return '<1%';
+	return `${Math.round(percent)}%`;
 }
 
 /**
@@ -127,7 +139,7 @@ export function formatActivityCount(count: number, type: string): string {
 	};
 
 	const pluralType = rule === 'one' ? type : (plurals[type.toLowerCase()] ?? `${type}s`);
-	return `${count} ${pluralType}`;
+	return `${formatCount(count)} ${pluralType}`;
 }
 
 const LOTR_MARATHON_SECONDS = 42960; // 11h 56m (Extended Editions total)

@@ -34,7 +34,22 @@
 
 	function handleDragOver(event: DragEvent) {
 		event.preventDefault();
+		if (loading) {
+			if (event.dataTransfer) event.dataTransfer.dropEffect = 'none';
+			return;
+		}
 		isDragOver = true;
+	}
+
+	function isFileDrag(event: DragEvent) {
+		return event.dataTransfer?.types.includes('Files') ?? false;
+	}
+
+	// Without this, a file dropped beside the zone makes the browser open or download it.
+	function blockFileDropOutsideZone(event: DragEvent) {
+		if (!isFileDrag(event) || event.defaultPrevented) return;
+		event.preventDefault();
+		if (event.dataTransfer) event.dataTransfer.dropEffect = 'none';
 	}
 
 	function handleDragLeave(event: DragEvent) {
@@ -82,6 +97,8 @@
 	}
 </script>
 
+<svelte:window ondragover={blockFileDropOutsideZone} ondrop={blockFileDropOutsideZone} />
+
 <input
 	bind:this={fileInput}
 	type="file"
@@ -94,7 +111,7 @@
 <button
 	type="button"
 	id={UPLOAD_ZONE_ID}
-	class="upload-zone group flex min-h-[300px] w-full cursor-pointer flex-col items-center justify-center p-8 text-center md:p-12"
+	class="upload-zone group flex min-h-[300px] w-full cursor-pointer flex-col items-center justify-center p-8 text-center aria-disabled:cursor-not-allowed md:p-12"
 	class:dragover={isDragOver}
 	aria-disabled={loading}
 	ondragover={handleDragOver}
@@ -127,7 +144,7 @@
 				aria-hidden="true"
 			/>
 		</span>
-		<span class="mb-1 block text-lg text-[var(--color-text-primary)]"
+		<span class="mb-1 block text-lg text-balance text-[var(--color-text-primary)]"
 			>Drop your Garmin CSV here</span
 		>
 		<span class="mb-4 block text-sm text-[var(--color-text-muted)]">or click to browse</span>
