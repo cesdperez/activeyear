@@ -6,29 +6,21 @@
         formatCalories,
     } from "#lib/utils/format.js";
     import {
-        CalendarCheck,
-        Lightning,
         Trophy,
         Hourglass,
         Fire,
     } from "phosphor-svelte";
-    import {
-        selectTopSports,
-        activeDaysPercent as yearShare,
-    } from "#lib/utils/breakdown.js";
+    import { selectTopSports } from "#lib/utils/breakdown.js";
     import ExportCardBase from "./ExportCardBase.svelte";
     import SportDistribution from "./breakdown/SportDistribution.svelte";
     import WeeklyPatternChart from "./breakdown/WeeklyPatternChart.svelte";
+    import ConsistencyStats from "./breakdown/ConsistencyStats.svelte";
 
     let topSports = $derived(
         selectTopSports(appStore.breakdown || [], appStore.breakdownMetric),
     );
 
     let totalActivities = $derived(appStore.stats?.activityCount ?? 0);
-
-    const activeDaysPercent = $derived(
-        yearShare(appStore.stats?.activeDays ?? 0),
-    );
 </script>
 
 <ExportCardBase variant="breakdown" title="BREAKDOWN">
@@ -47,112 +39,10 @@
         />
     {/if}
 
-    <!-- Consistency Stats with Progress Rings -->
-    <div class="grid grid-cols-2 gap-8 mb-16">
-        <!-- Active Days -->
-        <div
-            class="flex flex-col items-center text-center p-8 rounded-2xl consistency-card"
-        >
-            <div class="w-44 h-44 mb-4">
-                <svg viewBox="0 0 120 120" class="w-full h-full">
-                    <circle
-                        cx="60"
-                        cy="60"
-                        r="52"
-                        fill="none"
-                        stroke="rgba(0,0,0,0.05)"
-                        class="progress-ring-bg"
-                        stroke-width="10"
-                    />
-                    <circle
-                        cx="60"
-                        cy="60"
-                        r="52"
-                        fill="none"
-                        stroke="var(--color-accent)"
-                        stroke-width="10"
-                        stroke-dasharray="{activeDaysPercent * 3.27} 327"
-                        stroke-linecap="round"
-                        transform="rotate(-90 60 60)"
-                        class="progress-ring"
-                    />
-                    <text
-                        x="60"
-                        y="60"
-                        text-anchor="middle"
-                        dominant-baseline="central"
-                        fill="var(--color-text-primary)"
-                        style="font-size: 38px; font-weight: 900; font-family: inherit;"
-                        >{appStore.stats?.activeDays ?? 0}</text
-                    >
-                </svg>
-            </div>
-            <div
-                class="flex items-center gap-3 text-[var(--color-accent)]"
-            >
-                <CalendarCheck class="w-8 h-8" weight="bold" />
-                <span class="text-[28px] font-bold uppercase tracking-wider"
-                    >Active Days</span
-                >
-            </div>
-            <div
-                class="text-[20px] text-[var(--color-text-muted)] mt-2 whitespace-nowrap"
-            >
-                {Math.round(activeDaysPercent)}% of the year
-            </div>
-        </div>
-
-        <!-- Day Streak -->
-        <div
-            class="flex flex-col items-center text-center p-8 rounded-2xl consistency-card"
-        >
-            <div class="w-44 h-44 mb-4">
-                <svg viewBox="0 0 120 120" class="w-full h-full">
-                    <circle
-                        cx="60"
-                        cy="60"
-                        r="52"
-                        fill="none"
-                        stroke="rgba(0,0,0,0.05)"
-                        class="progress-ring-bg"
-                        stroke-width="10"
-                    />
-                    <circle
-                        cx="60"
-                        cy="60"
-                        r="52"
-                        fill="none"
-                        stroke="#ff6b6b"
-                        stroke-width="10"
-                        stroke-dasharray="20 10"
-                        stroke-linecap="round"
-                        transform="rotate(-90 60 60)"
-                        class="streak-ring"
-                    />
-                    <text
-                        x="60"
-                        y="60"
-                        text-anchor="middle"
-                        dominant-baseline="central"
-                        fill="var(--color-text-primary)"
-                        style="font-size: 38px; font-weight: 900; font-family: inherit;"
-                        >{appStore.stats?.longestStreak ?? 0}</text
-                    >
-                </svg>
-            </div>
-            <div class="flex items-center gap-3 text-[#ff6b6b]">
-                <Lightning class="w-8 h-8" weight="bold" />
-                <span class="text-[28px] font-bold uppercase tracking-wider"
-                    >Day Streak</span
-                >
-            </div>
-            <div
-                class="text-[20px] text-[var(--color-text-muted)] mt-2 whitespace-nowrap"
-            >
-                most consecutive active days
-            </div>
-        </div>
-    </div>
+    <ConsistencyStats
+        activeDays={appStore.stats?.activeDays ?? 0}
+        longestStreak={appStore.stats?.longestStreak ?? 0}
+    />
 
     <!-- Personal Records -->
     {#if appStore.records}
