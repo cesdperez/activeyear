@@ -68,10 +68,13 @@
 
 				{#if activityTitle}
 					<div
-						class="mt-2 flex items-center gap-1.5 border-t border-[rgba(255,255,255,0.05)] pt-2 text-xs text-[var(--color-text-muted)]"
+						class="mt-2 flex items-start gap-1.5 border-t border-[rgba(255,255,255,0.05)] pt-2 text-xs text-[var(--color-text-muted)]"
 					>
-						<span class="h-1 w-1 shrink-0 rounded-full bg-[var(--color-accent)] opacity-50"></span>
-						<span class="min-w-0 truncate" title={activityTitle}>{activityTitle}</span>
+						<span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[var(--color-accent)] opacity-50"
+						></span>
+						<span class="line-clamp-3 min-w-0 wrap-anywhere" title={activityTitle}
+							>{activityTitle}</span
+						>
 					</div>
 				{/if}
 			</div>

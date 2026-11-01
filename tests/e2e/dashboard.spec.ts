@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { DASHBOARD_HEADING, SAMPLE_CSV } from './helpers.js';
+import { DASHBOARD_HEADING, SAMPLE_CSV, garminCsv, uploadCsv } from './helpers.js';
 
 async function openDemo(page: Page): Promise<void> {
 	await page.goto('/');
@@ -128,5 +128,40 @@ for (const width of [320, 360, 768, 1024, 1280, 1920]) {
 			await overflowingElements(page.getByTestId('consistency-stats').locator('.stat-card'))
 		).toEqual([]);
 		expect(await overflowingElements(page.getByTestId('weekly-pattern-row'))).toEqual([]);
+	});
+}
+
+const LONG_TITLES = [
+	"New Year's Resolution Run",
+	'Sunday long run with the club along the river',
+	'Hill repeats before work'
+];
+
+for (const width of [320, 1024, 1280]) {
+	test(`highlight and record titles are fully visible at ${width}px`, async ({ page }) => {
+		await page.setViewportSize({ width, height: 900 });
+		await uploadCsv(
+			page,
+			garminCsv(
+				LONG_TITLES.map((title, i) => ({ title, favorite: true, distance: `${10 + i * 5}.0` }))
+			)
+		);
+
+		const { shown, clipped } = await page.locator('main').evaluate((main, titles) => {
+			const leaves = [...main.querySelectorAll('*')].filter(
+				(el) =>
+					!el.closest('#export-panel') &&
+					el.children.length === 0 &&
+					titles.includes(el.textContent?.trim() ?? '')
+			);
+			return {
+				shown: leaves.length,
+				clipped: leaves
+					.filter((el) => el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight)
+					.map((el) => el.textContent?.trim())
+			};
+		}, LONG_TITLES);
+		expect(shown).toBeGreaterThan(LONG_TITLES.length);
+		expect(clipped).toEqual([]);
 	});
 }
