@@ -17,7 +17,7 @@
 		When You Train
 	</div>
 	<div class="flex items-end justify-between gap-3" style="height: {barContainerHeight + 28}px;">
-		{#each bars as { heightPercent, barHeight, isTopDay }, i}
+		{#each bars as { heightPercent, barHeight, isTopDay }, i (i)}
 			<div class="flex flex-1 flex-col items-center justify-end gap-2">
 				<div
 					class="weekly-bar w-full rounded-t-lg transition-all"

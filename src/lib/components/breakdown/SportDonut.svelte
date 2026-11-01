@@ -23,7 +23,7 @@
 				class="donut-bg"
 				stroke-width="28"
 			/>
-			{#each segments as segment, i}
+			{#each segments as segment, i (i)}
 				<circle
 					cx="100"
 					cy="100"

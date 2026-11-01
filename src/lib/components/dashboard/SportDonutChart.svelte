@@ -31,7 +31,7 @@
 				stroke="rgba(255,255,255,0.05)"
 				stroke-width="28"
 			/>
-			{#each segments as segment, i}
+			{#each segments as segment, i (i)}
 				{@const color = sportColors[i % sportColors.length]}
 				<circle
 					cx="100"

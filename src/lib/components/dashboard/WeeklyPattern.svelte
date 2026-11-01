@@ -18,7 +18,7 @@
 			class="flex items-end justify-between gap-4 px-4"
 			style="height: {barContainerHeight + 60}px;"
 		>
-			{#each appStore.weeklyPattern as count, i}
+			{#each appStore.weeklyPattern as count, i (i)}
 				{@const { barHeight, isTopDay } = bars[i]}
 				<div class="flex flex-1 flex-col items-center justify-end gap-3">
 					<span class="font-mono text-sm text-[var(--color-text-muted)]">

@@ -10,7 +10,7 @@
 
 	{#if appStore.highlights.length > 0}
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-			{#each appStore.highlights as activity, i}
+			{#each appStore.highlights as activity, i (i)}
 				<HighlightItem {activity} delay={450 + i * 50} />
 			{/each}
 		</div>

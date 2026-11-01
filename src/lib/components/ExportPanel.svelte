@@ -139,7 +139,7 @@
 					Focused Stat (Summary Card)
 				</span>
 				<div class="grid grid-cols-2 gap-2">
-					{#each [{ value: 'distance', label: 'Distance', icon: Ruler }, { value: 'elevation', label: 'Elevation', icon: Mountains }, { value: 'duration', label: 'Time', icon: Timer }, { value: 'calories', label: 'Calories', icon: Fire }] as metric}
+					{#each [{ value: 'distance', label: 'Distance', icon: Ruler }, { value: 'elevation', label: 'Elevation', icon: Mountains }, { value: 'duration', label: 'Time', icon: Timer }, { value: 'calories', label: 'Calories', icon: Fire }] as metric (metric.value)}
 						<button
 							onclick={() => (appStore.summaryMetric = metric.value as SummaryMetric)}
 							class="flex items-center justify-center gap-2 rounded-lg px-3 py-2 transition-all duration-200 {appStore.summaryMetric ===
@@ -158,7 +158,7 @@
 			<div>
 				<span class="mb-2 block text-sm font-medium text-zinc-400"> Theme </span>
 				<div class="flex gap-2">
-					{#each themes as theme}
+					{#each themes as theme (theme.value)}
 						<button
 							onclick={() => setTheme(theme.value)}
 							class="flex-1 rounded-lg px-4 py-3 text-center transition-all duration-200 {appStore.theme ===

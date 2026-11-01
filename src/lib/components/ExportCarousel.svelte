@@ -91,7 +91,7 @@
 
 		<!-- Dots -->
 		<div class="carousel-dots">
-			{#each { length: SLIDE_COUNT } as _, i}
+			{#each { length: SLIDE_COUNT }, i}
 				<button
 					class="dot {currentSlide === i ? 'active' : ''}"
 					onclick={() => (currentSlide = i as 0 | 1 | 2)}

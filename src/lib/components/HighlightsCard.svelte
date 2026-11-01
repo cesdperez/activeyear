@@ -48,7 +48,7 @@
 				>
 					<!-- Vertical Timeline Line -->
 					<div class="timeline-line absolute top-[45px] bottom-[45px] left-[60px] w-[4px]"></div>
-					{#each highlights as fav, i}
+					{#each highlights as fav, i (i)}
 						{@const IconComponent = sportIcons[fav.type] ?? Target}
 						{@const date = new Date(fav.date)}
 						{@const month = monthNames[date.getMonth()]}

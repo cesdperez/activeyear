@@ -10,7 +10,7 @@
 </script>
 
 <div class="flex-1 space-y-6">
-	{#each sports as sport, i}
+	{#each sports as sport, i (sport.type)}
 		{@const IconComponent = sportIcons[sport.type] ?? Target}
 		{@const value = sport[metric]}
 		{@const percentage = (value / maxValue) * 100}

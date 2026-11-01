@@ -170,7 +170,7 @@
 
 		<!-- Supporting Stats Row -->
 		<div class="grid w-full grid-cols-3 gap-4">
-			{#each supportingStats as stat, i}
+			{#each supportingStats as stat, i (stat.id)}
 				<div
 					class="overflow-visible text-center {i === 1 ? 'border-r border-l border-white/10' : ''}"
 				>
