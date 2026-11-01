@@ -212,6 +212,16 @@
 		transition: all 0.2s ease-out;
 	}
 
+	/* The button is a large hit area around a small dot, so the ring goes on the dot. */
+	.dot:focus-visible {
+		outline: none;
+	}
+
+	.dot:focus-visible::before {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 3px;
+	}
+
 	.dot.active::before {
 		background: var(--color-accent);
 		transform: scale(1.2);

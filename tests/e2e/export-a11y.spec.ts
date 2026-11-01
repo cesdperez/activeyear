@@ -240,6 +240,24 @@ test.describe('Export carousel', () => {
 		}
 	});
 
+	test('a focused dot gets a round ring around the dot, not its hit area', async ({ page }) => {
+		await uploadSample(page);
+		await page.getByRole('button', { name: 'Previous slide' }).focus();
+		await page.keyboard.press('Tab');
+
+		const dot = page.getByRole('button', { name: 'Go to slide 1' });
+		await expect(dot).toBeFocused();
+		const ring = await dot.evaluate((el) => {
+			const before = getComputedStyle(el, '::before');
+			return {
+				button: getComputedStyle(el).outlineStyle,
+				dot: before.outlineStyle,
+				radius: before.borderRadius
+			};
+		});
+		expect(ring).toEqual({ button: 'none', dot: 'solid', radius: '9999px' });
+	});
+
 	test('arrow keys change slides when the carousel has focus', async ({ page }) => {
 		await uploadSample(page);
 
