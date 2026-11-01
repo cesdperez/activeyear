@@ -21,6 +21,7 @@ pnpm format                                # Prettier write
 - **Unit tests** (`*.test.ts`): Edge cases, complex logic, and scenarios too slow for E2E.
 - E2E runs against `pnpm preview` (`wrangler pages dev` on the build), so `_headers` and the CSP are enforced. Playwright reuses whatever already listens on port 4173, and `workerd` can outlive a killed `wrangler`: stop both before a run on a new build.
 - A running `wrangler pages dev` keeps serving the old build after `pnpm build`; restart it. Parallel E2E runs (several worktrees) each need their own port through an uncommitted config override of `baseURL` and `webServer`, or they test each other's builds. The `webkit` project runs only the specs it matches; it needs `npx playwright install webkit`.
+- Playwright runs with `reducedMotion: 'reduce'`, which turns on the reduced-motion rule in `src/app.css`: every style change becomes a 0.01ms transition, so layout read right after a change still shows the old values. Poll, or measure inside a transition-free area.
 - After changes: run `pnpm test:run` and `pnpm check`. Before merging to main: run `pnpm test:all`.
 
 ## Code Style
