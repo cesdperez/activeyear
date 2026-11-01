@@ -42,6 +42,12 @@ export function formatCount(count: number): string {
 	return count.toLocaleString('en-US');
 }
 
+/** Whole percent, but "<1%" for a share that is above zero and would round to 0%. */
+export function formatPercentOfYear(percent: number): string {
+	if (percent > 0 && percent < 0.5) return '<1%';
+	return `${Math.round(percent)}%`;
+}
+
 /**
  * Format calories with thousands separator
  */

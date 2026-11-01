@@ -12,6 +12,7 @@ import {
 	calculatePizzaSlices,
 	formatActivityCount,
 	formatCount,
+	formatPercentOfYear,
 	pluralize
 } from './format.js';
 
@@ -177,6 +178,17 @@ describe('formatCount', () => {
 	it('groups thousands like the other stats', () => {
 		expect(formatCount(7)).toBe('7');
 		expect(formatCount(1008)).toBe('1,008');
+	});
+});
+
+describe('formatPercentOfYear', () => {
+	it('rounds to a whole percent', () => {
+		expect(formatPercentOfYear(20.4)).toBe('20%');
+		expect(formatPercentOfYear(0)).toBe('0%');
+	});
+
+	it('shows a non-zero share under one percent as <1%', () => {
+		expect(formatPercentOfYear(0.27)).toBe('<1%');
 	});
 });
 
