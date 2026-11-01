@@ -47,7 +47,7 @@
 	}
 
 	.theme-minimalist :global(.text-\[var\(--color-text-dim\)\]) {
-		color: #999 !important;
+		color: #6b6b6b !important;
 	}
 
 	:global(.stat-value) {
@@ -188,6 +188,10 @@
 		filter: none;
 	}
 
+	.theme-minimalist :global(.streak-label) {
+		color: #525252;
+	}
+
 	.theme-retro :global(.donut-segment) {
 		filter: drop-shadow(0 0 12px var(--color-accent)) !important;
 	}
@@ -222,6 +226,12 @@
 		background: transparent;
 		border: none;
 		box-shadow: none;
+	}
+
+	/* Gold on off-white is too faint to read as an icon. */
+	.theme-minimalist :global(.record-icon-compact),
+	.theme-minimalist :global(.highlight-star) {
+		color: #a16207;
 	}
 
 	/* Theme-specific background/stroke overrides */

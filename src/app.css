@@ -46,9 +46,9 @@
 	--color-text-primary: #0a0a0b;
 	--color-text-muted: #52525b;
 	--color-text-dim: #71717a;
-	--color-accent: #ef4444;
-	--color-accent-glow: rgba(239, 68, 68, 0.4);
-	--color-accent-subtle: rgba(239, 68, 68, 0.1);
+	--color-accent: #b91c1c;
+	--color-accent-glow: rgba(185, 28, 28, 0.4);
+	--color-accent-subtle: rgba(185, 28, 28, 0.1);
 }
 
 /* Theme: Retro - 8-bit arcade aesthetic */

@@ -141,7 +141,7 @@
 			ringStroke: '#ff6b6b',
 			ringDashArray: '20 10',
 			ringClass: 'streak-ring',
-			colorClass: 'text-[#ff6b6b]',
+			colorClass: 'streak-label text-[#ff6b6b]',
 			label: 'Day Streak',
 			caption: 'most consecutive active days'
 		})}
