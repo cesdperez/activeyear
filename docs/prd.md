@@ -6,7 +6,7 @@ Browser-only "Year in Sport" infographic generator. Users upload activity data (
 
 **Positioning:** *If Strava Wrapped is a summary, ActiveYear is a trophy.*
 
-**Scope:** 2025 activities only. Multi-year CSVs are filtered to current year.
+**Scope:** one season, `TARGET_YEAR` in `src/lib/constants/time.ts`. Multi-year CSVs are filtered to the selected year.
 
 ---
 
@@ -76,7 +76,7 @@ All exports include watermark: `activeyear.app` (placeholder domain).
 **Garmin Connect:**
 1. Log in at connect.garmin.com
 2. Go to **Activities → All Activities**
-3. Set filter to **2025** (or scroll to load all 2025 activities)
+3. Set filter to the target year (or scroll to load all of that year's activities)
 4. **Important:** Scroll down until all activities are loaded (Garmin only exports visible rows)
 5. Click **Export CSV** (top-right icon)
 
@@ -107,7 +107,7 @@ All exports include watermark: `activeyear.app` (placeholder domain).
 | Feature | Status |
 |---------|--------|
 | Garmin CSV parsing | Required |
-| 2025 filter | Required |
+| Target-year filter | Required |
 | Core metrics (distance, time, calories, elevation) | Required |
 | Personal records (3 types) | Required |
 | Active days + longest streak | Required |

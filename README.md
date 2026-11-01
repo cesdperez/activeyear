@@ -18,7 +18,7 @@
 
 ## 📖 Overview
 
-**ActiveYear** is a web tools that takes your Garmin (and maybe next year Strava) activity export CSVs and generates beautiful, social-media-ready stats cards for your 2025 year in sport. 
+**ActiveYear** is a web tools that takes your Garmin (and maybe next year Strava) activity export CSVs and generates beautiful, social-media-ready stats cards for your year in sport. 
 
 Whether you're a runner, cyclist, or multi-sport athlete, visualize your hard work with themes like **Neon**, **Minimalist**, and **Retro**.
 
@@ -36,7 +36,7 @@ Whether you're a runner, cyclist, or multi-sport athlete, visualize your hard wo
 
 1. **Export your Data (Garmin)**:
    - Go to [Garmin Connect](https://connect.garmin.com) -> **Activities** -> **All Activities**.
-   - Filter by **2025**.
+   - Filter by the year you want to review.
    - **Important**: Scroll down until all activities are loaded in the table.
    - Click the "Export CSV" icon (top right).
 2. **Upload**: Drag & drop your `Activities.csv` file into ActiveYear.
