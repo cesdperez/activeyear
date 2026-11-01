@@ -38,7 +38,7 @@ export async function exportToPng(element: HTMLElement, options: ExportOptions):
 		link.click();
 	} catch (error) {
 		console.error('Failed to export image:', error);
-		throw new Error('Failed to generate image. Please try again.');
+		throw new Error('Failed to generate image. Please try again.', { cause: error });
 	}
 }
 
