@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { appStore } from '#lib/stores/app.svelte.js';
-	import PersonalRecordCard from '#lib/components/PersonalRecordCard.svelte';
+	import RecordCard from '#lib/components/widgets/RecordCard.svelte';
 	import { formatDistance, formatDuration, formatCalories } from '#lib/utils/format.js';
 	import { Fire, Trophy, Hourglass } from 'phosphor-svelte';
 	import SectionHeading from './SectionHeading.svelte';
@@ -12,40 +12,34 @@
 
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
 			{#if appStore.records.longestDistance}
-				<PersonalRecordCard
+				<RecordCard
+					variant="dashboard"
+					icon={Trophy}
 					value={formatDistance(appStore.records.longestDistance.value, appStore.unit)}
 					label="Longest Distance"
-					detail={appStore.records.longestDistance.activity.title}
+					activityTitle={appStore.records.longestDistance.activity.title}
 					delay={450}
-				>
-					{#snippet icon()}
-						<Trophy weight="fill" />
-					{/snippet}
-				</PersonalRecordCard>
+				/>
 			{/if}
 			{#if appStore.records.longestDuration}
-				<PersonalRecordCard
+				<RecordCard
+					variant="dashboard"
+					icon={Hourglass}
 					value={formatDuration(appStore.records.longestDuration.value)}
 					label="Longest Duration"
-					detail={appStore.records.longestDuration.activity.title}
+					activityTitle={appStore.records.longestDuration.activity.title}
 					delay={500}
-				>
-					{#snippet icon()}
-						<Hourglass weight="fill" />
-					{/snippet}
-				</PersonalRecordCard>
+				/>
 			{/if}
 			{#if appStore.records.biggestBurn}
-				<PersonalRecordCard
+				<RecordCard
+					variant="dashboard"
+					icon={Fire}
 					value={formatCalories(appStore.records.biggestBurn.value)}
 					label="Biggest Burn"
-					detail={appStore.records.biggestBurn.activity.title}
+					activityTitle={appStore.records.biggestBurn.activity.title}
 					delay={550}
-				>
-					{#snippet icon()}
-						<Fire weight="fill" />
-					{/snippet}
-				</PersonalRecordCard>
+				/>
 			{/if}
 		</div>
 	</section>
