@@ -10,7 +10,7 @@
 		<Dashboard />
 	{:else}
 		<!-- Upload State -->
-		<div class="flex min-h-screen flex-col items-center justify-center px-4">
+		<div class="flex min-h-screen flex-col items-center justify-center px-4 py-12">
 			<div class="mb-8 text-center">
 				<h1 class="glow-text mb-3 text-4xl font-bold md:text-5xl">ActiveYear</h1>
 				<p class="text-lg text-zinc-400">Your {TARGET_YEAR} in Sport</p>
@@ -20,7 +20,7 @@
 				<FileUpload />
 				<div class="mt-4 text-center">
 					<button
-						class="text-sm text-zinc-500 transition-colors duration-200 hover:text-cyan-400"
+						class="text-sm text-zinc-400 transition-colors duration-200 hover:text-cyan-400"
 						onclick={() => appStore.loadDemoData()}
 					>
 						No CSV file? See how it works with demo data
@@ -29,14 +29,15 @@
 			</div>
 
 			<div class="mt-12 max-w-md text-center">
-				<h2 class="mb-4 text-sm font-medium text-zinc-400">How to get your data</h2>
-				<ol class="space-y-2 text-left text-sm text-zinc-500">
+				<h2 class="mb-4 text-sm font-medium text-zinc-300">How to get your data</h2>
+				<ol class="space-y-2 text-left text-sm text-zinc-400">
 					<li class="flex gap-2">
 						<span class="font-mono text-cyan-400">1.</span>
 						Log in at
 						<a
 							href="https://connect.garmin.com"
 							target="_blank"
+							rel="noopener noreferrer"
 							class="text-cyan-400 hover:underline">connect.garmin.com</a
 						>
 					</li>
