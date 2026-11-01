@@ -67,6 +67,19 @@ describe('appStore', () => {
 		expect(appStore.status).toBe('ready');
 	});
 
+	it('lists highlights by date whatever the row order of the file', async () => {
+		const csv = [
+			'Activity Type,Date,Favorite,Title,Distance,Calories,Time,Total Ascent',
+			`Running,${TARGET_YEAR}-09-01 08:00:00,true,September,10.0,600,00:50:00,100`,
+			`Running,${TARGET_YEAR}-02-01 08:00:00,true,February,10.0,600,00:50:00,100`,
+			`Running,${TARGET_YEAR}-05-01 08:00:00,true,May,10.0,600,00:50:00,100`
+		].join('\n');
+
+		await appStore.processFile(csvFile(csv));
+
+		expect(appStore.highlights.map((a) => a.title)).toEqual(['February', 'May', 'September']);
+	});
+
 	it('derives stats and highlights from the demo activities', () => {
 		appStore.loadDemoData();
 

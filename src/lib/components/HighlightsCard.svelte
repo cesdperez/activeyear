@@ -30,11 +30,7 @@
 	let area = $state<HTMLElement>();
 	let list = $state<HTMLElement>();
 
-	let highlights = $derived(
-		appStore.highlights
-			.slice(0, limit)
-			.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-	);
+	let highlights = $derived(appStore.highlights.slice(0, limit));
 	let hiddenCount = $derived(appStore.highlights.length - highlights.length);
 	let compact = $derived(
 		isCompactHighlights(appStore.highlights.slice(0, HIGHLIGHTS_LIMIT).map(titleOf))
