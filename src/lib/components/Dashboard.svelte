@@ -1,32 +1,23 @@
 <script lang="ts">
 	import { appStore } from "#lib/stores/app.svelte.js";
-	import StatCard from "./StatCard.svelte";
 	import PersonalRecordCard from "./PersonalRecordCard.svelte";
 	import ExportPanel from "./ExportPanel.svelte";
 	import ConfettiRain from "#lib/components/dashboard/ConfettiRain.svelte";
 	import DashboardToolbar from "#lib/components/dashboard/DashboardToolbar.svelte";
+	import DashboardHeader from "#lib/components/dashboard/DashboardHeader.svelte";
+	import MainStats from "#lib/components/dashboard/MainStats.svelte";
+	import ConsistencyStats from "#lib/components/dashboard/ConsistencyStats.svelte";
 	import {
 		formatDistance,
 		formatDuration,
 		formatCalories,
-		formatElevation,
-		formatEarthLaps,
-		formatEverests,
-		formatPizzaSlices,
-		formatLotRMarathons,
 	} from "#lib/utils/format.js";
 
 	// Phosphor icons
 	import {
-		Ruler,
-		Timer,
 		Fire,
-		Mountains,
-		CalendarCheck,
-		Lightning,
 		Trophy,
 		Hourglass,
-		ArrowDown,
 		Target,
 		Star,
 	} from "phosphor-svelte";
@@ -71,141 +62,9 @@
 >
 	<ConfettiRain />
 	<DashboardToolbar />
-	<!-- Header -->
-	<header class="text-center mb-16 md:mb-24">
-		<h1
-			class="text-5xl md:text-7xl font-bold mb-6 glow-text tracking-tight"
-		>
-			Your {appStore.selectedYear}
-		</h1>
-		<div
-			class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[var(--color-surface-elevated)] border border-[rgba(255,255,255,0.05)]"
-		>
-			<span class="text-[var(--color-accent)] font-mono font-bold"
-				>{appStore.stats?.activityCount}</span
-			>
-			<span class="text-[var(--color-text-muted)]">activities across</span
-			>
-			<span class="text-[var(--color-accent)] font-mono font-bold"
-				>{appStore.stats?.activeDays}</span
-			>
-			<span class="text-[var(--color-text-muted)]">active days</span>
-		</div>
-
-		<div class="mt-8">
-			<button
-				class="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-accent)] hover:text-white transition-colors duration-200 group"
-				onclick={() => {
-					document
-						.getElementById("export-panel")
-						?.scrollIntoView({ behavior: "smooth" });
-				}}
-			>
-				<span>Jump to Export</span>
-				<ArrowDown
-					class="w-4 h-4 group-hover:translate-y-1 transition-transform"
-				/>
-			</button>
-		</div>
-	</header>
-
-	<!-- Main Stats Grid -->
-	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-		<StatCard
-			value={formatDistance(
-				appStore.stats?.totalDistance ?? 0,
-				appStore.unit,
-			)}
-			label="Total Distance"
-			delay={0}
-			equivalent={`🌍 ${formatEarthLaps(appStore.stats?.totalDistance ?? 0)}`}
-		>
-			{#snippet icon()}
-				<Ruler weight="bold" />
-			{/snippet}
-		</StatCard>
-
-		<StatCard
-			value={formatElevation(
-				appStore.stats?.totalElevation ?? 0,
-				appStore.unit,
-			)}
-			label="Elevation Gained"
-			delay={150}
-			equivalent={`🏔️ ${formatEverests(appStore.stats?.totalElevation ?? 0)}`}
-		>
-			{#snippet icon()}
-				<Mountains weight="bold" />
-			{/snippet}
-		</StatCard>
-
-		<StatCard
-			value={formatDuration(appStore.stats?.totalDuration ?? 0)}
-			label="Time Active"
-			delay={50}
-			equivalent={`💍 ${formatLotRMarathons(appStore.stats?.totalDuration ?? 0)}`}
-		>
-			{#snippet icon()}
-				<Timer weight="bold" />
-			{/snippet}
-		</StatCard>
-
-		<StatCard
-			value={formatCalories(appStore.stats?.totalCalories ?? 0)}
-			label="Calories Burned"
-			delay={100}
-			equivalent={`🍕 ${formatPizzaSlices(appStore.stats?.totalCalories ?? 0)}`}
-		>
-			{#snippet icon()}
-				<Fire weight="bold" />
-			{/snippet}
-		</StatCard>
-	</div>
-
-	<!-- Consistency Stats -->
-	<div class="grid grid-cols-2 gap-4 md:gap-6 mb-16 max-w-2xl mx-auto">
-		<div
-			class="stat-card p-4 md:p-6 flex items-center gap-4 group"
-			style="animation-delay: 350ms"
-		>
-			<div class="text-[var(--color-accent)] shrink-0">
-				<CalendarCheck class="w-6 h-6 md:w-8 md:h-8" weight="bold" />
-			</div>
-			<div>
-				<div
-					class="text-2xl md:text-3xl font-bold text-white leading-none"
-				>
-					{appStore.stats?.activeDays ?? 0}
-				</div>
-				<div
-					class="text-xs md:text-sm text-[var(--color-text-muted)] font-medium uppercase tracking-wider"
-				>
-					Active Days
-				</div>
-			</div>
-		</div>
-
-		<div
-			class="stat-card p-4 md:p-6 flex items-center gap-4 group"
-			style="animation-delay: 400ms"
-		>
-			<div class="text-[var(--color-accent)] shrink-0">
-				<Lightning class="w-6 h-6 md:w-8 md:h-8" weight="bold" />
-			</div>
-			<div>
-				<div
-					class="text-2xl md:text-3xl font-bold text-white leading-none"
-				>
-					{appStore.stats?.longestStreak ?? 0}
-				</div>
-				<div
-					class="text-xs md:text-sm text-[var(--color-text-muted)] font-medium uppercase tracking-wider"
-				>
-					most consecutive active days
-				</div>
-			</div>
-		</div>
-	</div>
+	<DashboardHeader />
+	<MainStats />
+	<ConsistencyStats />
 
 	<!-- Weekly Activity Pattern -->
 	{#if appStore.weeklyPattern.some((v) => v > 0)}
