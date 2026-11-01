@@ -1,4 +1,5 @@
 import type {
+	ActivityType,
 	BreakdownMetric,
 	SportBreakdown,
 	WeeklyPattern,
@@ -10,7 +11,7 @@ import {
 	TOP_DAYS_COUNT,
 	TOP_SPORTS_LIMIT
 } from '#lib/constants/breakdown.js';
-import { OTHER_SPORT_COLOR, sportColors } from '#lib/constants/sports.js';
+import { OTHER_SPORT_COLOR, sportColors, sportNames } from '#lib/constants/sports.js';
 import { ONE_HOUR_IN_SECONDS } from '#lib/constants/time.js';
 import { consolidateBreakdown, mergeIntoOther } from './activity.js';
 import { donutSegments, scaledBarHeight, topIndices } from './charts.js';
@@ -56,12 +57,26 @@ export function selectTopSports(
 	return [...kept, other].sort((a, b) => b[metric] - a[metric]);
 }
 
-/** One colour per sport, matching between the donut and the bars. "Other" is always neutral. */
-export function sportColorsFor(sports: SportBreakdown[]): string[] {
-	let named = 0;
-	return sports.map((s) =>
-		s.type === 'other' ? OTHER_SPORT_COLOR : sportColors[named++ % sportColors.length]
-	);
+export type SportColors = Record<ActivityType, string>;
+
+/**
+ * One colour per sport for the whole year, ranked by activity count with ties by name, so a sport
+ * keeps its colour in both metrics and on every view. "Other" and sports not in `breakdown` are
+ * neutral.
+ */
+export function sportColorsFor(breakdown: SportBreakdown[]): SportColors {
+	const colors = Object.fromEntries(
+		Object.keys(sportNames).map((type) => [type, OTHER_SPORT_COLOR])
+	) as SportColors;
+
+	consolidateBreakdown(breakdown)
+		.filter((s) => s.type !== 'other')
+		.sort((a, b) => b.count - a.count || a.type.localeCompare(b.type))
+		.forEach((s, i) => {
+			colors[s.type] = sportColors[i % sportColors.length];
+		});
+
+	return colors;
 }
 
 /**
@@ -70,12 +85,11 @@ export function sportColorsFor(sports: SportBreakdown[]): string[] {
  */
 export function sportDonutSegments(
 	sports: SportBreakdown[],
+	colors: SportColors,
 	metric: BreakdownMetric,
 	circumference: number,
 	variant: WidgetVariant
 ): SportDonutSegment[] {
-	const colors = sportColorsFor(sports);
-
 	return donutSegments(
 		sports.map((s) => s[metric]),
 		circumference
@@ -83,7 +97,7 @@ export function sportDonutSegments(
 		.map(({ share, offset }, i) => ({
 			length: share * circumference - DONUT_SEGMENT_GAP[variant],
 			offset,
-			color: colors[i]
+			color: colors[sports[i].type]
 		}))
 		.filter(({ length }) => length > 0)
 		.map(({ length, offset, color }) => ({
