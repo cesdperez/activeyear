@@ -2,7 +2,7 @@
 	import { sportNames, sportIcons } from '#lib/constants/sports.js';
 	import { formatDistance, formatDuration } from '#lib/utils/format.js';
 	import type { Activity, Unit } from '#lib/types/index.js';
-	import { Target, Star } from 'phosphor-svelte';
+	import { Star } from 'phosphor-svelte';
 
 	interface Props {
 		activity: Activity;
@@ -12,7 +12,7 @@
 
 	let { activity, unit, delay }: Props = $props();
 
-	const IconComponent = $derived(sportIcons[activity.type] ?? Target);
+	const IconComponent = $derived(sportIcons[activity.type]);
 </script>
 
 <div class="stat-card group flex items-center gap-4 p-4" style="animation-delay: {delay}ms">
@@ -36,7 +36,7 @@
 			<span
 				class="rounded-full bg-[var(--color-surface-elevated)] px-2 py-0.5 text-xs tracking-wider uppercase"
 			>
-				{sportNames[activity.type] ?? activity.type}
+				{sportNames[activity.type]}
 			</span>
 		</div>
 	</div>

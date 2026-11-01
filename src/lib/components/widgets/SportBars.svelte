@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Target } from 'phosphor-svelte';
 	import { sportNames, sportIcons, sportColors } from '#lib/constants/sports.js';
 	import { formatDuration } from '#lib/utils/format.js';
 	import type { BreakdownMetric, SportBreakdown, WidgetVariant } from '#lib/types/index.js';
@@ -16,7 +15,7 @@
 
 <div class={isDashboard ? 'w-full max-w-2xl flex-1 space-y-6' : 'flex-1 space-y-6'}>
 	{#each sports as sport, i (sport.type)}
-		{@const IconComponent = sportIcons[sport.type] ?? Target}
+		{@const IconComponent = sportIcons[sport.type]}
 		{@const value = sport[metric]}
 		{@const formattedValue = metric === 'count' ? value : formatDuration(value)}
 		{@const percentage = (value / maxValue) * 100}
@@ -43,7 +42,7 @@
 							? 'font-bold tracking-wide text-white uppercase'
 							: 'text-[24px] font-bold tracking-wide text-[var(--color-text-primary)] uppercase'}
 					>
-						{sportNames[sport.type] ?? sport.type}
+						{sportNames[sport.type]}
 					</span>
 				</div>
 				<div class="text-right">

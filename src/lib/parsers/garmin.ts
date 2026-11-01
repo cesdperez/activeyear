@@ -350,10 +350,16 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 	return { activities, errors };
 }
 
-// Substring match on the raw first line, so it also holds when each row is wrapped in quotes.
+// Quotes are dropped before splitting so a header row wrapped whole in quotes still matches.
 function hasGarminHeaders(csvContent: string): boolean {
 	const firstLine = csvContent.trimStart().split(/\r?\n/, 1)[0];
-	return KEY_HEADERS.filter((h) => firstLine.includes(h)).length > 1;
+	const headers = new Set(
+		firstLine
+			.replaceAll('"', '')
+			.split(',')
+			.map((h) => h.trim())
+	);
+	return KEY_HEADERS.filter((h) => headers.has(h)).length > 1;
 }
 
 export const garminParser: ActivityParser = {

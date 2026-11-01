@@ -19,7 +19,8 @@ import type {
 export type AppStatus = 'idle' | 'parsing' | 'ready' | 'error';
 
 class AppStore {
-	#activities = $state<Activity[]>([]);
+	// Raw because the list is only ever replaced whole, and the derived stats read every activity.
+	#activities = $state.raw<Activity[]>([]);
 	#highlights = $derived(this.#activities.filter((a) => a.favorite));
 	#stats = $derived(this.#activities.length > 0 ? calculateYearStats(this.#activities) : null);
 	#records = $derived(

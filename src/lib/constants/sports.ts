@@ -11,7 +11,7 @@ import {
 	Waves,
 	Anchor
 } from 'phosphor-svelte';
-import type { ActivityType } from '../types/index.js';
+import type { ActivityType } from '#lib/types/index.js';
 
 // Sport type display names
 export const sportNames: Record<ActivityType, string> = {

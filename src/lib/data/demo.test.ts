@@ -38,17 +38,16 @@ describe('demoActivities', () => {
 	});
 
 	describe('in other timezones', () => {
-		const originalTz = process.env.TZ;
 		const weeklyPattern = calculateWeeklyPattern(demoActivities);
 
 		afterEach(() => {
-			process.env.TZ = originalTz;
+			vi.unstubAllEnvs();
 		});
 
 		it.each(['Pacific/Kiritimati', 'Pacific/Pago_Pago', 'America/New_York'])(
 			'keeps the same weekly pattern and day counts in %s',
 			async (timeZone) => {
-				process.env.TZ = timeZone;
+				vi.stubEnv('TZ', timeZone);
 				vi.resetModules();
 				const { demoActivities: shifted } = await import('./demo.js');
 				const shiftedStats = calculateYearStats(shifted);

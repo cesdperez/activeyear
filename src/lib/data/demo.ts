@@ -1,19 +1,19 @@
-import { TARGET_YEAR } from '../constants/time.js';
-import { daysInYear } from '../utils/date.js';
-import type { Activity, ActivityType } from '../types/index.js';
+import { TARGET_YEAR } from '#lib/constants/time.js';
+import { daysInYear } from '#lib/utils/date.js';
+import type { Activity, ActivityType } from '#lib/types/index.js';
 
 interface SessionPlan {
 	type: ActivityType;
 	count: number;
 	titles: string[];
-	/** Averages per session; each session scales them by the same random factor. */
+	// Averages per session; each session scales them by the same random factor.
 	distance: number;
 	duration: number;
 	calories: number;
 	elevation: number;
 }
 
-// Chosen so the totals and weekday shape stay near the earlier hand-written demo.
+// Fixed so every load shows the same demo.
 const DEMO_SEED = 2292;
 const ACTIVE_DAYS = 180;
 const DOUBLE_SESSION_DAYS = 65;
@@ -22,7 +22,7 @@ const LONGEST_STREAK = 12;
 const TOTAL_DURATION = 150 * 60 * 60;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** Monday first, like `WeeklyPattern`: busy weekends, quiet Fridays. */
+// Monday first, like `WeeklyPattern`: busy weekends, quiet Fridays.
 const ACTIVE_DAY_WEIGHTS = [27, 24, 26, 22, 18, 33, 30];
 const DOUBLE_SESSION_WEIGHTS = [11, 8, 10, 8, 6, 11, 11];
 
@@ -103,7 +103,7 @@ function seededRandom(seed: number): () => number {
 	};
 }
 
-/** Weighted sampling without replacement: a higher weight tends to sort earlier. */
+// Weighted sampling without replacement: a higher weight tends to sort earlier.
 function weightedOrder(
 	indices: number[],
 	weightOf: (index: number) => number,
@@ -222,7 +222,7 @@ function runLength(active: Set<number>, index: number): number {
 	return length;
 }
 
-/** Active day indices: the fixed dates, a streak block, then weighted picks kept shorter than the block. */
+// Active day indices: the fixed dates, a streak block, then weighted picks kept shorter than the block.
 function pickActiveDays(fixedDays: number[], random: () => number): Set<number> {
 	const block = streakBlock();
 	const active = new Set([...fixedDays, ...block]);
@@ -285,7 +285,7 @@ function sumDurations(activities: Activity[]): number {
 	return activities.reduce((sum, a) => sum + a.duration, 0);
 }
 
-/** Scales the durations to add up to `total`, giving the rounding remainder to the last one. */
+// Scales the durations to add up to `total`, giving the rounding remainder to the last one.
 function withTotalDuration(activities: Activity[], total: number): Activity[] {
 	const ratio = total / sumDurations(activities);
 	const scaled = activities.map((a) => ({ ...a, duration: Math.round(a.duration * ratio) }));
