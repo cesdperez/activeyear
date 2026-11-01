@@ -31,6 +31,7 @@
 		{
 			id: 'distance',
 			label: 'Total Distance',
+			amount: appStore.stats?.totalDistance ?? 0,
 			value: formatDistance(appStore.stats?.totalDistance ?? 0, appStore.unit),
 			icon: Ruler,
 			equivalent: `🌍 ${formatEarthLaps(appStore.stats?.totalDistance ?? 0)}`
@@ -38,6 +39,7 @@
 		{
 			id: 'elevation',
 			label: 'Elevation',
+			amount: appStore.stats?.totalElevation ?? 0,
 			value: formatElevation(appStore.stats?.totalElevation ?? 0, appStore.unit),
 			icon: Mountains,
 			equivalent: `🏔️ ${formatEverests(appStore.stats?.totalElevation ?? 0)}`
@@ -45,6 +47,7 @@
 		{
 			id: 'duration',
 			label: 'Time Active',
+			amount: appStore.stats?.totalDuration ?? 0,
 			value: formatDuration(appStore.stats?.totalDuration ?? 0),
 			icon: Timer,
 			equivalent: `💍 ${formatLotRMarathons(appStore.stats?.totalDuration ?? 0)}`
@@ -52,6 +55,7 @@
 		{
 			id: 'calories',
 			label: 'Calories',
+			amount: appStore.stats?.totalCalories ?? 0,
 			value: formatCalories(appStore.stats?.totalCalories ?? 0),
 			icon: Fire,
 			equivalent: `🍕 ${formatPizzaSlices(appStore.stats?.totalCalories ?? 0)}`
@@ -60,7 +64,13 @@
 
 	let heroStat = $derived(allStats.find((s) => s.id === appStore.summaryMetric) || allStats[0]);
 
-	let supportingStats = $derived(allStats.filter((s) => s.id !== heroStat.id));
+	let supportingStats = $derived(allStats.filter((s) => s.id !== heroStat.id && s.amount > 0));
+
+	// Middle cells draw both dividers so they sit right against the middle stat.
+	function dividerClass(index: number, count: number): string {
+		if (count === 2 && index === 1) return 'border-l';
+		return index > 0 && index < count - 1 ? 'border-r border-l' : '';
+	}
 </script>
 
 <ExportCardBase variant="summary" title="YEAR IN SPORT">
@@ -139,7 +149,7 @@
 			{:else}
 				{@const TopIcon = topSportIcon}
 				<div class="flex h-full w-full items-center justify-center text-[var(--color-accent)]">
-					<TopIcon class="h-56 w-56" weight="bold" />
+					<TopIcon class="h-56 w-56" weight="bold" aria-hidden="true" />
 				</div>
 			{/if}
 		</div>
@@ -149,7 +159,7 @@
 	<div class="flex flex-1 flex-col items-center justify-start gap-4 text-center">
 		<div class="mb-[60px]">
 			<div class="mb-4 flex items-center justify-center gap-4 text-[var(--color-accent)]">
-				<heroStat.icon class="h-16 w-16" weight="bold" />
+				<heroStat.icon class="h-16 w-16" weight="bold" aria-hidden="true" />
 			</div>
 			<div
 				class="stat-value text-[140px] leading-none font-bold -tracking-[0.04em] text-[var(--color-text-primary)]"
@@ -170,12 +180,22 @@
 		<div class="mb-[72px] h-2 w-64 rounded-full bg-[var(--color-accent)] opacity-40"></div>
 
 		<!-- Supporting Stats Row -->
-		<div class="grid w-full grid-cols-3 gap-4">
+		<div
+			class="grid w-full gap-4"
+			style="grid-template-columns: repeat({supportingStats.length}, minmax(0, 1fr));"
+		>
 			{#each supportingStats as stat, i (stat.id)}
 				<div
-					class="overflow-visible text-center {i === 1 ? 'border-r border-l border-white/10' : ''}"
+					class="overflow-visible border-white/10 text-center {dividerClass(
+						i,
+						supportingStats.length
+					)}"
 				>
-					<stat.icon class="mx-auto mb-3 h-12 w-12 text-[var(--color-text-dim)]" weight="bold" />
+					<stat.icon
+						class="mx-auto mb-3 h-12 w-12 text-[var(--color-text-dim)]"
+						weight="bold"
+						aria-hidden="true"
+					/>
 					<div
 						class="stat-value text-[48px] leading-none font-bold text-[var(--color-text-primary)]"
 					>

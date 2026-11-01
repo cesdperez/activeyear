@@ -22,6 +22,11 @@
 		glow: 'var(--color-accent-glow)'
 	};
 
+	// The neon green reads on the dark themes but almost vanishes on Minimal's white card.
+	const exportTopDayFill = $derived(
+		theme === 'minimalist' ? 'var(--color-text-primary)' : TOP_DAY_FILL.solid
+	);
+
 	const barContainerHeight = $derived(variant === 'dashboard' ? 160 : 100);
 
 	const hasActivity = $derived(pattern.some((v) => v > 0));
@@ -75,7 +80,7 @@
 						<div
 							class="weekly-bar w-full rounded-t-lg transition-all"
 							style="height: {barHeight}px; background: {isTopDay
-								? '#00ff88'
+								? exportTopDayFill
 								: 'var(--color-accent)'}; opacity: {theme === 'minimalist'
 								? 0.8
 								: 0.4 + (heightPercent / 100) * 0.6};"

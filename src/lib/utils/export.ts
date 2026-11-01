@@ -1,19 +1,14 @@
 import { domToPng } from 'modern-screenshot';
 import type { Theme } from '#lib/types/index.js';
-import {
-	HIGHLIGHT_TITLE_WRAPS_AFTER_CHARS,
-	HIGHLIGHTS_COMPACT_FROM,
-	HIGHLIGHTS_COMPACT_LONG_TITLES_FROM,
-	NAME_FONT_SIZE,
-	NAME_LONG_AFTER_CHARS,
-	TIMELINE_GAP
-} from '#lib/constants/export.js';
-import { loadAppFonts } from './fonts.js';
+import { NAME_FONT_SIZE, NAME_LONG_AFTER_CHARS, TIMELINE_GAP } from '#lib/constants/export.js';
+import { inlinedFontFaceCss } from './fonts.js';
 
 export interface ExportOptions {
 	filename: string;
 	scale?: number;
 	backgroundColor?: string;
+	/** Export even when the app fonts cannot be embedded, letting the image fall back. */
+	allowFallbackFonts?: boolean;
 }
 
 const THEME_BACKGROUNDS: Record<Theme, string> = {
@@ -26,10 +21,18 @@ const THEME_BACKGROUNDS: Record<Theme, string> = {
  * Export an HTML element to PNG and trigger download
  */
 export async function exportToPng(element: HTMLElement, options: ExportOptions): Promise<void> {
-	const { filename, scale = 2, backgroundColor = THEME_BACKGROUNDS.neon } = options;
+	const {
+		filename,
+		scale = 2,
+		backgroundColor = THEME_BACKGROUNDS.neon,
+		allowFallbackFonts = false
+	} = options;
 
-	// modern-screenshot embeds fonts by refetching them and skips any it cannot fetch.
-	await loadAppFonts();
+	// Left to itself, modern-screenshot refetches every font file and silently skips failures.
+	const fontCss = await inlinedFontFaceCss().catch((error) => {
+		if (allowFallbackFonts) return undefined;
+		throw error;
+	});
 
 	try {
 		const dataUrl = await domToPng(element, {
@@ -39,7 +42,7 @@ export async function exportToPng(element: HTMLElement, options: ExportOptions):
 			scale,
 			style: { textRendering: 'geometricPrecision' },
 			backgroundColor,
-			// No font.preferredFormat: modern-screenshot 4.7 then drops the src of every other @font-face.
+			font: fontCss ? { cssText: fontCss } : undefined,
 			filter: (node) => !(node instanceof HTMLElement && node.dataset.exportIgnore),
 			onCloneEachNode: keepLineClamp
 		});
@@ -82,15 +85,6 @@ export function exportFileStem(name: string, year: number): string {
 
 export function nameFontSize(name: string): number {
 	return name.length > NAME_LONG_AFTER_CHARS ? NAME_FONT_SIZE.long : NAME_FONT_SIZE.short;
-}
-
-/** Many highlights, or several whose titles wrap, only fit the card in the compact layout. */
-export function isCompactHighlights(titles: string[]): boolean {
-	if (titles.length >= HIGHLIGHTS_COMPACT_FROM) return true;
-	return (
-		titles.length >= HIGHLIGHTS_COMPACT_LONG_TITLES_FROM &&
-		titles.some((t) => t.length > HIGHLIGHT_TITLE_WRAPS_AFTER_CHARS)
-	);
 }
 
 /** Gap between timeline items so they spread over `available` height, within sensible bounds. */

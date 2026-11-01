@@ -1,4 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
+import { TIMELINE_GAP } from '../../src/lib/constants/export.js';
+import { TARGET_YEAR } from '../../src/lib/constants/time.js';
 import { garminCsv, overflowingCardElements, showSlide, uploadCsv } from './helpers.js';
 
 const CARDS = ['summary', 'breakdown', 'highlights'] as const;
@@ -45,6 +47,18 @@ function lowContrastText(page: Page): Promise<string[]> {
 	});
 }
 
+/** Whether the highlights timeline has room for one more item at the minimum gap. */
+function highlightsHaveRoomForAnother(page: Page): Promise<boolean> {
+	return page.locator('#export-card').evaluate((card, minGap) => {
+		const items = [...card.querySelectorAll<HTMLElement>('.timeline-item')];
+		const area = items[0].parentElement!.parentElement!;
+		const tallest = Math.max(...items.map((el) => el.offsetHeight));
+		const needed =
+			items.reduce((sum, el) => sum + el.offsetHeight, 0) + tallest + items.length * minGap;
+		return needed <= area.clientHeight;
+	}, TIMELINE_GAP.min);
+}
+
 test.describe('Export card layout', () => {
 	for (const count of [6, 7, 10, 12]) {
 		test(`highlights card fits ${count} favourites with two-line titles`, async ({ page }) => {
@@ -57,6 +71,49 @@ test.describe('Export card layout', () => {
 			expect(await overflowingCardElements(page, '*')).toEqual([]);
 		});
 	}
+
+	test('highlights card shows as many favourites as fit', async ({ page }) => {
+		const types = ['Cycling', 'Pool Swimming', 'Hiking', 'Yoga', 'Strength Training', 'Running'];
+		await uploadCsv(
+			page,
+			garminCsv(
+				Array.from({ length: 12 }, (_, i) => ({
+					title: `Fav ${i} Extremely long activity title that goes past sixty characters for sure`,
+					type: types[i % types.length],
+					favorite: true
+				}))
+			)
+		);
+		await page.locator('#userName').fill('bb-prod1 Ann');
+		await showSlide(page, 2);
+		await page.evaluate(() => document.fonts.ready);
+
+		await expect(page.locator('#export-card')).toContainText(/more highlights/);
+		await expect.poll(() => highlightsHaveRoomForAnother(page)).toBe(false);
+	});
+
+	test('highlights card uses the full layout when it fits', async ({ page }) => {
+		await uploadCsv(
+			page,
+			garminCsv(
+				favourites(6, (i) =>
+					i === 0 ? 'Rotterdam Marathon - New Personal Best' : `Morning run ${i}`
+				)
+			)
+		);
+		await showSlide(page, 2);
+		await page.evaluate(() => document.fonts.ready);
+
+		await expect
+			.poll(() =>
+				page
+					.locator('#export-card .highlight-title')
+					.first()
+					.evaluate((el) => getComputedStyle(el).fontSize)
+			)
+			.toBe('32px');
+		expect(await overflowingCardElements(page, '*')).toEqual([]);
+	});
 
 	test('highlights card keeps a 300 character title inside the card', async ({ page }) => {
 		await uploadCsv(
@@ -120,6 +177,52 @@ test.describe('Export card layout', () => {
 			await expect.poll(() => lowContrastText(page)).toEqual([]);
 		});
 	}
+
+	test('weekly bars stand out from the Minimal background', async ({ page }) => {
+		await uploadCsv(page, garminCsv(favourites(3, (i) => `Run ${i}`)));
+		await page.getByRole('button', { name: /Minimal/i }).click();
+		await showSlide(page, 1);
+		await expect(page.locator('#export-card')).toHaveAttribute('data-theme', 'minimalist');
+
+		const ratios = await page.locator('#export-card .weekly-bar').evaluateAll((bars) => {
+			const background = [253, 253, 253];
+			const luminance = (rgb: number[]) => {
+				const [r, g, b] = rgb.map((c) => {
+					const s = c / 255;
+					return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+				});
+				return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+			};
+			return bars
+				.filter((bar) => (bar as HTMLElement).offsetHeight > 0)
+				.map((bar) => {
+					const style = getComputedStyle(bar);
+					const alpha = Number(style.opacity);
+					const [r, g, b] = (style.backgroundColor.match(/[\d.]+/g) ?? []).map(Number);
+					const rgb = [r, g, b].map((c, i) => c * alpha + background[i] * (1 - alpha));
+					const [hi, lo] = [luminance(rgb), luminance(background)].sort((x, y) => y - x);
+					return (hi + 0.05) / (lo + 0.05);
+				});
+		});
+		expect(ratios.length).toBeGreaterThan(0);
+		expect(Math.min(...ratios)).toBeGreaterThanOrEqual(3);
+	});
+
+	test('summary card leaves out stats a yoga-only year has no value for', async ({ page }) => {
+		const yoga = [1, 2, 3].map(
+			(day) => `Yoga,${TARGET_YEAR}-03-0${day} 08:00:00,false,Yoga,--,40,00:20:00,--`
+		);
+		await uploadCsv(
+			page,
+			['Activity Type,Date,Favorite,Title,Distance,Calories,Time,Total Ascent', ...yoga].join('\n')
+		);
+		await showSlide(page, 0);
+
+		const card = page.locator('#export-card');
+		await expect(card).toContainText(/Calories/i);
+		await expect(card).not.toContainText(/Distance|Elevation|lap|Everest/i);
+		expect(await overflowingCardElements(page, '*')).toEqual([]);
+	});
 
 	test('donut slices leave a visible gap between them', async ({ page }) => {
 		await uploadCsv(

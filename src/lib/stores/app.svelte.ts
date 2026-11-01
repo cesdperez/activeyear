@@ -43,6 +43,8 @@ class AppStore {
 	summaryMetric = $state<SummaryMetric>('distance');
 	unit = $state<Unit>('km');
 	breakdownMetric = $state<BreakdownMetric>('count');
+	/** Freezes every control that changes the cards, so one export cannot mix settings. */
+	isExporting = $state(false);
 
 	get displayName() {
 		return this.#displayName;

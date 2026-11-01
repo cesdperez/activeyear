@@ -16,16 +16,16 @@
 		</p>
 	{/if}
 	<div class="flex flex-col items-center justify-center">
-		<h2
+		<p
 			class="mr-[0.05em] mb-2 text-[140px] leading-[0.8] font-black tracking-tighter text-[var(--color-text-primary)]"
 		>
 			{TARGET_YEAR}
-		</h2>
-		<h1
+		</p>
+		<p
 			class="export-title relative z-10 mr-[-0.15em] text-[72px] leading-none font-bold tracking-[0.15em] text-[var(--color-text-dim)] uppercase"
 		>
 			{title}
-		</h1>
+		</p>
 	</div>
 </header>
 

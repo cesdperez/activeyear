@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { exportFileStem, isCompactHighlights, nameFontSize, timelineGap } from './export.js';
+import { exportFileStem, nameFontSize, timelineGap } from './export.js';
 
 describe('exportFileStem', () => {
 	it.each([
@@ -15,22 +15,6 @@ describe('nameFontSize', () => {
 	it('keeps short names large and shrinks long ones', () => {
 		expect(nameFontSize('Ana')).toBe(42);
 		expect(nameFontSize('Wolfgang Amadeus Mozart')).toBe(32);
-	});
-});
-
-describe('isCompactHighlights', () => {
-	it('uses the large layout for a few short titles', () => {
-		expect(isCompactHighlights(['Run', 'Ride', 'Swim'])).toBe(false);
-	});
-
-	it('goes compact for many highlights', () => {
-		expect(isCompactHighlights(Array(7).fill('Run'))).toBe(true);
-	});
-
-	it('goes compact when a few titles are long enough to wrap', () => {
-		const long = 'Morning tempo run along the river path';
-		expect(isCompactHighlights([long, 'Run', 'Run', 'Run', 'Run'])).toBe(true);
-		expect(isCompactHighlights([long, long, long, long])).toBe(false);
 	});
 });
 

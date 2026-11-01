@@ -1,6 +1,6 @@
 import { test, expect, type Download, type Page } from '@playwright/test';
 import { readFileSync } from 'fs';
-import { uploadSample } from './helpers.js';
+import { showSlide, uploadSample } from './helpers.js';
 
 const VALID_PNG = {
 	name: 'avatar.png',
@@ -42,7 +42,7 @@ test.describe('Export panel accessibility', () => {
 
 		await avatarInput.setInputFiles(VALID_PNG);
 		const removeButton = page.getByRole('button', { name: 'Remove image' });
-		await removeButton.focus();
+		await expect(removeButton).toBeFocused();
 		await page.keyboard.press('Enter');
 
 		await expect(page.locator('#userAvatar')).toBeFocused();
@@ -57,7 +57,9 @@ test.describe('Export panel accessibility', () => {
 		await avatarInput.setInputFiles(TEXT_FILE);
 		const avatarError = page.locator('#userAvatar-error');
 		await expect(avatarError).toHaveText(/upload an image file/i);
+		await expect(avatarError).toHaveAttribute('role', 'alert');
 		await expect(avatarInput).toHaveAttribute('aria-describedby', 'userAvatar-error');
+		await expect(avatarInput).toHaveValue('');
 
 		await avatarInput.setInputFiles(CORRUPT_PNG);
 		await expect(avatarError).toHaveText(/could not be read/i);
@@ -138,6 +140,20 @@ test.describe('Export panel accessibility', () => {
 		await expect(page.locator('#userName')).toBeDisabled();
 		await expect(page.getByRole('button', { name: 'Next slide' })).toBeDisabled();
 		await expect(page.locator('.carousel-dots .dot').first()).toBeDisabled();
+		const unitGroup = page.getByRole('group', { name: 'Distance unit' });
+		await expect(unitGroup.getByRole('button', { name: 'mi' })).toBeDisabled();
+		const metricGroup = page.getByRole('group', { name: 'Breakdown metric' });
+		await expect(metricGroup.getByRole('button', { name: 'Time' })).toBeDisabled();
+		await expect(page.getByRole('button', { name: /Upload different file/ })).toBeDisabled();
+		for (const control of [
+			page.getByRole('button', { name: /Retro/ }),
+			page.getByRole('button', { name: 'Next slide' }),
+			unitGroup.getByRole('button', { name: 'mi' })
+		]) {
+			await expect
+				.poll(async () => Number(await control.evaluate((el) => getComputedStyle(el).opacity)))
+				.toBeLessThan(0.75);
+		}
 
 		const files = await Promise.all(
 			(await downloads).map(async (download) => readFileSync(await download.path()))
@@ -172,6 +188,26 @@ test.describe('Export panel accessibility', () => {
 	});
 });
 
+test.describe('Export card semantics', () => {
+	for (const slide of [0, 1, 2]) {
+		test(`card ${slide + 1} hides its icons and adds no headings to the page`, async ({ page }) => {
+			await uploadSample(page);
+			await showSlide(page, slide);
+			const card = page.locator('#export-card');
+
+			const unnamedImages = await card.evaluate(
+				(el) =>
+					[...el.querySelectorAll('svg[role="img"]:not([aria-label])')].filter(
+						(svg) => !svg.closest('[aria-hidden="true"]')
+					).length
+			);
+			expect(unnamedImages).toBe(0);
+			await expect(card.getByRole('heading')).toHaveCount(0);
+			await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+		});
+	}
+});
+
 test.describe('Export carousel', () => {
 	test('is a labelled region whose slide label is announced politely', async ({ page }) => {
 		await uploadSample(page);
@@ -202,6 +238,24 @@ test.describe('Export carousel', () => {
 			expect(box?.width).toBeGreaterThanOrEqual(24);
 			expect(box?.height).toBeGreaterThanOrEqual(24);
 		}
+	});
+
+	test('a focused dot gets a round ring around the dot, not its hit area', async ({ page }) => {
+		await uploadSample(page);
+		await page.getByRole('button', { name: 'Previous slide' }).focus();
+		await page.keyboard.press('Tab');
+
+		const dot = page.getByRole('button', { name: 'Go to slide 1' });
+		await expect(dot).toBeFocused();
+		const ring = await dot.evaluate((el) => {
+			const before = getComputedStyle(el, '::before');
+			return {
+				button: getComputedStyle(el).outlineStyle,
+				dot: before.outlineStyle,
+				radius: before.borderRadius
+			};
+		});
+		expect(ring).toEqual({ button: 'none', dot: 'solid', radius: '9999px' });
 	});
 
 	test('arrow keys change slides when the carousel has focus', async ({ page }) => {
