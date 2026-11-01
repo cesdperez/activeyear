@@ -9,6 +9,7 @@ export default defineConfig({
 	reporter: 'html',
 	use: {
 		baseURL: 'http://localhost:4173',
+		reducedMotion: 'reduce',
 		trace: 'on-first-retry'
 	},
 	projects: [

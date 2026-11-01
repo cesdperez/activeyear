@@ -1,18 +1,9 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { uploadSample } from './helpers.js';
 
 test.describe('Export Flow', () => {
-	async function uploadAndWaitForDashboard(page: Page) {
-		await page.addStyleTag({
-			content:
-				'*, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }'
-		});
-
-		await uploadSample(page);
-	}
-
 	test('export panel appears after upload', async ({ page }) => {
-		await uploadAndWaitForDashboard(page);
+		await uploadSample(page);
 
 		await expect(page.getByRole('heading', { name: 'Export' })).toBeVisible();
 
@@ -25,7 +16,7 @@ test.describe('Export Flow', () => {
 	});
 
 	test('user name personalization works', async ({ page }) => {
-		await uploadAndWaitForDashboard(page);
+		await uploadSample(page);
 
 		const nameInput = page.locator('#userName');
 		await expect(nameInput).toBeVisible();
@@ -37,7 +28,7 @@ test.describe('Export Flow', () => {
 	});
 
 	test('download button triggers export', async ({ page }) => {
-		await uploadAndWaitForDashboard(page);
+		await uploadSample(page);
 
 		const downloadButton = page.getByRole('button', { name: /Download All Images/i });
 		await expect(downloadButton).toBeEnabled();
@@ -52,7 +43,7 @@ test.describe('Export Flow', () => {
 	});
 
 	test('theme selector is visible', async ({ page }) => {
-		await uploadAndWaitForDashboard(page);
+		await uploadSample(page);
 
 		await expect(page.getByRole('button', { name: /Neon/i })).toBeVisible();
 		await expect(page.getByRole('button', { name: /Minimal/i })).toBeVisible();
@@ -60,7 +51,7 @@ test.describe('Export Flow', () => {
 	});
 
 	test('theme switching works', async ({ page }) => {
-		await uploadAndWaitForDashboard(page);
+		await uploadSample(page);
 
 		const exportCard = page.locator('#export-card');
 

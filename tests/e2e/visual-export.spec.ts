@@ -20,15 +20,6 @@ type ThemeName = (typeof THEMES)[number];
 // differences between the two engines are expected.
 const MAX_DIFF_RATIO = 0.055;
 
-async function setupDashboard(page: Page): Promise<void> {
-	await page.addStyleTag({
-		content:
-			'*, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }'
-	});
-
-	await uploadSample(page);
-}
-
 async function navigateToSlide(page: Page, slideIndex: number): Promise<void> {
 	const dots = page.locator('.carousel-dots .dot');
 	await dots.nth(slideIndex).click();
@@ -242,7 +233,7 @@ test.describe('Export Visual Fidelity', () => {
 
 	for (const [cardIndex, cardName] of CARDS.entries()) {
 		test(`${cardName} card: downloaded image matches preview`, async ({ page }) => {
-			await setupDashboard(page);
+			await uploadSample(page);
 			await navigateToSlide(page, cardIndex);
 
 			// Capture screenshot of preview at full resolution
@@ -274,7 +265,7 @@ test.describe('Export Visual Fidelity', () => {
 		});
 
 		test(`${cardName} card: downloaded image snapshot`, async ({ page }) => {
-			await setupDashboard(page);
+			await uploadSample(page);
 			await navigateToSlide(page, cardIndex);
 
 			const downloadBuffer = await captureSpecificCardDownload(page, cardIndex);
@@ -290,7 +281,7 @@ test.describe('Export Visual Fidelity', () => {
 		// so non-neon themes have higher thresholds. The download snapshots still verify consistency.
 		for (const theme of THEMES) {
 			test(`summary card with ${theme} theme: download matches preview`, async ({ page }) => {
-				await setupDashboard(page);
+				await uploadSample(page);
 				await setTheme(page, theme);
 				await navigateToSlide(page, 0);
 

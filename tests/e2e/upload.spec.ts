@@ -1,21 +1,14 @@
 import { test, expect } from '@playwright/test';
-import { DASHBOARD_HEADING, SAMPLE_CSV } from './helpers.js';
+import { TARGET_YEAR } from '../../src/lib/constants/time.js';
+import { DASHBOARD_HEADING, uploadSample } from './helpers.js';
 
 test.describe('Upload Flow', () => {
 	test('home page displays upload UI', async ({ page }) => {
-		// Disable animations for stability
-		await page.addStyleTag({
-			content:
-				'*, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }'
-		});
-
 		await page.goto('/');
 
-		// Check main heading
 		await expect(page.getByRole('heading', { name: 'ActiveYear' })).toBeVisible();
 		await expect(page.getByText(`${DASHBOARD_HEADING} in Sport`)).toBeVisible();
 
-		// Check upload zone
 		await expect(page.getByText('Drop your Garmin CSV here')).toBeVisible();
 		await expect(page.getByText('Your data never leaves this browser')).toBeVisible();
 	});
@@ -25,51 +18,43 @@ test.describe('Upload Flow', () => {
 
 		await expect(page.getByText('How to get your data')).toBeVisible();
 		await expect(page.getByText('connect.garmin.com')).toBeVisible();
-		await expect(page.getByText('Scroll down until all 2026 activities are loaded')).toBeVisible();
+		await expect(
+			page.getByText(`Scroll down until all ${TARGET_YEAR} activities are loaded`)
+		).toBeVisible();
 	});
 
 	test('processes uploaded CSV and shows dashboard', async ({ page }) => {
-		await page.goto('/');
+		await uploadSample(page);
 
-		// Get the file input (hidden)
-		const fileInput = page.locator('input[type="file"]');
-
-		// Upload the sample CSV file
-
-		await fileInput.setInputFiles(SAMPLE_CSV);
-
-		// Wait for dashboard to appear
-		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible({
-			timeout: 10000
-		});
-
-		// Check core stats are displayed
 		await expect(page.getByText('Total Distance').first()).toBeVisible();
 		await expect(page.getByText('Time Active').first()).toBeVisible();
 		await expect(page.getByText('Calories Burned').first()).toBeVisible();
 		await expect(page.getByText('Elevation Gained').first()).toBeVisible();
 
-		// Check derived metrics
 		await expect(page.getByText(/around the globe/).first()).toBeVisible();
 		await expect(page.getByText(/Everest/).first()).toBeVisible();
 	});
 
 	test('allows uploading a different file', async ({ page }) => {
-		await page.goto('/');
+		await uploadSample(page);
 
-		const fileInput = page.locator('input[type="file"]');
-
-		await fileInput.setInputFiles(SAMPLE_CSV);
-
-		// Wait for dashboard
-		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible({
-			timeout: 10000
-		});
-
-		// Click reset button
 		await page.getByRole('button', { name: 'Upload different file' }).click();
 
-		// Should be back to upload state
 		await expect(page.getByText('Drop your Garmin CSV here')).toBeVisible();
+	});
+
+	test('explains why an unreadable CSV was rejected', async ({ page }) => {
+		await page.goto('/');
+
+		await page.locator('input[type="file"]').setInputFiles({
+			name: 'actividades.csv',
+			mimeType: 'text/csv',
+			buffer: Buffer.from(
+				'Tipo de actividad,Fecha,Título,Distancia\nCarrera,2026-01-01 08:00:00,Run,10.0'
+			)
+		});
+
+		await expect(page.getByText(/set to English/)).toBeVisible({ timeout: 10000 });
+		await expect(page.getByText('Click to try again')).toBeVisible();
 	});
 });
