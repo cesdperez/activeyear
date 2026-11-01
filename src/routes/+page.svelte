@@ -3,6 +3,8 @@
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import FileUpload from '#lib/components/FileUpload.svelte';
 	import Dashboard from '#lib/components/Dashboard.svelte';
+
+	let uploading = $state(false);
 </script>
 
 <main class="min-h-screen bg-[var(--color-surface)]">
@@ -17,10 +19,11 @@
 			</div>
 
 			<div class="w-full max-w-lg">
-				<FileUpload />
+				<FileUpload bind:loading={uploading} />
 				<div class="mt-4 text-center">
 					<button
-						class="text-sm text-zinc-400 transition-colors duration-200 hover:text-cyan-400"
+						class="text-sm text-zinc-400 transition-colors duration-200 hover:text-cyan-400 disabled:cursor-not-allowed disabled:opacity-50"
+						disabled={uploading}
 						onclick={() => appStore.loadDemoData()}
 					>
 						No CSV file? See how it works with demo data
