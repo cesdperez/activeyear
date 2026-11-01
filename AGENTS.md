@@ -26,7 +26,9 @@ pnpm check                             # TypeScript type checking
 - **Comments**: Only when non-obvious; avoid redundant explanations
 
 ## Deployment
-Cloudflare Pages auto-deploys on push to `main`. Do not push unless explicitly requested.
+Cloudflare Pages auto-deploys on push to `main` (Git integration, no CI pipeline). Do not push unless explicitly requested.
+
+Solo project, kept simple: quality gates run as local git hooks, not CI. Pre-commit formats and lints staged files; pre-push runs `pnpm check` and `pnpm test:run`. Add new checks to the hooks rather than introducing a CI workflow.
 
 ## Context
 - Refer to `docs/prd.md` for product requirements when relevant to the task.
