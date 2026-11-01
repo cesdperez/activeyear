@@ -1,12 +1,8 @@
 import { describe, expect, it, beforeAll } from 'vitest';
-import { readFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
 import { parseGarminCsv } from './garmin.js';
+import { loadFixture } from './__fixtures__/load.js';
 import { calculateYearStats, calculateSportBreakdown } from '../utils/stats.js';
 import type { Activity, YearStats, SportBreakdown } from '../types/index.js';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 describe('Integration: Real Garmin Export', () => {
 	// Expected values based on actual CSV content
@@ -27,9 +23,7 @@ describe('Integration: Real Garmin Export', () => {
 	let breakdown: SportBreakdown[];
 
 	beforeAll(() => {
-		const csvPath = join(__dirname, '__fixtures__', 'garmin-activities.csv');
-		const csvContent = readFileSync(csvPath, 'utf-8');
-		const result = parseGarminCsv(csvContent, 2025);
+		const result = parseGarminCsv(loadFixture('garmin-activities.csv'), 2025);
 		activities = result.activities;
 		stats = calculateYearStats(activities);
 		breakdown = calculateSportBreakdown(activities);

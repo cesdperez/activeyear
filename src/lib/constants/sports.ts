@@ -11,9 +11,10 @@ import {
 	Waves,
 	Anchor
 } from 'phosphor-svelte';
+import type { ActivityType } from '../types/index.js';
 
 // Sport type display names
-export const sportNames: Record<string, string> = {
+export const sportNames: Record<ActivityType, string> = {
 	running: 'Running',
 	cycling: 'Cycling',
 	swimming: 'Swimming',
@@ -28,7 +29,7 @@ export const sportNames: Record<string, string> = {
 };
 
 // Sport icons mapping (using Phosphor for bold, activity-specific icons)
-export const sportIcons: Record<string, typeof PersonSimpleRun> = {
+export const sportIcons: Record<ActivityType, typeof PersonSimpleRun> = {
 	running: PersonSimpleRun,
 	cycling: PersonSimpleBike,
 	swimming: PersonSimpleSwim,

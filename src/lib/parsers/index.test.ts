@@ -1,12 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
 import { parseActivityCsv } from './index.js';
 import { TARGET_YEAR } from '#lib/constants/time.js';
+import { loadFixture } from './__fixtures__/load.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const garminCsv = readFileSync(join(__dirname, '__fixtures__', 'garmin-sample.csv'), 'utf-8');
+const garminCsv = loadFixture('garmin-sample.csv');
 
 describe('parseActivityCsv', () => {
 	it('parses a Garmin export with the Garmin parser', () => {

@@ -10,11 +10,10 @@ import {
 	isInYear
 } from './garmin.js';
 import { TARGET_YEAR } from '../constants/time.js';
-import { readFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { loadFixture } from './__fixtures__/load.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const sample = parseGarminCsv(loadFixture('garmin-sample.csv'), 2026);
+const sample2 = parseGarminCsv(loadFixture('garmin-sample-2.csv'), 2025);
 
 describe('parseGarminTime', () => {
 	it('parses HH:MM:SS format', () => {
@@ -97,41 +96,24 @@ describe('parseGarminElevation', () => {
 });
 
 describe('mapActivityType', () => {
-	it('maps Running to running', () => {
-		expect(mapActivityType('Running')).toBe('running');
-	});
-
-	it('maps Indoor Cycling to cycling', () => {
-		expect(mapActivityType('Indoor Cycling')).toBe('cycling');
-	});
-
-	it('maps Virtual Cycling to cycling', () => {
-		expect(mapActivityType('Virtual Cycling')).toBe('cycling');
-	});
-
-	it('maps Pool Swim to swimming', () => {
-		expect(mapActivityType('Pool Swim')).toBe('swimming');
-	});
-
-	it('maps Open Water Swimming to swimming', () => {
-		expect(mapActivityType('Open Water Swimming')).toBe('swimming');
-	});
-
-	it('maps Strength Training to strength', () => {
-		expect(mapActivityType('Strength Training')).toBe('strength');
-	});
-
-	it('maps Yoga to yoga', () => {
-		expect(mapActivityType('Yoga')).toBe('yoga');
-	});
-
-	it('maps Walking to walking', () => {
-		expect(mapActivityType('Walking')).toBe('walking');
-	});
-
-	it('maps unknown types to other', () => {
-		expect(mapActivityType('Bouldering')).toBe('other');
-		expect(mapActivityType('Multisport')).toBe('other');
+	it.each([
+		['Running', 'running'],
+		['Indoor Cycling', 'cycling'],
+		['Virtual Cycling', 'cycling'],
+		['Pool Swim', 'swimming'],
+		['Open Water Swimming', 'swimming'],
+		['Strength Training', 'strength'],
+		['Yoga', 'yoga'],
+		['Walking', 'walking'],
+		['Cardio', 'cardio'],
+		['CrossFit', 'cardio'],
+		['HIIT', 'cardio'],
+		['Bouldering', 'other'],
+		['Multisport', 'other'],
+		['Padel', 'other'],
+		['Skating', 'other']
+	])('maps %s to %s', (garminType, expected) => {
+		expect(mapActivityType(garminType)).toBe(expected);
 	});
 });
 
@@ -164,80 +146,51 @@ describe('isInYear', () => {
 });
 
 describe('parseGarminCsv', () => {
-	it('parses sample CSV file correctly', () => {
-		const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
-		const csvContent = readFileSync(csvPath, 'utf-8');
-
-		const result = parseGarminCsv(csvContent, 2026);
-
-		expect(result.errors).toHaveLength(0);
-		// Excludes the one activity from the previous year
-		expect(result.activities).toHaveLength(8);
+	it('parses the sample, leaving out the activity from the previous year', () => {
+		expect(sample.errors).toHaveLength(0);
+		expect(sample.activities).toHaveLength(8);
 	});
 
 	it('filters to specified year only', () => {
-		const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
-		const csvContent = readFileSync(csvPath, 'utf-8');
+		const result2025 = parseGarminCsv(loadFixture('garmin-sample.csv'), 2025);
 
-		const result2026 = parseGarminCsv(csvContent, 2026);
-		const result2025 = parseGarminCsv(csvContent, 2025);
-
-		expect(result2026.activities).toHaveLength(8);
 		expect(result2025.activities).toHaveLength(1);
 		expect(result2025.activities[0].title).toBe('Last Year Run');
 	});
 
 	it('correctly parses activity types', () => {
-		const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
-		const csvContent = readFileSync(csvPath, 'utf-8');
+		const types = sample.activities.map((a) => a.type);
 
-		const result = parseGarminCsv(csvContent, 2026);
-		const types = result.activities.map((a) => a.type);
-
-		expect(types).toContain('running');
-		expect(types).toContain('cycling');
-		expect(types).toContain('strength');
-		expect(types).toContain('yoga');
-		expect(types).toContain('swimming');
-		expect(types).toContain('walking');
+		expect(types).toEqual(
+			expect.arrayContaining(['running', 'cycling', 'strength', 'yoga', 'swimming', 'walking'])
+		);
 	});
 
 	it('correctly parses marathon activity', () => {
-		const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
-		const csvContent = readFileSync(csvPath, 'utf-8');
+		const marathon = sample.activities.find((a) => a.title === 'Valencia Marathon');
 
-		const result = parseGarminCsv(csvContent, 2026);
-		const marathon = result.activities.find((a) => a.title === 'Valencia Marathon');
-
-		expect(marathon).toBeDefined();
-		expect(marathon?.distance).toBe(42.63);
-		expect(marathon?.calories).toBe(2800);
-		expect(marathon?.duration).toBe(12888); // 3:34:48 in seconds
-		expect(marathon?.elevation).toBe(105);
+		expect(marathon).toMatchObject({
+			distance: 42.63,
+			calories: 2800,
+			duration: 12888,
+			elevation: 105
+		});
 	});
 
-	it('handles swimming distance converted from meters to km', () => {
-		const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
-		const csvContent = readFileSync(csvPath, 'utf-8');
+	it('converts swimming distance from meters to km', () => {
+		const swim = sample.activities.find((a) => a.type === 'swimming');
 
-		const result = parseGarminCsv(csvContent, 2026);
-		const swim = result.activities.find((a) => a.type === 'swimming');
-
-		expect(swim).toBeDefined();
-		// Swimming distances are in meters in Garmin CSV, we convert to km
-		// 1,500 meters = 1.5 km
 		expect(swim?.distance).toBe(1.5);
 	});
 
 	it('handles activities with missing distance (like yoga)', () => {
-		const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
-		const csvContent = readFileSync(csvPath, 'utf-8');
+		const yoga = sample.activities.find((a) => a.type === 'yoga');
 
-		const result = parseGarminCsv(csvContent, 2026);
-		const yoga = result.activities.find((a) => a.type === 'yoga');
-
-		expect(yoga).toBeDefined();
 		expect(yoga?.distance).toBe(0);
+	});
+
+	it('parses the Favorite column', () => {
+		expect(sample.activities.filter((a) => a.favorite)).toHaveLength(5);
 	});
 
 	it('returns empty array for empty CSV', () => {
@@ -254,110 +207,40 @@ describe('parseGarminCsv', () => {
 	});
 
 	it('detects non-English headers and returns wrong-language error', () => {
-		// Spanish headers
 		const spanishCsv =
 			'Tipo de actividad,Fecha,Título,Distancia,Calorías,Tiempo,Ascenso total\nCarrera,2025-01-01 08:00:00,Morning Run,10.0,600,00:50:00,100';
 		const result = parseGarminCsv(spanishCsv, 2025);
 
 		expect(result.activities).toHaveLength(0);
-		expect(result.errors).toHaveLength(1);
-		expect(result.errors[0].type).toBe('wrong-language');
-		expect(result.errors[0].message).toContain('English');
+		expect(result.errors).toEqual([
+			expect.objectContaining({
+				type: 'wrong-language',
+				message: expect.stringContaining('English')
+			})
+		]);
 	});
 });
 
 describe('parseGarminCsv with garmin-sample-2.csv', () => {
-	it('parses sample 2 CSV file correctly', () => {
-		const csvPath = join(__dirname, '__fixtures__', 'garmin-sample-2.csv');
-		const csvContent = readFileSync(csvPath, 'utf-8');
+	const countOf = (type: string) => sample2.activities.filter((a) => a.type === type).length;
 
-		const result = parseGarminCsv(csvContent, 2025);
-
-		expect(result.errors).toHaveLength(0);
-		// 177 activities from 2025 (excludes 24 from 2024 at the bottom)
-		expect(result.activities.length).toBeGreaterThan(150);
+	it('parses the 2025 activities without errors', () => {
+		expect(sample2.errors).toHaveLength(0);
+		expect(sample2.activities.length).toBeGreaterThan(150);
 	});
 
-	it('correctly parses Cardio activities as cardio type', () => {
-		const csvPath = join(__dirname, '__fixtures__', 'garmin-sample-2.csv');
-		const csvContent = readFileSync(csvPath, 'utf-8');
-
-		const result = parseGarminCsv(csvContent, 2025);
-		const cardioActivities = result.activities.filter((a) => a.type === 'cardio');
-
-		// There are many CrossFit activities in the file
-		expect(cardioActivities.length).toBeGreaterThan(30);
-		expect(cardioActivities.some((a) => a.title === 'CrossFit')).toBe(true);
-	});
-
-	it('correctly parses Running activities (not as other)', () => {
-		const csvPath = join(__dirname, '__fixtures__', 'garmin-sample-2.csv');
-		const csvContent = readFileSync(csvPath, 'utf-8');
-
-		const result = parseGarminCsv(csvContent, 2025);
-		const runningActivities = result.activities.filter((a) => a.type === 'running');
-
-		// There are many running activities
-		expect(runningActivities.length).toBeGreaterThan(50);
-	});
-
-	it('correctly parses Hiking activities', () => {
-		const csvPath = join(__dirname, '__fixtures__', 'garmin-sample-2.csv');
-		const csvContent = readFileSync(csvPath, 'utf-8');
-
-		const result = parseGarminCsv(csvContent, 2025);
-		const hikingActivities = result.activities.filter((a) => a.type === 'hiking');
-
-		expect(hikingActivities.length).toBeGreaterThan(15);
-	});
-
-	it('correctly parses duration from Total Time column', () => {
-		const csvPath = join(__dirname, '__fixtures__', 'garmin-sample-2.csv');
-		const csvContent = readFileSync(csvPath, 'utf-8');
-
-		const result = parseGarminCsv(csvContent, 2025);
-
-		// All activities should have non-zero duration
-		const activitiesWithDuration = result.activities.filter((a) => a.duration > 0);
-		expect(activitiesWithDuration.length).toBe(result.activities.length);
-	});
-
-	it('finds the longest duration activity (personal record)', () => {
-		const csvPath = join(__dirname, '__fixtures__', 'garmin-sample-2.csv');
-		const csvContent = readFileSync(csvPath, 'utf-8');
-
-		const result = parseGarminCsv(csvContent, 2025);
-
-		// Find activity with longest duration
-		const longestDuration = result.activities.reduce(
-			(max, a) => (a.duration > max.duration ? a : max),
-			result.activities[0]
+	it('parses CrossFit as cardio, and running and hiking as their own types', () => {
+		expect(countOf('cardio')).toBeGreaterThan(30);
+		expect(sample2.activities.some((a) => a.type === 'cardio' && a.title === 'CrossFit')).toBe(
+			true
 		);
-
-		// There should be hiking activities with several hours duration
-		expect(longestDuration.duration).toBeGreaterThan(3600 * 5); // > 5 hours
-	});
-});
-
-describe('mapActivityType extended', () => {
-	it('maps Cardio to cardio', () => {
-		expect(mapActivityType('Cardio')).toBe('cardio');
+		expect(countOf('running')).toBeGreaterThan(50);
+		expect(countOf('hiking')).toBeGreaterThan(15);
 	});
 
-	it('maps CrossFit to cardio', () => {
-		expect(mapActivityType('CrossFit')).toBe('cardio');
-	});
-
-	it('maps HIIT to cardio', () => {
-		expect(mapActivityType('HIIT')).toBe('cardio');
-	});
-
-	it('maps Padel to other', () => {
-		expect(mapActivityType('Padel')).toBe('other');
-	});
-
-	it('maps Skating to other', () => {
-		expect(mapActivityType('Skating')).toBe('other');
+	it('reads duration from the Total Time column', () => {
+		expect(sample2.activities.every((a) => a.duration > 0)).toBe(true);
+		expect(Math.max(...sample2.activities.map((a) => a.duration))).toBeGreaterThan(5 * 3600);
 	});
 });
 
@@ -371,17 +254,6 @@ describe('parseGarminCsv default year', () => {
 });
 
 describe('parseGarminCsv favorite field', () => {
-	it('parses Favorite column correctly', () => {
-		const csvPath = join(__dirname, '__fixtures__', 'garmin-sample.csv');
-		const csvContent = readFileSync(csvPath, 'utf-8');
-
-		const result = parseGarminCsv(csvContent, 2026);
-
-		const favorites = result.activities.filter((a) => a.favorite);
-		expect(favorites).toHaveLength(5);
-		expect(result.activities.length).toBe(8);
-	});
-
 	it('sets favorite to false when Favorite column is missing', () => {
 		const csv =
 			'Activity Type,Date,Title,Distance,Calories,Time,Total Ascent\nRunning,2025-01-01 08:00:00,Morning Run,10.0,600,00:50:00,100';

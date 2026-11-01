@@ -218,24 +218,6 @@ describe('calculateWeeklyPattern', () => {
 		expect(pattern).toEqual([0, 0, 0, 0, 0, 0, 0]);
 	});
 
-	it('correctly maps Monday to index 0', () => {
-		// 2025-06-16 is a Monday
-		const activities = [createActivity({ date: new Date('2025-06-16') })];
-
-		const pattern = calculateWeeklyPattern(activities);
-
-		expect(pattern).toEqual([1, 0, 0, 0, 0, 0, 0]);
-	});
-
-	it('correctly maps Sunday to index 6', () => {
-		// 2025-06-15 is a Sunday
-		const activities = [createActivity({ date: new Date('2025-06-15') })];
-
-		const pattern = calculateWeeklyPattern(activities);
-
-		expect(pattern).toEqual([0, 0, 0, 0, 0, 0, 1]);
-	});
-
 	it('correctly maps all days of the week', () => {
 		// Create activities for a full week starting Monday 2025-06-16
 		const activities = [
@@ -278,15 +260,6 @@ describe('calculateWeeklyPattern', () => {
 
 		expect(pattern[0]).toBe(2); // 2 Mondays
 		expect(pattern[1]).toBe(1); // 1 Tuesday
-	});
-
-	it('handles Saturday correctly (index 5)', () => {
-		// 2025-06-21 is a Saturday
-		const activities = [createActivity({ date: new Date('2025-06-21') })];
-
-		const pattern = calculateWeeklyPattern(activities);
-
-		expect(pattern).toEqual([0, 0, 0, 0, 0, 1, 0]);
 	});
 
 	it('handles mixed weekday and weekend activities', () => {
