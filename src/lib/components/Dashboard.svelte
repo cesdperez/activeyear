@@ -1,9 +1,10 @@
 <script lang="ts">
+	import { appStore } from '#lib/stores/app.svelte.js';
 	import ExportPanel from '#lib/components/ExportPanel.svelte';
 	import DashboardToolbar from '#lib/components/dashboard/DashboardToolbar.svelte';
 	import DashboardHeader from '#lib/components/dashboard/DashboardHeader.svelte';
 	import MainStats from '#lib/components/dashboard/MainStats.svelte';
-	import ConsistencyStats from '#lib/components/dashboard/ConsistencyStats.svelte';
+	import ConsistencyStats from '#lib/components/widgets/ConsistencyStats.svelte';
 	import WeeklyPattern from '#lib/components/dashboard/WeeklyPattern.svelte';
 	import HighlightsSection from '#lib/components/dashboard/HighlightsSection.svelte';
 	import PersonalRecords from '#lib/components/dashboard/PersonalRecords.svelte';
@@ -18,7 +19,11 @@
 	<DashboardToolbar />
 	<DashboardHeader />
 	<MainStats />
-	<ConsistencyStats />
+	<ConsistencyStats
+		variant="dashboard"
+		activeDays={appStore.stats?.activeDays ?? 0}
+		longestStreak={appStore.stats?.longestStreak ?? 0}
+	/>
 	<WeeklyPattern />
 	<HighlightsSection />
 	<PersonalRecords />

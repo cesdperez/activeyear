@@ -4,7 +4,7 @@
 	import ExportCardBase from './ExportCardBase.svelte';
 	import SportDistribution from './breakdown/SportDistribution.svelte';
 	import WeeklyPatternChart from './breakdown/WeeklyPatternChart.svelte';
-	import ConsistencyStats from './breakdown/ConsistencyStats.svelte';
+	import ConsistencyStats from './widgets/ConsistencyStats.svelte';
 	import PersonalRecordsSection from './breakdown/PersonalRecordsSection.svelte';
 
 	let topSports = $derived(selectTopSports(appStore.breakdown || [], appStore.breakdownMetric));
@@ -24,6 +24,7 @@
 	{/if}
 
 	<ConsistencyStats
+		variant="export"
 		activeDays={appStore.stats?.activeDays ?? 0}
 		longestStreak={appStore.stats?.longestStreak ?? 0}
 	/>
