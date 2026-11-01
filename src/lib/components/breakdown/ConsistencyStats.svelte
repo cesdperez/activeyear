@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { CalendarCheck, Lightning } from 'phosphor-svelte';
 	import { activeDaysPercent } from '#lib/utils/breakdown.js';
+	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import ConsistencyCard from './ConsistencyCard.svelte';
 
 	let { activeDays, longestStreak }: { activeDays: number; longestStreak: number } = $props();
 
-	let yearPercent = $derived(activeDaysPercent(activeDays));
+	let yearPercent = $derived(activeDaysPercent(activeDays, TARGET_YEAR));
 </script>
 
 <div class="mb-16 grid grid-cols-2 gap-8">

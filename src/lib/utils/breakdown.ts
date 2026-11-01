@@ -5,7 +5,6 @@ import {
 	TOP_DAYS_COUNT,
 	TOP_SPORTS_LIMIT
 } from '#lib/constants/breakdown.js';
-import { DAYS_IN_YEAR } from '#lib/constants/time.js';
 import { consolidateBreakdown } from './activity.js';
 import { donutSegments, scaledBarHeight, topIndices } from './charts.js';
 
@@ -57,6 +56,11 @@ export function weeklyBars(pattern: WeeklyPattern, containerHeight: number): Wee
 	}));
 }
 
-export function activeDaysPercent(activeDays: number): number {
-	return Math.min((activeDays / DAYS_IN_YEAR) * 100, 100);
+function daysInYear(year: number): number {
+	const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+	return isLeapYear ? 366 : 365;
+}
+
+export function activeDaysPercent(activeDays: number, year: number): number {
+	return Math.min((activeDays / daysInYear(year)) * 100, 100);
 }
