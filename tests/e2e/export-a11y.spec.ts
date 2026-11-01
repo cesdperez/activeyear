@@ -42,7 +42,7 @@ test.describe('Export panel accessibility', () => {
 
 		await avatarInput.setInputFiles(VALID_PNG);
 		const removeButton = page.getByRole('button', { name: 'Remove image' });
-		await removeButton.focus();
+		await expect(removeButton).toBeFocused();
 		await page.keyboard.press('Enter');
 
 		await expect(page.locator('#userAvatar')).toBeFocused();
@@ -57,7 +57,9 @@ test.describe('Export panel accessibility', () => {
 		await avatarInput.setInputFiles(TEXT_FILE);
 		const avatarError = page.locator('#userAvatar-error');
 		await expect(avatarError).toHaveText(/upload an image file/i);
+		await expect(avatarError).toHaveAttribute('role', 'alert');
 		await expect(avatarInput).toHaveAttribute('aria-describedby', 'userAvatar-error');
+		await expect(avatarInput).toHaveValue('');
 
 		await avatarInput.setInputFiles(CORRUPT_PNG);
 		await expect(avatarError).toHaveText(/could not be read/i);
@@ -138,6 +140,20 @@ test.describe('Export panel accessibility', () => {
 		await expect(page.locator('#userName')).toBeDisabled();
 		await expect(page.getByRole('button', { name: 'Next slide' })).toBeDisabled();
 		await expect(page.locator('.carousel-dots .dot').first()).toBeDisabled();
+		const unitGroup = page.getByRole('group', { name: 'Distance unit' });
+		await expect(unitGroup.getByRole('button', { name: 'mi' })).toBeDisabled();
+		const metricGroup = page.getByRole('group', { name: 'Breakdown metric' });
+		await expect(metricGroup.getByRole('button', { name: 'Time' })).toBeDisabled();
+		await expect(page.getByRole('button', { name: /Upload different file/ })).toBeDisabled();
+		for (const control of [
+			page.getByRole('button', { name: /Retro/ }),
+			page.getByRole('button', { name: 'Next slide' }),
+			unitGroup.getByRole('button', { name: 'mi' })
+		]) {
+			await expect
+				.poll(async () => Number(await control.evaluate((el) => getComputedStyle(el).opacity)))
+				.toBeLessThan(0.75);
+		}
 
 		const files = await Promise.all(
 			(await downloads).map(async (download) => readFileSync(await download.path()))

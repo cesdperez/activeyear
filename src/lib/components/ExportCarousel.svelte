@@ -8,7 +8,6 @@
 	import { CaretLeft, CaretRight } from 'phosphor-svelte';
 
 	let currentSlide = $state<0 | 1 | 2>(0);
-	let isExporting = $state(false);
 	const slideLabels = ['Summary', 'Breakdown', 'Highlights'];
 
 	const SLIDE_COUNT = 3;
@@ -25,7 +24,7 @@
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
-		if (isExporting) return;
+		if (appStore.isExporting) return;
 		if (event.key === 'ArrowRight') nextSlide();
 		else if (event.key === 'ArrowLeft') prevSlide();
 		else return;
@@ -38,7 +37,7 @@
 	}
 
 	function handlePointerUp(event: PointerEvent) {
-		if (!swipeStart || isExporting) {
+		if (!swipeStart || appStore.isExporting) {
 			swipeStart = null;
 			return;
 		}
@@ -60,7 +59,6 @@
 
 		const backgroundColor = getThemeBackgroundColor(appStore.theme);
 		const originalSlide = currentSlide;
-		isExporting = true;
 
 		try {
 			for (const [index, label] of slideLabels.entries()) {
@@ -77,7 +75,6 @@
 			}
 		} finally {
 			currentSlide = originalSlide;
-			isExporting = false;
 		}
 	}
 </script>
@@ -109,7 +106,7 @@
 	<div class="carousel-nav">
 		<button
 			onclick={prevSlide}
-			disabled={isExporting}
+			disabled={appStore.isExporting}
 			class="nav-button"
 			aria-label="Previous slide"
 		>
@@ -122,19 +119,24 @@
 					class="dot {currentSlide === i ? 'active' : ''}"
 					aria-current={currentSlide === i ? 'true' : undefined}
 					onclick={() => (currentSlide = i as 0 | 1 | 2)}
-					disabled={isExporting}
+					disabled={appStore.isExporting}
 					aria-label="Go to slide {i + 1}"
 				></button>
 			{/each}
 		</div>
 
-		<button onclick={nextSlide} disabled={isExporting} class="nav-button" aria-label="Next slide">
+		<button
+			onclick={nextSlide}
+			disabled={appStore.isExporting}
+			class="nav-button"
+			aria-label="Next slide"
+		>
 			<CaretRight class="h-5 w-5" weight="bold" aria-hidden="true" />
 		</button>
 	</div>
 
 	<!-- Silent while exporting, which flips through every slide. -->
-	<div class="slide-label" aria-live={isExporting ? 'off' : 'polite'} aria-atomic="true">
+	<div class="slide-label" aria-live={appStore.isExporting ? 'off' : 'polite'} aria-atomic="true">
 		{slideLabels[currentSlide]} ({currentSlide + 1}/{SLIDE_COUNT})
 	</div>
 </section>
@@ -179,7 +181,7 @@
 		cursor: pointer;
 	}
 
-	.nav-button:hover {
+	.nav-button:hover:enabled {
 		background: var(--color-surface-hover);
 		color: var(--color-text-primary);
 		border-color: var(--color-accent);
@@ -215,13 +217,14 @@
 		transform: scale(1.2);
 	}
 
-	.dot:hover:not(.active)::before {
+	.dot:hover:enabled:not(.active)::before {
 		background: var(--color-text-muted);
 	}
 
 	.dot:disabled,
 	.nav-button:disabled {
 		cursor: not-allowed;
+		opacity: 0.5;
 	}
 
 	@media (forced-colors: active) {
