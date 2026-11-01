@@ -1,26 +1,25 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { appStore } from '#lib/stores/app.svelte.js';
 	import { getExportDimensions } from '#lib/utils/export.js';
-	import type { CardVariant } from '#lib/types/index.js';
+	import type { CardVariant, Theme } from '#lib/types/index.js';
 
 	let {
 		variant,
+		theme,
 		children
 	}: {
 		variant: CardVariant;
+		theme: Theme;
 		children: Snippet;
 	} = $props();
 
 	let dimensions = $derived(getExportDimensions());
-
-	let currentTheme = $derived(appStore.theme);
 </script>
 
 <div
-	class="export-card theme-{currentTheme}"
+	class="export-card theme-{theme}"
 	id="export-card"
-	data-theme={currentTheme}
+	data-theme={theme}
 	data-variant={variant}
 	style="width: {dimensions.width}px; height: {dimensions.height}px;"
 >

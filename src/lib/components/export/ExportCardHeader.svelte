@@ -1,16 +1,15 @@
 <script lang="ts">
 	import { TARGET_YEAR } from '#lib/constants/time.js';
-	import { appStore } from '#lib/stores/app.svelte.js';
 
-	let { title }: { title: string } = $props();
+	let { title, userName }: { title: string; userName: string } = $props();
 </script>
 
 <header class="relative mb-[130px] text-center">
-	{#if appStore.userName}
+	{#if userName}
 		<p
 			class="relative z-10 mr-[-0.1em] mb-2 text-[42px] leading-none font-bold tracking-widest text-[var(--color-accent)] uppercase"
 		>
-			{appStore.userName}'s
+			{userName}'s
 		</p>
 	{/if}
 	<div class="flex flex-col items-center justify-center">
