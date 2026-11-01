@@ -6,11 +6,12 @@ export interface DonutSegment {
 }
 
 /**
- * Indices of the `count` largest values, largest first. Ties keep the earlier index first.
+ * Indices of the `count` largest positive values, largest first. Ties keep the earlier index first.
  */
 export function topIndices(values: readonly number[], count: number): number[] {
 	return values
 		.map((value, idx) => ({ value, idx }))
+		.filter((item) => item.value > 0)
 		.sort((a, b) => b.value - a.value)
 		.slice(0, count)
 		.map((item) => item.idx);

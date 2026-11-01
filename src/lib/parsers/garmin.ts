@@ -16,6 +16,7 @@ const ACTIVITY_TYPE_MAP: Record<string, ActivityType> = {
 	Running: 'running',
 	'Trail Running': 'running',
 	'Treadmill Running': 'running',
+	'Virtual Run': 'running',
 	Cycling: 'cycling',
 	'Indoor Cycling': 'cycling',
 	'Virtual Cycling': 'cycling',
@@ -23,6 +24,7 @@ const ACTIVITY_TYPE_MAP: Record<string, ActivityType> = {
 	'Mountain Biking': 'cycling',
 	'eMountain Biking': 'cycling',
 	'Gravel Cycling': 'cycling',
+	'Gravel/Unpaved Cycling': 'cycling',
 	Swimming: 'swimming',
 	'Pool Swim': 'swimming',
 	'Open Water Swimming': 'swimming',
@@ -153,20 +155,26 @@ export function parseGarminDistance(distanceStr: string): number {
 	return isNaN(value) ? 0 : value;
 }
 
+// In fields Garmin writes as whole numbers, a dot followed by exactly three digits
+// is a thousands separator ("1.500"), never a decimal point.
+function cleanWholeNumberString(str: string): string {
+	const cleaned = cleanNumericString(str);
+	return /^\d+\.\d{3}$/.test(cleaned) ? cleaned.replace('.', '') : cleaned;
+}
+
+/**
+ * Parse a Garmin distance given in meters (swims, rowing, track) to km
+ */
+export function parseGarminMeterDistance(distanceStr: string): number {
+	const value = parseFloat(cleanWholeNumberString(distanceStr));
+	return isNaN(value) ? 0 : value / 1000;
+}
+
 /**
  * Parse Garmin calories string to number
  */
 export function parseGarminCalories(caloriesStr: string): number {
-	const cleaned = cleanNumericString(caloriesStr);
-	// Remove dot if we suspect it's a thousands separator
-	let final = cleaned;
-	if (cleaned.includes('.') && !cleaned.includes(',')) {
-		const parts = cleaned.split('.');
-		if (parts.length === 2 && parts[1].length === 3) {
-			final = cleaned.replace(/\./g, '');
-		}
-	}
-	const value = parseInt(final, 10);
+	const value = parseInt(cleanWholeNumberString(caloriesStr), 10);
 	return isNaN(value) ? 0 : value;
 }
 
@@ -174,15 +182,7 @@ export function parseGarminCalories(caloriesStr: string): number {
  * Parse Garmin elevation string to meters
  */
 export function parseGarminElevation(elevationStr: string): number {
-	const cleaned = cleanNumericString(elevationStr);
-	let final = cleaned;
-	if (cleaned.includes('.') && !cleaned.includes(',')) {
-		const parts = cleaned.split('.');
-		if (parts.length === 2 && parts[1].length === 3) {
-			final = cleaned.replace(/\./g, '');
-		}
-	}
-	const value = parseInt(final, 10);
+	const value = parseInt(cleanWholeNumberString(elevationStr), 10);
 	return isNaN(value) ? 0 : value;
 }
 
@@ -327,11 +327,9 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 			return;
 		}
 
-		// Parse distance - swimming activities are in meters, convert to km
-		let distance = parseGarminDistance(row['Distance']);
-		if (DISTANCE_IN_METERS_TYPES.has(row['Activity Type'])) {
-			distance = distance / 1000; // Convert meters to km
-		}
+		const distance = DISTANCE_IN_METERS_TYPES.has(row['Activity Type'])
+			? parseGarminMeterDistance(row['Distance'])
+			: parseGarminDistance(row['Distance']);
 
 		const activity: Activity = {
 			date,

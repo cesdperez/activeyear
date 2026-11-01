@@ -10,7 +10,8 @@ import {
 	calculateEarthLaps,
 	calculateEverests,
 	calculatePizzaSlices,
-	formatActivityCount
+	formatActivityCount,
+	pluralize
 } from './format.js';
 
 describe('formatDistance', () => {
@@ -26,6 +27,10 @@ describe('formatDistance', () => {
 	it('formats miles when unit is miles', () => {
 		expect(formatDistance(10, 'miles')).toBe('6.2mi'); // 10km ≈ 6.21...mi
 		expect(formatDistance(161, 'miles')).toBe('100mi'); // 161km ≈ 100.04...mi
+	});
+
+	it('groups thousands like the other stats', () => {
+		expect(formatDistance(16241.4)).toBe('16,241km');
 	});
 });
 
@@ -58,6 +63,7 @@ describe('formatCalories', () => {
 
 	it('handles small values', () => {
 		expect(formatCalories(150)).toBe('150kcal');
+		expect(formatCalories(40)).toBe('40kcal');
 	});
 
 	it('returns 0 for zero calories', () => {
@@ -142,6 +148,18 @@ describe('formatPizzaSlices', () => {
 
 	it('handles small values', () => {
 		expect(formatPizzaSlices(855)).toBe('3 pizza slices burnt');
+	});
+
+	it('says slice for a single slice', () => {
+		expect(formatPizzaSlices(285)).toBe('1 pizza slice burnt');
+	});
+});
+
+describe('pluralize', () => {
+	it('picks the singular form only for one', () => {
+		expect(pluralize(1, 'Hour', 'Hours')).toBe('Hour');
+		expect(pluralize(0, 'Hour', 'Hours')).toBe('Hours');
+		expect(pluralize(2, 'Hour', 'Hours')).toBe('Hours');
 	});
 });
 

@@ -28,17 +28,17 @@ export function calculateYearStats(activities: Activity[]): YearStats {
 	let totalDuration = 0;
 	let totalCalories = 0;
 	let totalElevation = 0;
-	const uniqueDates = new Set<string>();
+	const uniqueDays = new Set<number>();
 
 	for (const a of activities) {
 		totalDistance += a.distance;
 		totalDuration += a.duration;
 		totalCalories += a.calories;
 		totalElevation += a.elevation;
-		uniqueDates.add(a.date.toISOString().split('T')[0]);
+		uniqueDays.add(localDayNumber(a.date));
 	}
 
-	const activeDays = uniqueDates.size;
+	const activeDays = uniqueDays.size;
 	const longestStreak = calculateLongestStreak(activities);
 
 	return {
@@ -52,37 +52,30 @@ export function calculateYearStats(activities: Activity[]): YearStats {
 	};
 }
 
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+// Dates hold the CSV's local wall-clock time, so the day is the local calendar date.
+// Date.UTC keeps consecutive dates exactly one apart across DST changes.
+function localDayNumber(date: Date): number {
+	return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / MS_PER_DAY;
+}
+
 /**
  * Calculate the longest streak of consecutive days with activities
  */
 export function calculateLongestStreak(activities: Activity[]): number {
 	if (activities.length === 0) return 0;
 
-	// Get unique sorted dates
-	const uniqueDates = Array.from(
-		new Set(activities.map((a) => a.date.toISOString().split('T')[0]))
-	).sort();
-
-	if (uniqueDates.length === 0) return 0;
-	if (uniqueDates.length === 1) return 1;
+	const days = Array.from(new Set(activities.map((a) => localDayNumber(a.date)))).sort(
+		(a, b) => a - b
+	);
 
 	let maxStreak = 1;
 	let currentStreak = 1;
 
-	for (let i = 1; i < uniqueDates.length; i++) {
-		const prevDate = new Date(uniqueDates[i - 1]);
-		const currDate = new Date(uniqueDates[i]);
-
-		// Check if dates are consecutive (difference of 1 day)
-		const diffMs = currDate.getTime() - prevDate.getTime();
-		const diffDays = diffMs / (1000 * 60 * 60 * 24);
-
-		if (diffDays === 1) {
-			currentStreak++;
-			maxStreak = Math.max(maxStreak, currentStreak);
-		} else {
-			currentStreak = 1;
-		}
+	for (let i = 1; i < days.length; i++) {
+		currentStreak = days[i] - days[i - 1] === 1 ? currentStreak + 1 : 1;
+		maxStreak = Math.max(maxStreak, currentStreak);
 	}
 
 	return maxStreak;

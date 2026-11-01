@@ -59,6 +59,14 @@ describe('appStore', () => {
 		expect(appStore.stats?.activityCount).toBe(1);
 	});
 
+	it('accepts a CSV extension in any case', async () => {
+		const content = garminCsv(`${TARGET_YEAR}-03-01 08:00:00`);
+
+		await appStore.processFile(new File([content], 'Activities.CSV'));
+
+		expect(appStore.status).toBe('ready');
+	});
+
 	it('derives stats and highlights from the demo activities', () => {
 		appStore.loadDemoData();
 

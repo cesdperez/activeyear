@@ -85,7 +85,7 @@ class AppStore {
 	}
 
 	async processFile(file: File) {
-		if (!file.name.endsWith('.csv')) {
+		if (!file.name.toLowerCase().endsWith('.csv')) {
 			this.#fail('Please upload a CSV file');
 			return;
 		}
