@@ -17,17 +17,20 @@
 
 <div class="relative mx-auto max-w-7xl overflow-x-hidden px-4 py-12 sm:px-6 md:py-20 lg:px-8">
 	<DashboardToolbar />
-	<DashboardHeader />
-	<MainStats />
+	<DashboardHeader
+		activityCount={appStore.stats?.activityCount ?? 0}
+		activeDays={appStore.stats?.activeDays ?? 0}
+	/>
+	<MainStats stats={appStore.stats} unit={appStore.unit} />
 	<ConsistencyStats
 		variant="dashboard"
 		activeDays={appStore.stats?.activeDays ?? 0}
 		longestStreak={appStore.stats?.longestStreak ?? 0}
 	/>
 	<WeeklyPattern variant="dashboard" pattern={appStore.weeklyPattern} />
-	<HighlightsSection />
-	<PersonalRecords />
-	<SportBreakdown />
+	<HighlightsSection highlights={appStore.highlights} unit={appStore.unit} />
+	<PersonalRecords records={appStore.records} unit={appStore.unit} />
+	<SportBreakdown breakdown={appStore.breakdown} metric={appStore.breakdownMetric} />
 	<ExportPanel />
 	<UploadAnotherFile />
 </div>

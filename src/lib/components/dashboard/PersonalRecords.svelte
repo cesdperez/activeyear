@@ -1,43 +1,45 @@
 <script lang="ts">
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import type { PersonalRecords, Unit } from '#lib/types/index.js';
 	import RecordCard from '#lib/components/widgets/RecordCard.svelte';
 	import { formatDistance, formatDuration, formatCalories } from '#lib/utils/format.js';
 	import { Fire, Trophy, Hourglass } from 'phosphor-svelte';
 	import SectionHeading from './SectionHeading.svelte';
+
+	let { records, unit }: { records: PersonalRecords | null; unit: Unit } = $props();
 </script>
 
-{#if appStore.records}
+{#if records}
 	<section class="mb-16">
 		<SectionHeading title="Personal Records" />
 
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-			{#if appStore.records.longestDistance}
+			{#if records.longestDistance}
 				<RecordCard
 					variant="dashboard"
 					icon={Trophy}
-					value={formatDistance(appStore.records.longestDistance.value, appStore.unit)}
+					value={formatDistance(records.longestDistance.value, unit)}
 					label="Longest Distance"
-					activityTitle={appStore.records.longestDistance.activity.title}
+					activityTitle={records.longestDistance.activity.title}
 					delay={450}
 				/>
 			{/if}
-			{#if appStore.records.longestDuration}
+			{#if records.longestDuration}
 				<RecordCard
 					variant="dashboard"
 					icon={Hourglass}
-					value={formatDuration(appStore.records.longestDuration.value)}
+					value={formatDuration(records.longestDuration.value)}
 					label="Longest Duration"
-					activityTitle={appStore.records.longestDuration.activity.title}
+					activityTitle={records.longestDuration.activity.title}
 					delay={500}
 				/>
 			{/if}
-			{#if appStore.records.biggestBurn}
+			{#if records.biggestBurn}
 				<RecordCard
 					variant="dashboard"
 					icon={Fire}
-					value={formatCalories(appStore.records.biggestBurn.value)}
+					value={formatCalories(records.biggestBurn.value)}
 					label="Biggest Burn"
-					activityTitle={appStore.records.biggestBurn.activity.title}
+					activityTitle={records.biggestBurn.activity.title}
 					delay={550}
 				/>
 			{/if}

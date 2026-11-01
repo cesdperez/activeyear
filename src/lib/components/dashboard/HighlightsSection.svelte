@@ -1,17 +1,19 @@
 <script lang="ts">
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import type { Activity, Unit } from '#lib/types/index.js';
 	import { Star } from 'phosphor-svelte';
 	import SectionHeading from './SectionHeading.svelte';
 	import HighlightItem from './HighlightItem.svelte';
+
+	let { highlights, unit }: { highlights: Activity[]; unit: Unit } = $props();
 </script>
 
 <section class="mb-16">
 	<SectionHeading title="Highlights" />
 
-	{#if appStore.highlights.length > 0}
+	{#if highlights.length > 0}
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-			{#each appStore.highlights as activity, i (i)}
-				<HighlightItem {activity} delay={450 + i * 50} />
+			{#each highlights as activity, i (i)}
+				<HighlightItem {activity} {unit} delay={450 + i * 50} />
 			{/each}
 		</div>
 	{:else}

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { TARGET_YEAR } from '#lib/constants/time.js';
-	import { appStore } from '#lib/stores/app.svelte.js';
+
+	let { activityCount, activeDays }: { activityCount: number; activeDays: number } = $props();
 	import { ArrowDown } from 'phosphor-svelte';
 </script>
 
@@ -11,11 +12,9 @@
 	<div
 		class="inline-flex items-center gap-3 rounded-full border border-[rgba(255,255,255,0.05)] bg-[var(--color-surface-elevated)] px-4 py-2"
 	>
-		<span class="font-mono font-bold text-[var(--color-accent)]"
-			>{appStore.stats?.activityCount}</span
-		>
+		<span class="font-mono font-bold text-[var(--color-accent)]">{activityCount}</span>
 		<span class="text-[var(--color-text-muted)]">activities across</span>
-		<span class="font-mono font-bold text-[var(--color-accent)]">{appStore.stats?.activeDays}</span>
+		<span class="font-mono font-bold text-[var(--color-accent)]">{activeDays}</span>
 		<span class="text-[var(--color-text-muted)]">active days</span>
 	</div>
 

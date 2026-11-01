@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { appStore } from '#lib/stores/app.svelte.js';
 	import { sportNames, sportIcons } from '#lib/constants/sports.js';
 	import { formatDistance, formatDuration } from '#lib/utils/format.js';
-	import type { Activity } from '#lib/types/index.js';
+	import type { Activity, Unit } from '#lib/types/index.js';
 	import { Target, Star } from 'phosphor-svelte';
 
 	interface Props {
 		activity: Activity;
+		unit: Unit;
 		delay: number;
 	}
 
-	let { activity, delay }: Props = $props();
+	let { activity, unit, delay }: Props = $props();
 
 	const IconComponent = $derived(sportIcons[activity.type] ?? Target);
 </script>
@@ -30,7 +30,7 @@
 		</div>
 		<div class="flex items-center gap-3 text-sm text-[var(--color-text-muted)]">
 			{#if activity.distance > 0}
-				<span class="font-mono">{formatDistance(activity.distance, appStore.unit)}</span>
+				<span class="font-mono">{formatDistance(activity.distance, unit)}</span>
 			{/if}
 			<span class="font-mono">{formatDuration(activity.duration)}</span>
 			<span
