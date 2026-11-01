@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { appStore } from "$lib/stores/app.svelte.js";
+	import { appStore } from "#lib/stores/app.svelte.js";
 	import {
 		UploadSimple,
 		Warning,

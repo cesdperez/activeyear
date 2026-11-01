@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { appStore } from "$lib/stores/app.svelte.js";
-    import { getExportDimensions } from "$lib/utils/export.js";
-    import type { CardVariant } from "$lib/types/index.js";
+    import { appStore } from "#lib/stores/app.svelte.js";
+    import { getExportDimensions } from "#lib/utils/export.js";
+    import type { CardVariant } from "#lib/types/index.js";
 
     let {
         variant,

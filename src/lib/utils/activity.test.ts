@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { consolidateBreakdown } from './activity';
-import type { SportBreakdown } from '$lib/types';
+import type { SportBreakdown } from '#lib/types/index.js';
 
 describe('consolidateBreakdown', () => {
     it('should keep sports with duration >= 1 hour', () => {

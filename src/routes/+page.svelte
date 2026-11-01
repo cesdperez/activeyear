@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { appStore } from "$lib/stores/app.svelte.js";
-	import FileUpload from "$lib/components/FileUpload.svelte";
-	import Dashboard from "$lib/components/Dashboard.svelte";
+	import { appStore } from "#lib/stores/app.svelte.js";
+	import FileUpload from "#lib/components/FileUpload.svelte";
+	import Dashboard from "#lib/components/Dashboard.svelte";
 </script>
 
 <main class="min-h-screen bg-[var(--color-surface)]">

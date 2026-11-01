@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { appStore } from "$lib/stores/app.svelte.js";
+    import { appStore } from "#lib/stores/app.svelte.js";
     import {
         formatDistance,
         formatDuration,
@@ -9,10 +9,10 @@
         formatEverests,
         formatPizzaSlices,
         formatLotRMarathons,
-    } from "$lib/utils/format.js";
+    } from "#lib/utils/format.js";
     import { Ruler, Timer, Mountains, Fire, Target } from "phosphor-svelte";
-    import { sportIcons } from "$lib/constants/sports.js";
-    import { consolidateBreakdown } from "$lib/utils/activity.js";
+    import { sportIcons } from "#lib/constants/sports.js";
+    import { consolidateBreakdown } from "#lib/utils/activity.js";
     import ExportCardBase from "./ExportCardBase.svelte";
 
     let consolidatedBreakdownData = $derived(

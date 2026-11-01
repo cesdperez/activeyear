@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { appStore } from "$lib/stores/app.svelte.js";
-    import { formatDistance, formatDuration } from "$lib/utils/format.js";
+    import { appStore } from "#lib/stores/app.svelte.js";
+    import { formatDistance, formatDuration } from "#lib/utils/format.js";
     import { Star, Target } from "phosphor-svelte";
-    import { sportNames, sportIcons } from "$lib/constants/sports.js";
+    import { sportNames, sportIcons } from "#lib/constants/sports.js";
     import ExportCardBase from "./ExportCardBase.svelte";
 
     const monthNames = [

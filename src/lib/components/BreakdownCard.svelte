@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { appStore } from "$lib/stores/app.svelte.js";
+    import { appStore } from "#lib/stores/app.svelte.js";
     import {
         formatDistance,
         formatDuration,
         formatCalories,
-    } from "$lib/utils/format.js";
+    } from "#lib/utils/format.js";
     import {
         CalendarCheck,
         Lightning,
@@ -17,8 +17,8 @@
         sportNames,
         sportIcons,
         sportColors,
-    } from "$lib/constants/sports.js";
-    import { consolidateBreakdown } from "$lib/utils/activity.js";
+    } from "#lib/constants/sports.js";
+    import { consolidateBreakdown } from "#lib/utils/activity.js";
     import ExportCardBase from "./ExportCardBase.svelte";
 
     let currentTheme = $derived(appStore.theme);

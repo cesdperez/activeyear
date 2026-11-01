@@ -1,5 +1,5 @@
 import { toPng } from 'html-to-image';
-import type { Theme } from '$lib/types/index.js';
+import type { Theme } from '#lib/types/index.js';
 
 export interface ExportOptions {
     filename?: string;

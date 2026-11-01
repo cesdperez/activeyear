@@ -1,4 +1,4 @@
-import type { SportBreakdown } from '$lib/types';
+import type { SportBreakdown } from '#lib/types/index.js';
 import { ONE_HOUR_IN_SECONDS } from '../constants/time.js';
 
 

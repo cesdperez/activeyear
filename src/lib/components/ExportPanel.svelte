@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { appStore } from "$lib/stores/app.svelte.js";
+    import { appStore } from "#lib/stores/app.svelte.js";
     import ExportCarousel from "./ExportCarousel.svelte";
     import {
         DownloadSimple,
@@ -10,7 +10,7 @@
         Timer,
         Fire,
     } from "phosphor-svelte";
-    import type { Theme, SummaryMetric } from "$lib/types/index.js";
+    import type { Theme, SummaryMetric } from "#lib/types/index.js";
 
     let isExporting = $state(false);
     let exportError = $state<string | null>(null);

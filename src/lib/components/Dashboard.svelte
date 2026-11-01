@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { appStore } from "$lib/stores/app.svelte.js";
+	import { appStore } from "#lib/stores/app.svelte.js";
 	import StatCard from "./StatCard.svelte";
 	import PersonalRecordCard from "./PersonalRecordCard.svelte";
 	import ExportPanel from "./ExportPanel.svelte";
@@ -12,7 +12,7 @@
 		formatEverests,
 		formatPizzaSlices,
 		formatLotRMarathons,
-	} from "$lib/utils/format.js";
+	} from "#lib/utils/format.js";
 
 	// Phosphor icons
 	import {
@@ -34,8 +34,8 @@
 		sportNames,
 		sportIcons,
 		sportColors,
-	} from "$lib/constants/sports.js";
-	import { consolidateBreakdown } from "$lib/utils/activity.js";
+	} from "#lib/constants/sports.js";
+	import { consolidateBreakdown } from "#lib/utils/activity.js";
 
 	import confetti from "canvas-confetti";
 
