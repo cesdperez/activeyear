@@ -1,4 +1,5 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type Download, type Page } from '@playwright/test';
+import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { TARGET_YEAR } from '../../src/lib/constants/time.js';
@@ -49,6 +50,17 @@ export async function uploadCsv(page: Page, csv: string): Promise<void> {
 	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible({
 		timeout: 10000
 	});
+}
+
+/** Clicks Download All Images and returns the three PNGs in card order. */
+export async function downloadAllCards(page: Page): Promise<Buffer[]> {
+	const downloads: Download[] = [];
+	const collect = (download: Download) => downloads.push(download);
+	page.on('download', collect);
+	await page.getByRole('button', { name: /Download All Images/i }).click();
+	await expect.poll(() => downloads.length, { timeout: 15000 }).toBe(3);
+	page.off('download', collect);
+	return Promise.all(downloads.map(async (d) => readFileSync((await d.path()) ?? '')));
 }
 
 export async function showSlide(page: Page, slideIndex: number): Promise<void> {

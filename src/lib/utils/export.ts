@@ -8,6 +8,7 @@ import {
 	NAME_LONG_AFTER_CHARS,
 	TIMELINE_GAP
 } from '#lib/constants/export.js';
+import { loadAppFonts } from './fonts.js';
 
 export interface ExportOptions {
 	filename: string;
@@ -26,6 +27,9 @@ const THEME_BACKGROUNDS: Record<Theme, string> = {
  */
 export async function exportToPng(element: HTMLElement, options: ExportOptions): Promise<void> {
 	const { filename, scale = 2, backgroundColor = THEME_BACKGROUNDS.neon } = options;
+
+	// modern-screenshot embeds fonts by refetching them and skips any it cannot fetch.
+	await loadAppFonts();
 
 	try {
 		const dataUrl = await domToPng(element, {
