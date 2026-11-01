@@ -28,9 +28,9 @@
 				No highlights yet
 			</p>
 			<p class="text-sm text-[var(--color-text-muted)] max-w-md">
-				Mark activities as favorites in Garmin Connect by tapping the
-				star icon on any activity, then re-export your data to see them
-				here.
+				Mark activities as favorites in Garmin Connect by tapping
+				the star icon on any activity, then re-export your data to
+				see them here.
 			</p>
 		</div>
 	{/if}
