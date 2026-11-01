@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import {
 	calculateYearStats,
 	calculateLongestStreak,
@@ -103,6 +103,42 @@ describe('calculateLongestStreak', () => {
 		];
 
 		expect(calculateLongestStreak(activities)).toBe(2);
+	});
+});
+
+describe.each(['America/Los_Angeles', 'Asia/Tokyo'])('day keys in %s', (timeZone) => {
+	const originalTz = process.env.TZ;
+	beforeAll(() => {
+		process.env.TZ = timeZone;
+	});
+	afterAll(() => {
+		process.env.TZ = originalTz;
+	});
+
+	it('counts an early and a late activity on the same local date as one active day', () => {
+		const activities = [
+			createActivity({ date: new Date('2025-06-15 00:30:00') }),
+			createActivity({ date: new Date('2025-06-15 23:30:00') })
+		];
+
+		expect(calculateYearStats(activities).activeDays).toBe(1);
+	});
+
+	it('does not join local dates two days apart into a streak', () => {
+		const activities = [
+			createActivity({ date: new Date('2025-06-15 23:30:00') }),
+			createActivity({ date: new Date('2025-06-17 00:30:00') })
+		];
+
+		expect(calculateLongestStreak(activities)).toBe(1);
+	});
+
+	it('keeps a streak across a daylight saving change', () => {
+		const activities = ['2025-03-08', '2025-03-09', '2025-03-10', '2025-11-01', '2025-11-02'].map(
+			(day) => createActivity({ date: new Date(`${day} 12:00:00`) })
+		);
+
+		expect(calculateLongestStreak(activities)).toBe(3);
 	});
 });
 
