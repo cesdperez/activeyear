@@ -3,6 +3,8 @@
 	import StatCard from "./StatCard.svelte";
 	import PersonalRecordCard from "./PersonalRecordCard.svelte";
 	import ExportPanel from "./ExportPanel.svelte";
+	import ConfettiRain from "#lib/components/dashboard/ConfettiRain.svelte";
+	import DashboardToolbar from "#lib/components/dashboard/DashboardToolbar.svelte";
 	import {
 		formatDistance,
 		formatDuration,
@@ -25,7 +27,6 @@
 		Trophy,
 		Hourglass,
 		ArrowDown,
-		Confetti,
 		Target,
 		Star,
 	} from "phosphor-svelte";
@@ -36,47 +37,6 @@
 		sportColors,
 	} from "#lib/constants/sports.js";
 	import { consolidateBreakdown } from "#lib/utils/activity.js";
-
-	import confetti from "canvas-confetti";
-
-	$effect(() => {
-		if (appStore.confettiEnabled) {
-			const cleanup = startConfetti();
-			return cleanup;
-		}
-	});
-
-	function startConfetti() {
-		let timeoutId: ReturnType<typeof setTimeout>;
-		let active = true;
-
-		(function frame() {
-			if (!appStore.confettiEnabled || !active) return;
-
-			confetti({
-				particleCount: 1,
-				startVelocity: 0,
-				ticks: 800,
-				gravity: 0.3,
-				scalar: 0.7,
-				origin: {
-					x: Math.random(),
-					// since they fall down, start a bit above the screen
-					y: -0.1,
-				},
-				colors: ["#FFD700", "#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4"],
-				shapes: ["circle", "square"],
-				disableForReducedMotion: true,
-			});
-
-			timeoutId = setTimeout(frame, 140);
-		})();
-
-		return () => {
-			active = false;
-			clearTimeout(timeoutId);
-		};
-	}
 
 	let breakdownMetric = $derived(appStore.breakdownMetric);
 
@@ -109,44 +69,8 @@
 <div
 	class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative overflow-x-hidden"
 >
-	<div class="absolute top-4 right-4 md:right-8 z-10 flex items-center gap-2">
-		<!-- Unit Toggle -->
-		<div
-			class="flex p-0.5 bg-[var(--color-surface-elevated)] rounded-full border border-[rgba(255,255,255,0.05)]"
-		>
-			<button
-				class="px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-200 {appStore.unit ===
-				'km'
-					? 'bg-[var(--color-accent)] text-black'
-					: 'text-zinc-500 hover:text-zinc-300'}"
-				onclick={() => (appStore.unit = "km")}
-			>
-				km
-			</button>
-			<button
-				class="px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-200 {appStore.unit ===
-				'miles'
-					? 'bg-[var(--color-accent)] text-black'
-					: 'text-zinc-500 hover:text-zinc-300'}"
-				onclick={() => (appStore.unit = "miles")}
-			>
-				mi
-			</button>
-		</div>
-		<button
-			class="p-2 rounded-full transition-all duration-300 hover:scale-110 {appStore.confettiEnabled
-				? 'bg-[var(--color-surface-elevated)] text-[var(--color-accent)] shadow-lg'
-				: 'bg-transparent text-zinc-600 hover:text-zinc-400'}"
-			onclick={() =>
-				(appStore.confettiEnabled = !appStore.confettiEnabled)}
-			title={appStore.confettiEnabled
-				? "Disable celebration mode"
-				: "Enable celebration mode"}
-			aria-label="Toggle celebration confetti"
-		>
-			<Confetti class="w-6 h-6" />
-		</button>
-	</div>
+	<ConfettiRain />
+	<DashboardToolbar />
 	<!-- Header -->
 	<header class="text-center mb-16 md:mb-24">
 		<h1
