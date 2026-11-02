@@ -28,7 +28,8 @@
 			? 'donut-chart-container !h-[280px] !w-[280px] md:!h-[340px] md:!w-[340px]'
 			: 'donut-chart-container !h-[280px] !w-[280px]'}
 	>
-		<svg viewBox="0 0 200 200" class="donut-chart">
+		<!-- The ring is decorative; the legend and centre text carry the information. -->
+		<svg viewBox="0 0 200 200" class="donut-chart" aria-hidden="true" focusable="false">
 			<circle
 				cx="100"
 				cy="100"

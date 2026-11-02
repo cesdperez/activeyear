@@ -1,10 +1,16 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import FileUpload from '#lib/components/FileUpload.svelte';
 	import Dashboard from '#lib/components/Dashboard.svelte';
 
 	let uploading = $state(false);
+	let hydrated = $state(false);
+
+	onMount(() => {
+		hydrated = true;
+	});
 </script>
 
 <main class="min-h-screen bg-[var(--color-surface)]">
@@ -18,12 +24,20 @@
 				<p class="text-lg text-zinc-400">Your {TARGET_YEAR} in Sport</p>
 			</div>
 
+			<noscript>
+				<p class="mb-6 max-w-md text-center text-sm text-pretty text-zinc-300">
+					ActiveYear needs JavaScript to read your Garmin CSV. Everything is processed in your
+					browser and your data never leaves your device, so please enable JavaScript and reload
+					this page.
+				</p>
+			</noscript>
+
 			<div class="w-full max-w-lg">
 				<FileUpload bind:loading={uploading} />
 				<div class="mt-4 text-center">
 					<button
 						class="text-sm text-balance text-zinc-400 transition-colors duration-200 hover:text-cyan-400 disabled:cursor-not-allowed disabled:opacity-50"
-						disabled={uploading}
+						disabled={uploading || !hydrated}
 						onclick={() => appStore.loadDemoData()}
 					>
 						No CSV file? See how it works with demo data
