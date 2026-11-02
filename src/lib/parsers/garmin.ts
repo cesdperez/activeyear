@@ -9,7 +9,7 @@ import type {
 } from '../types/index.js';
 import { TARGET_YEAR } from '../constants/time.js';
 
-// Garmin localises headers, so other languages miss these.
+// Garmin localises headers, so other languages miss these. Every Garmin export has all three.
 const KEY_HEADERS = ['Activity Type', 'Date', 'Distance'];
 
 const ACTIVITY_TYPE_MAP: Record<string, ActivityType> = {
@@ -357,7 +357,7 @@ function hasGarminHeaders(csvContent: string): boolean {
 			.split(',')
 			.map((h) => h.trim())
 	);
-	return KEY_HEADERS.filter((h) => headers.has(h)).length > 1;
+	return KEY_HEADERS.every((h) => headers.has(h));
 }
 
 export const garminParser: ActivityParser = {
