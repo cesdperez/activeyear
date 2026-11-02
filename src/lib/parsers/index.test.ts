@@ -35,6 +35,16 @@ describe('parseActivityCsv', () => {
 		expect(result.errors).toEqual([expect.objectContaining({ type: 'unsupported-format' })]);
 	});
 
+	it('rejects a Strava export that has Activity Type and Distance but no Date', () => {
+		const stravaCsv =
+			'Activity ID,Activity Type,Activity Name,Elapsed Time,Distance\n123,Run,Morning Run,3000,10.0';
+
+		const result = parseActivityCsv(stravaCsv, 2025);
+
+		expect(result.activities).toEqual([]);
+		expect(result.errors).toEqual([expect.objectContaining({ type: 'unsupported-format' })]);
+	});
+
 	it('rejects a CSV that no parser recognises', () => {
 		const spanishGarminCsv =
 			'Tipo de actividad,Fecha,Título,Distancia\nCarrera,2025-01-01 08:00:00,Run,10.0';
