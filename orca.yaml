@@ -6,11 +6,9 @@ scripts:
     pnpm --silent ports
   archive: |
     #!/usr/bin/env bash
-    # Orca reads this from the primary checkout and runs it in the worktree being removed, which may predate scripts/ports.ts.
-    [ -f scripts/ports.ts ] || exit 0
-    for port in $(node scripts/ports.ts --all); do
-      lsof -ti "tcp:$port" -sTCP:LISTEN | xargs kill 2>/dev/null || true
-    done
+    # Orca reads this from the primary checkout and runs it in the worktree being removed, which may predate the script.
+    [ -f scripts/stop-servers.sh ] || exit 0
+    bash scripts/stop-servers.sh
 setupAgentStartupPolicy: wait-for-setup
 defaultTabs:
   - title: Agent

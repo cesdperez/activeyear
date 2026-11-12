@@ -22,7 +22,7 @@ pnpm ports                                 # This checkout's preview and dev URL
 - **Unit tests** (`*.test.ts`): Edge cases, complex logic, and scenarios too slow for E2E.
 - E2E runs against `pnpm preview` (`wrangler pages dev` on the build), so `_headers` and the CSP are enforced. `pnpm test:e2e` builds and starts a fresh preview each run. `E2E_REUSE_SERVER=1` reuses a running one instead, which keeps serving the build it started with.
 - Each checkout gets its own ports from `scripts/ports.ts`, so worktrees run dev, preview and E2E in parallel. The main checkout uses 4173 (preview) and 5173 (dev), a linked worktree a pair derived from its path. `ACTIVEYEAR_PORT` overrides the preview port; dev is one above it.
-- Ports are strict: a busy port fails the command rather than serving another build. `workerd` can outlive a killed `wrangler` and hold the port; stop what listens on your own port (`lsof -ti tcp:<port> -sTCP:LISTEN`).
+- Ports are strict: a busy port fails the command rather than serving another build. `workerd` can outlive a killed `wrangler` and hold the port; `bash scripts/stop-servers.sh` stops this checkout's servers and everything they started. Orca runs it when it removes a worktree.
 - The `webkit` project runs only the specs it matches; it needs `npx playwright install webkit`.
 - Playwright runs with `reducedMotion: 'reduce'`, which turns on the reduced-motion rule in `src/app.css`: every style change becomes a 0.01ms transition, so layout read right after a change still shows the old values. Poll, or measure inside a transition-free area.
 - After changes: run `pnpm test:run` and `pnpm check`. Before merging to main: run `pnpm test:all`.
