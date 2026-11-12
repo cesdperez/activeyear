@@ -162,6 +162,15 @@ describe('parseGarminDate', () => {
 		expect(date?.getDate()).toBe(29);
 	});
 
+	it('parses the last second of a year', () => {
+		const date = parseGarminDate('2026-12-31 23:59:59');
+		expect(date?.getMonth()).toBe(11);
+		expect(date?.getDate()).toBe(31);
+		expect(date?.getHours()).toBe(23);
+		expect(date?.getMinutes()).toBe(59);
+		expect(date?.getSeconds()).toBe(59);
+	});
+
 	it('parses surrounding whitespace', () => {
 		expect(parseGarminDate(' 2026-03-01 08:00:00 ')).not.toBeNull();
 	});
