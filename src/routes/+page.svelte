@@ -4,6 +4,7 @@
 	import { createHydrated } from '#lib/stores/hydrated.svelte.js';
 	import FileUpload from '#lib/components/FileUpload.svelte';
 	import Dashboard from '#lib/components/Dashboard.svelte';
+	import HomeFaq from '#lib/components/HomeFaq.svelte';
 
 	let uploading = $state(false);
 	const hydrated = createHydrated();
@@ -71,6 +72,8 @@
 					Use the website on a computer. The Garmin Connect app can't export.
 				</p>
 			</div>
+
+			<HomeFaq />
 		</div>
 	{/if}
 </main>
