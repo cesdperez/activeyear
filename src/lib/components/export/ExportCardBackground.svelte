@@ -1,25 +1,25 @@
 <script lang="ts">
 	import type { Theme } from '#lib/types/index.js';
+	import neonGradient from '#lib/assets/neon-gradient.png?inline';
+	import neonNoise from '#lib/assets/neon-noise.png?inline';
 
 	let { theme }: { theme: Theme } = $props();
 </script>
 
 <div class="export-background absolute inset-0"></div>
 
+<!-- Images, not a CSS gradient and feTurbulence: both dither per pixel, which pushes the exported PNG past 2 MB. -->
 {#if theme === 'neon'}
 	<div
-		class="absolute inset-0 opacity-[0.03]"
-		style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%270 0 256 256%27 xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cfilter id=%27noise%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.65%27 numOctaves=%273%27 stitchTiles=%27stitch%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23noise)%27/%3E%3C/svg%3E');"
+		class="absolute inset-0"
+		style="background: url({neonGradient}) 0 0 / 100% 100% no-repeat;"
 	></div>
+	<div class="absolute inset-0 opacity-[0.03]" style="background-image: url({neonNoise});"></div>
 {/if}
 
 <style>
 	.export-background {
 		background: var(--color-surface);
-	}
-
-	:global(.theme-neon) .export-background {
-		background: radial-gradient(circle at 50% 0%, #1a1b26 0%, #050505 100%);
 	}
 
 	:global(.theme-minimalist) .export-background {
