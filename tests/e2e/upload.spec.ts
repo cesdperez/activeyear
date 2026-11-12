@@ -67,6 +67,16 @@ test.describe('Upload Flow', () => {
 		await expect(page.getByText('Drop your Garmin CSV here')).toBeVisible();
 	});
 
+	test('shows an upload error as soon as the file is read', async ({ page }) => {
+		await page.goto('/');
+
+		await uploadFileWithoutTargetYear(page);
+
+		await expect(
+			page.getByRole('button', { name: `No ${TARGET_YEAR} activities found in the file` })
+		).toBeVisible({ timeout: 2000 });
+	});
+
 	test('explains why an export without target year activities was rejected', async ({ page }) => {
 		await page.goto('/');
 
