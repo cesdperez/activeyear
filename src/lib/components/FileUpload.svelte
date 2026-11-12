@@ -149,7 +149,7 @@
 			/>
 		</span>
 		<span class="mb-1 block text-lg text-balance text-[var(--color-text-primary)]"
-			>Drop your Garmin CSV here</span
+			>Drop your Garmin or Strava CSV here</span
 		>
 		<span class="mb-4 block text-sm text-[var(--color-text-muted)]">or click to browse</span>
 		<span class="flex items-center justify-center gap-1.5 text-xs text-[var(--color-text-dim)]">

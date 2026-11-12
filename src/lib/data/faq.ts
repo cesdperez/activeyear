@@ -4,7 +4,7 @@ import type { FaqItem } from '#lib/types/index.js';
 export const FAQ: FaqItem[] = [
 	{
 		question: 'What is this?',
-		answer: `A free ${TARGET_YEAR} year in review for Garmin athletes. Upload your activity export and see your year in sport: total distance, elevation, time and calories, a breakdown by sport, personal records, highlights and your longest streak.`
+		answer: `A free ${TARGET_YEAR} year in review for Garmin and Strava athletes. Upload your activity export and see your year in sport: total distance, elevation, time and calories, a breakdown by sport, personal records, highlights and your longest streak.`
 	},
 	{
 		question: 'Is my data private?',
@@ -14,7 +14,7 @@ export const FAQ: FaqItem[] = [
 	{
 		question: 'Which file does it need?',
 		answer:
-			'The Activities CSV exported from Garmin Connect in English. It covers running, cycling, swimming, walking, hiking, strength, yoga, paddling, rowing, cardio, winter sports, racket sports and climbing.'
+			'The Activities CSV from Garmin Connect or activities.csv from your Strava account export, in English. It covers running, cycling, swimming, walking, hiking, strength, yoga, paddling, rowing, cardio, winter sports, racket sports and climbing.'
 	},
 	{
 		question: 'What can I share?',

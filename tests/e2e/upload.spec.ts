@@ -65,7 +65,7 @@ test.describe('Upload Flow', () => {
 		await expect(page.getByRole('heading', { name: 'ActiveYear' })).toBeVisible();
 		await expect(page.getByText(`${DASHBOARD_HEADING} in Sport`)).toBeVisible();
 
-		await expect(page.getByText('Drop your Garmin CSV here')).toBeVisible();
+		await expect(page.getByText('Drop your Garmin or Strava CSV here')).toBeVisible();
 		await expect(page.getByText('Your data never leaves this browser')).toBeVisible();
 	});
 
@@ -123,7 +123,7 @@ test.describe('Upload Flow', () => {
 
 		await page.getByRole('button', { name: 'Upload different file' }).click();
 
-		await expect(page.getByText('Drop your Garmin CSV here')).toBeVisible();
+		await expect(page.getByText('Drop your Garmin or Strava CSV here')).toBeVisible();
 	});
 
 	test('shows an upload error as soon as the file is read', async ({ page }) => {
@@ -197,7 +197,7 @@ test.describe('Upload Flow', () => {
 		expect(await isFileDragCancelled(heading, 'dragover')).toBe(true);
 		expect(await isFileDragCancelled(heading, 'drop')).toBe(true);
 
-		await expect(page.getByText('Drop your Garmin CSV here')).toBeVisible();
+		await expect(page.getByText('Drop your Garmin or Strava CSV here')).toBeVisible();
 		await expect(page.getByRole('status')).toBeEmpty();
 	});
 
@@ -218,7 +218,7 @@ test.describe('Upload Flow', () => {
 
 test.describe('Upload accessibility', () => {
 	const uploadZone = (page: Page) =>
-		page.getByRole('button', { name: /Drop your Garmin CSV here/ });
+		page.getByRole('button', { name: /Drop your Garmin or Strava CSV here/ });
 	const demoButton = (page: Page) => page.getByRole('button', { name: /demo data/ });
 
 	test('Space on the upload zone opens the file picker', async ({ page }) => {

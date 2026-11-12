@@ -13,7 +13,7 @@ test.describe('Search and AI discovery', () => {
 	test('home page head describes the app for search and social previews', async ({ page }) => {
 		await page.goto('/');
 
-		await expect(page).toHaveTitle(new RegExp(`Garmin Year in Review ${TARGET_YEAR}`));
+		await expect(page).toHaveTitle(new RegExp(`Garmin & Strava Year in Review ${TARGET_YEAR}`));
 		const head = page.locator('head');
 		await expect(head.locator('meta[name="description"]')).toHaveAttribute(
 			'content',

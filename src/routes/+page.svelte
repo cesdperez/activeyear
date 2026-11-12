@@ -49,9 +49,9 @@
 
 			<noscript>
 				<p class="mb-6 max-w-md text-center text-sm text-pretty text-zinc-300">
-					ActiveYear needs JavaScript to read your Garmin CSV. Everything is processed in your
-					browser and your data never leaves your device, so please enable JavaScript and reload
-					this page.
+					ActiveYear needs JavaScript to read your Garmin or Strava CSV. Everything is processed in
+					your browser and your data never leaves your device, so please enable JavaScript and
+					reload this page.
 				</p>
 			</noscript>
 
