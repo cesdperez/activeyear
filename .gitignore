@@ -12,6 +12,9 @@ node_modules
 .DS_Store
 Thumbs.db
 
+# Orca
+.orca
+
 # Env
 .env
 .env.*
