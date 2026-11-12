@@ -315,7 +315,7 @@ Confident, concise, celebratory.
 
 - Distances: No decimals under 100, one decimal over ("42 km", "847.3 km")
 - Elevation: Round to nearest 10m
-- Time: Hours and minutes ("127h 34m"), never seconds for totals
+- Time: Hours and minutes ("127h 34m"); seconds only for a total under a minute ("45s")
 - Calories: Round to nearest 100 for totals
 - Counts: Exact numbers ("94 runs", not "~90 runs")
 
