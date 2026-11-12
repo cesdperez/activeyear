@@ -13,14 +13,24 @@ async function uploadFileWithoutTargetYear(page: Page) {
 	});
 }
 
+type SlowReadWindow = Window & { slowedFileRead?: boolean };
+
 // Parsing finishes in milliseconds, too fast to assert on the loading state.
 async function slowFileReads(page: Page) {
 	await page.addInitScript(() => {
 		const read = File.prototype.text;
 		File.prototype.text = function () {
+			(window as SlowReadWindow).slowedFileRead = true;
 			return new Promise((resolve) => setTimeout(resolve, 1500)).then(() => read.call(this));
 		};
 	});
+}
+
+// Fails once the app reads files another way, which would make slowFileReads a no-op.
+async function expectFileReadSlowed(page: Page) {
+	await expect
+		.poll(() => page.evaluate(() => (window as SlowReadWindow).slowedFileRead))
+		.toBe(true);
 }
 
 function isFileDragCancelled(target: Locator, type: 'dragover' | 'drop') {
@@ -113,6 +123,7 @@ test.describe('Upload Flow', () => {
 		await slowFileReads(page);
 		await page.goto('/');
 		await uploadFileWithoutTargetYear(page);
+		await expectFileReadSlowed(page);
 		const uploadZone = page.locator(`#${UPLOAD_ZONE_ID}`);
 		await expect(page.getByRole('status')).toHaveText('Analyzing activities...');
 
@@ -142,6 +153,7 @@ test.describe('Upload accessibility', () => {
 		await slowFileReads(page);
 		await page.goto('/');
 		await uploadFileWithoutTargetYear(page);
+		await expectFileReadSlowed(page);
 
 		await expect(page.getByRole('status')).toHaveText('Analyzing activities...');
 		await expect(page.getByRole('alert')).toHaveText(
@@ -154,6 +166,7 @@ test.describe('Upload accessibility', () => {
 		await slowFileReads(page);
 		await page.goto('/');
 		await uploadFileWithoutTargetYear(page);
+		await expectFileReadSlowed(page);
 
 		await expect(demoButton(page)).toBeDisabled();
 		await expect(page.getByRole('alert')).not.toBeEmpty({ timeout: 10000 });
