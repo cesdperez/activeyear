@@ -54,5 +54,6 @@ if (import.meta.main) {
 	if (mode === '--all') console.log(`${PREVIEW_PORT}\n${DEV_PORT}`);
 	else if (mode === '--urls')
 		console.log(`preview http://localhost:${PREVIEW_PORT}\ndev     http://localhost:${DEV_PORT}`);
-	else console.log(PREVIEW_PORT);
+	// A bare number gets ANSI colours under FORCE_COLOR, which Playwright sets for its web server.
+	else console.log(String(PREVIEW_PORT));
 }
