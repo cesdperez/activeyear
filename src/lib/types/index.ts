@@ -103,3 +103,8 @@ export interface ParseError {
 	row: number;
 	message: string;
 }
+
+export interface FaqItem {
+	question: string;
+	answer: string;
+}

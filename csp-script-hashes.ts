@@ -3,7 +3,9 @@ import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Plugin } from 'vite';
 
-const INLINE_SCRIPT = /<script(?![^>]*\ssrc=)[^>]*>([\s\S]*?)<\/script>/g;
+// JSON-LD is a data block that browsers never run, so it needs no hash.
+const INLINE_SCRIPT =
+	/<script(?![^>]*\ssrc=)(?![^>]*\stype="application\/ld\+json")[^>]*>([\s\S]*?)<\/script>/g;
 const SCRIPT_SRC = /^(\s*Content-Security-Policy:.*?\bscript-src)\b/m;
 
 /**
