@@ -84,6 +84,12 @@ export type SummaryMetric = 'distance' | 'elevation' | 'duration' | 'calories';
 
 export type Unit = 'km' | 'miles';
 
+export type SavedYearError =
+	| { type: 'invalid-file' }
+	| { type: 'unsupported-version'; version: unknown }
+	| { type: 'wrong-year'; year: unknown; expected: number }
+	| { type: 'invalid-activities' };
+
 export type ActivitySource = 'garmin' | 'strava';
 
 export interface ParseResult {
