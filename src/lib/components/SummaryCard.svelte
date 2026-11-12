@@ -78,7 +78,7 @@
 	<div class="relative -mt-[30px] mb-[140px] flex justify-center">
 		<!-- Decorative Spiral Effects -->
 		<div class="avatar-decorations">
-			<svg viewBox="0 0 200 200" class="spiral-svg">
+			<svg viewBox="0 0 200 200" class="spiral-svg" aria-hidden="true" focusable="false">
 				<ellipse
 					cx="100"
 					cy="100"
