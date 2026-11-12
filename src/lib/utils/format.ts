@@ -28,7 +28,8 @@ export function formatDistance(km: number, unit: Unit = 'km'): string {
  */
 export function formatDuration(seconds: number): string {
 	if (seconds <= 0) return '0m';
-	if (seconds < ONE_MINUTE_IN_SECONDS) return `${Math.max(1, Math.floor(seconds))}s`;
+	const underAMinute = secondsUnderAMinute(seconds);
+	if (underAMinute !== undefined) return `${underAMinute}s`;
 
 	const hours = Math.floor(seconds / ONE_HOUR_IN_SECONDS);
 	const minutes = Math.floor((seconds % ONE_HOUR_IN_SECONDS) / ONE_MINUTE_IN_SECONDS);
@@ -37,6 +38,12 @@ export function formatDuration(seconds: number): string {
 		return `${minutes}m`;
 	}
 	return `${formatCount(hours)}h ${minutes}m`;
+}
+
+/** Whole seconds, at least 1, for a duration under a minute; `undefined` for none or a minute and up. */
+export function secondsUnderAMinute(seconds: number): number | undefined {
+	if (seconds <= 0 || seconds >= ONE_MINUTE_IN_SECONDS) return undefined;
+	return Math.max(1, Math.floor(seconds));
 }
 
 /** Whether a formatted stat shows anything but zero, so "0.0km" and "0ft" do not count. */

@@ -13,7 +13,8 @@ import {
 	formatActivityCount,
 	formatCount,
 	formatPercentOfYear,
-	pluralize
+	pluralize,
+	secondsUnderAMinute
 } from './format.js';
 
 describe('formatDistance', () => {
@@ -181,6 +182,18 @@ describe('formatPizzaSlices', () => {
 
 	it('says less than a slice when the calories round to no slices', () => {
 		expect(formatPizzaSlices(120)).toBe('Less than a pizza slice burnt');
+	});
+});
+
+describe('secondsUnderAMinute', () => {
+	it('gives whole seconds, at least one, for a duration under a minute', () => {
+		expect(secondsUnderAMinute(45.9)).toBe(45);
+		expect(secondsUnderAMinute(0.4)).toBe(1);
+	});
+
+	it('gives nothing for no duration or a minute and up', () => {
+		expect(secondsUnderAMinute(0)).toBeUndefined();
+		expect(secondsUnderAMinute(60)).toBeUndefined();
 	});
 });
 

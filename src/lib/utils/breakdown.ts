@@ -16,7 +16,7 @@ import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '#lib/constants/time.
 import { consolidateBreakdown, mergeIntoOther } from './activity.js';
 import { donutSegments, scaledBarHeight, topIndices } from './charts.js';
 import { daysInYear } from './date.js';
-import { pluralize } from './format.js';
+import { pluralize, secondsUnderAMinute } from './format.js';
 
 export interface SportDonutSegment {
 	dashArray: string;
@@ -115,8 +115,8 @@ export function donutCentre(sports: SportBreakdown[], metric: BreakdownMetric): 
 	if (metric === 'duration') {
 		// Floored so the centre agrees with formatDuration in Time Active.
 		const hours = Math.floor(total / ONE_HOUR_IN_SECONDS);
-		if (total > 0 && total < ONE_MINUTE_IN_SECONDS) {
-			const seconds = Math.max(1, Math.floor(total));
+		const seconds = secondsUnderAMinute(total);
+		if (seconds !== undefined) {
 			return { value: seconds.toString(), label: pluralize(seconds, 'Second', 'Seconds') };
 		}
 		if (hours === 0) {
