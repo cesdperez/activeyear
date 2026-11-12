@@ -49,8 +49,10 @@ Security headers:
 
 Solo project, kept simple: there is no CI. Local git hooks run the checks instead, set up by `simple-git-hooks` in `package.json` and installed by `pnpm install` through `prepare`:
 
-- `pre-commit`: `lint-staged` runs Prettier and ESLint on the staged files.
-- `pre-push`: `pnpm check` and `pnpm test:run`.
+- `pre-commit`: `lint-staged` runs Prettier and ESLint on the staged files, then `pnpm scan:staged` runs gitleaks on the staged changes.
+- `pre-push`: `pnpm check`, `pnpm test:run`, `pnpm scan` (gitleaks over the full history, trivy for HIGH and CRITICAL vulnerabilities in production dependencies and for secrets) and `pnpm knip` (unused files, exports and dependencies).
+
+gitleaks and trivy come from Homebrew (`brew install gitleaks trivy`); the hooks fail with that hint when either is missing. trivy downloads its vulnerability database on the first run and refreshes it once a day. Accept a reviewed false positive in `.gitleaksignore` or `.trivyignore`.
 
 E2E needs a build and a free port, so it stays out of the hooks (see Testing Strategy). Put new automated checks in these hooks, not a CI workflow. After editing the hook config, run `pnpm exec simple-git-hooks`, because the installed hooks only change when it runs.
 
