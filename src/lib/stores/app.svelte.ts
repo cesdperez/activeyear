@@ -7,6 +7,7 @@ import {
 	summaryMetricWithValue,
 	selectHighlights
 } from '../utils/stats.js';
+import { parseSavedYear, savedYearErrorMessage, serializeSavedYear } from '#lib/utils/savedYear.js';
 import { TARGET_YEAR } from '../constants/time.js';
 import { demoActivities } from '../data/demo.js';
 import {
@@ -121,8 +122,9 @@ class AppStore {
 	}
 
 	async processFile(file: File) {
-		if (!file.name.toLowerCase().endsWith('.csv')) {
-			this.#fail('Please upload a CSV file');
+		const name = file.name.toLowerCase();
+		if (!name.endsWith('.csv') && !name.endsWith('.json')) {
+			this.#fail('Please upload a CSV or saved .json file');
 			return;
 		}
 
@@ -131,6 +133,17 @@ class AppStore {
 
 		try {
 			const content = await file.text();
+			if (name.endsWith('.json')) {
+				const saved = parseSavedYear(content, TARGET_YEAR);
+				if (!saved.ok) {
+					this.#fail(savedYearErrorMessage(saved.error));
+					return;
+				}
+				this.#load(saved.activities);
+				this.#source = saved.source;
+				this.#parseErrors = [];
+				return;
+			}
 			const result = parseActivityCsv(content, TARGET_YEAR);
 
 			const unreadable = result.errors.find((e) => e.type === 'unsupported-format');
@@ -150,6 +163,10 @@ class AppStore {
 		} catch (err) {
 			this.#fail(err instanceof Error ? err.message : 'Failed to parse file');
 		}
+	}
+
+	savedYearJson() {
+		return serializeSavedYear(this.#activities, this.#source, TARGET_YEAR);
 	}
 
 	loadDemoData() {

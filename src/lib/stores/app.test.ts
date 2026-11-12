@@ -26,7 +26,25 @@ describe('appStore', () => {
 		await appStore.processFile(new File(['x'], 'activities.txt'));
 
 		expect(appStore.status).toBe('error');
-		expect(appStore.error).toBe('Please upload a CSV file');
+		expect(appStore.error).toBe('Please upload a CSV or saved .json file');
+	});
+
+	it('loads a saved JSON year', async () => {
+		await appStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
+		const activities = appStore.activities;
+		const json = appStore.savedYearJson();
+		appStore.reset();
+		await appStore.processFile(new File([json], 'year.JSON'));
+		expect(appStore.status).toBe('ready');
+		expect(appStore.activities).toEqual(activities);
+		expect(appStore.source).toBe('garmin');
+		expect(appStore.parseErrors).toEqual([]);
+	});
+
+	it('rejects invalid saved JSON', async () => {
+		await appStore.processFile(new File(['{'], 'year.json'));
+		expect(appStore.status).toBe('error');
+		expect(appStore.error).toBe('This file is not a saved ActiveYear year');
 	});
 
 	it('rejects a CSV in a format no parser recognises', async () => {
