@@ -30,6 +30,18 @@ test.describe('Search and AI discovery', () => {
 		);
 	});
 
+	test('apple touch icon is available as a PNG', async ({ page, request }) => {
+		await page.goto('/');
+
+		await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute(
+			'href',
+			'/apple-touch-icon.png'
+		);
+		const response = await request.get('/apple-touch-icon.png');
+		expect(response.status()).toBe(200);
+		expect(response.headers()['content-type']).toContain('image/png');
+	});
+
 	test('structured data parses and its FAQ matches the visible FAQ', async ({ page }) => {
 		const cspViolations = recordCspViolations(page);
 		await page.goto('/');
