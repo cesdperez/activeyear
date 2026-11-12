@@ -166,7 +166,7 @@ function cleanWholeNumberString(str: string): string {
 /**
  * Parse a Garmin distance given in meters (swims, rowing, track) to km
  */
-export function parseGarminMeterDistance(distanceStr: string): number {
+function parseGarminMeterDistance(distanceStr: string): number {
 	const value = parseFloat(cleanWholeNumberString(distanceStr));
 	return isNaN(value) ? 0 : value / 1000;
 }
