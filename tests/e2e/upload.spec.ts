@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { TARGET_YEAR } from '../../src/lib/constants/time.js';
+import { MIN_UPLOAD_LOADING_MS, TARGET_YEAR } from '../../src/lib/constants/time.js';
 import { UPLOAD_ZONE_ID } from '../../src/lib/constants/dom.js';
 import { DASHBOARD_HEADING, uploadSample } from './helpers.js';
 
@@ -84,7 +84,7 @@ test.describe('Upload Flow', () => {
 
 		await expect(
 			page.getByRole('button', { name: `No ${TARGET_YEAR} activities found in the file` })
-		).toBeVisible({ timeout: 2000 });
+		).toBeVisible({ timeout: MIN_UPLOAD_LOADING_MS + 2000 });
 	});
 
 	test('explains why an export without target year activities was rejected', async ({ page }) => {
