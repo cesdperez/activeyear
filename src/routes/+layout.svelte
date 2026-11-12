@@ -12,6 +12,7 @@
 	import '../app.css';
 
 	import { onMount } from 'svelte';
+	import { page } from '$app/state';
 	import MetaTags from '#lib/components/MetaTags.svelte';
 	import { inlinedFontFaceCss, loadAppFonts } from '#lib/utils/fonts.js';
 
@@ -25,6 +26,8 @@
 	});
 </script>
 
-<MetaTags />
+{#if page.route.id !== '/404'}
+	<MetaTags />
+{/if}
 
 {@render children()}

@@ -18,10 +18,18 @@ test.describe('Content Security Policy', () => {
 	});
 
 	test('unknown paths get the security headers too', async ({ page }) => {
+		const violations = recordCspViolations(page);
 		const response = await page.goto('/no-such-page');
 
 		expect(response!.status()).toBe(404);
 		expect(response!.headers()['content-security-policy']).toContain("default-src 'self'");
+		await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+		await expect(page.getByRole('link', { name: 'Back to ActiveYear' })).toHaveAttribute(
+			'href',
+			'/'
+		);
+		await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+		expect(violations).toEqual([]);
 	});
 
 	test('upload, confetti and PNG export run without violations', async ({ page }) => {
