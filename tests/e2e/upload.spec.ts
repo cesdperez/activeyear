@@ -160,7 +160,7 @@ test.describe('Upload Flow', () => {
 	});
 
 	test('ignores a file dropped outside the upload zone', async ({ page }) => {
-		await page.goto('/');
+		await gotoUpload(page);
 		const heading = page.getByRole('heading', { name: 'ActiveYear' });
 
 		expect(await isFileDragCancelled(heading, 'dragover')).toBe(true);
@@ -191,7 +191,7 @@ test.describe('Upload accessibility', () => {
 	const demoButton = (page: Page) => page.getByRole('button', { name: /demo data/ });
 
 	test('Space on the upload zone opens the file picker', async ({ page }) => {
-		await page.goto('/');
+		await gotoUpload(page);
 		await uploadZone(page).focus();
 
 		const fileChooser = page.waitForEvent('filechooser');
