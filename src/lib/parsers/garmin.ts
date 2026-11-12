@@ -194,11 +194,16 @@ export function mapActivityType(garminType: string): ActivityType {
 	return ACTIVITY_TYPE_MAP[garminType] || 'other';
 }
 
-function isValidGarminDate(year: number, month: number, day: number): boolean {
+function isCalendarDate(year: number, month: number, day: number): boolean {
 	const date = new Date(Date.UTC(year, month - 1, day));
 	return (
 		date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
 	);
+}
+
+function isClockTime(hours: number, minutes: number, seconds: number): boolean {
+	// Range check, not a local Date round trip: a real time inside the browser's daylight-saving gap would shift and be rejected.
+	return hours <= 23 && minutes <= 59 && seconds <= 59;
 }
 
 /**
@@ -208,9 +213,7 @@ export function parseGarminDate(dateStr: string): Date | null {
 	const match = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(dateStr.trim());
 	if (!match) return null;
 	const [year, month, day, hours, minutes, seconds] = match.slice(1).map(Number);
-	if (!isValidGarminDate(year, month, day)) return null;
-	// A local date round trip can shift valid times in a daylight-saving gap.
-	if (hours > 23 || minutes > 59 || seconds > 59) return null;
+	if (!isCalendarDate(year, month, day) || !isClockTime(hours, minutes, seconds)) return null;
 	return new Date(year, month - 1, day, hours, minutes, seconds);
 }
 
