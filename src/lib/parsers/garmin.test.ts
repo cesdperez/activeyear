@@ -6,9 +6,9 @@ import {
 	parseGarminCalories,
 	parseGarminElevation,
 	mapActivityType,
-	parseGarminDate,
-	isInYear
+	parseGarminDate
 } from './garmin.js';
+import { isInYear } from './csv.js';
 import { TARGET_YEAR } from '../constants/time.js';
 import { loadFixture } from './__fixtures__/load.js';
 

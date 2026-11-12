@@ -1,4 +1,13 @@
 import Papa from 'papaparse';
+import {
+	firstLine,
+	readHeaderCells,
+	isCalendarDate,
+	isInYear,
+	sortedYears,
+	papaRowErrors,
+	invalidDateError
+} from './csv.js';
 import type { Activity, ActivityParser, ActivityType, ParseResult } from '#lib/types/index.js';
 
 const KEY_HEADERS = ['Activity Date', 'Activity Type', 'Moving Time'];
@@ -34,8 +43,7 @@ const ACTIVITY_TYPES: Record<string, ActivityType> = {
 };
 
 function readHeaders(csv: string): string[] {
-	const line = csv.trimStart().split(/\r?\n/, 1)[0];
-	return (Papa.parse<string[]>(line ?? '').data[0] ?? []).map((value) => value.trim());
+	return readHeaderCells(firstLine(csv));
 }
 
 function hasEnglishHeaders(csv: string): boolean {
@@ -56,13 +64,11 @@ function parseStravaDate(value: string): Date | null {
 	const minute = Number(match[5]);
 	const second = Number(match[6]);
 	if (hour < 1 || hour > 12 || minute > 59 || second > 59) return null;
+	if (!isCalendarDate(year, month + 1, day)) return null;
 	// Activity Date is UTC.
-	const date = new Date(
+	return new Date(
 		Date.UTC(year, month, day, (hour % 12) + (match[7] === 'PM' ? 12 : 0), minute, second)
 	);
-	return date.getUTCFullYear() === year && date.getUTCMonth() === month && date.getUTCDate() === day
-		? date
-		: null;
 }
 
 function parseNumber(value: string | undefined): number {
@@ -159,8 +165,7 @@ function parse(csv: string, year: number): ParseResult {
 			});
 			return;
 		}
-		for (const error of errors)
-			result.errors.push({ type: 'unknown', row: rowLine, message: error.message });
+		result.errors.push(...papaRowErrors(errors, rowLine));
 
 		const type = data[columns.type] ?? '';
 		const dateText = data[columns.date] ?? '';
@@ -174,13 +179,13 @@ function parse(csv: string, year: number): ParseResult {
 		}
 		const date = parseStravaDate(dateText);
 		if (!date) {
-			result.errors.push({ type: 'invalid-date', row: rowLine, message: 'Invalid date format' });
+			result.errors.push(invalidDateError(rowLine));
 			return;
 		}
 		years.add(date.getFullYear());
-		if (date.getFullYear() === year) result.activities.push(readActivity(data, columns, date));
+		if (isInYear(date, year)) result.activities.push(readActivity(data, columns, date));
 	});
-	result.yearsInFile = [...years].sort((a, b) => a - b);
+	result.yearsInFile = sortedYears(years);
 	return result;
 }
 

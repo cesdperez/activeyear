@@ -1,4 +1,13 @@
 import Papa from 'papaparse';
+import {
+	firstLine,
+	readHeaderCells,
+	isCalendarDate,
+	isInYear,
+	sortedYears,
+	papaRowErrors,
+	invalidDateError
+} from './csv.js';
 import type {
 	Activity,
 	ActivityParser,
@@ -194,13 +203,6 @@ export function mapActivityType(garminType: string): ActivityType {
 	return ACTIVITY_TYPE_MAP[garminType] || 'other';
 }
 
-function isCalendarDate(year: number, month: number, day: number): boolean {
-	const date = new Date(Date.UTC(year, month - 1, day));
-	return (
-		date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
-	);
-}
-
 function isClockTime(hours: number, minutes: number, seconds: number): boolean {
 	// Range check, not a local Date round trip: a real time inside the browser's daylight-saving gap would shift and be rejected.
 	return hours <= 23 && minutes <= 59 && seconds <= 59;
@@ -217,19 +219,8 @@ export function parseGarminDate(dateStr: string): Date | null {
 	return new Date(year, month - 1, day, hours, minutes, seconds);
 }
 
-/**
- * Check if a date is in the target year
- */
-export function isInYear(date: Date, year: number): boolean {
-	return date.getFullYear() === year;
-}
-
 function findHeaderIndex(lines: string[]): number {
 	return lines.findIndex((line) => line.trim() !== '');
-}
-
-function readHeaders(headerLine: string): string[] {
-	return (Papa.parse<string[]>(headerLine, { header: false }).data[0] ?? []).map((h) => h.trim());
 }
 
 /**
@@ -239,7 +230,7 @@ function deduplicateHeaders(csvContent: string): string {
 	const lines = csvContent.split(/\r?\n/);
 	const headerIndex = findHeaderIndex(lines);
 	if (headerIndex === -1) return csvContent;
-	const headers = readHeaders(lines[headerIndex]);
+	const headers = readHeaderCells(lines[headerIndex]);
 	if (headers.length === 0) return csvContent;
 
 	const seen = new Set<string>();
@@ -375,7 +366,7 @@ function repairMalformedQuotes(csvContent: string): { content: string; errors: P
 	const allLines = csvContent.split(/\r?\n/);
 	const headerIndex = findHeaderIndex(allLines);
 	if (headerIndex === -1) return { content: csvContent, errors: [] };
-	const headers = readHeaders(allLines[headerIndex]);
+	const headers = readHeaderCells(allLines[headerIndex]);
 	const rows = allLines.slice(0, headerIndex + 1);
 	const lines = allLines.slice(headerIndex + 1);
 	const errors: ParseError[] = [];
@@ -517,7 +508,7 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 	errors.push(...repaired.errors);
 
 	readRows(deduplicateHeaders(repaired.content), (row, line, rowErrors) => {
-		for (const { message } of rowErrors) errors.push({ type: 'unknown', row: line, message });
+		errors.push(...papaRowErrors(rowErrors, line));
 
 		if (!row['Activity Type'] || !row['Date']) {
 			errors.push({
@@ -530,7 +521,7 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 
 		const date = parseGarminDate(row['Date']);
 		if (!date) {
-			errors.push({ type: 'invalid-date', row: line, message: 'Invalid date format' });
+			errors.push(invalidDateError(line));
 			return;
 		}
 
@@ -538,14 +529,13 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 		if (isInYear(date, targetYear)) activities.push(readActivity(row, date));
 	});
 
-	return { activities, errors, yearsInFile: [...years].sort((a, b) => a - b) };
+	return { activities, errors, yearsInFile: sortedYears(years) };
 }
 
 // Quotes are dropped before splitting so a header row wrapped whole in quotes still matches.
 function hasGarminHeaders(csvContent: string): boolean {
-	const firstLine = csvContent.trimStart().split(/\r?\n/, 1)[0];
 	const headers = new Set(
-		firstLine
+		firstLine(csvContent)
 			.replaceAll('"', '')
 			.split(',')
 			.map((h) => h.trim())
