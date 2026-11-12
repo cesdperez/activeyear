@@ -3,7 +3,7 @@
 	import { sportIcons } from '#lib/constants/sports.js';
 	import type { SportColors } from '#lib/utils/breakdown.js';
 	import { formatCount, formatDuration } from '#lib/utils/format.js';
-	import type { BreakdownMetric, SportBreakdown, WidgetVariant } from '#lib/types/index.js';
+	import type { BreakdownMetric, SportBreakdown, WidgetVariantProps } from '#lib/types/index.js';
 
 	let {
 		sports,
@@ -14,8 +14,7 @@
 		sports: SportBreakdown[];
 		colors: SportColors;
 		metric: BreakdownMetric;
-		variant: WidgetVariant;
-	} = $props();
+	} & WidgetVariantProps = $props();
 
 	const isDashboard = $derived(variant === 'dashboard');
 	const maxValue = $derived(Math.max(...sports.map((s) => s[metric]), 1));

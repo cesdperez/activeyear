@@ -5,7 +5,7 @@
 	import { activeDaysPercent } from '#lib/utils/breakdown.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { formatCount, formatPercentOfYear } from '#lib/utils/format.js';
-	import type { WidgetVariant } from '#lib/types/index.js';
+	import type { WidgetVariantProps } from '#lib/types/index.js';
 
 	interface DashboardStat {
 		Icon: Component<IconComponentProps>;
@@ -30,7 +30,7 @@
 		activeDays,
 		longestStreak,
 		variant
-	}: { activeDays: number; longestStreak: number; variant: WidgetVariant } = $props();
+	}: { activeDays: number; longestStreak: number } & WidgetVariantProps = $props();
 
 	const yearPercent = $derived(activeDaysPercent(activeDays, TARGET_YEAR));
 	const activeDaysLabel = $derived(i18n.m.dashboard.activeDaysLabel(activeDays));

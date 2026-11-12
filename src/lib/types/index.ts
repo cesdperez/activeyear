@@ -82,6 +82,8 @@ export type CardVariant = 'summary' | 'breakdown' | 'highlights';
 
 /** Where a shared widget renders: the responsive dashboard or a fixed-size export card. */
 export type WidgetVariant = 'dashboard' | 'export';
+export type WidgetVariantProps =
+	{ variant: 'export'; theme: Theme } | { variant: 'dashboard'; theme?: never };
 
 export type SummaryMetric = 'distance' | 'elevation' | 'duration' | 'calories';
 

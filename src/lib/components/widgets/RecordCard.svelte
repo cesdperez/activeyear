@@ -1,22 +1,21 @@
 <script lang="ts">
-	import { onMount, type Component } from 'svelte';
+	import { onMount, untrack, type Component } from 'svelte';
 	import { prefersReducedMotion, spring } from 'svelte/motion';
 	import type { IconComponentProps } from 'phosphor-svelte';
-	import type { WidgetVariant } from '#lib/types/index.js';
+	import type { WidgetVariantProps } from '#lib/types/index.js';
 
-	interface Props {
+	type Props = {
 		icon: Component<IconComponentProps>;
 		value: string;
 		label: string;
 		activityTitle: string;
-		variant: WidgetVariant;
 		/** Dashboard entrance delay in ms. */
 		delay?: number;
-	}
+	} & WidgetVariantProps;
 
 	let { icon: Icon, value, label, activityTitle, variant, delay = 0 }: Props = $props();
 
-	const animate = !prefersReducedMotion.current;
+	const animate = untrack(() => variant === 'dashboard' && !prefersReducedMotion.current);
 	let opacity = spring(animate ? 0 : 1, { stiffness: 0.1, damping: 0.6 });
 	let scale = spring(animate ? 0.95 : 1, { stiffness: 0.15, damping: 0.5 });
 

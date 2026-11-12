@@ -21,6 +21,7 @@
 
 	<ConsistencyStats
 		variant="export"
+		theme={appStore.theme}
 		activeDays={appStore.stats?.activeDays ?? 0}
 		longestStreak={appStore.stats?.longestStreak ?? 0}
 	/>

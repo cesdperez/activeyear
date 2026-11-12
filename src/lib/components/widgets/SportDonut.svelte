@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { donutCentre, sportDonutSegments, type SportColors } from '#lib/utils/breakdown.js';
-	import type { BreakdownMetric, SportBreakdown, WidgetVariant } from '#lib/types/index.js';
+	import type { BreakdownMetric, SportBreakdown, WidgetVariantProps } from '#lib/types/index.js';
 
 	let {
 		sports,
@@ -12,8 +12,7 @@
 		sports: SportBreakdown[];
 		colors: SportColors;
 		metric: BreakdownMetric;
-		variant: WidgetVariant;
-	} = $props();
+	} & WidgetVariantProps = $props();
 
 	// Matches the r="80" of the circles below.
 	const circumference = 2 * Math.PI * 80;

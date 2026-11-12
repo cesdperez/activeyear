@@ -2,18 +2,10 @@
 	import { weekdayLabels } from '#lib/utils/date.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { weeklyBars } from '#lib/utils/breakdown.js';
-	import type {
-		Theme,
-		WeeklyPattern as WeeklyPatternData,
-		WidgetVariant
-	} from '#lib/types/index.js';
+	import type { WeeklyPattern as WeeklyPatternData, WidgetVariantProps } from '#lib/types/index.js';
 	import SectionHeading from '#lib/components/dashboard/SectionHeading.svelte';
 
-	let {
-		pattern,
-		variant,
-		theme
-	}: { pattern: WeeklyPatternData; variant: WidgetVariant; theme?: Theme } = $props();
+	let { pattern, variant, theme }: { pattern: WeeklyPatternData } & WidgetVariantProps = $props();
 
 	const TOP_DAY_FILL = { solid: '#00ff88', faded: '#00ff8840', glow: '#00ff8830' };
 	// A hex alpha suffix is invalid after var(), so fading the accent needs color-mix.

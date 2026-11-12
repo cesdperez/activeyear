@@ -2,18 +2,17 @@
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { Trophy, Hourglass, Fire } from 'phosphor-svelte';
 	import { formatDistance, formatDuration, formatCalories } from '#lib/utils/format.js';
-	import type { PersonalRecords, Unit, WidgetVariant } from '#lib/types/index.js';
+	import type { PersonalRecords, Unit, WidgetVariantProps } from '#lib/types/index.js';
 	import RecordCard from './RecordCard.svelte';
 
-	interface Props {
+	type Props = {
 		records: PersonalRecords;
 		unit: Unit;
-		variant: WidgetVariant;
 		/** Dashboard entrance delay in ms of the first card; each next card waits 50 ms more. */
 		delay?: number;
-	}
+	} & WidgetVariantProps;
 
-	let { records, unit, variant, delay = 0 }: Props = $props();
+	let { records, unit, delay = 0, ...variantProps }: Props = $props();
 
 	const cards = $derived([
 		{
@@ -40,7 +39,7 @@
 {#each cards as { icon, label, record, format }, i (label)}
 	{#if record}
 		<RecordCard
-			{variant}
+			{...variantProps}
 			{icon}
 			value={format(record.value)}
 			{label}
