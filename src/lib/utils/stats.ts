@@ -2,6 +2,10 @@ import { HIGHLIGHTS_LIMIT } from '#lib/constants/export.js';
 import type {
 	Activity,
 	ActivitySource,
+	ActivityBreak,
+	QuarterTotals,
+	SportAverage,
+	WeekdayTotals,
 	ActivityType,
 	PersonalRecord,
 	PersonalRecords,
@@ -165,11 +169,7 @@ export function calculateWeeklyPattern(activities: Activity[]): WeeklyPattern {
 	const pattern: WeeklyPattern = [0, 0, 0, 0, 0, 0, 0];
 
 	for (const activity of activities) {
-		// JavaScript getDay() returns 0 for Sunday, 1 for Monday, etc.
-		// We want Monday = 0, Sunday = 6
-		const jsDay = activity.date.getDay();
-		const dayIndex = jsDay === 0 ? 6 : jsDay - 1;
-		pattern[dayIndex]++;
+		pattern[mondayFirstDayIndex(activity.date)]++;
 	}
 
 	return pattern;
@@ -209,4 +209,71 @@ export function selectHighlights(
 					.slice(0, HIGHLIGHTS_LIMIT)
 			: activities.filter((activity) => activity.favorite);
 	return selected.sort(byDate);
+}
+
+function mondayFirstDayIndex(date: Date): number {
+	return (date.getDay() + 6) % 7;
+}
+
+export function calculateQuarterTotals(activities: Activity[]): QuarterTotals[] {
+	const totals: QuarterTotals[] = ([1, 2, 3, 4] as const).map((quarter) => ({
+		quarter,
+		distance: 0,
+		duration: 0,
+		count: 0
+	}));
+	for (const activity of activities) {
+		const quarter = totals[Math.floor(activity.date.getMonth() / 3)];
+		quarter.distance += activity.distance;
+		quarter.duration += activity.duration;
+		quarter.count++;
+	}
+	return totals;
+}
+
+export function calculateLongestBreak(activities: Activity[]): ActivityBreak | null {
+	const days = Array.from(
+		new Set(activities.map((activity) => localDayNumber(activity.date)))
+	).sort((a, b) => a - b);
+	let longest: ActivityBreak | null = null;
+	for (let i = 1; i < days.length; i++) {
+		const gap = days[i] - days[i - 1] - 1;
+		if (gap > (longest?.days ?? 0)) {
+			longest = {
+				days: gap,
+				start: localDateFromDayNumber(days[i - 1] + 1),
+				end: localDateFromDayNumber(days[i] - 1)
+			};
+		}
+	}
+	return longest;
+}
+
+function localDateFromDayNumber(day: number): Date {
+	const utc = new Date(day * MS_PER_DAY);
+	return new Date(utc.getUTCFullYear(), utc.getUTCMonth(), utc.getUTCDate());
+}
+
+export function calculateWeekdayTotals(activities: Activity[]): WeekdayTotals {
+	const totals: WeekdayTotals = {
+		distance: [0, 0, 0, 0, 0, 0, 0],
+		duration: [0, 0, 0, 0, 0, 0, 0]
+	};
+	for (const activity of activities) {
+		const day = mondayFirstDayIndex(activity.date);
+		totals.distance[day] += activity.distance;
+		totals.duration[day] += activity.duration;
+	}
+	return totals;
+}
+
+export function calculateSportAverages(breakdown: SportBreakdown[]): SportAverage[] {
+	return breakdown
+		.filter((sport) => sport.count !== 0)
+		.map((sport) => ({
+			type: sport.type,
+			count: sport.count,
+			averageDistance: sport.distance / sport.count,
+			averageDuration: sport.duration / sport.count
+		}));
 }

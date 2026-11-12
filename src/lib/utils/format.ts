@@ -180,3 +180,7 @@ export function formatLotRMarathons(seconds: number): string {
 	const marathons = calculateLotRMarathons(seconds);
 	return `${marathons.toFixed(1)} LotR marathons`;
 }
+
+export function formatShortDate(date: Date): string {
+	return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}

@@ -142,3 +142,28 @@ export interface ExportStep {
 	text: string;
 	link?: { href: string; label: string };
 }
+
+export interface QuarterTotals {
+	quarter: 1 | 2 | 3 | 4;
+	distance: number; // in km
+	duration: number; // in seconds
+	count: number;
+}
+
+export interface ActivityBreak {
+	days: number;
+	start: Date; // first inactive day, local midnight
+	end: Date; // last inactive day, local midnight
+}
+
+export interface WeekdayTotals {
+	distance: WeeklyPattern; // in km
+	duration: WeeklyPattern; // in seconds
+}
+
+export interface SportAverage {
+	type: ActivityType;
+	count: number;
+	averageDistance: number; // in km
+	averageDuration: number; // in seconds
+}

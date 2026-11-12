@@ -1,6 +1,10 @@
 import { HIGHLIGHTS_LIMIT } from '../constants/export.js';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import {
+	calculateQuarterTotals,
+	calculateLongestBreak,
+	calculateWeekdayTotals,
+	calculateSportAverages,
 	calculateYearStats,
 	calculateLongestStreak,
 	calculatePersonalRecords,
@@ -391,5 +395,85 @@ describe('selectHighlights', () => {
 		const early = createActivity({ date: new Date('2025-01-01'), favorite: true });
 		const late = createActivity({ date: new Date('2025-12-01'), favorite: true });
 		expect(selectHighlights([late, createActivity(), early], source)).toEqual([early, late]);
+	});
+});
+
+describe('more stats', () => {
+	it('returns four empty quarters and groups local year boundaries', () => {
+		expect(calculateQuarterTotals([])).toEqual(
+			[1, 2, 3, 4].map((quarter) => ({ quarter, distance: 0, duration: 0, count: 0 }))
+		);
+		expect(
+			calculateQuarterTotals([
+				createActivity({ date: new Date(2024, 11, 31), distance: 2, duration: 3 }),
+				createActivity({ date: new Date(2025, 0, 1), distance: 4, duration: 5 })
+			])
+		).toEqual([
+			{ quarter: 1, distance: 4, duration: 5, count: 1 },
+			{ quarter: 2, distance: 0, duration: 0, count: 0 },
+			{ quarter: 3, distance: 0, duration: 0, count: 0 },
+			{ quarter: 4, distance: 2, duration: 3, count: 1 }
+		]);
+	});
+
+	it('finds gaps across years, deduplicates days and picks the earliest tie', () => {
+		const dates = [
+			new Date(2025, 0, 13),
+			new Date(2024, 11, 31, 12),
+			new Date(2025, 0, 10),
+			new Date(2024, 11, 31, 20)
+		];
+		expect(calculateLongestBreak(dates.map((date) => createActivity({ date })))).toEqual({
+			days: 9,
+			start: new Date(2025, 0, 1),
+			end: new Date(2025, 0, 9)
+		});
+		const tie = [1, 4, 7].reverse().map((day) => createActivity({ date: new Date(2025, 0, day) }));
+		expect(calculateLongestBreak(tie)).toEqual({
+			days: 2,
+			start: new Date(2025, 0, 2),
+			end: new Date(2025, 0, 3)
+		});
+	});
+
+	it('returns null without a gap and counts calendar days across DST', () => {
+		expect(calculateLongestBreak([])).toBeNull();
+		expect(calculateLongestBreak([createActivity()])).toBeNull();
+		expect(
+			calculateLongestBreak(
+				[1, 1, 2].map((day) => createActivity({ date: new Date(2025, 0, day) }))
+			)
+		).toBeNull();
+		expect(
+			calculateLongestBreak([28, 31].map((day) => createActivity({ date: new Date(2025, 2, day) })))
+		).toEqual({ days: 2, start: new Date(2025, 2, 29), end: new Date(2025, 2, 30) });
+	});
+
+	it('sums weekday totals Monday first', () => {
+		expect(calculateWeekdayTotals([])).toEqual({
+			distance: [0, 0, 0, 0, 0, 0, 0],
+			duration: [0, 0, 0, 0, 0, 0, 0]
+		});
+		expect(
+			calculateWeekdayTotals([
+				createActivity({ date: new Date(2025, 0, 5), distance: 2, duration: 3 }),
+				createActivity({ date: new Date(2025, 0, 6), distance: 4, duration: 5 }),
+				createActivity({ date: new Date(2025, 0, 6), distance: 6, duration: 7 })
+			])
+		).toEqual({ distance: [10, 0, 0, 0, 0, 0, 2], duration: [12, 0, 0, 0, 0, 0, 3] });
+	});
+
+	it('averages sports in input order, skipping zero counts', () => {
+		expect(calculateSportAverages([])).toEqual([]);
+		expect(
+			calculateSportAverages([
+				{ type: 'cycling', distance: 30, duration: 300, count: 2 },
+				{ type: 'walking', distance: 0, duration: 0, count: 0 },
+				{ type: 'running', distance: 9, duration: 90, count: 3 }
+			])
+		).toEqual([
+			{ type: 'cycling', count: 2, averageDistance: 15, averageDuration: 150 },
+			{ type: 'running', count: 3, averageDistance: 3, averageDuration: 30 }
+		]);
 	});
 });

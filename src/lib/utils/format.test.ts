@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+	formatShortDate,
 	formatDistance,
 	formatDuration,
 	formatCalories,
@@ -240,5 +241,11 @@ describe('formatActivityCount', () => {
 	it('uses plural for count > 1', () => {
 		expect(formatActivityCount(5, 'run')).toBe('5 runs');
 		expect(formatActivityCount(94, 'activity')).toBe('94 activities');
+	});
+});
+
+describe('formatShortDate', () => {
+	it('formats a local date with a short month and day', () => {
+		expect(formatShortDate(new Date(2025, 2, 3))).toBe('Mar 3');
 	});
 });
