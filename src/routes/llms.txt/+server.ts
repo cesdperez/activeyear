@@ -27,6 +27,7 @@ ${SITE_NAME} (${SITE_URL}) is a free web app that turns a Garmin Connect or Stra
 - The CSV is parsed and analysed in the browser. The activity data is never uploaded to a server.
 - Input: the Activities CSV from Garmin Connect or activities.csv from a Strava account export, both in English.
 - Output: a dashboard and three shareable 1080 × 1920 PNG cards in Neon, Minimal or Retro style.
+- Save: the dashboard can download the parsed year as a .json file, which reopens the recap when dropped on the upload area.
 - A demo with sample data is available on the home page.
 
 ## How to use with Garmin Connect

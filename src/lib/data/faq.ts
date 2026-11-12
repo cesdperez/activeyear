@@ -22,6 +22,11 @@ export const FAQ: FaqItem[] = [
 			'Three story-sized cards (1080 × 1920 PNG): a summary, a sport breakdown and your highlights, in Neon, Minimal or Retro style.'
 	},
 	{
+		question: 'Can I reopen my recap later?',
+		answer:
+			'Yes. Use Save my year on your dashboard to download a small .json file, then drop it on the upload area any time to reopen the recap. It stays on your device.'
+	},
+	{
 		question: 'Does it work with Strava?',
 		answer:
 			'Yes. Upload activities.csv from your Strava account export (Settings, My Account, Download or Delete Your Account), with Strava set to English.'
