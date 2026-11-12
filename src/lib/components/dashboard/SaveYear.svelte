@@ -28,7 +28,7 @@
 		<DownloadSimple class="h-4 w-4" weight="bold" aria-hidden="true" />
 		Save my year
 	</button>
-	<p class="mt-2 text-xs text-[var(--color-text-muted)]">
+	<p class="mt-2 text-xs text-[var(--color-text-dim)]">
 		Reopen this recap later without exporting again
 	</p>
 </div>
