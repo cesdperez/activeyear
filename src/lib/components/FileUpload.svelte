@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import { UPLOAD_ZONE_ID } from '#lib/constants/dom.js';
+	import { MIN_UPLOAD_LOADING_MS } from '#lib/constants/time.js';
 	import { UploadSimple, Warning, SpinnerGap, ShieldCheck } from 'phosphor-svelte';
 
 	let { loading = $bindable(false) }: { loading?: boolean } = $props();
@@ -74,7 +75,10 @@
 		currentPhrase = randomPhrase();
 		const phraseInterval = setInterval(() => (currentPhrase = randomPhrase()), 1000);
 		try {
-			await appStore.processFile(file);
+			await Promise.all([
+				appStore.processFile(file),
+				new Promise((resolve) => setTimeout(resolve, MIN_UPLOAD_LOADING_MS))
+			]);
 		} finally {
 			clearInterval(phraseInterval);
 			loading = false;
