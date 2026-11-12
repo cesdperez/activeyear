@@ -306,13 +306,20 @@ function readTrailingFields(
 
 // Garmin writes titles without escaping their quotes, so a title can swallow the fields after it.
 // Every other column must read cleanly from its end of the line, leaving the title in between.
-function recoverTitleRow(line: string, headers: string[]): string[] | null {
+function readFieldsAroundTitle(line: string, headers: string[]) {
 	const titleIndex = headers.indexOf('Title');
 	if (titleIndex === -1) return null;
 
 	const before = readLeadingFields(line, titleIndex);
 	const after = readTrailingFields(line, headers.length - titleIndex - 1);
 	if (!before || !after || before.end > after.start) return null;
+	return { before, after };
+}
+
+function recoverTitleRow(line: string, headers: string[]): string[] | null {
+	const fields = readFieldsAroundTitle(line, headers);
+	if (!fields) return null;
+	const { before, after } = fields;
 
 	const rawTitle = line.slice(before.end, after.start);
 	if (rawTitle.length < 2 || !rawTitle.startsWith('"') || !rawTitle.endsWith('"')) return null;
@@ -390,10 +397,21 @@ function repairMalformedQuotes(csvContent: string): { content: string; errors: P
 		rows.push(...Array<string>(lineCount).fill(''));
 	};
 
+	const skipPending = (record: PendingRecord) => {
+		let start = 0;
+		for (let i = 1; i < record.lines.length; i++) {
+			if (readFieldsAroundTitle(record.lines[i], headers)) {
+				skip(record.row + start, i - start);
+				start = i;
+			}
+		}
+		skip(record.row + start, record.lines.length - start);
+	};
+
 	const closePending = (record: PendingRecord) => {
 		const text = record.lines.join('\n');
 		if (isCompleteRecord(text, headers)) rows.push(text);
-		else skip(record.row, record.lines.length);
+		else skipPending(record);
 	};
 
 	for (const [index, line] of lines.entries()) {
@@ -407,7 +425,7 @@ function repairMalformedQuotes(csvContent: string): { content: string; errors: P
 		}
 
 		if (isCompleteRecord(line, headers) || recoverTitleRow(line, headers)) {
-			skip(pending.row, pending.lines.length);
+			skipPending(pending);
 			pending = null;
 			readLine(line);
 			continue;
@@ -419,11 +437,11 @@ function repairMalformedQuotes(csvContent: string): { content: string; errors: P
 			closePending(pending);
 			pending = null;
 		} else if (pending.lines.length > MAX_RECORD_LINES || pending.chars > MAX_RECORD_CHARS) {
-			skip(pending.row, pending.lines.length);
+			skipPending(pending);
 			pending = null;
 		}
 	}
-	if (pending) skip(pending.row, pending.lines.length);
+	if (pending) skipPending(pending);
 
 	return { content: rows.join('\n'), errors };
 }

@@ -445,6 +445,30 @@ describe('parseGarminCsv with quoted fields', () => {
 		expect(result.errors.map((e) => [e.type, e.row])).toEqual([['malformed-quotes', 2]]);
 	});
 
+	it.each([2, 3])('reports each of %i adjacent unclosed rows', (count) => {
+		const broken = 'Running,2026-03-01 08:00:00,true,"Open title,10.33,658,00:50:00,100';
+		const result = parseGarminCsv(
+			[HEADER, ...Array(count).fill(broken), NEXT_ROW].join('\n'),
+			2026
+		);
+
+		expect(result.errors.map((e) => [e.type, e.row])).toEqual(
+			Array.from({ length: count }, (_, i) => ['malformed-quotes', i + 2])
+		);
+		expect(result.activities.map((a) => a.title)).toEqual(['Ride']);
+	});
+
+	it('counts an unresolved multiline title as one row before a broken row', () => {
+		const csv = `${HEADER}\nCycling,2026-03-02 08:00:00,false,"Multi\ntitle without a closing quote\nRunning,2026-03-01 08:00:00,true,"Open title,10.33,658,00:50:00,100\n${NEXT_ROW}`;
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(result.errors.map((e) => [e.type, e.row])).toEqual([
+			['malformed-quotes', 2],
+			['malformed-quotes', 4]
+		]);
+		expect(result.activities.map((a) => a.title)).toEqual(['Ride']);
+	});
+
 	it('skips a row whose quote is still open at the end of the file', () => {
 		const csv = `${HEADER}\n${NEXT_ROW}\nRunning,2026-03-01 08:00:00,true,"Open title,10.33,658,00:50:00,100`;
 		const result = parseGarminCsv(csv, 2026);
@@ -480,6 +504,15 @@ describe('parseGarminCsv rejected rows', () => {
 		`Running,${date},false,${title},10.0,600,00:50:00,100`;
 	const quoted = (line: string) => `"${line.replaceAll('"', '""')}"`;
 	const errorRows = (csv: string) => parseGarminCsv(csv, 2026).errors.map((e) => [e.type, e.row]);
+
+	it('preserves the line number after adjacent broken rows', () => {
+		const broken = 'Running,2026-03-01 08:00:00,true,"Open title,10.33,658,00:50:00,100';
+		expect(errorRows([HEADER, broken, broken, row('bad')].join('\n'))).toEqual([
+			['malformed-quotes', 2],
+			['malformed-quotes', 3],
+			['invalid-date', 4]
+		]);
+	});
 
 	it('rejects loose dates while retaining valid activities', () => {
 		const csv = [HEADER, row('Private 2026'), row('2026-03-01 08:00:00')].join('\n');
