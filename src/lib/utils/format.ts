@@ -1,4 +1,5 @@
 import type { Unit } from '../types/index.js';
+import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '../constants/time.js';
 
 const EARTH_CIRCUMFERENCE_KM = 40075;
 const EVEREST_HEIGHT_M = 8848;
@@ -27,10 +28,10 @@ export function formatDistance(km: number, unit: Unit = 'km'): string {
  */
 export function formatDuration(seconds: number): string {
 	if (seconds <= 0) return '0m';
-	if (seconds < 60) return `${Math.max(1, Math.floor(seconds))}s`;
+	if (seconds < ONE_MINUTE_IN_SECONDS) return `${Math.max(1, Math.floor(seconds))}s`;
 
-	const hours = Math.floor(seconds / 3600);
-	const minutes = Math.floor((seconds % 3600) / 60);
+	const hours = Math.floor(seconds / ONE_HOUR_IN_SECONDS);
+	const minutes = Math.floor((seconds % ONE_HOUR_IN_SECONDS) / ONE_MINUTE_IN_SECONDS);
 
 	if (hours === 0) {
 		return `${minutes}m`;
