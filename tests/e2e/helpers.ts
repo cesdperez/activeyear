@@ -2,6 +2,7 @@ import { expect, type Download, type Page } from '@playwright/test';
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { UPLOAD_ZONE_ID } from '../../src/lib/constants/dom.js';
 import { TARGET_YEAR } from '../../src/lib/constants/time.js';
 
 export const SAMPLE_CSV = join(
@@ -17,8 +18,13 @@ export const SAMPLE_CSV = join(
 
 export const DASHBOARD_HEADING = `Your ${TARGET_YEAR}`;
 
-export async function uploadSample(page: Page): Promise<void> {
+export async function gotoUpload(page: Page): Promise<void> {
 	await page.goto('/');
+	await expect(page.locator(`#${UPLOAD_ZONE_ID}`)).not.toHaveAttribute('aria-disabled', 'true');
+}
+
+export async function uploadSample(page: Page): Promise<void> {
+	await gotoUpload(page);
 	await page.locator('input[type="file"]').setInputFiles(SAMPLE_CSV);
 	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible({
 		timeout: 10000
@@ -43,7 +49,7 @@ export function garminCsv(activities: CsvActivity[]): string {
 }
 
 export async function uploadCsv(page: Page, csv: string): Promise<void> {
-	await page.goto('/');
+	await gotoUpload(page);
 	await page
 		.locator('input[type="file"]')
 		.setInputFiles({ name: 'activities.csv', mimeType: 'text/csv', buffer: Buffer.from(csv) });

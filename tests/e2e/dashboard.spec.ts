@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { DASHBOARD_HEADING, SAMPLE_CSV, garminCsv, uploadCsv } from './helpers.js';
+import { DASHBOARD_HEADING, SAMPLE_CSV, garminCsv, gotoUpload, uploadCsv } from './helpers.js';
 
 async function openDemo(page: Page): Promise<void> {
 	await page.goto('/');
@@ -101,7 +101,7 @@ test('stat cards show values instantly when reduced motion is preferred', async 
 
 test('summary uses singular nouns for a single activity on a single day', async ({ page }) => {
 	const [header, firstActivity] = readFileSync(SAMPLE_CSV, 'utf8').split('\n');
-	await page.goto('/');
+	await gotoUpload(page);
 	await page.locator('input[type="file"]').setInputFiles({
 		name: 'one.csv',
 		mimeType: 'text/csv',

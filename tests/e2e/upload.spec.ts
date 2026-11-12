@@ -1,7 +1,7 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { MIN_UPLOAD_LOADING_MS, TARGET_YEAR } from '../../src/lib/constants/time.js';
 import { UPLOAD_ZONE_ID } from '../../src/lib/constants/dom.js';
-import { DASHBOARD_HEADING, garminCsv, uploadCsv, uploadSample } from './helpers.js';
+import { DASHBOARD_HEADING, garminCsv, gotoUpload, uploadCsv, uploadSample } from './helpers.js';
 
 const WRONG_YEAR_MESSAGE = `This file has activities from ${TARGET_YEAR - 1}, none from ${TARGET_YEAR}`;
 
@@ -96,7 +96,7 @@ test.describe('Upload Flow', () => {
 	});
 
 	test('shows an upload error as soon as the file is read', async ({ page }) => {
-		await page.goto('/');
+		await gotoUpload(page);
 
 		await uploadFileWithoutTargetYear(page);
 
@@ -116,7 +116,7 @@ test.describe('Upload Flow', () => {
 				}
 			}).observe(document, { subtree: true, childList: true, characterData: true });
 		});
-		await page.goto('/');
+		await gotoUpload(page);
 
 		await uploadFileWithoutTargetYear(page);
 		await expect(page.getByRole('alert')).not.toBeEmpty();
@@ -127,7 +127,7 @@ test.describe('Upload Flow', () => {
 	});
 
 	test('explains why an export without target year activities was rejected', async ({ page }) => {
-		await page.goto('/');
+		await gotoUpload(page);
 
 		await uploadFileWithoutTargetYear(page);
 
@@ -141,7 +141,7 @@ test.describe('Upload Flow', () => {
 		const rows = ['not a date', 'March 32nd', ''].map(
 			(date) => `Running,${date},false,Morning Run,10.0,600,00:50:00,100`
 		);
-		await page.goto('/');
+		await gotoUpload(page);
 
 		await uploadFile(page, [garminCsv([]), ...rows].join('\n'));
 
@@ -172,7 +172,7 @@ test.describe('Upload Flow', () => {
 
 	test('shows no drop highlight while a file loads', async ({ page }) => {
 		await slowFileReads(page);
-		await page.goto('/');
+		await gotoUpload(page);
 		await uploadFileWithoutTargetYear(page);
 		await expectFileReadSlowed(page);
 		const uploadZone = page.locator(`#${UPLOAD_ZONE_ID}`);
@@ -202,7 +202,7 @@ test.describe('Upload accessibility', () => {
 
 	test('announces loading progress and errors', async ({ page }) => {
 		await slowFileReads(page);
-		await page.goto('/');
+		await gotoUpload(page);
 		await uploadFileWithoutTargetYear(page);
 		await expectFileReadSlowed(page);
 
@@ -212,7 +212,7 @@ test.describe('Upload accessibility', () => {
 
 	test('blocks the demo while a file loads', async ({ page }) => {
 		await slowFileReads(page);
-		await page.goto('/');
+		await gotoUpload(page);
 		await uploadFileWithoutTargetYear(page);
 		await expectFileReadSlowed(page);
 
@@ -222,7 +222,7 @@ test.describe('Upload accessibility', () => {
 	});
 
 	test('accepts the same file again after an error', async ({ page }) => {
-		await page.goto('/');
+		await gotoUpload(page);
 		await uploadFileWithoutTargetYear(page);
 
 		await expect(page.getByRole('alert')).not.toBeEmpty({ timeout: 10000 });
