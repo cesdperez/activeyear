@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
+	import { createHydrated } from '#lib/stores/hydrated.svelte.js';
 	import { UPLOAD_ZONE_ID } from '#lib/constants/dom.js';
 	import { MIN_UPLOAD_LOADING_MS } from '#lib/constants/time.js';
 	import { UploadSimple, Warning, SpinnerGap, ShieldCheck } from 'phosphor-svelte';
@@ -10,12 +10,7 @@
 	let isDragOver = $state(false);
 	let fileInput: HTMLInputElement;
 	let currentPhrase = $state('');
-	// Controls cannot respond before hydration, so present them as disabled until then.
-	let hydrated = $state(false);
-
-	onMount(() => {
-		hydrated = true;
-	});
+	const hydrated = createHydrated();
 
 	const FUNNY_PHRASES = [
 		'Warming up the calves...',
@@ -70,7 +65,7 @@
 	}
 
 	async function upload(file: File) {
-		if (loading || !hydrated) return;
+		if (loading || !hydrated.current) return;
 		loading = true;
 		currentPhrase = randomPhrase();
 		const phraseInterval = setInterval(() => (currentPhrase = randomPhrase()), 1000);
@@ -102,7 +97,7 @@
 	}
 
 	function triggerFileInput() {
-		if (!loading && hydrated) fileInput?.click();
+		if (!loading && hydrated.current) fileInput?.click();
 	}
 </script>
 
@@ -122,7 +117,7 @@
 	id={UPLOAD_ZONE_ID}
 	class="upload-zone group flex min-h-[300px] w-full cursor-pointer flex-col items-center justify-center p-8 text-center aria-disabled:cursor-not-allowed md:p-12"
 	class:dragover={isDragOver}
-	aria-disabled={loading || !hydrated}
+	aria-disabled={loading || !hydrated.current}
 	ondragover={handleDragOver}
 	ondragleave={handleDragLeave}
 	ondrop={handleDrop}

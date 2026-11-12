@@ -1,16 +1,12 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
+	import { createHydrated } from '#lib/stores/hydrated.svelte.js';
 	import FileUpload from '#lib/components/FileUpload.svelte';
 	import Dashboard from '#lib/components/Dashboard.svelte';
 
 	let uploading = $state(false);
-	let hydrated = $state(false);
-
-	onMount(() => {
-		hydrated = true;
-	});
+	const hydrated = createHydrated();
 </script>
 
 <main class="min-h-screen bg-[var(--color-surface)]">
@@ -37,7 +33,7 @@
 				<div class="mt-4 text-center">
 					<button
 						class="text-sm text-balance text-zinc-400 transition-colors duration-200 hover:text-cyan-400 disabled:cursor-not-allowed disabled:opacity-50"
-						disabled={uploading || !hydrated}
+						disabled={uploading || !hydrated.current}
 						onclick={() => appStore.loadDemoData()}
 					>
 						No CSV file? See how it works with demo data
