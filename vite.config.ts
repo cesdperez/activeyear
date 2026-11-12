@@ -11,6 +11,7 @@ export default defineConfig({
 		tailwindcss(),
 		sveltekit({
 			preprocess: vitePreprocess(),
+			paths: { relative: false },
 			adapter: adapter({ routes: { include: ['/*'], exclude: ['/*'] } })
 		}),
 		cspScriptHashes('.svelte-kit/cloudflare')

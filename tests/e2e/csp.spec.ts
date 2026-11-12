@@ -32,6 +32,17 @@ test.describe('Content Security Policy', () => {
 		expect(violations).toEqual([]);
 	});
 
+	test('nested unknown paths still load the stylesheet', async ({ page }) => {
+		const response = await page.goto('/a/b/c');
+
+		expect(response!.status()).toBe(404);
+		const heading = page.getByRole('heading', { name: 'Page not found' });
+		await expect(heading).toBeVisible();
+		await expect
+			.poll(() => heading.evaluate((el) => getComputedStyle(el).fontFamily))
+			.toContain('Outfit');
+	});
+
 	test('upload, confetti and PNG export run without violations', async ({ page }) => {
 		const violations = recordCspViolations(page);
 		await uploadSample(page);
