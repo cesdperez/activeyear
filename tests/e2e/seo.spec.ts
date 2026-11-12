@@ -35,7 +35,7 @@ test.describe('Search and AI discovery', () => {
 
 		await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute(
 			'href',
-			'/apple-touch-icon.png'
+			/\/apple-touch-icon\.png$/
 		);
 		const response = await request.get('/apple-touch-icon.png');
 		expect(response.status()).toBe(200);
