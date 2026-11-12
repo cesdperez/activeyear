@@ -11,6 +11,7 @@ pnpm test:e2e tests/e2e/upload.spec.ts     # One E2E file
 pnpm check                                 # Type checking
 pnpm lint                                  # Prettier check and ESLint
 pnpm format                                # Prettier write
+pnpm ports                                 # This checkout's preview and dev URLs
 ```
 
 `pnpm test` starts vitest in watch mode; use `test:run` so the command exits.
@@ -19,8 +20,10 @@ pnpm format                                # Prettier write
 
 - **E2E tests** (`tests/e2e/`): Primary coverage for user flows. Avoid duplicating in unit tests.
 - **Unit tests** (`*.test.ts`): Edge cases, complex logic, and scenarios too slow for E2E.
-- E2E runs against `pnpm preview` (`wrangler pages dev` on the build), so `_headers` and the CSP are enforced. Playwright reuses whatever already listens on port 4173, and `workerd` can outlive a killed `wrangler`: stop both before a run on a new build.
-- A running `wrangler pages dev` keeps serving the old build after `pnpm build`; restart it. Parallel E2E runs (several worktrees) each need their own port through an uncommitted config override of `baseURL` and `webServer`, or they test each other's builds. The `webkit` project runs only the specs it matches; it needs `npx playwright install webkit`.
+- E2E runs against `pnpm preview` (`wrangler pages dev` on the build), so `_headers` and the CSP are enforced. `pnpm test:e2e` builds and starts a fresh preview each run. `E2E_REUSE_SERVER=1` reuses a running one instead, which keeps serving the build it started with.
+- Each checkout gets its own ports from `scripts/ports.ts`, so worktrees run dev, preview and E2E in parallel. The main checkout uses 4173 (preview) and 5173 (dev), a linked worktree a pair derived from its path. `ACTIVEYEAR_PORT` overrides the preview port; dev is one above it.
+- Ports are strict: a busy port fails the command rather than serving another build. `workerd` can outlive a killed `wrangler` and hold the port; stop what listens on your own port (`lsof -ti tcp:<port> -sTCP:LISTEN`).
+- The `webkit` project runs only the specs it matches; it needs `npx playwright install webkit`.
 - Playwright runs with `reducedMotion: 'reduce'`, which turns on the reduced-motion rule in `src/app.css`: every style change becomes a 0.01ms transition, so layout read right after a change still shows the old values. Poll, or measure inside a transition-free area.
 - After changes: run `pnpm test:run` and `pnpm check`. Before merging to main: run `pnpm test:all`.
 
@@ -49,7 +52,7 @@ Solo project, kept simple: there is no CI. Local git hooks run the checks instea
 - `pre-commit`: `lint-staged` runs Prettier and ESLint on the staged files.
 - `pre-push`: `pnpm check` and `pnpm test:run`.
 
-E2E needs a build and port 4173, so it stays out of the hooks (see Testing Strategy). Put new automated checks in these hooks, not a CI workflow. After editing the hook config, run `pnpm exec simple-git-hooks`, because the installed hooks only change when it runs.
+E2E needs a build and a free port, so it stays out of the hooks (see Testing Strategy). Put new automated checks in these hooks, not a CI workflow. After editing the hook config, run `pnpm exec simple-git-hooks`, because the installed hooks only change when it runs.
 
 ## External pull requests
 
