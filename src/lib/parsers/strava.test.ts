@@ -79,6 +79,24 @@ describe('Strava parser', () => {
 			}
 		]);
 	});
+	it('counts adjacent broken rows as one skipped row', () => {
+		const csv = [
+			header,
+			row('Jan 1, 2026, 6:21:05 PM'),
+			row('Jan 2, 2026, 6:21:05 PM', 'Run', '"broken'),
+			row('Jan 3, 2026, 6:21:05 PM', 'Run', '"broken'),
+			row('Jan 4, 2026, 6:21:05 PM')
+		].join('\n');
+		const result = stravaParser.parse(csv, 2026);
+		expect(result.activities).toHaveLength(1);
+		expect(result.errors).toEqual([
+			{
+				type: 'malformed-quotes',
+				row: 3,
+				message: 'Skipped row 3 because its quote marks could not be read.'
+			}
+		]);
+	});
 	it('skips whitespace lines and retains line numbers', () => {
 		const csv = [' ', header, row('Jan 1, 2026, 6:21:05 PM'), '   ', row('invalid')].join('\n');
 		const result = stravaParser.parse(csv, 2026);

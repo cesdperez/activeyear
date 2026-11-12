@@ -157,6 +157,8 @@ function parse(csv: string, year: number): ParseResult {
 	const result: ParseResult = { activities: [], errors: [], yearsInFile: [] };
 	const years = new Set<number>();
 	readRows(csv, (data, rowLine, errors) => {
+		// A broken quote reads on to the next quote mark, so swallowed rows count as one skipped row.
+		// Descriptions span lines, so there is no line boundary to resync on.
 		if (errors.some((error) => error.type === 'Quotes')) {
 			result.errors.push({
 				type: 'malformed-quotes',
