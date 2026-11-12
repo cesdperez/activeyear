@@ -109,10 +109,22 @@ describe('mapActivityType', () => {
 		['Cardio', 'cardio'],
 		['CrossFit', 'cardio'],
 		['HIIT', 'cardio'],
-		['Bouldering', 'other'],
+		['Bouldering', 'climbing'],
+		['Rock Climbing', 'climbing'],
+		['Resort Skiing', 'winter'],
+		['Tennis', 'racket'],
+		['Elliptical', 'cardio'],
+		['Stair Stepper', 'cardio'],
+		['Indoor Cardio', 'cardio'],
+		['Floor Climbing', 'cardio'],
+		['Jump Rope', 'cardio'],
+		['Ultra Run', 'running'],
+		['Cyclocross', 'cycling'],
+		['Track Cycling', 'cycling'],
+		['Unknown', 'other'],
 		['Multisport', 'other'],
-		['Padel', 'other'],
-		['Skating', 'other']
+		['Padel', 'racket'],
+		['Skating', 'winter']
 	])('maps %s to %s', (garminType, expected) => {
 		expect(mapActivityType(garminType)).toBe(expected);
 	});
@@ -640,5 +652,16 @@ describe('parseGarminCsv rejected rows', () => {
 
 		expect(result.errors).toEqual([]);
 		expect(result.activities).toHaveLength(1);
+	});
+});
+
+describe('Garmin sport distances', () => {
+	it('ignores climbing distance but keeps winter kilometres', () => {
+		const csv =
+			'Activity Type,Date,Distance\nRock Climbing,2026-01-01 08:00:00,2.5\nSkiing,2026-01-01 08:00:00,2.5';
+		expect(parseGarminCsv(csv, 2026).activities.map((a) => [a.type, a.distance])).toEqual([
+			['climbing', 0],
+			['winter', 2.5]
+		]);
 	});
 });

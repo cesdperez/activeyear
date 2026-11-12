@@ -8,6 +8,7 @@ import {
 	papaRowErrors,
 	invalidDateError
 } from './csv.js';
+import { TYPES_WITHOUT_DISTANCE } from '#lib/constants/parsing.js';
 import type { Activity, ActivityParser, ActivityType, ParseResult } from '#lib/types/index.js';
 
 const KEY_HEADERS = ['Activity Date', 'Activity Type', 'Moving Time'];
@@ -37,6 +38,20 @@ const ACTIVITY_TYPES: Record<string, ActivityType> = {
 	Crossfit: 'cardio',
 	Rowing: 'rowing',
 	'Virtual Row': 'rowing',
+	'Alpine Ski': 'winter',
+	'Backcountry Ski': 'winter',
+	'Nordic Ski': 'winter',
+	Snowboard: 'winter',
+	Snowshoe: 'winter',
+	'Ice Skate': 'winter',
+	Tennis: 'racket',
+	Padel: 'racket',
+	Pickleball: 'racket',
+	Squash: 'racket',
+	Badminton: 'racket',
+	Racquetball: 'racket',
+	'Table Tennis': 'racket',
+	'Rock Climb': 'climbing',
 	Kayaking: 'paddling',
 	Canoeing: 'paddling',
 	'Stand Up Paddling': 'paddling'
@@ -110,11 +125,12 @@ function readActivity(
 	columns: ReturnType<typeof columnIndexes>,
 	date: Date
 ): Activity {
+	const type = ACTIVITY_TYPES[data[columns.type]] ?? 'other';
 	return {
 		date,
-		type: ACTIVITY_TYPES[data[columns.type]] ?? 'other',
+		type,
 		title: data[columns.name] ?? '',
-		distance: parseNumber(data[columns.distance]) / 1000,
+		distance: TYPES_WITHOUT_DISTANCE.has(type) ? 0 : parseNumber(data[columns.distance]) / 1000,
 		duration: parseNumber(data[columns.movingTime]),
 		elevation: Math.round(parseNumber(data[columns.elevation])),
 		calories: Math.round(parseNumber(data[columns.calories])),

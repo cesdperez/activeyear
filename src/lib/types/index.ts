@@ -9,6 +9,9 @@ export type ActivityType =
 	| 'cardio'
 	| 'rowing'
 	| 'paddling'
+	| 'winter'
+	| 'racket'
+	| 'climbing'
 	| 'other';
 
 export interface Activity {

@@ -9,7 +9,10 @@ import {
 	Target,
 	Heartbeat,
 	Waves,
-	Anchor
+	Anchor,
+	PersonSimpleSki,
+	Racquet,
+	HandGrabbing
 } from 'phosphor-svelte';
 import type { ActivityType } from '#lib/types/index.js';
 
@@ -25,6 +28,9 @@ export const sportNames: Record<ActivityType, string> = {
 	paddling: 'Paddling',
 	rowing: 'Rowing',
 	cardio: 'Cardio',
+	winter: 'Winter sports',
+	racket: 'Racket sports',
+	climbing: 'Climbing',
 	other: 'Other'
 };
 
@@ -40,6 +46,9 @@ export const sportIcons: Record<ActivityType, typeof PersonSimpleRun> = {
 	paddling: Waves,
 	rowing: Anchor,
 	cardio: Heartbeat,
+	winter: PersonSimpleSki,
+	racket: Racquet,
+	climbing: HandGrabbing,
 	other: Target
 };
 // One colour per sport type except "other", so no two slices share a colour.
@@ -53,7 +62,10 @@ export const sportColors = [
 	'#f472b6',
 	'#4d7cff',
 	'#a3e635',
-	'#2dd4bf'
+	'#2dd4bf',
+	'#ef4444',
+	'#facc15',
+	'#4ade80'
 ];
 
 export const OTHER_SPORT_COLOR = '#94a3b8';

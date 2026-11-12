@@ -130,6 +130,10 @@ describe('Strava parser', () => {
 		['Weight Training', 'strength'],
 		['Elliptical', 'cardio'],
 		['Stair-Stepper', 'cardio'],
+		['Alpine Ski', 'winter'],
+		['Tennis', 'racket'],
+		['Rock Climb', 'climbing'],
+		['Unknown', 'other'],
 		['Workout', 'other']
 	])('maps %s to %s', (type, expected) => {
 		expect(
@@ -149,6 +153,20 @@ describe('Strava parser', () => {
 				type: 'unsupported-format',
 				message: expect.stringContaining('English')
 			})
+		]);
+	});
+});
+
+describe('Strava sport distances', () => {
+	it('ignores climbing distance but keeps winter kilometres', () => {
+		const csv = [
+			header,
+			row('Oct 31, 2026, 9:49:58 AM', 'Rock Climb'),
+			row('Oct 31, 2026, 9:49:58 AM', 'Alpine Ski')
+		].join('\n');
+		expect(stravaParser.parse(csv, 2026).activities.map((a) => [a.type, a.distance])).toEqual([
+			['climbing', 0],
+			['winter', 1.45]
 		]);
 	});
 });

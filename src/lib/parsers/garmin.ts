@@ -17,7 +17,11 @@ import type {
 	ParseResult
 } from '../types/index.js';
 import { TARGET_YEAR } from '../constants/time.js';
-import { MAX_RECORD_CHARS, MAX_RECORD_LINES } from '../constants/parsing.js';
+import {
+	MAX_RECORD_CHARS,
+	MAX_RECORD_LINES,
+	TYPES_WITHOUT_DISTANCE
+} from '../constants/parsing.js';
 
 // Garmin localises headers, so other languages miss these. Every Garmin export has all three.
 const KEY_HEADERS = ['Activity Type', 'Date', 'Distance'];
@@ -55,11 +59,42 @@ const ACTIVITY_TYPE_MAP: Record<string, ActivityType> = {
 	SUP: 'paddling',
 	Kayaking: 'paddling',
 	Canoeing: 'paddling',
-	Padel: 'other',
-	Skating: 'other',
-	'Ice Skating': 'other',
-	Multisport: 'other',
-	'Rock Climbing': 'other'
+	'Resort Skiing': 'winter',
+	'Resort Snowboarding': 'winter',
+	'Resort Skiing/Snowboarding': 'winter',
+	Skiing: 'winter',
+	Snowboarding: 'winter',
+	'Backcountry Skiing': 'winter',
+	'Backcountry Snowboarding': 'winter',
+	'Backcountry Skiing/Snowboarding': 'winter',
+	'Cross Country Classic Skiing': 'winter',
+	'Cross Country Skate Skiing': 'winter',
+	'Cross Country Skiing': 'winter',
+	'Skate Skiing': 'winter',
+	Snowshoeing: 'winter',
+	Skating: 'winter',
+	'Ice Skating': 'winter',
+	Tennis: 'racket',
+	Padel: 'racket',
+	Pickleball: 'racket',
+	Squash: 'racket',
+	Badminton: 'racket',
+	'Table Tennis': 'racket',
+	Racquetball: 'racket',
+	'Platform Tennis': 'racket',
+	'Rock Climbing': 'climbing',
+	Bouldering: 'climbing',
+	'Indoor Climbing': 'climbing',
+	Climbing: 'climbing',
+	Elliptical: 'cardio',
+	'Stair Stepper': 'cardio',
+	'Indoor Cardio': 'cardio',
+	'Floor Climbing': 'cardio',
+	'Jump Rope': 'cardio',
+	'Ultra Run': 'running',
+	Cyclocross: 'cycling',
+	'Track Cycling': 'cycling',
+	Multisport: 'other'
 };
 
 const DISTANCE_IN_METERS_TYPES = new Set([
@@ -459,13 +494,16 @@ function flattenWholeRowQuoted(rows: string[][], content: string): string | null
 }
 
 function readActivity(row: GarminRawActivity, date: Date): Activity {
-	const distance = DISTANCE_IN_METERS_TYPES.has(row['Activity Type'])
-		? parseGarminMeterDistance(row['Distance'])
-		: parseGarminDistance(row['Distance']);
+	const type = mapActivityType(row['Activity Type']);
+	const distance = TYPES_WITHOUT_DISTANCE.has(type)
+		? 0
+		: DISTANCE_IN_METERS_TYPES.has(row['Activity Type'])
+			? parseGarminMeterDistance(row['Distance'])
+			: parseGarminDistance(row['Distance']);
 
 	return {
 		date,
-		type: mapActivityType(row['Activity Type']),
+		type,
 		title: row['Title'] || '',
 		distance,
 		duration: parseGarminTime(row['Total Time'] || row['Time']),

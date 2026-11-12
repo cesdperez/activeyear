@@ -14,7 +14,7 @@ export const FAQ: FaqItem[] = [
 	{
 		question: 'Which file does it need?',
 		answer:
-			'The Activities CSV exported from Garmin Connect in English. It covers running, cycling, swimming, walking, hiking, strength, yoga, paddling, rowing and cardio.'
+			'The Activities CSV exported from Garmin Connect in English. It covers running, cycling, swimming, walking, hiking, strength, yoga, paddling, rowing, cardio, winter sports, racket sports and climbing.'
 	},
 	{
 		question: 'What can I share?',
