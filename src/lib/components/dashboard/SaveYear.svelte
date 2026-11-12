@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { DownloadSimple } from 'phosphor-svelte';
+	import { SAVED_YEAR_URL_REVOKE_DELAY_MS } from '#lib/constants/savedYear.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import { savedYearFileName } from '#lib/utils/savedYear.js';
@@ -12,7 +13,8 @@
 		link.href = url;
 		link.download = savedYearFileName(TARGET_YEAR);
 		link.click();
-		URL.revokeObjectURL(url);
+		// Safari needs time to start the download before the URL is revoked.
+		setTimeout(() => URL.revokeObjectURL(url), SAVED_YEAR_URL_REVOKE_DELAY_MS);
 	}
 </script>
 

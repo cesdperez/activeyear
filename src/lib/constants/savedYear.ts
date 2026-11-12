@@ -1,1 +1,2 @@
 export const SAVED_YEAR_VERSION = 1;
+export const SAVED_YEAR_URL_REVOKE_DELAY_MS = 5000;

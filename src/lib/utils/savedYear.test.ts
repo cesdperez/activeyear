@@ -35,6 +35,21 @@ describe('saved year', () => {
 		});
 		expect(savedYearFileName(2026)).toBe('activeyear-2026.json');
 	});
+	it('round trips non-finite activity values as zero', () => {
+		const invalid = {
+			...activity,
+			distance: Infinity,
+			duration: NaN,
+			calories: -Infinity,
+			elevation: NaN
+		};
+		const json = serializeSavedYear([invalid], 'garmin', 2026);
+		expect(parseSavedYear(json, 2026)).toEqual({
+			ok: true,
+			activities: [{ ...activity, distance: 0, duration: 0, calories: 0, elevation: 0 }],
+			source: 'garmin'
+		});
+	});
 	it.each(['[]', '{}', 'null', '{"foo":1}'])('rejects a non-saved file %s', (json) => {
 		expect(parseSavedYear(json, 2026)).toEqual({ ok: false, error: { type: 'invalid-file' } });
 	});
@@ -58,6 +73,8 @@ describe('saved year', () => {
 		);
 	});
 	it.each([
+		{ date: '2025-12-31T23:59:59' },
+		{ date: '2027-01-01T00:00:00' },
 		{ date: '2026-02-30T05:06:07' },
 		{ date: '2026-03-04T05:06:07Z' },
 		{ type: 'bad' },

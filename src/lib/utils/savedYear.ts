@@ -21,7 +21,14 @@ export function serializeSavedYear(
 		version: SAVED_YEAR_VERSION,
 		year,
 		source,
-		activities: activities.map((activity) => ({ ...activity, date: localDate(activity.date) }))
+		activities: activities.map((activity) => ({
+			...activity,
+			date: localDate(activity.date),
+			distance: Number.isFinite(activity.distance) ? activity.distance : 0,
+			duration: Number.isFinite(activity.duration) ? activity.duration : 0,
+			calories: Number.isFinite(activity.calories) ? activity.calories : 0,
+			elevation: Number.isFinite(activity.elevation) ? activity.elevation : 0
+		}))
 	});
 }
 
@@ -92,7 +99,7 @@ export function parseSavedYear(
 	)
 		return { ok: false, error: { type: 'invalid-activities' } };
 	const activities = data.activities.map(parseActivity);
-	if (activities.some((activity) => activity === null))
+	if (activities.some((activity) => activity === null || activity.date.getFullYear() !== year))
 		return { ok: false, error: { type: 'invalid-activities' } };
 	return { ok: true, activities: activities as Activity[], source: data.source };
 }
