@@ -9,6 +9,7 @@
 	import HighlightsSection from '#lib/components/dashboard/HighlightsSection.svelte';
 	import PersonalRecords from '#lib/components/dashboard/PersonalRecords.svelte';
 	import SportBreakdown from '#lib/components/dashboard/SportBreakdown.svelte';
+	import MoreStats from '#lib/components/dashboard/MoreStats.svelte';
 	import UploadAnotherFile from '#lib/components/dashboard/UploadAnotherFile.svelte';
 	import SaveYear from '#lib/components/dashboard/SaveYear.svelte';
 	import { useConfettiRain } from '#lib/components/dashboard/confettiRain.svelte.js';
@@ -37,6 +38,7 @@
 	/>
 	<PersonalRecords records={appStore.records} unit={appStore.unit} />
 	<SportBreakdown breakdown={appStore.breakdown} metric={appStore.breakdownMetric} />
+	<MoreStats activities={appStore.activities} breakdown={appStore.breakdown} unit={appStore.unit} />
 	<ExportPanel />
 	<SaveYear />
 	<UploadAnotherFile />

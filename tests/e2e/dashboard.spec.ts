@@ -63,6 +63,24 @@ test.describe('dashboard toggles', () => {
 	});
 });
 
+test('more stats are hidden until expanded', async ({ page }) => {
+	await openDemo(page);
+	const toggle = page.getByRole('button', { name: 'More stats', exact: true });
+	const section = page.getByTestId('more-stats');
+	await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+	await expect(section).not.toBeVisible();
+	await toggle.click();
+	await expect(page.getByRole('button', { name: 'Fewer stats' })).toHaveAttribute(
+		'aria-expanded',
+		'true'
+	);
+	await expect(section).toBeVisible();
+	await expect(section.getByRole('heading', { name: 'More Stats' })).toBeVisible();
+	for (const quarter of ['Q1', 'Q2', 'Q3', 'Q4']) {
+		await expect(section.getByRole('heading', { name: quarter, exact: true })).toBeVisible();
+	}
+});
+
 test('Jump to Export moves focus to the export heading', async ({ page }) => {
 	await openDemo(page);
 	await page.getByRole('button', { name: 'Jump to Export' }).click();
