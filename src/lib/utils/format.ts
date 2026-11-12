@@ -117,6 +117,7 @@ export function calculatePizzaSlices(calories: number): number {
  */
 export function formatPizzaSlices(calories: number): string {
 	const slices = calculatePizzaSlices(calories);
+	if (slices === 0 && calories > 0) return 'Less than a pizza slice burnt';
 	return `${slices.toLocaleString('en-US')} pizza ${pluralize(slices, 'slice', 'slices')} burnt`;
 }
 

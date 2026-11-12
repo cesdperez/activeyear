@@ -170,6 +170,10 @@ describe('formatPizzaSlices', () => {
 	it('says slice for a single slice', () => {
 		expect(formatPizzaSlices(285)).toBe('1 pizza slice burnt');
 	});
+
+	it('says less than a slice when the calories round to no slices', () => {
+		expect(formatPizzaSlices(120)).toBe('Less than a pizza slice burnt');
+	});
 });
 
 describe('pluralize', () => {
