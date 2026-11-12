@@ -1,7 +1,10 @@
 import Papa from 'papaparse';
-import type { ActivityParser, ActivityType, ParseError, ParseResult } from '#lib/types/index.js';
+import type { Activity, ActivityParser, ActivityType, ParseResult } from '#lib/types/index.js';
 
 const KEY_HEADERS = ['Activity Date', 'Activity Type', 'Moving Time'];
+// Localized exports translate headers but keep activities/<id>.fit.gz filenames.
+const ACTIVITY_FILENAME = /(?:^|[",\r\n])activities\/\d+\.(?:fit|gpx|tcx)(?:\.gz)?(?=$|[",\r\n])/i;
+
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const ACTIVITY_TYPES: Record<string, ActivityType> = {
 	Run: 'running',
@@ -30,15 +33,17 @@ const ACTIVITY_TYPES: Record<string, ActivityType> = {
 	'Stand Up Paddling': 'paddling'
 };
 
-function headers(csv: string): string[] {
+function readHeaders(csv: string): string[] {
 	const line = csv.split(/\r?\n/).find((part) => part.trim());
 	return (Papa.parse<string[]>(line ?? '').data[0] ?? []).map((value) => value.trim());
 }
+
 function hasEnglishHeaders(csv: string): boolean {
-	const found = headers(csv);
+	const found = readHeaders(csv);
 	return KEY_HEADERS.every((header) => found.includes(header));
 }
-function parseDate(value: string): Date | null {
+
+function parseStravaDate(value: string): Date | null {
 	const match =
 		/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{1,2}), (\d{4}), (\d{1,2}):(\d{2}):(\d{2}) (AM|PM)$/.exec(
 			value.trim()
@@ -51,6 +56,7 @@ function parseDate(value: string): Date | null {
 	const minute = Number(match[5]);
 	const second = Number(match[6]);
 	if (hour < 1 || hour > 12 || minute > 59 || second > 59) return null;
+	// Activity Date is UTC.
 	const date = new Date(
 		Date.UTC(year, month, day, (hour % 12) + (match[7] === 'PM' ? 12 : 0), minute, second)
 	);
@@ -58,25 +64,50 @@ function parseDate(value: string): Date | null {
 		? date
 		: null;
 }
-function number(value: string | undefined): number {
+
+function parseNumber(value: string | undefined): number {
 	if (!value?.trim()) return 0;
 	const parsed = Number(value);
 	return Number.isFinite(parsed) ? parsed : 0;
 }
+function nonEnglishExportResult(): ParseResult {
+	return {
+		activities: [],
+		yearsInFile: [],
+		errors: [
+			{
+				type: 'unsupported-format',
+				row: 0,
+				message:
+					"This Strava export isn't in English. Set your Strava language to English, request a new archive, and upload its activities.csv."
+			}
+		]
+	};
+}
+
+function readActivity(data: string[], columns: string[], date: Date): Activity {
+	const get = (name: string) => data[columns.indexOf(name)] ?? '';
+	return {
+		date,
+		type: ACTIVITY_TYPES[get('Activity Type')] ?? 'other',
+		title: get('Activity Name'),
+		// The last Distance is metres; the first is display text.
+		distance: parseNumber(data[columns.lastIndexOf('Distance')]) / 1000,
+		duration: parseNumber(get('Moving Time')),
+		elevation: Math.round(parseNumber(get('Elevation Gain'))),
+		calories: Math.round(parseNumber(get('Calories'))),
+		favorite: false
+	};
+}
+
+function rowStartLine(segment: string, line: number): number {
+	const leading = segment.match(/^(?:\s*\r?\n)*/)?.[0] ?? '';
+	return line + (leading.match(/\n/g)?.length ?? 0);
+}
+
 function parse(csv: string, year: number): ParseResult {
-	if (!hasEnglishHeaders(csv))
-		return {
-			activities: [],
-			yearsInFile: [],
-			errors: [
-				{
-					type: 'unsupported-format',
-					row: 0,
-					message:
-						"This Strava export isn't in English. Set your Strava language to English, request a new archive, and upload its activities.csv."
-				}
-			]
-		};
+	if (!hasEnglishHeaders(csv)) return nonEnglishExportResult();
+
 	const result: ParseResult = { activities: [], errors: [], yearsInFile: [] };
 	const years = new Set<number>();
 	let columns: string[] | undefined;
@@ -86,19 +117,18 @@ function parse(csv: string, year: number): ParseResult {
 		skipEmptyLines: true,
 		step: ({ data, errors, meta }) => {
 			const segment = csv.slice(previousCursor, meta.cursor);
-			const leading = segment.match(/^(?:\s*\r?\n)*/)?.[0] ?? '';
-			const rowLine = line + (leading.match(/\n/g)?.length ?? 0);
+			const rowLine = rowStartLine(segment, line);
 			line += segment.match(/\n/g)?.length ?? 0;
 			previousCursor = meta.cursor;
 			if (!columns) {
 				columns = data.map((value) => value.trim());
 				return;
 			}
-			const get = (name: string) => data[columns!.indexOf(name)] ?? '';
 			for (const error of errors)
-				result.errors.push({ type: 'unknown', row: rowLine, message: error.message } as ParseError);
-			const type = get('Activity Type');
-			const dateText = get('Activity Date');
+				result.errors.push({ type: 'unknown', row: rowLine, message: error.message });
+
+			const type = data[columns.indexOf('Activity Type')] ?? '';
+			const dateText = data[columns.indexOf('Activity Date')] ?? '';
 			if (!type || !dateText) {
 				result.errors.push({
 					type: 'missing-column',
@@ -107,33 +137,21 @@ function parse(csv: string, year: number): ParseResult {
 				});
 				return;
 			}
-			const date = parseDate(dateText);
+			const date = parseStravaDate(dateText);
 			if (!date) {
 				result.errors.push({ type: 'invalid-date', row: rowLine, message: 'Invalid date format' });
 				return;
 			}
 			years.add(date.getFullYear());
-			if (date.getFullYear() !== year) return;
-			result.activities.push({
-				date,
-				type: ACTIVITY_TYPES[type] ?? 'other',
-				title: get('Activity Name'),
-				distance: number(data[columns.lastIndexOf('Distance')]) / 1000,
-				duration: number(get('Moving Time')),
-				elevation: Math.round(number(get('Elevation Gain'))),
-				calories: Math.round(number(get('Calories'))),
-				favorite: false
-			});
+			if (date.getFullYear() === year) result.activities.push(readActivity(data, columns, date));
 		}
 	});
 	result.yearsInFile = [...years].sort((a, b) => a - b);
 	return result;
 }
+
+/** Detect and parse Strava activities.csv exports. */
 export const stravaParser: ActivityParser = {
-	detect: (csv) =>
-		hasEnglishHeaders(csv) ||
-		/(?:^|[",\r\n])activities\/\d+\.(?:fit|gpx|tcx)(?:\.gz)?(?=$|[",\r\n])/i.test(
-			csv.slice(0, 65536)
-		),
+	detect: (csv) => hasEnglishHeaders(csv) || ACTIVITY_FILENAME.test(csv.slice(0, 65536)),
 	parse
 };
