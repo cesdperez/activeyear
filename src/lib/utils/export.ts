@@ -23,7 +23,7 @@ const THEME_BACKGROUNDS: Record<Theme, string> = {
 export async function exportToPng(element: HTMLElement, options: ExportOptions): Promise<void> {
 	const {
 		filename,
-		scale = 2,
+		scale = 1,
 		backgroundColor = THEME_BACKGROUNDS.neon,
 		allowFallbackFonts = false
 	} = options;

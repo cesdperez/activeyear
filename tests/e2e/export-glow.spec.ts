@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { PNG } from 'pngjs';
 import { DASHBOARD_HEADING, downloadAllCards } from './helpers.js';
 
-const EXPORT_SCALE = 2;
+const EXPORT_SCALE = 1;
 const GLOW_RADIUS = 218;
 
 // WebKit used to draw the blurred avatar box-shadow as a hard block on one side only.
