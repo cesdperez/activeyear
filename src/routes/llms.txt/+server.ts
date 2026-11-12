@@ -2,13 +2,16 @@ import { REPOSITORY_URL, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '#lib/cons
 import { TARGET_YEAR } from '#lib/constants/time.js';
 import { FAQ } from '#lib/data/faq.js';
 import { GARMIN_EXPORT_NOTE, GARMIN_EXPORT_STEPS } from '#lib/data/garminExport.js';
+import { STRAVA_EXPORT_NOTE, STRAVA_EXPORT_STEPS } from '#lib/data/stravaExport.js';
+import type { ExportStep } from '#lib/types/index.js';
 
 export const prerender = true;
 
 export function GET(): Response {
-	const exportSteps = GARMIN_EXPORT_STEPS.map(
-		({ text, link }, i) => `${i + 1}. ${link ? `${text} ${link.href}` : text}`
-	);
+	const numbered = (steps: ExportStep[]) =>
+		steps.map(({ text, link }, i) => `${i + 1}. ${link ? `${text} ${link.href}` : text}`);
+	const exportSteps = numbered(GARMIN_EXPORT_STEPS);
+	const stravaSteps = numbered(STRAVA_EXPORT_STEPS);
 	const appSteps = [
 		`Open ${SITE_URL} and drop the CSV file onto the upload area.`,
 		'Pick a theme, add a name, and download the cards.'
@@ -31,6 +34,12 @@ ${SITE_NAME} (${SITE_URL}) is a free web app that turns a Garmin Connect activit
 ${[...exportSteps, ...appSteps].join('\n')}
 
 ${GARMIN_EXPORT_NOTE}
+
+## How to get your Strava data
+
+${stravaSteps.join('\n')}
+
+${STRAVA_EXPORT_NOTE}
 
 ## FAQ
 

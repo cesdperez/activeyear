@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { GARMIN_EXPORT_NOTE, GARMIN_EXPORT_STEPS } from '#lib/data/garminExport.js';
+	import { STRAVA_EXPORT_NOTE, STRAVA_EXPORT_STEPS } from '#lib/data/stravaExport.js';
+	import type { ExportStep } from '#lib/types/index.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import { createHydrated } from '#lib/stores/hydrated.svelte.js';
 	import FileUpload from '#lib/components/FileUpload.svelte';
@@ -10,6 +12,29 @@
 	let uploading = $state(false);
 	const hydrated = createHydrated();
 </script>
+
+{#snippet exportGuide(title: string, steps: ExportStep[], note: string)}
+	<h3 class="mb-3 text-xs font-medium tracking-wide text-zinc-300 uppercase">{title}</h3>
+	<ol class="space-y-2 text-left text-sm text-pretty text-zinc-400">
+		{#each steps as { text, link }, i (text)}
+			<li class="flex gap-2">
+				<span class="font-mono text-cyan-400">{i + 1}.</span>
+				{text}
+				{#if link}
+					<!-- eslint-disable svelte/no-navigation-without-resolve -- external site, not an app route -->
+					<a
+						href={link.href}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="text-cyan-400 hover:underline">{link.label}</a
+					>
+					<!-- eslint-enable svelte/no-navigation-without-resolve -->
+				{/if}
+			</li>
+		{/each}
+	</ol>
+	<p class="mt-4 text-xs text-balance text-zinc-400">{note}</p>
+{/snippet}
 
 <main class="min-h-screen bg-[var(--color-surface)]">
 	{#if appStore.status === 'ready'}
@@ -45,25 +70,10 @@
 
 			<div class="mt-12 max-w-md text-center">
 				<h2 class="mb-4 text-sm font-medium text-zinc-300">How to get your data</h2>
-				<ol class="space-y-2 text-left text-sm text-pretty text-zinc-400">
-					{#each GARMIN_EXPORT_STEPS as { text, link }, i (text)}
-						<li class="flex gap-2">
-							<span class="font-mono text-cyan-400">{i + 1}.</span>
-							{text}
-							{#if link}
-								<!-- eslint-disable svelte/no-navigation-without-resolve -- external site, not an app route -->
-								<a
-									href={link.href}
-									target="_blank"
-									rel="noopener noreferrer"
-									class="text-cyan-400 hover:underline">{link.label}</a
-								>
-								<!-- eslint-enable svelte/no-navigation-without-resolve -->
-							{/if}
-						</li>
-					{/each}
-				</ol>
-				<p class="mt-4 text-xs text-balance text-zinc-400">{GARMIN_EXPORT_NOTE}</p>
+				{@render exportGuide('Garmin Connect', GARMIN_EXPORT_STEPS, GARMIN_EXPORT_NOTE)}
+				<div class="mt-8">
+					{@render exportGuide('Strava', STRAVA_EXPORT_STEPS, STRAVA_EXPORT_NOTE)}
+				</div>
 			</div>
 
 			<HomeFaq />

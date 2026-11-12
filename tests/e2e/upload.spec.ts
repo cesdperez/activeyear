@@ -73,6 +73,9 @@ test.describe('Upload Flow', () => {
 		await expect(
 			page.getByText(`Scroll down until all ${TARGET_YEAR} activities are loaded`)
 		).toBeVisible();
+		await expect(page.getByRole('heading', { name: 'Strava', exact: true })).toBeVisible();
+		await expect(page.getByText('Download or Delete Your Account')).toBeVisible();
+		await expect(page.getByText('Upload only activities.csv.')).toBeVisible();
 	});
 
 	test('processes uploaded CSV and shows dashboard', async ({ page }) => {
