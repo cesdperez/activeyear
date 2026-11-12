@@ -6,7 +6,7 @@ import type {
 	UnusableFileError
 } from '#lib/types/index.js';
 import { ROW_ERROR_REASONS } from '#lib/constants/parsing.js';
-import { formatCount } from './format.js';
+import { formatCount, pluralize } from './format.js';
 
 function isRowErrorType(type: ParseError['type']): type is RowErrorType {
 	return type in ROW_ERROR_REASONS;
@@ -56,5 +56,5 @@ export function unusableFileMessage(error: UnusableFileError): string {
 }
 
 export function skippedRowsNotice(count: number): string {
-	return `Skipped ${formatCount(count)} ${count === 1 ? 'row' : 'rows'} that could not be read`;
+	return `Skipped ${formatCount(count)} ${pluralize(count, 'row', 'rows')} that could not be read`;
 }
