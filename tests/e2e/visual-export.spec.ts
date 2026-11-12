@@ -57,8 +57,7 @@ async function captureExportCardAtFullResolution(page: Page): Promise<Buffer> {
 
 	await page.waitForTimeout(100);
 
-	// Capture at CSS scale (1x) - we'll compare at this resolution
-	// The download is 2x, but we'll scale it down for comparison
+	// Capture at CSS scale (1x), the same resolution as the download
 	const screenshot = await exportCard.screenshot({
 		type: 'png',
 		scale: 'css'
@@ -75,47 +74,6 @@ async function captureExportCardAtFullResolution(page: Page): Promise<Buffer> {
 	});
 
 	return screenshot;
-}
-
-function scaleDownImage(buffer: Buffer, scaleFactor: number): Buffer {
-	const src = PNG.sync.read(buffer);
-	const newWidth = Math.floor(src.width / scaleFactor);
-	const newHeight = Math.floor(src.height / scaleFactor);
-	const dst = new PNG({ width: newWidth, height: newHeight });
-
-	// Bilinear interpolation for better quality downscaling
-	for (let y = 0; y < newHeight; y++) {
-		for (let x = 0; x < newWidth; x++) {
-			const srcX = x * scaleFactor;
-			const srcY = y * scaleFactor;
-
-			// Average the 2x2 block of source pixels
-			let r = 0,
-				g = 0,
-				b = 0,
-				a = 0;
-			for (let dy = 0; dy < scaleFactor; dy++) {
-				for (let dx = 0; dx < scaleFactor; dx++) {
-					const sx = Math.min(srcX + dx, src.width - 1);
-					const sy = Math.min(srcY + dy, src.height - 1);
-					const srcIdx = (sy * src.width + sx) * 4;
-					r += src.data[srcIdx];
-					g += src.data[srcIdx + 1];
-					b += src.data[srcIdx + 2];
-					a += src.data[srcIdx + 3];
-				}
-			}
-
-			const pixelCount = scaleFactor * scaleFactor;
-			const dstIdx = (y * newWidth + x) * 4;
-			dst.data[dstIdx] = Math.round(r / pixelCount);
-			dst.data[dstIdx + 1] = Math.round(g / pixelCount);
-			dst.data[dstIdx + 2] = Math.round(b / pixelCount);
-			dst.data[dstIdx + 3] = Math.round(a / pixelCount);
-		}
-	}
-
-	return PNG.sync.write(dst);
 }
 
 async function captureSpecificCardDownload(page: Page, cardIndex: number): Promise<Buffer> {
@@ -156,22 +114,7 @@ function compareImages(
 	downloadBuffer: Buffer
 ): { diffRatio: number; diffPixels: number; diffImage: Buffer } {
 	const screenshot = PNG.sync.read(screenshotBuffer);
-	let download = PNG.sync.read(downloadBuffer);
-
-	// The download is at 2x resolution (scale: 2 in exportToPng)
-	// Scale it down to match the screenshot resolution (allow small rounding differences)
-	// Determine the scale factor (e.g. 2x, 4x)
-	const widthRatio = download.width / screenshot.width;
-	const heightRatio = download.height / screenshot.height;
-
-	// Check if ratios are consistent and close to an integer
-	if (Math.abs(widthRatio - heightRatio) < 0.1) {
-		const scaleFactor = Math.round(widthRatio);
-		if (scaleFactor > 1 && Math.abs(widthRatio - scaleFactor) < 0.1) {
-			downloadBuffer = scaleDownImage(downloadBuffer, scaleFactor);
-			download = PNG.sync.read(downloadBuffer);
-		}
-	}
+	const download = PNG.sync.read(downloadBuffer);
 
 	// Images must have same dimensions (allow 1px difference for rounding)
 	const widthDiff = Math.abs(screenshot.width - download.width);
@@ -250,10 +193,7 @@ test.describe('Export Visual Fidelity', () => {
 				const debugDir = join(__dirname, '..', '..', 'test-results', 'debug');
 				mkdirSync(debugDir, { recursive: true });
 				writeFileSync(join(debugDir, `${cardName}-screenshot.png`), screenshotBuffer);
-				writeFileSync(
-					join(debugDir, `${cardName}-download-scaled.png`),
-					scaleDownImage(downloadBuffer, 2)
-				);
+				writeFileSync(join(debugDir, `${cardName}-download.png`), downloadBuffer);
 				writeFileSync(join(debugDir, `${cardName}-diff.png`), diffImage);
 			}
 
@@ -300,10 +240,7 @@ test.describe('Export Visual Fidelity', () => {
 					const debugDir = join(__dirname, '..', '..', 'test-results', 'debug');
 					mkdirSync(debugDir, { recursive: true });
 					writeFileSync(join(debugDir, `${theme}-screenshot.png`), screenshotBuffer);
-					writeFileSync(
-						join(debugDir, `${theme}-download-scaled.png`),
-						scaleDownImage(downloadBuffer, 2)
-					);
+					writeFileSync(join(debugDir, `${theme}-download.png`), downloadBuffer);
 					writeFileSync(join(debugDir, `${theme}-diff.png`), diffImage);
 				}
 
