@@ -416,12 +416,14 @@ function repairMalformedQuotes(csvContent: string): { content: string; errors: P
 
 // Some tools wrap each CSV row in quotes and escape the quotes inside, so most data rows
 // parse as one column. The header may be left unquoted.
-function flattenWholeRowQuoted(rows: string[][]): string | null {
+function flattenWholeRowQuoted(rows: string[][], content: string): string | null {
 	const dataRows = rows.slice(1);
 	const quotedDataRows = dataRows.filter((row) => row.length === 1).length;
 	if (dataRows.length === 0 || quotedDataRows <= dataRows.length / 2) return null;
 
-	return rows.map((row) => (row.length === 1 ? row[0] : Papa.unparse([row]))).join('\n');
+	// Keep blank lines so later rows retain their line number in the file.
+	const allRows = Papa.parse<string[]>(content, { header: false, skipEmptyLines: false }).data;
+	return allRows.map((row) => (row.length === 1 ? row[0] : Papa.unparse([row]))).join('\n');
 }
 
 function readActivity(row: GarminRawActivity, date: Date): Activity {
@@ -482,7 +484,7 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 		header: false,
 		skipEmptyLines: true
 	});
-	const flattened = flattenWholeRowQuoted(firstPass.data);
+	const flattened = flattenWholeRowQuoted(firstPass.data, csvContent);
 	const content = flattened ?? csvContent;
 	const parsed =
 		flattened === null ? firstPass : Papa.parse<string[]>(flattened, { skipEmptyLines: true });

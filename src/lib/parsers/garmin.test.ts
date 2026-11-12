@@ -442,6 +442,7 @@ describe('parseGarminCsv rejected rows', () => {
 	const HEADER = 'Activity Type,Date,Favorite,Title,Distance,Calories,Time,Total Ascent';
 	const row = (date: string, title = 'Morning Run') =>
 		`Running,${date},false,${title},10.0,600,00:50:00,100`;
+	const quoted = (line: string) => `"${line.replaceAll('"', '""')}"`;
 	const errorRows = (csv: string) => parseGarminCsv(csv, 2026).errors.map((e) => [e.type, e.row]);
 
 	it('lists every year with a readable activity, whatever the target year', () => {
@@ -485,6 +486,38 @@ describe('parseGarminCsv rejected rows', () => {
 		const csv = [HEADER, '', row('2026-03-01 08:00:00', '"Two\nlines"'), '', row('bad')];
 
 		expect(errorRows(csv.join('\n'))).toEqual([['invalid-date', 6]]);
+	});
+
+	it('numbers a row by its line in the file after blank lines in whole-row quotes', () => {
+		const csv = [quoted(HEADER), '', quoted(row('2026-03-01 08:00:00')), '', quoted(row('bad'))];
+
+		expect(errorRows(csv.join('\n'))).toEqual([['invalid-date', 5]]);
+	});
+
+	it('numbers a row by its line in the file after blank lines and a multi-line title in whole-row quotes', () => {
+		const csv = [
+			quoted(HEADER),
+			'',
+			quoted(row('2026-03-01 08:00:00', '"Two\nlines"')),
+			'',
+			quoted(row('bad'))
+		];
+
+		expect(errorRows(csv.join('\n'))).toEqual([['invalid-date', 6]]);
+	});
+
+	it('numbers a row by its line in the file with Windows line endings in whole-row quotes', () => {
+		const csv = [quoted(HEADER), '', quoted(row('2026-03-01 08:00:00')), '', quoted(row('bad'))];
+
+		expect(errorRows(`${csv.join('\r\n')}\r\n`)).toEqual([['invalid-date', 5]]);
+	});
+
+	it('reads activities from whole-row quotes after a leading blank line', () => {
+		const csv = ['', quoted(HEADER), quoted(row('2026-03-01 08:00:00'))].join('\n');
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(result.errors).toEqual([]);
+		expect(result.activities).toHaveLength(1);
 	});
 
 	it('numbers rows by line in a file that needs quote repair', () => {
