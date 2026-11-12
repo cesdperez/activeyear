@@ -45,7 +45,7 @@
 <div
 	role="tablist"
 	aria-label="Choose your data source"
-	class="mb-4 inline-flex rounded-full border border-zinc-700 bg-zinc-900 p-1"
+	class="mb-4 inline-flex items-center rounded-full border border-zinc-700 bg-zinc-900 p-1"
 >
 	<button
 		onkeydown={handleKeydown}
@@ -57,7 +57,7 @@
 		aria-controls="garmin-panel"
 		tabindex={selected === 'garmin' ? 0 : -1}
 		onclick={() => (selected = 'garmin')}
-		class="rounded-full px-4 py-2 text-xs font-medium tracking-wide uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 {selected ===
+		class="min-h-11 rounded-full px-4 text-xs font-medium tracking-wide uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 {selected ===
 		'garmin'
 			? 'bg-cyan-400/10 text-cyan-400'
 			: 'text-zinc-400 hover:text-zinc-200'}">Garmin Connect</button
@@ -72,7 +72,7 @@
 		aria-controls="strava-panel"
 		tabindex={selected === 'strava' ? 0 : -1}
 		onclick={() => (selected = 'strava')}
-		class="rounded-full px-4 py-2 text-xs font-medium tracking-wide uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 {selected ===
+		class="min-h-11 rounded-full px-4 text-xs font-medium tracking-wide uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 {selected ===
 		'strava'
 			? 'bg-cyan-400/10 text-cyan-400'
 			: 'text-zinc-400 hover:text-zinc-200'}">Strava</button

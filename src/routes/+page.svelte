@@ -43,7 +43,7 @@
 				</div>
 			</div>
 
-			<div class="mt-12 max-w-md text-center">
+			<div class="mt-12 w-full max-w-md text-center">
 				<h2 class="mb-4 text-sm font-medium text-zinc-300">How to get your data</h2>
 				<ExportGuides />
 			</div>
