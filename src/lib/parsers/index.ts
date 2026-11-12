@@ -1,7 +1,8 @@
 import type { ActivityParser, ParseResult } from '#lib/types/index.js';
 import { garminParser } from './garmin.js';
+import { stravaParser } from './strava.js';
 
-const PARSERS: ActivityParser[] = [garminParser];
+const PARSERS: ActivityParser[] = [garminParser, stravaParser];
 
 /** Parses the CSV with the first parser that recognises its format. */
 export function parseActivityCsv(csvContent: string, year: number): ParseResult {
