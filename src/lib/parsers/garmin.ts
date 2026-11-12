@@ -506,7 +506,8 @@ function readActivity(row: GarminRawActivity, date: Date): Activity {
 		type,
 		title: row['Title'] || '',
 		distance,
-		duration: parseGarminTime(row['Total Time'] || row['Time']),
+		duration:
+			parseGarminTime(row['Moving Time']) || parseGarminTime(row['Total Time'] || row['Time']),
 		calories: parseGarminCalories(row['Calories']),
 		elevation: parseGarminElevation(row['Total Ascent']),
 		favorite: row['Favorite']?.toLowerCase() === 'true'

@@ -11,7 +11,7 @@ describe('Integration: Real Garmin Export', () => {
 	const EXPECTED = {
 		activityCount: 470, // Actual count in CSV for 2025
 		totalDistanceKm: 5661, // Calculated from CSV (Garmin: 5690km)
-		totalDurationMinutes: 24398, // Calculated from CSV (Garmin: 23733 due to different activities)
+		totalDurationMinutes: 22714, // Calculated from moving time in CSV
 		totalElevationMeters: 17459, // From Total Ascent column (Garmin shows "Climbing" which may differ)
 		totalCalories: 209152, // Calculated from CSV
 		activeDays: 298 // Same as Garmin

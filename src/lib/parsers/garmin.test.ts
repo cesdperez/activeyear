@@ -222,7 +222,7 @@ describe('parseGarminCsv', () => {
 		expect(marathon).toMatchObject({
 			distance: 42.63,
 			calories: 2800,
-			duration: 12888,
+			duration: 12880,
 			elevation: 105
 		});
 	});
@@ -286,6 +286,31 @@ describe('parseGarminCsv default year', () => {
 		const result = parseGarminCsv(csv);
 
 		expect(result.activities.map((a) => a.title)).toEqual(['Run']);
+	});
+});
+
+describe('parseGarminCsv moving time', () => {
+	const row = 'Indoor Cycling,2026-11-03 21:31:56,Morning Ride,6.14,118,00:15:03';
+	const header = 'Activity Type,Date,Title,Distance,Calories,Time';
+
+	it('prefers moving time from a Garmin export', () => {
+		const result = parseGarminCsv(`${header},Moving Time\n${row},00:14:48`, 2026);
+		expect(result.activities[0].duration).toBe(888);
+	});
+
+	it.each(['--', '', '00:00:00'])('falls back to Time when moving time is %s', (moving) => {
+		const result = parseGarminCsv(`${header},Moving Time\n${row},${moving}`, 2026);
+		expect(result.activities[0].duration).toBe(903);
+	});
+
+	it('falls back to Time when the moving time column is absent', () => {
+		const result = parseGarminCsv(`${header}\n${row}`, 2026);
+		expect(result.activities[0].duration).toBe(903);
+	});
+
+	it('falls back to Total Time before Time', () => {
+		const result = parseGarminCsv(`${header},Moving Time,Total Time\n${row},--,00:16:00`, 2026);
+		expect(result.activities[0].duration).toBe(960);
 	});
 });
 
