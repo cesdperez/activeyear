@@ -23,7 +23,9 @@
 	</div>
 	<div class="min-w-0 flex-1">
 		<div class="mb-1 flex items-start gap-2">
-			<Star class="mt-1 h-4 w-4 shrink-0 text-yellow-500" weight="fill" aria-hidden="true" />
+			{#if activity.favorite}
+				<Star class="mt-1 h-4 w-4 shrink-0 text-yellow-500" weight="fill" aria-hidden="true" />
+			{/if}
 			<span class="line-clamp-3 font-bold wrap-anywhere text-white" title={activity.title}>
 				{activity.title || sportNames[activity.type] || 'Activity'}
 			</span>

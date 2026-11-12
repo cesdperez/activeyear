@@ -117,6 +117,19 @@ test.describe('Upload Flow', () => {
 		await expect(stats.getByText('60.9km')).toBeVisible();
 		await expect(stats.getByText('1,010m')).toBeVisible();
 		await expect(stats.getByText('18h 40m')).toBeVisible();
+		const highlights = page.locator('section').filter({
+			has: page.getByRole('heading', { name: 'Highlights', exact: true })
+		});
+		const caption = page.getByText(
+			"Your longest sessions of the year. Strava exports don't include favorites."
+		);
+		await expect(highlights.locator('.stat-card').first()).toBeVisible();
+		await expect(caption).toBeVisible();
+
+		await page.getByRole('button', { name: 'Upload different file' }).click();
+		await page.getByRole('button', { name: 'See how it works with demo data' }).click();
+		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
+		await expect(caption).toHaveCount(0);
 	});
 
 	test('rejects a localized Strava export', async ({ page }) => {

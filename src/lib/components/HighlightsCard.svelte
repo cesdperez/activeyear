@@ -141,13 +141,15 @@
 								</div>
 								<div class="min-w-0 flex-1">
 									<div class="mb-1 flex items-center gap-2">
-										<Star
-											class="{compact
-												? 'h-4 w-4'
-												: 'h-6 w-6'} highlight-star shrink-0 text-yellow-500"
-											weight="fill"
-											aria-hidden="true"
-										/>
+										{#if fav.favorite}
+											<Star
+												class="{compact
+													? 'h-4 w-4'
+													: 'h-6 w-6'} highlight-star shrink-0 text-yellow-500"
+												weight="fill"
+												aria-hidden="true"
+											/>
+										{/if}
 										<div
 											class="{compact
 												? 'text-[22px]'
