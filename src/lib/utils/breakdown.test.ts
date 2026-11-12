@@ -237,6 +237,13 @@ describe('donutCentre', () => {
 		});
 	});
 
+	it('shows seconds when the total is under a minute', () => {
+		expect(donutCentre([sport({ duration: 45 })], 'duration')).toEqual({
+			value: '45',
+			label: 'Seconds'
+		});
+	});
+
 	it('groups thousands', () => {
 		expect(donutCentre([sport({ count: 1200 })], 'count').value).toBe('1,200');
 	});

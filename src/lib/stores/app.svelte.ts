@@ -41,10 +41,19 @@ class AppStore {
 	userPfp = $state<string | null>(null);
 	confettiEnabled = $state<boolean>(false);
 	summaryMetric = $state<SummaryMetric>('distance');
-	unit = $state<Unit>('km');
+	#unit = $state<Unit>('km');
 	breakdownMetric = $state<BreakdownMetric>('count');
 	/** Freezes every control that changes the cards, so one export cannot mix settings. */
 	isExporting = $state(false);
+
+	get unit() {
+		return this.#unit;
+	}
+
+	set unit(unit: Unit) {
+		this.#unit = unit;
+		this.#focusStatWithValue();
+	}
 
 	get displayName() {
 		return this.#displayName;
@@ -132,9 +141,13 @@ class AppStore {
 
 	#load(activities: Activity[]) {
 		this.#activities = activities;
-		if (this.#stats)
-			this.summaryMetric = summaryMetricWithValue(this.#stats, this.summaryMetric, this.unit);
+		this.#focusStatWithValue();
 		this.#status = 'ready';
+	}
+
+	#focusStatWithValue() {
+		if (this.#stats)
+			this.summaryMetric = summaryMetricWithValue(this.#stats, this.summaryMetric, this.#unit);
 	}
 
 	// Leaves parseErrors untouched when none are given, matching the CSV-extension and thrown-error paths.

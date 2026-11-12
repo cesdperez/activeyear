@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { TARGET_YEAR } from '../../src/lib/constants/time.js';
+import { MIN_UPLOAD_LOADING_MS, TARGET_YEAR } from '../../src/lib/constants/time.js';
 import { UPLOAD_ZONE_ID } from '../../src/lib/constants/dom.js';
 import { DASHBOARD_HEADING, uploadSample } from './helpers.js';
 
@@ -11,6 +11,27 @@ async function uploadFileWithoutTargetYear(page: Page) {
 			`Activity Type,Date,Title,Distance\nRunning,${TARGET_YEAR - 1}-03-01,Run,10.0`
 		)
 	});
+}
+
+type SlowReadWindow = Window & { slowedFileRead?: boolean };
+type ShownAtWindow = Window & { shownAt?: Record<string, number> };
+
+// Parsing finishes in milliseconds, too fast to assert on the loading state.
+async function slowFileReads(page: Page) {
+	await page.addInitScript(() => {
+		const read = File.prototype.text;
+		File.prototype.text = function () {
+			(window as SlowReadWindow).slowedFileRead = true;
+			return new Promise((resolve) => setTimeout(resolve, 1500)).then(() => read.call(this));
+		};
+	});
+}
+
+// Fails once the app reads files another way, which would make slowFileReads a no-op.
+async function expectFileReadSlowed(page: Page) {
+	await expect
+		.poll(() => page.evaluate(() => (window as SlowReadWindow).slowedFileRead))
+		.toBe(true);
 }
 
 function isFileDragCancelled(target: Locator, type: 'dragover' | 'drop') {
@@ -67,6 +88,37 @@ test.describe('Upload Flow', () => {
 		await expect(page.getByText('Drop your Garmin CSV here')).toBeVisible();
 	});
 
+	test('shows an upload error as soon as the file is read', async ({ page }) => {
+		await page.goto('/');
+
+		await uploadFileWithoutTargetYear(page);
+
+		await expect(
+			page.getByRole('button', { name: `No ${TARGET_YEAR} activities found in the file` })
+		).toBeVisible({ timeout: MIN_UPLOAD_LOADING_MS + 2000 });
+	});
+
+	test('keeps the loading state up for a moment before showing an error', async ({ page }) => {
+		await page.addInitScript(() => {
+			const shownAt: Record<string, number> = {};
+			(window as ShownAtWindow).shownAt = shownAt;
+			new MutationObserver(() => {
+				for (const role of ['status', 'alert']) {
+					if (document.querySelector(`[role="${role}"]`)?.textContent && !shownAt[role])
+						shownAt[role] = performance.now();
+				}
+			}).observe(document, { subtree: true, childList: true, characterData: true });
+		});
+		await page.goto('/');
+
+		await uploadFileWithoutTargetYear(page);
+		await expect(page.getByRole('alert')).not.toBeEmpty();
+
+		const { status, alert } = await page.evaluate(() => (window as ShownAtWindow).shownAt ?? {});
+		// Timers never fire early, so only DOM update jitter can shave a little off.
+		expect(alert - status).toBeGreaterThanOrEqual(MIN_UPLOAD_LOADING_MS - 50);
+	});
+
 	test('explains why an export without target year activities was rejected', async ({ page }) => {
 		await page.goto('/');
 
@@ -90,8 +142,10 @@ test.describe('Upload Flow', () => {
 	});
 
 	test('shows no drop highlight while a file loads', async ({ page }) => {
+		await slowFileReads(page);
 		await page.goto('/');
 		await uploadFileWithoutTargetYear(page);
+		await expectFileReadSlowed(page);
 		const uploadZone = page.locator(`#${UPLOAD_ZONE_ID}`);
 		await expect(page.getByRole('status')).toHaveText('Analyzing activities...');
 
@@ -118,8 +172,10 @@ test.describe('Upload accessibility', () => {
 	});
 
 	test('announces loading progress and errors', async ({ page }) => {
+		await slowFileReads(page);
 		await page.goto('/');
 		await uploadFileWithoutTargetYear(page);
+		await expectFileReadSlowed(page);
 
 		await expect(page.getByRole('status')).toHaveText('Analyzing activities...');
 		await expect(page.getByRole('alert')).toHaveText(
@@ -129,8 +185,10 @@ test.describe('Upload accessibility', () => {
 	});
 
 	test('blocks the demo while a file loads', async ({ page }) => {
+		await slowFileReads(page);
 		await page.goto('/');
 		await uploadFileWithoutTargetYear(page);
+		await expectFileReadSlowed(page);
 
 		await expect(demoButton(page)).toBeDisabled();
 		await expect(page.getByRole('alert')).not.toBeEmpty({ timeout: 10000 });

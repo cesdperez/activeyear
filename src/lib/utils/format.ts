@@ -1,4 +1,5 @@
 import type { Unit } from '../types/index.js';
+import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '../constants/time.js';
 
 const EARTH_CIRCUMFERENCE_KM = 40075;
 const EVEREST_HEIGHT_M = 8848;
@@ -23,18 +24,31 @@ export function formatDistance(km: number, unit: Unit = 'km'): string {
 }
 
 /**
- * Format duration in seconds to "Xh Ym" format
+ * Format duration in seconds to "Xh Ym" format, or "Xs" under a minute
  */
 export function formatDuration(seconds: number): string {
 	if (seconds <= 0) return '0m';
+	const underAMinute = secondsUnderAMinute(seconds);
+	if (underAMinute !== undefined) return `${underAMinute}s`;
 
-	const hours = Math.floor(seconds / 3600);
-	const minutes = Math.floor((seconds % 3600) / 60);
+	const hours = Math.floor(seconds / ONE_HOUR_IN_SECONDS);
+	const minutes = Math.floor((seconds % ONE_HOUR_IN_SECONDS) / ONE_MINUTE_IN_SECONDS);
 
 	if (hours === 0) {
 		return `${minutes}m`;
 	}
 	return `${formatCount(hours)}h ${minutes}m`;
+}
+
+/** Whole seconds, at least 1, for a duration under a minute; `undefined` for none or a minute and up. */
+export function secondsUnderAMinute(seconds: number): number | undefined {
+	if (seconds <= 0 || seconds >= ONE_MINUTE_IN_SECONDS) return undefined;
+	return Math.max(1, Math.floor(seconds));
+}
+
+/** Whether a formatted stat shows anything but zero, so "0.0km" and "0ft" do not count. */
+export function showsValue(formatted: string): boolean {
+	return /[1-9]/.test(formatted);
 }
 
 /** Whole number with thousands separators, matching the other stats. */
@@ -45,7 +59,14 @@ export function formatCount(count: number): string {
 /** Whole percent, but "<1%" for a share that is above zero and would round to 0%. */
 export function formatPercentOfYear(percent: number): string {
 	if (percent > 0 && percent < 0.5) return '<1%';
-	return `${Math.round(percent)}%`;
+	return `${partialPercent(percent, 0)}%`;
+}
+
+function partialPercent(percent: number, decimals: number): string {
+	if (percent >= 100) return (100).toFixed(decimals);
+	// A share just under 100 would otherwise round up to a full 100.
+	const highestPartial = 100 - 10 ** -decimals;
+	return Math.min(Number(percent.toFixed(decimals)), highestPartial).toFixed(decimals);
 }
 
 /**
@@ -81,7 +102,7 @@ export function calculateEarthLaps(distanceKm: number): number {
 export function formatEarthLaps(distanceKm: number): string {
 	const laps = calculateEarthLaps(distanceKm);
 	if (laps < 1.0) {
-		return `${(laps * 100).toFixed(1)}% of a lap around the globe`;
+		return `${partialPercent(laps * 100, 1)}% of a lap around the globe`;
 	}
 	return `${laps.toFixed(2)}x laps around the globe`;
 }
@@ -99,7 +120,7 @@ export function calculateEverests(elevationM: number): number {
 export function formatEverests(elevationM: number): string {
 	const everests = calculateEverests(elevationM);
 	if (everests < 1.0) {
-		return `${(everests * 100).toFixed(0)}% the height of Mt. Everest`;
+		return `${partialPercent(everests * 100, 0)}% the height of Mt. Everest`;
 	}
 	return `${everests.toFixed(1)}x the height of Mt. Everest`;
 }
@@ -116,6 +137,7 @@ export function calculatePizzaSlices(calories: number): number {
  */
 export function formatPizzaSlices(calories: number): string {
 	const slices = calculatePizzaSlices(calories);
+	if (slices === 0 && calories > 0) return 'Less than a pizza slice burnt';
 	return `${slices.toLocaleString('en-US')} pizza ${pluralize(slices, 'slice', 'slices')} burnt`;
 }
 

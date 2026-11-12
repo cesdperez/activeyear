@@ -13,7 +13,8 @@ import {
 	formatActivityCount,
 	formatCount,
 	formatPercentOfYear,
-	pluralize
+	pluralize,
+	secondsUnderAMinute
 } from './format.js';
 
 describe('formatDistance', () => {
@@ -55,6 +56,12 @@ describe('formatDuration', () => {
 
 	it('groups thousands of hours', () => {
 		expect(formatDuration(1194 * 3600 + 33 * 60)).toBe('1,194h 33m');
+	});
+
+	it('shows seconds for a duration under a minute', () => {
+		expect(formatDuration(45)).toBe('45s');
+		expect(formatDuration(59.7)).toBe('59s');
+		expect(formatDuration(0.4)).toBe('1s');
 	});
 
 	it('returns 0m for zero duration', () => {
@@ -119,6 +126,10 @@ describe('formatEarthLaps', () => {
 	it('formats values between 0.1 and 1.0 as percentage', () => {
 		expect(formatEarthLaps(8015)).toBe('20.0% of a lap around the globe');
 	});
+
+	it('never rounds a partial lap up to 100%', () => {
+		expect(formatEarthLaps(40070)).toBe('99.9% of a lap around the globe');
+	});
 });
 
 describe('calculateEverests', () => {
@@ -142,6 +153,10 @@ describe('formatEverests', () => {
 	it('formats values between 0.1 and 1.0 as percentage', () => {
 		expect(formatEverests(4424)).toBe('50% the height of Mt. Everest');
 	});
+
+	it('never rounds a partial Everest up to 100%', () => {
+		expect(formatEverests(8840)).toBe('99% the height of Mt. Everest');
+	});
 });
 
 describe('calculatePizzaSlices', () => {
@@ -163,6 +178,22 @@ describe('formatPizzaSlices', () => {
 
 	it('says slice for a single slice', () => {
 		expect(formatPizzaSlices(285)).toBe('1 pizza slice burnt');
+	});
+
+	it('says less than a slice when the calories round to no slices', () => {
+		expect(formatPizzaSlices(120)).toBe('Less than a pizza slice burnt');
+	});
+});
+
+describe('secondsUnderAMinute', () => {
+	it('gives whole seconds, at least one, for a duration under a minute', () => {
+		expect(secondsUnderAMinute(45.9)).toBe(45);
+		expect(secondsUnderAMinute(0.4)).toBe(1);
+	});
+
+	it('gives nothing for no duration or a minute and up', () => {
+		expect(secondsUnderAMinute(0)).toBeUndefined();
+		expect(secondsUnderAMinute(60)).toBeUndefined();
 	});
 });
 
@@ -189,6 +220,11 @@ describe('formatPercentOfYear', () => {
 
 	it('shows a non-zero share under one percent as <1%', () => {
 		expect(formatPercentOfYear(0.27)).toBe('<1%');
+	});
+
+	it('never rounds a partial year up to 100%', () => {
+		expect(formatPercentOfYear((364 / 365) * 100)).toBe('99%');
+		expect(formatPercentOfYear(100)).toBe('100%');
 	});
 });
 

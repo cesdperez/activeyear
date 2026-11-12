@@ -28,11 +28,11 @@
 				{activity.title || sportNames[activity.type] || 'Activity'}
 			</span>
 		</div>
-		<div class="flex items-center gap-3 text-sm text-[var(--color-text-muted)]">
+		<div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--color-text-muted)]">
 			{#if activity.distance > 0}
-				<span class="font-mono">{formatDistance(activity.distance, unit)}</span>
+				<span class="font-mono whitespace-nowrap">{formatDistance(activity.distance, unit)}</span>
 			{/if}
-			<span class="font-mono">{formatDuration(activity.duration)}</span>
+			<span class="font-mono whitespace-nowrap">{formatDuration(activity.duration)}</span>
 			<span
 				class="rounded-full bg-[var(--color-surface-elevated)] px-2 py-0.5 text-xs tracking-wider uppercase"
 			>

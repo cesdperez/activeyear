@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { appStore } from '#lib/stores/app.svelte.js';
+	import { createHydrated } from '#lib/stores/hydrated.svelte.js';
 	import { UPLOAD_ZONE_ID } from '#lib/constants/dom.js';
+	import { MIN_UPLOAD_LOADING_MS } from '#lib/constants/time.js';
 	import { UploadSimple, Warning, SpinnerGap, ShieldCheck } from 'phosphor-svelte';
 
 	let { loading = $bindable(false) }: { loading?: boolean } = $props();
@@ -8,6 +10,7 @@
 	let isDragOver = $state(false);
 	let fileInput: HTMLInputElement;
 	let currentPhrase = $state('');
+	const hydrated = createHydrated();
 
 	const FUNNY_PHRASES = [
 		'Warming up the calves...',
@@ -61,19 +64,20 @@
 		return FUNNY_PHRASES[Math.floor(Math.random() * FUNNY_PHRASES.length)];
 	}
 
-	async function showLoadingPhrases() {
+	async function upload(file: File) {
+		if (loading || !hydrated.current) return;
+		loading = true;
 		currentPhrase = randomPhrase();
 		const phraseInterval = setInterval(() => (currentPhrase = randomPhrase()), 1000);
-		await new Promise((resolve) => setTimeout(resolve, 5000));
-		clearInterval(phraseInterval);
-	}
-
-	async function upload(file: File) {
-		if (loading) return;
-		loading = true;
-		await showLoadingPhrases();
-		await appStore.processFile(file);
-		loading = false;
+		try {
+			await Promise.all([
+				appStore.processFile(file),
+				new Promise((resolve) => setTimeout(resolve, MIN_UPLOAD_LOADING_MS))
+			]);
+		} finally {
+			clearInterval(phraseInterval);
+			loading = false;
+		}
 	}
 
 	function handleDrop(event: DragEvent) {
@@ -93,7 +97,7 @@
 	}
 
 	function triggerFileInput() {
-		if (!loading) fileInput?.click();
+		if (!loading && hydrated.current) fileInput?.click();
 	}
 </script>
 
@@ -113,7 +117,7 @@
 	id={UPLOAD_ZONE_ID}
 	class="upload-zone group flex min-h-[300px] w-full cursor-pointer flex-col items-center justify-center p-8 text-center aria-disabled:cursor-not-allowed md:p-12"
 	class:dragover={isDragOver}
-	aria-disabled={loading}
+	aria-disabled={loading || !hydrated.current}
 	ondragover={handleDragOver}
 	ondragleave={handleDragLeave}
 	ondrop={handleDrop}

@@ -93,13 +93,13 @@
 		if (!file) return;
 
 		if (!file.type.startsWith('image/')) {
-			avatarError = 'Please upload an image file';
+			await showAvatarError('Please upload an image file');
 			return;
 		}
 
 		const dataUrl = await loadImageDataUrl(file);
 		if (!dataUrl) {
-			avatarError = 'That file could not be read as an image';
+			await showAvatarError('That file could not be read as an image');
 			return;
 		}
 
@@ -108,6 +108,13 @@
 		// The file input is replaced by the preview, which would drop focus to the page.
 		await tick();
 		removeImageButton?.focus();
+	}
+
+	async function showAvatarError(message: string) {
+		// Re-inserting the alert makes screen readers announce a repeated message again.
+		avatarError = null;
+		await tick();
+		avatarError = message;
 	}
 
 	async function removeImage() {
