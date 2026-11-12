@@ -75,15 +75,19 @@ function localDayNumber(date: Date): number {
 	return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / MS_PER_DAY;
 }
 
+function sortedActiveDays(activities: Activity[]): number[] {
+	return Array.from(new Set(activities.map((activity) => localDayNumber(activity.date)))).sort(
+		(a, b) => a - b
+	);
+}
+
 /**
  * Calculate the longest streak of consecutive days with activities
  */
 export function calculateLongestStreak(activities: Activity[]): number {
 	if (activities.length === 0) return 0;
 
-	const days = Array.from(new Set(activities.map((a) => localDayNumber(a.date)))).sort(
-		(a, b) => a - b
-	);
+	const days = sortedActiveDays(activities);
 
 	let maxStreak = 1;
 	let currentStreak = 1;
@@ -232,9 +236,7 @@ export function calculateQuarterTotals(activities: Activity[]): QuarterTotals[] 
 }
 
 export function calculateLongestBreak(activities: Activity[]): ActivityBreak | null {
-	const days = Array.from(
-		new Set(activities.map((activity) => localDayNumber(activity.date)))
-	).sort((a, b) => a - b);
+	const days = sortedActiveDays(activities);
 	let longest: ActivityBreak | null = null;
 	for (let i = 1; i < days.length; i++) {
 		const gap = days[i] - days[i - 1] - 1;

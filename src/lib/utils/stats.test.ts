@@ -436,7 +436,7 @@ describe('more stats', () => {
 		});
 	});
 
-	it('returns null without a gap and counts calendar days across DST', () => {
+	it('returns null without a gap', () => {
 		expect(calculateLongestBreak([])).toBeNull();
 		expect(calculateLongestBreak([createActivity()])).toBeNull();
 		expect(
@@ -444,9 +444,24 @@ describe('more stats', () => {
 				[1, 1, 2].map((day) => createActivity({ date: new Date(2025, 0, day) }))
 			)
 		).toBeNull();
-		expect(
-			calculateLongestBreak([28, 31].map((day) => createActivity({ date: new Date(2025, 2, day) })))
-		).toEqual({ days: 2, start: new Date(2025, 2, 29), end: new Date(2025, 2, 30) });
+	});
+
+	describe('longest break in Europe/Madrid', () => {
+		const originalTz = process.env.TZ;
+		beforeAll(() => {
+			process.env.TZ = 'Europe/Madrid';
+		});
+		afterAll(() => {
+			process.env.TZ = originalTz;
+		});
+
+		it('counts calendar days across DST', () => {
+			expect(
+				calculateLongestBreak(
+					[28, 31].map((day) => createActivity({ date: new Date(2025, 2, day) }))
+				)
+			).toEqual({ days: 2, start: new Date(2025, 2, 29), end: new Date(2025, 2, 30) });
+		});
 	});
 
 	it('sums weekday totals Monday first', () => {
