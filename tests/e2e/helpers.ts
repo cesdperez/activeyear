@@ -5,16 +5,20 @@ import { fileURLToPath } from 'url';
 import { UPLOAD_ZONE_ID } from '../../src/lib/constants/dom.js';
 import { TARGET_YEAR } from '../../src/lib/constants/time.js';
 
-export const SAMPLE_CSV = join(
-	dirname(fileURLToPath(import.meta.url)),
-	'..',
-	'..',
-	'src',
-	'lib',
-	'parsers',
-	'__fixtures__',
-	'garmin-sample.csv'
-);
+const fixturePath = (name: string) =>
+	join(
+		dirname(fileURLToPath(import.meta.url)),
+		'..',
+		'..',
+		'src',
+		'lib',
+		'parsers',
+		'__fixtures__',
+		name
+	);
+
+export const SAMPLE_CSV = fixturePath('garmin-sample.csv');
+export const STRAVA_CSV = fixturePath('strava-activities.csv');
 
 export const DASHBOARD_HEADING = `Your ${TARGET_YEAR}`;
 

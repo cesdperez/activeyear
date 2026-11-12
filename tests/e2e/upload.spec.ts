@@ -1,7 +1,14 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { MIN_UPLOAD_LOADING_MS, TARGET_YEAR } from '../../src/lib/constants/time.js';
 import { UPLOAD_ZONE_ID } from '../../src/lib/constants/dom.js';
-import { DASHBOARD_HEADING, garminCsv, gotoUpload, uploadCsv, uploadSample } from './helpers.js';
+import {
+	DASHBOARD_HEADING,
+	STRAVA_CSV,
+	garminCsv,
+	gotoUpload,
+	uploadCsv,
+	uploadSample
+} from './helpers.js';
 
 const WRONG_YEAR_MESSAGE = `This file has activities from ${TARGET_YEAR - 1}, none from ${TARGET_YEAR}`;
 
@@ -74,7 +81,7 @@ test.describe('Upload Flow', () => {
 			page.getByText(`Scroll down until all ${TARGET_YEAR} activities are loaded`)
 		).toBeVisible();
 		await expect(page.getByRole('heading', { name: 'Strava', exact: true })).toBeVisible();
-		await expect(page.getByText('Download or Delete Your Account')).toBeVisible();
+		await expect(page.getByText('Download or Delete Your Account').first()).toBeVisible();
 		await expect(page.getByText('Upload only activities.csv.')).toBeVisible();
 	});
 
@@ -88,6 +95,27 @@ test.describe('Upload Flow', () => {
 
 		await expect(page.getByText(/around the globe/).first()).toBeVisible();
 		await expect(page.getByText(/Everest/).first()).toBeVisible();
+	});
+
+	test('imports a Strava account export', async ({ page }) => {
+		await gotoUpload(page);
+		await page.locator('input[type="file"]').setInputFiles(STRAVA_CSV);
+		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible({
+			timeout: 10000
+		});
+		const stats = page.getByTestId('main-stats');
+		await expect(stats.getByText('60.9km')).toBeVisible();
+		await expect(stats.getByText('1,010m')).toBeVisible();
+		await expect(stats.getByText('18h 40m')).toBeVisible();
+	});
+
+	test('rejects a localized Strava export', async ({ page }) => {
+		await gotoUpload(page);
+		await uploadFile(
+			page,
+			'Fecha de la actividad,Tipo de actividad,Nombre de archivo\n"31 oct 2026, 9:49:58",Carrera,activities/123.fit.gz'
+		);
+		await expect(page.getByRole('alert')).toContainText('English', { timeout: 10000 });
 	});
 
 	test('allows uploading a different file', async ({ page }) => {

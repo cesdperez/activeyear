@@ -23,7 +23,8 @@ export const FAQ: FaqItem[] = [
 	},
 	{
 		question: 'Does it work with Strava?',
-		answer: 'Not yet. Only Garmin Connect exports are supported.'
+		answer:
+			'Yes. Upload activities.csv from your Strava account export (Settings, My Account, Download or Delete Your Account), with Strava set to English.'
 	},
 	{
 		question: 'Is it free?',

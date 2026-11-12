@@ -25,7 +25,7 @@ ${SITE_NAME} (${SITE_URL}) is a free web app that turns a Garmin Connect activit
 
 - Works in any modern browser on a computer. No install, no account, no login.
 - The CSV is parsed and analysed in the browser. The activity data is never uploaded to a server.
-- Input: the Activities CSV from Garmin Connect (English). Strava and other exports are not supported yet.
+- Input: the Activities CSV from Garmin Connect or activities.csv from a Strava account export, both in English.
 - Output: a dashboard and three shareable 1080 × 1920 PNG cards in Neon, Minimal or Retro style.
 - A demo with sample data is available on the home page.
 
