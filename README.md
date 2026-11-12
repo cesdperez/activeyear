@@ -18,7 +18,7 @@
 
 ## 📖 Overview
 
-**ActiveYear** is a web tool that takes your Garmin (and maybe next year Strava) activity export CSVs and generates beautiful, social-media-ready stats cards for your year in sport.
+**ActiveYear** ([activeyear.app](https://activeyear.app)) is a web tool that takes your Garmin activity export CSV and generates beautiful, social-media-ready stats cards for your year in sport.
 
 Whether you're a runner, cyclist, or multi-sport athlete, visualize your hard work with themes like **Neon**, **Minimalist**, and **Retro**.
 
@@ -30,7 +30,7 @@ Whether you're a runner, cyclist, or multi-sport athlete, visualize your hard wo
   - **Fun Stats**: "Earth Laps", "Everests Climbed", and "Pizza Index" (calories burned).
   - **Consistency**: Tracking active streaks and monthly distribution.
 - **🎨 Themed Exports**: Choose a visual style that fits your vibe.
-- **📱 Social Ready**: One-click export for Instagram Stories (9:16), Posts (1:1), and Portrait (4:5).
+- **📱 Social Ready**: One-click export of three story cards (1080×1920) for Instagram Stories and other feeds.
 
 ## 🚀 How to Use
 
@@ -60,6 +60,10 @@ pnpm test:run
 # Run E2E tests
 pnpm test:e2e
 ```
+
+## 🔎 Search and AI discovery
+
+The site URL, title and description live in `src/lib/constants/site.ts`. Prerendered routes build `robots.txt`, `sitemap.xml` and `llms.txt` from them, and the home page carries JSON-LD for the web app and its visible FAQ (`src/lib/data/faq.ts`).
 
 ## 📄 License
 
