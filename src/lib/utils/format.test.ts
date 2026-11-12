@@ -57,6 +57,12 @@ describe('formatDuration', () => {
 		expect(formatDuration(1194 * 3600 + 33 * 60)).toBe('1,194h 33m');
 	});
 
+	it('shows seconds for a duration under a minute', () => {
+		expect(formatDuration(45)).toBe('45s');
+		expect(formatDuration(59.7)).toBe('59s');
+		expect(formatDuration(0.4)).toBe('1s');
+	});
+
 	it('returns 0m for zero duration', () => {
 		expect(formatDuration(0)).toBe('0m');
 	});

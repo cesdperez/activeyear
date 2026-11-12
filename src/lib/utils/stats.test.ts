@@ -331,7 +331,7 @@ describe('summaryMetricWithValue', () => {
 	});
 
 	it('skips a stat that would display as zero', () => {
-		const stats = statsOf({ duration: 30, calories: 200 });
+		const stats = statsOf({ duration: 0, calories: 200 });
 
 		expect(summaryMetricWithValue(stats, 'duration', 'km')).toBe('calories');
 		expect(
@@ -354,6 +354,12 @@ describe('summaryMetricWithValue', () => {
 	});
 
 	it('keeps the current stat when no stat has a value', () => {
-		expect(summaryMetricWithValue(statsOf({ duration: 30 }), 'distance', 'km')).toBe('distance');
+		expect(summaryMetricWithValue(statsOf({ duration: 0 }), 'distance', 'km')).toBe('distance');
+	});
+
+	it('counts a sub-minute duration as a value', () => {
+		const stats = statsOf({ duration: 30, calories: 200 });
+
+		expect(summaryMetricWithValue(stats, 'duration', 'km')).toBe('duration');
 	});
 });

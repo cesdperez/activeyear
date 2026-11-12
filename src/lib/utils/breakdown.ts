@@ -115,6 +115,10 @@ export function donutCentre(sports: SportBreakdown[], metric: BreakdownMetric): 
 	if (metric === 'duration') {
 		// Floored so the centre agrees with formatDuration in Time Active.
 		const hours = Math.floor(total / ONE_HOUR_IN_SECONDS);
+		if (total > 0 && total < ONE_MINUTE_IN_SECONDS) {
+			const seconds = Math.max(1, Math.floor(total));
+			return { value: seconds.toString(), label: pluralize(seconds, 'Second', 'Seconds') };
+		}
 		if (hours === 0) {
 			const minutes = Math.floor(total / ONE_MINUTE_IN_SECONDS);
 			return { value: minutes.toString(), label: pluralize(minutes, 'Minute', 'Minutes') };

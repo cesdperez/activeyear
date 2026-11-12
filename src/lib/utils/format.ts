@@ -23,10 +23,11 @@ export function formatDistance(km: number, unit: Unit = 'km'): string {
 }
 
 /**
- * Format duration in seconds to "Xh Ym" format
+ * Format duration in seconds to "Xh Ym" format, or "Xs" under a minute
  */
 export function formatDuration(seconds: number): string {
 	if (seconds <= 0) return '0m';
+	if (seconds < 60) return `${Math.max(1, Math.floor(seconds))}s`;
 
 	const hours = Math.floor(seconds / 3600);
 	const minutes = Math.floor((seconds % 3600) / 60);
