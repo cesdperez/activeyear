@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { stravaParser } from './strava.js';
 import { parseActivityCsv } from './index.js';
 import { loadFixture } from './__fixtures__/load.js';
@@ -9,6 +9,8 @@ const row = (date: string, type = 'Run', description = '') =>
 	`"${date}",Title,${type},200,"1,450",100,1450.0,12.6,20.4,${description}`;
 
 describe('Strava parser', () => {
+	afterEach(() => vi.unstubAllEnvs());
+
 	it('parses the anonymised export and totals its metric columns', () => {
 		const result = stravaParser.parse(loadFixture('strava-activities.csv'), 2026);
 		expect(result.errors).toEqual([]);
@@ -49,12 +51,60 @@ describe('Strava parser', () => {
 			['invalid-date', 7]
 		]);
 	});
-	it('filters New Year instants in zones from UTC-5 to UTC+4', () => {
-		const csv = [header, row('Jan 1, 2026, 6:21:05 PM'), row('Dec 31, 2025, 6:00:00 PM')].join(
+	it.each([
+		['Europe/Amsterdam', 2, 0],
+		['America/New_York', 1, 1]
+	])('filters New Year instants in %s', (zone, in2026, in2025) => {
+		vi.stubEnv('TZ', zone);
+		const csv = [header, row('Jan 1, 2026, 6:21:05 PM'), row('Dec 31, 2025, 11:30:00 PM')].join(
 			'\n'
 		);
-		expect(stravaParser.parse(csv, 2026).activities).toHaveLength(1);
-		expect(stravaParser.parse(csv, 2025).activities).toHaveLength(1);
+		expect(stravaParser.parse(csv, 2026).activities).toHaveLength(in2026);
+		expect(stravaParser.parse(csv, 2025).activities).toHaveLength(in2025);
+	});
+	it('skips malformed quoted rows', () => {
+		const csv = [
+			header,
+			row('Jan 1, 2026, 6:21:05 PM'),
+			row('Jan 2, 2026, 6:21:05 PM', 'Run', '"broken'),
+			row('Jan 3, 2026, 6:21:05 PM')
+		].join('\n');
+		const result = stravaParser.parse(csv, 2026);
+		expect(result.activities).toHaveLength(1);
+		expect(result.errors).toEqual([
+			{
+				type: 'malformed-quotes',
+				row: 3,
+				message: 'Skipped row 3 because its quote marks could not be read.'
+			}
+		]);
+	});
+	it('skips whitespace lines and retains line numbers', () => {
+		const csv = [' ', header, row('Jan 1, 2026, 6:21:05 PM'), '   ', row('invalid')].join('\n');
+		const result = stravaParser.parse(csv, 2026);
+		expect(result.activities).toHaveLength(1);
+		expect(result.errors).toEqual([
+			{ type: 'invalid-date', row: 5, message: 'Invalid date format' }
+		]);
+	});
+	it('accepts a BOM before the header', () => {
+		expect(
+			stravaParser.parse(`\ufeff${header}\n${row('Jan 1, 2026, 6:21:05 PM')}`, 2026).activities
+		).toHaveLength(1);
+	});
+	it('reports a missing type after a multiline description', () => {
+		const csv = [
+			header,
+			row('Jan 1, 2026, 6:21:05 PM', 'Run', '"first\nsecond"'),
+			row('Jan 2, 2026, 6:21:05 PM', '')
+		].join('\n');
+		expect(stravaParser.parse(csv, 2026).errors).toEqual([
+			{
+				type: 'missing-column',
+				row: 4,
+				message: 'Missing required column (Activity Type or Activity Date)'
+			}
+		]);
 	});
 	it.each([
 		['Virtual Ride', 'cycling'],

@@ -17,7 +17,7 @@ export function parseActivityCsv(csvContent: string, year: number): ParseResult 
 				type: 'unsupported-format',
 				row: 0,
 				message:
-					"We couldn't recognise this file. Export your activities from Garmin Connect set to English and upload that CSV."
+					"We couldn't recognise this file. Upload the Activities CSV from Garmin Connect or activities.csv from your Strava account export, with the language set to English."
 			}
 		]
 	};

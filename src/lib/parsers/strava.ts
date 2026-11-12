@@ -34,7 +34,7 @@ const ACTIVITY_TYPES: Record<string, ActivityType> = {
 };
 
 function readHeaders(csv: string): string[] {
-	const line = csv.split(/\r?\n/).find((part) => part.trim());
+	const line = csv.trimStart().split(/\r?\n/, 1)[0];
 	return (Papa.parse<string[]>(line ?? '').data[0] ?? []).map((value) => value.trim());
 }
 
@@ -70,6 +70,7 @@ function parseNumber(value: string | undefined): number {
 	const parsed = Number(value);
 	return Number.isFinite(parsed) ? parsed : 0;
 }
+
 function nonEnglishExportResult(): ParseResult {
 	return {
 		activities: [],
@@ -85,17 +86,32 @@ function nonEnglishExportResult(): ParseResult {
 	};
 }
 
-function readActivity(data: string[], columns: string[], date: Date): Activity {
-	const get = (name: string) => data[columns.indexOf(name)] ?? '';
+function columnIndexes(columns: string[]) {
+	return {
+		date: columns.indexOf('Activity Date'),
+		name: columns.indexOf('Activity Name'),
+		type: columns.indexOf('Activity Type'),
+		movingTime: columns.indexOf('Moving Time'),
+		elevation: columns.indexOf('Elevation Gain'),
+		calories: columns.indexOf('Calories'),
+		// The last Distance is metres; the first is display text.
+		distance: columns.lastIndexOf('Distance')
+	};
+}
+
+function readActivity(
+	data: string[],
+	columns: ReturnType<typeof columnIndexes>,
+	date: Date
+): Activity {
 	return {
 		date,
-		type: ACTIVITY_TYPES[get('Activity Type')] ?? 'other',
-		title: get('Activity Name'),
-		// The last Distance is metres; the first is display text.
-		distance: parseNumber(data[columns.lastIndexOf('Distance')]) / 1000,
-		duration: parseNumber(get('Moving Time')),
-		elevation: Math.round(parseNumber(get('Elevation Gain'))),
-		calories: Math.round(parseNumber(get('Calories'))),
+		type: ACTIVITY_TYPES[data[columns.type]] ?? 'other',
+		title: data[columns.name] ?? '',
+		distance: parseNumber(data[columns.distance]) / 1000,
+		duration: parseNumber(data[columns.movingTime]),
+		elevation: Math.round(parseNumber(data[columns.elevation])),
+		calories: Math.round(parseNumber(data[columns.calories])),
 		favorite: false
 	};
 }
@@ -105,52 +121,70 @@ function rowStartLine(segment: string, line: number): number {
 	return line + (leading.match(/\n/g)?.length ?? 0);
 }
 
-function parse(csv: string, year: number): ParseResult {
-	if (!hasEnglishHeaders(csv)) return nonEnglishExportResult();
-
-	const result: ParseResult = { activities: [], errors: [], yearsInFile: [] };
-	const years = new Set<number>();
-	let columns: string[] | undefined;
+function readRows(
+	csv: string,
+	onRow: (data: string[], line: number, errors: Papa.ParseError[]) => void
+): void {
 	let previousCursor = 0;
 	let line = 1;
+	let header = true;
 	Papa.parse<string[]>(csv, {
-		skipEmptyLines: true,
+		skipEmptyLines: 'greedy',
 		step: ({ data, errors, meta }) => {
 			const segment = csv.slice(previousCursor, meta.cursor);
 			const rowLine = rowStartLine(segment, line);
 			line += segment.match(/\n/g)?.length ?? 0;
 			previousCursor = meta.cursor;
-			if (!columns) {
-				columns = data.map((value) => value.trim());
+			if (header) {
+				header = false;
 				return;
 			}
-			for (const error of errors)
-				result.errors.push({ type: 'unknown', row: rowLine, message: error.message });
-
-			const type = data[columns.indexOf('Activity Type')] ?? '';
-			const dateText = data[columns.indexOf('Activity Date')] ?? '';
-			if (!type || !dateText) {
-				result.errors.push({
-					type: 'missing-column',
-					row: rowLine,
-					message: 'Missing required column (Activity Type or Activity Date)'
-				});
-				return;
-			}
-			const date = parseStravaDate(dateText);
-			if (!date) {
-				result.errors.push({ type: 'invalid-date', row: rowLine, message: 'Invalid date format' });
-				return;
-			}
-			years.add(date.getFullYear());
-			if (date.getFullYear() === year) result.activities.push(readActivity(data, columns, date));
+			onRow(data, rowLine, errors);
 		}
+	});
+}
+
+function parse(csv: string, year: number): ParseResult {
+	if (!hasEnglishHeaders(csv)) return nonEnglishExportResult();
+
+	const columns = columnIndexes(readHeaders(csv));
+	const result: ParseResult = { activities: [], errors: [], yearsInFile: [] };
+	const years = new Set<number>();
+	readRows(csv, (data, rowLine, errors) => {
+		if (errors.some((error) => error.type === 'Quotes')) {
+			result.errors.push({
+				type: 'malformed-quotes',
+				row: rowLine,
+				message: `Skipped row ${rowLine} because its quote marks could not be read.`
+			});
+			return;
+		}
+		for (const error of errors)
+			result.errors.push({ type: 'unknown', row: rowLine, message: error.message });
+
+		const type = data[columns.type] ?? '';
+		const dateText = data[columns.date] ?? '';
+		if (!type || !dateText) {
+			result.errors.push({
+				type: 'missing-column',
+				row: rowLine,
+				message: 'Missing required column (Activity Type or Activity Date)'
+			});
+			return;
+		}
+		const date = parseStravaDate(dateText);
+		if (!date) {
+			result.errors.push({ type: 'invalid-date', row: rowLine, message: 'Invalid date format' });
+			return;
+		}
+		years.add(date.getFullYear());
+		if (date.getFullYear() === year) result.activities.push(readActivity(data, columns, date));
 	});
 	result.yearsInFile = [...years].sort((a, b) => a - b);
 	return result;
 }
 
-/** Detect and parse Strava activities.csv exports. */
+/** Also detects localized Strava exports so they can be rejected with English-language guidance. */
 export const stravaParser: ActivityParser = {
 	detect: (csv) => hasEnglishHeaders(csv) || ACTIVITY_FILENAME.test(csv.slice(0, 65536)),
 	parse
