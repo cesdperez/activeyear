@@ -1,5 +1,7 @@
+import { HIGHLIGHTS_LIMIT } from '#lib/constants/export.js';
 import type {
 	Activity,
+	ActivitySource,
 	ActivityType,
 	PersonalRecord,
 	PersonalRecords,
@@ -193,4 +195,18 @@ export function summaryMetricWithValue(
 		showsValue(display(stats, unit))
 	).map(([metric]) => metric);
 	return withValue.includes(current) ? current : (withValue[0] ?? current);
+}
+
+export function selectHighlights(
+	activities: Activity[],
+	source: ActivitySource | null
+): Activity[] {
+	const byDate = (a: Activity, b: Activity) => a.date.getTime() - b.date.getTime();
+	const selected =
+		source === 'strava'
+			? [...activities]
+					.sort((a, b) => b.duration - a.duration || byDate(a, b))
+					.slice(0, HIGHLIGHTS_LIMIT)
+			: activities.filter((activity) => activity.favorite);
+	return selected.sort(byDate);
 }

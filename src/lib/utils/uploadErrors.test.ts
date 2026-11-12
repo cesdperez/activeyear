@@ -12,7 +12,7 @@ function rowError(type: ParseError['type'], row: number): ParseError {
 }
 
 function emptyResult(errors: ParseError[], yearsInFile: number[] = []): ParseResult {
-	return { activities: [], errors, yearsInFile };
+	return { source: 'garmin', activities: [], errors, yearsInFile };
 }
 
 describe('describeSkippedRows', () => {

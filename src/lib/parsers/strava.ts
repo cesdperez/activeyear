@@ -94,6 +94,7 @@ function parseNumber(value: string | undefined): number {
 
 function nonEnglishExportResult(): ParseResult {
 	return {
+		source: 'strava',
 		activities: [],
 		yearsInFile: [],
 		errors: [
@@ -170,7 +171,7 @@ function parse(csv: string, year: number): ParseResult {
 	if (!hasEnglishHeaders(csv)) return nonEnglishExportResult();
 
 	const columns = columnIndexes(readHeaders(csv));
-	const result: ParseResult = { activities: [], errors: [], yearsInFile: [] };
+	const result: ParseResult = { source: 'strava', activities: [], errors: [], yearsInFile: [] };
 	const years = new Set<number>();
 	readRows(csv, (data, rowLine, errors) => {
 		// A broken quote reads on to the next quote mark, so swallowed rows count as one skipped row.

@@ -1,3 +1,4 @@
+import { HIGHLIGHTS_LIMIT } from '../constants/export.js';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import {
 	calculateYearStats,
@@ -5,7 +6,8 @@ import {
 	calculatePersonalRecords,
 	calculateSportBreakdown,
 	calculateWeeklyPattern,
-	summaryMetricWithValue
+	summaryMetricWithValue,
+	selectHighlights
 } from './stats.js';
 import type { Activity } from '../types/index.js';
 
@@ -361,5 +363,33 @@ describe('summaryMetricWithValue', () => {
 		const stats = statsOf({ duration: 30, calories: 200 });
 
 		expect(summaryMetricWithValue(stats, 'duration', 'km')).toBe('duration');
+	});
+});
+
+describe('selectHighlights', () => {
+	it('selects the longest Strava activities, breaking ties by earlier date, in chronological order', () => {
+		const activities = Array.from({ length: HIGHLIGHTS_LIMIT + 1 }, (_, i) =>
+			createActivity({ date: new Date(2025, 0, HIGHLIGHTS_LIMIT - i), duration: 100 })
+		);
+		const original = [...activities];
+		const result = selectHighlights(activities, 'strava');
+		expect(result).toHaveLength(HIGHLIGHTS_LIMIT);
+		expect(result).toEqual(
+			[...activities].sort((a, b) => a.date.getTime() - b.date.getTime()).slice(0, HIGHLIGHTS_LIMIT)
+		);
+		expect(activities).toEqual(original);
+	});
+
+	it('picks the longest durations and returns them chronologically', () => {
+		const activities = Array.from({ length: HIGHLIGHTS_LIMIT + 1 }, (_, i) =>
+			createActivity({ date: new Date(2025, 0, i + 1), duration: i })
+		);
+		expect(selectHighlights(activities, 'strava')).toEqual(activities.slice(1));
+	});
+
+	it.each(['garmin', null] as const)('uses only favorites for %s', (source) => {
+		const early = createActivity({ date: new Date('2025-01-01'), favorite: true });
+		const late = createActivity({ date: new Date('2025-12-01'), favorite: true });
+		expect(selectHighlights([late, createActivity(), early], source)).toEqual([early, late]);
 	});
 });

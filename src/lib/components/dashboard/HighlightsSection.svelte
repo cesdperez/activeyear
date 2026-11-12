@@ -1,14 +1,26 @@
 <script lang="ts">
-	import type { Activity, Unit } from '#lib/types/index.js';
+	import type { Activity, ActivitySource, Unit } from '#lib/types/index.js';
 	import { Star } from 'phosphor-svelte';
 	import SectionHeading from './SectionHeading.svelte';
 	import HighlightItem from './HighlightItem.svelte';
 
-	let { highlights, unit }: { highlights: Activity[]; unit: Unit } = $props();
+	let {
+		highlights,
+		unit,
+		source
+	}: { highlights: Activity[]; unit: Unit; source: ActivitySource | null } = $props();
 </script>
 
 <section class="mb-16">
-	<SectionHeading title="Highlights" />
+	<SectionHeading
+		title="Highlights"
+		class={source === 'strava' && highlights.length > 0 ? 'mb-2' : 'mb-8'}
+	/>
+	{#if source === 'strava' && highlights.length > 0}
+		<p class="mb-8 text-sm text-[var(--color-text-muted)]">
+			Your longest sessions of the year. Strava exports don't include favorites.
+		</p>
+	{/if}
 
 	{#if highlights.length > 0}
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

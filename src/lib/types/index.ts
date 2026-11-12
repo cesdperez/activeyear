@@ -84,7 +84,10 @@ export type SummaryMetric = 'distance' | 'elevation' | 'duration' | 'calories';
 
 export type Unit = 'km' | 'miles';
 
+export type ActivitySource = 'garmin' | 'strava';
+
 export interface ParseResult {
+	source: ActivitySource | null;
 	activities: Activity[];
 	errors: ParseError[];
 	/** Every year with a readable activity in the file, ascending, whatever the target year. */

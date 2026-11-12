@@ -10,6 +10,7 @@ export function parseActivityCsv(csvContent: string, year: number): ParseResult 
 	if (parser) return parser.parse(csvContent, year);
 
 	return {
+		source: null,
 		activities: [],
 		yearsInFile: [],
 		errors: [

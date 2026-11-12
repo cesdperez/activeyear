@@ -4,7 +4,8 @@ import {
 	calculatePersonalRecords,
 	calculateSportBreakdown,
 	calculateWeeklyPattern,
-	summaryMetricWithValue
+	summaryMetricWithValue,
+	selectHighlights
 } from '../utils/stats.js';
 import { TARGET_YEAR } from '../constants/time.js';
 import { demoActivities } from '../data/demo.js';
@@ -15,6 +16,7 @@ import {
 } from '#lib/utils/uploadErrors.js';
 import type {
 	Activity,
+	ActivitySource,
 	ParseError,
 	Theme,
 	SummaryMetric,
@@ -27,9 +29,8 @@ export type AppStatus = 'idle' | 'parsing' | 'ready' | 'error';
 class AppStore {
 	// Raw because the list is only ever replaced whole, and the derived stats read every activity.
 	#activities = $state.raw<Activity[]>([]);
-	#highlights = $derived(
-		this.#activities.filter((a) => a.favorite).sort((a, b) => a.date.getTime() - b.date.getTime())
-	);
+	#source = $state<ActivitySource | null>(null);
+	#highlights = $derived(selectHighlights(this.#activities, this.#source));
 	#stats = $derived(this.#activities.length > 0 ? calculateYearStats(this.#activities) : null);
 	#records = $derived(
 		this.#activities.length > 0 ? calculatePersonalRecords(this.#activities) : null
@@ -67,6 +68,10 @@ class AppStore {
 
 	get activities() {
 		return this.#activities;
+	}
+
+	get source() {
+		return this.#source;
 	}
 
 	get highlights() {
@@ -108,6 +113,7 @@ class AppStore {
 
 	reset() {
 		this.#activities = [];
+		this.#source = null;
 		this.#status = 'idle';
 		this.#error = null;
 		this.#parseErrors = [];
@@ -138,6 +144,7 @@ class AppStore {
 				return;
 			}
 
+			this.#source = result.source;
 			this.#load(result.activities);
 			this.#parseErrors = result.errors;
 		} catch (err) {
