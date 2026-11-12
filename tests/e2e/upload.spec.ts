@@ -80,9 +80,19 @@ test.describe('Upload Flow', () => {
 		await expect(
 			page.getByText(`Scroll down until all ${TARGET_YEAR} activities are loaded`)
 		).toBeVisible();
-		await expect(page.getByRole('heading', { name: 'Strava', exact: true })).toBeVisible();
+		const garminTab = page.getByRole('tab', { name: 'Garmin Connect' });
+		const stravaTab = page.getByRole('tab', { name: 'Strava' });
+		await expect(garminTab).toHaveAttribute('aria-selected', 'true');
+		await stravaTab.click();
 		await expect(page.getByText('Download or Delete Your Account').first()).toBeVisible();
 		await expect(page.getByText('Upload only activities.csv.')).toBeVisible();
+		await expect(
+			page.getByText("Use the website on a computer. The Garmin Connect app can't export.")
+		).toBeHidden();
+		await garminTab.click();
+		await garminTab.focus();
+		await page.keyboard.press('ArrowRight');
+		await expect(stravaTab).toHaveAttribute('aria-selected', 'true');
 	});
 
 	test('processes uploaded CSV and shows dashboard', async ({ page }) => {
