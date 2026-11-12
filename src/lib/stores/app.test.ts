@@ -84,6 +84,21 @@ describe('appStore', () => {
 		expect(appStore.error).toBe(`Row 2 could not be read: ${reason}`);
 	});
 
+	it('counts the rows left out of a file that loads', async () => {
+		const content = `${garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)}\nRunning,bad,Run,10.0,600,00:50:00,100`;
+
+		await appStore.processFile(csvFile(content));
+
+		expect(appStore.status).toBe('ready');
+		expect(appStore.skippedRowCount).toBe(1);
+	});
+
+	it('reports no skipped rows for the demo', () => {
+		appStore.loadDemoData();
+
+		expect(appStore.skippedRowCount).toBe(0);
+	});
+
 	it('accepts a CSV extension in any case', async () => {
 		const content = garminCsv(`${TARGET_YEAR}-03-01 08:00:00`);
 

@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { formatCount } from '#lib/utils/format.js';
+	import { skippedRowsNotice } from '#lib/utils/uploadErrors.js';
 	import { prefersReducedMotion } from 'svelte/motion';
-	import { ArrowDown } from 'phosphor-svelte';
+	import { ArrowDown, Warning } from 'phosphor-svelte';
 
-	let { activityCount, activeDays }: { activityCount: number; activeDays: number } = $props();
+	let {
+		activityCount,
+		activeDays,
+		skippedRowCount
+	}: { activityCount: number; activeDays: number; skippedRowCount: number } = $props();
 
 	function jumpToExport() {
 		const heading = document.querySelector<HTMLElement>('#export-panel h2');
@@ -42,6 +47,12 @@
 			>
 		</span>
 	</div>
+	{#if skippedRowCount > 0}
+		<p class="mt-3 flex items-center justify-center gap-1.5 text-sm text-[var(--color-text-muted)]">
+			<Warning class="h-4 w-4 shrink-0" weight="bold" aria-hidden="true" />
+			{skippedRowsNotice(skippedRowCount)}
+		</p>
+	{/if}
 
 	<div class="mt-8">
 		<button

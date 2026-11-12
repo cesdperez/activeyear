@@ -8,7 +8,11 @@ import {
 } from '../utils/stats.js';
 import { TARGET_YEAR } from '../constants/time.js';
 import { demoActivities } from '../data/demo.js';
-import { describeUnusableFile, unusableFileMessage } from '#lib/utils/uploadErrors.js';
+import {
+	describeSkippedRows,
+	describeUnusableFile,
+	unusableFileMessage
+} from '#lib/utils/uploadErrors.js';
 import type {
 	Activity,
 	ParseError,
@@ -35,6 +39,7 @@ class AppStore {
 	#status = $state<AppStatus>('idle');
 	#error = $state<string | null>(null);
 	#parseErrors = $state<ParseError[]>([]);
+	#skippedRowCount = $derived(describeSkippedRows(this.#parseErrors)?.count ?? 0);
 
 	userName = $state<string>('');
 	#displayName = $derived(this.userName.trim());
@@ -94,6 +99,11 @@ class AppStore {
 
 	get parseErrors() {
 		return this.#parseErrors;
+	}
+
+	/** Rows left out of the loaded totals because they could not be read. */
+	get skippedRowCount() {
+		return this.#skippedRowCount;
 	}
 
 	reset() {

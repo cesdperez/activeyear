@@ -1,7 +1,7 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { MIN_UPLOAD_LOADING_MS, TARGET_YEAR } from '../../src/lib/constants/time.js';
 import { UPLOAD_ZONE_ID } from '../../src/lib/constants/dom.js';
-import { DASHBOARD_HEADING, garminCsv, uploadSample } from './helpers.js';
+import { DASHBOARD_HEADING, garminCsv, uploadCsv, uploadSample } from './helpers.js';
 
 const WRONG_YEAR_MESSAGE = `This file has activities from ${TARGET_YEAR - 1}, none from ${TARGET_YEAR}`;
 
@@ -149,6 +149,14 @@ test.describe('Upload Flow', () => {
 			'3 rows could not be read, e.g. row 2: the date is not valid',
 			{ timeout: 10000 }
 		);
+	});
+
+	test('notes the skipped rows above a dashboard that loaded', async ({ page }) => {
+		const csv = garminCsv([{ title: 'Morning Run' }, { title: 'Evening Run' }]);
+
+		await uploadCsv(page, `${csv}\nRunning,not a date,false,Lunch Run,5.0,300,00:25:00,10`);
+
+		await expect(page.getByText('Skipped 1 row that could not be read')).toBeVisible();
 	});
 
 	test('ignores a file dropped outside the upload zone', async ({ page }) => {

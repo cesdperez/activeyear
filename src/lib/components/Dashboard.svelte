@@ -20,6 +20,7 @@
 	<DashboardHeader
 		activityCount={appStore.stats?.activityCount ?? 0}
 		activeDays={appStore.stats?.activeDays ?? 0}
+		skippedRowCount={appStore.skippedRowCount}
 	/>
 	<MainStats stats={appStore.stats} unit={appStore.unit} />
 	<ConsistencyStats
