@@ -14,6 +14,7 @@ async function uploadFileWithoutTargetYear(page: Page) {
 }
 
 type SlowReadWindow = Window & { slowedFileRead?: boolean };
+type ShownAtWindow = Window & { shownAt?: Record<string, number> };
 
 // Parsing finishes in milliseconds, too fast to assert on the loading state.
 async function slowFileReads(page: Page) {
@@ -95,6 +96,27 @@ test.describe('Upload Flow', () => {
 		await expect(
 			page.getByRole('button', { name: `No ${TARGET_YEAR} activities found in the file` })
 		).toBeVisible({ timeout: MIN_UPLOAD_LOADING_MS + 2000 });
+	});
+
+	test('keeps the loading state up for a moment before showing an error', async ({ page }) => {
+		await page.addInitScript(() => {
+			const shownAt: Record<string, number> = {};
+			(window as ShownAtWindow).shownAt = shownAt;
+			new MutationObserver(() => {
+				for (const role of ['status', 'alert']) {
+					if (document.querySelector(`[role="${role}"]`)?.textContent && !shownAt[role])
+						shownAt[role] = performance.now();
+				}
+			}).observe(document, { subtree: true, childList: true, characterData: true });
+		});
+		await page.goto('/');
+
+		await uploadFileWithoutTargetYear(page);
+		await expect(page.getByRole('alert')).not.toBeEmpty();
+
+		const { status, alert } = await page.evaluate(() => (window as ShownAtWindow).shownAt ?? {});
+		// Timers never fire early, so only DOM update jitter can shave a little off.
+		expect(alert - status).toBeGreaterThanOrEqual(MIN_UPLOAD_LOADING_MS - 50);
 	});
 
 	test('explains why an export without target year activities was rejected', async ({ page }) => {
