@@ -233,7 +233,9 @@ function readHeaders(headerLine: string): string[] {
  */
 function deduplicateHeaders(csvContent: string): string {
 	const lines = csvContent.split(/\r?\n/);
-	const headers = readHeaders(lines[0]);
+	const headerIndex = lines.findIndex((line) => line.trim() !== '');
+	if (headerIndex === -1) return csvContent;
+	const headers = readHeaders(lines[headerIndex]);
 	if (headers.length === 0) return csvContent;
 
 	const seen = new Set<string>();
@@ -247,7 +249,7 @@ function deduplicateHeaders(csvContent: string): string {
 		return final;
 	});
 
-	lines[0] = Papa.unparse([deduplicatedHeaders]);
+	lines[headerIndex] = Papa.unparse([deduplicatedHeaders]);
 	return lines.join('\n');
 }
 
@@ -366,9 +368,12 @@ interface PendingRecord {
  * that cannot be recovered, so a corrupt row never reaches the totals.
  */
 function repairMalformedQuotes(csvContent: string): { content: string; errors: ParseError[] } {
-	const [headerLine, ...lines] = csvContent.split(/\r?\n/);
-	const headers = readHeaders(headerLine);
-	const rows = [headerLine];
+	const allLines = csvContent.split(/\r?\n/);
+	const headerIndex = allLines.findIndex((line) => line.trim() !== '');
+	if (headerIndex === -1) return { content: csvContent, errors: [] };
+	const headers = readHeaders(allLines[headerIndex]);
+	const rows = allLines.slice(0, headerIndex + 1);
+	const lines = allLines.slice(headerIndex + 1);
 	const errors: ParseError[] = [];
 	// A line with an open quote may start a field that spans lines.
 	let pending: PendingRecord | null = null;
@@ -397,7 +402,7 @@ function repairMalformedQuotes(csvContent: string): { content: string; errors: P
 	};
 
 	for (const [index, line] of lines.entries()) {
-		const row = index + 2;
+		const row = headerIndex + index + 2;
 		if (!pending) {
 			if (readLine(line)) continue;
 			if (countQuotes(line) % 2 === 1) {

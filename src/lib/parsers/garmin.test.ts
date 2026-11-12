@@ -583,4 +583,40 @@ describe('parseGarminCsv rejected rows', () => {
 
 		expect(errorRows(csv.join('\n'))).toEqual([['invalid-date', 5]]);
 	});
+
+	it.each([false, true])(
+		'repairs a title after a leading blank line (whole-row quotes: %s)',
+		(wholeRow) => {
+			const wrap = wholeRow ? quoted : (line: string) => line;
+			const csv = ['', wrap(HEADER), wrap(row('2026-03-01 08:00:00', '"Go "Hard""'))].join('\n');
+			const result = parseGarminCsv(csv, 2026);
+
+			expect(result.errors).toEqual([]);
+			expect(result.activities).toHaveLength(1);
+			expect(result.activities[0].title).toBe('Go "Hard"');
+		}
+	);
+
+	it('numbers rejected rows after a leading blank line when repairing quotes', () => {
+		const csv = ['', HEADER, row('2026-03-01 08:00:00', '"Go "Hard""'), row('bad')];
+
+		expect(errorRows(csv.join('\n'))).toEqual([['invalid-date', 4]]);
+	});
+
+	it('numbers unrecoverable quotes after a leading blank line', () => {
+		const csv = ['', HEADER, row('2026-03-01 08:00:00', '"Open title'), row('bad')];
+
+		expect(errorRows(csv.join('\n'))).toEqual([
+			['malformed-quotes', 3],
+			['invalid-date', 4]
+		]);
+	});
+
+	it('deduplicates headers after leading blank lines', () => {
+		const csv = ['', '', `${HEADER},Title`, `${row('2026-03-01 08:00:00')},Other`].join('\n');
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(result.errors).toEqual([]);
+		expect(result.activities).toHaveLength(1);
+	});
 });
