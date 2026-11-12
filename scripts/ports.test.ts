@@ -1,5 +1,8 @@
+import { mkdirSync, mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, it, expect } from 'vitest';
-import { devPortFor, previewPortFor } from './ports.js';
+import { checkoutAt, devPortFor, previewPortFor } from './ports.js';
 
 const main = { path: '/code/activeyear', isMain: true };
 const worktree = { path: '/code/worktrees/feature', isMain: false };
@@ -32,5 +35,26 @@ describe('previewPortFor', () => {
 
 	it.each(['abc', '0', '65535', '80.5'])('rejects the override %s', (override) => {
 		expect(() => previewPortFor(worktree, override)).toThrow(/ACTIVEYEAR_PORT/);
+	});
+});
+
+describe('checkoutAt', () => {
+	const root = () => mkdtempSync(join(tmpdir(), 'ports-'));
+
+	it('treats a .git directory as the main checkout', () => {
+		const dir = root();
+		mkdirSync(join(dir, '.git'));
+		expect(checkoutAt(dir)).toEqual({ path: realpathSync(dir), isMain: true });
+	});
+
+	it('treats a .git file as a linked worktree', () => {
+		const dir = root();
+		writeFileSync(join(dir, '.git'), 'gitdir: /elsewhere\n');
+		expect(checkoutAt(dir)).toEqual({ path: realpathSync(dir), isMain: false });
+	});
+
+	it('treats a folder without .git as the main checkout', () => {
+		const dir = root();
+		expect(checkoutAt(dir)).toEqual({ path: realpathSync(dir), isMain: true });
 	});
 });
