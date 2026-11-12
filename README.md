@@ -40,6 +40,7 @@ Whether you're a runner, cyclist, or multi-sport athlete, visualize your hard wo
    - **Important**: Scroll down until all activities are loaded in the table.
    - Click the "Export CSV" icon (top right).
 2. **Upload**: Drag & drop your `Activities.csv` file into ActiveYear.
+   - If the file has no activities for the year, ActiveYear says which years it covers, or how many rows it could not read and why.
 3. **Customize**: Pick your theme, adjust your name, and toggle stats.
 4. **Export**: Download your personalized PNG and share!
 

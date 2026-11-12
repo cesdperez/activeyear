@@ -60,6 +60,30 @@ describe('appStore', () => {
 		expect(appStore.stats?.activityCount).toBe(1);
 	});
 
+	it('says which years a file covers when none of its activities are from the target year', async () => {
+		await appStore.processFile(csvFile(garminCsv(`${TARGET_YEAR - 2}-03-01 08:00:00`)));
+
+		expect(appStore.status).toBe('error');
+		expect(appStore.error).toBe(
+			`This file has activities from ${TARGET_YEAR - 2}, none from ${TARGET_YEAR}`
+		);
+	});
+
+	it.each([
+		['an invalid date', garminCsv('not a date'), 'the date is not valid'],
+		['a missing date', garminCsv(''), 'the activity type or date is missing'],
+		[
+			'unreadable quote marks',
+			'Activity Type,Date,Title,Distance\nRunning,2025-03-01 08:00:00,"Open title,10.0',
+			'the quote marks do not match'
+		]
+	])('explains a file whose only row has %s', async (_, content, reason) => {
+		await appStore.processFile(csvFile(content));
+
+		expect(appStore.status).toBe('error');
+		expect(appStore.error).toBe(`Row 2 could not be read: ${reason}`);
+	});
+
 	it('accepts a CSV extension in any case', async () => {
 		const content = garminCsv(`${TARGET_YEAR}-03-01 08:00:00`);
 

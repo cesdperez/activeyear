@@ -8,6 +8,7 @@ import {
 } from '../utils/stats.js';
 import { TARGET_YEAR } from '../constants/time.js';
 import { demoActivities } from '../data/demo.js';
+import { describeUnusableFile, unusableFileMessage } from '#lib/utils/uploadErrors.js';
 import type {
 	Activity,
 	ParseError,
@@ -123,7 +124,7 @@ class AppStore {
 			}
 
 			if (result.activities.length === 0) {
-				this.#fail(`No ${TARGET_YEAR} activities found in the file`, result.errors);
+				this.#fail(unusableFileMessage(describeUnusableFile(result, TARGET_YEAR)), result.errors);
 				return;
 			}
 

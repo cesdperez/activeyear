@@ -94,17 +94,30 @@ export interface ActivityParser {
 	parse(csvContent: string, year: number): ParseResult;
 }
 
+/** Row errors that keep the row out of the totals. */
+export type RowErrorType = 'invalid-date' | 'malformed-quotes' | 'missing-column';
+
 export interface ParseError {
-	type:
-		| 'invalid-date'
-		| 'invalid-number'
-		| 'malformed-quotes'
-		| 'missing-column'
-		| 'unsupported-format'
-		| 'unknown';
+	type: RowErrorType | 'invalid-number' | 'unsupported-format' | 'unknown';
 	row: number;
 	message: string;
 }
+
+export interface SkippedRows {
+	count: number;
+	reason: RowErrorType;
+	exampleRow: number;
+}
+
+/** Why a parsed file gave no activities to show. */
+export type UnusableFileError =
+	| { type: 'rows-rejected'; skipped: SkippedRows }
+	| {
+			type: 'no-activities-in-year';
+			year: number;
+			yearsInFile: number[];
+			skipped: SkippedRows | null;
+	  };
 
 export interface FaqItem {
 	question: string;

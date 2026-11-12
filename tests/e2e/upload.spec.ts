@@ -1,16 +1,23 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { MIN_UPLOAD_LOADING_MS, TARGET_YEAR } from '../../src/lib/constants/time.js';
 import { UPLOAD_ZONE_ID } from '../../src/lib/constants/dom.js';
-import { DASHBOARD_HEADING, uploadSample } from './helpers.js';
+import { DASHBOARD_HEADING, garminCsv, uploadSample } from './helpers.js';
 
-async function uploadFileWithoutTargetYear(page: Page) {
+const WRONG_YEAR_MESSAGE = `This file has activities from ${TARGET_YEAR - 1}, none from ${TARGET_YEAR}`;
+
+async function uploadFile(page: Page, csv: string) {
 	await page.locator('input[type="file"]').setInputFiles({
 		name: 'activities.csv',
 		mimeType: 'text/csv',
-		buffer: Buffer.from(
-			`Activity Type,Date,Title,Distance\nRunning,${TARGET_YEAR - 1}-03-01,Run,10.0`
-		)
+		buffer: Buffer.from(csv)
 	});
+}
+
+async function uploadFileWithoutTargetYear(page: Page) {
+	await uploadFile(
+		page,
+		`Activity Type,Date,Title,Distance\nRunning,${TARGET_YEAR - 1}-03-01,Run,10.0`
+	);
 }
 
 type SlowReadWindow = Window & { slowedFileRead?: boolean };
@@ -93,9 +100,9 @@ test.describe('Upload Flow', () => {
 
 		await uploadFileWithoutTargetYear(page);
 
-		await expect(
-			page.getByRole('button', { name: `No ${TARGET_YEAR} activities found in the file` })
-		).toBeVisible({ timeout: MIN_UPLOAD_LOADING_MS + 2000 });
+		await expect(page.getByRole('button', { name: WRONG_YEAR_MESSAGE })).toBeVisible({
+			timeout: MIN_UPLOAD_LOADING_MS + 2000
+		});
 	});
 
 	test('keeps the loading state up for a moment before showing an error', async ({ page }) => {
@@ -124,10 +131,24 @@ test.describe('Upload Flow', () => {
 
 		await uploadFileWithoutTargetYear(page);
 
-		await expect(
-			page.getByRole('button', { name: `No ${TARGET_YEAR} activities found in the file` })
-		).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole('button', { name: WRONG_YEAR_MESSAGE })).toBeVisible({
+			timeout: 10000
+		});
 		await expect(page.getByText('Click to try again')).toBeVisible();
+	});
+
+	test('says how many rows could not be read and why', async ({ page }) => {
+		const rows = ['not a date', 'March 32nd', ''].map(
+			(date) => `Running,${date},false,Morning Run,10.0,600,00:50:00,100`
+		);
+		await page.goto('/');
+
+		await uploadFile(page, [garminCsv([]), ...rows].join('\n'));
+
+		await expect(page.getByRole('alert')).toHaveText(
+			'3 rows could not be read, e.g. row 2: the date is not valid',
+			{ timeout: 10000 }
+		);
 	});
 
 	test('ignores a file dropped outside the upload zone', async ({ page }) => {
@@ -178,10 +199,7 @@ test.describe('Upload accessibility', () => {
 		await expectFileReadSlowed(page);
 
 		await expect(page.getByRole('status')).toHaveText('Analyzing activities...');
-		await expect(page.getByRole('alert')).toHaveText(
-			`No ${TARGET_YEAR} activities found in the file`,
-			{ timeout: 10000 }
-		);
+		await expect(page.getByRole('alert')).toHaveText(WRONG_YEAR_MESSAGE, { timeout: 10000 });
 	});
 
 	test('blocks the demo while a file loads', async ({ page }) => {
