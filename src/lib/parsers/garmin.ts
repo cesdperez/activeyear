@@ -194,13 +194,24 @@ export function mapActivityType(garminType: string): ActivityType {
 	return ACTIVITY_TYPE_MAP[garminType] || 'other';
 }
 
+function isValidGarminDate(year: number, month: number, day: number): boolean {
+	const date = new Date(Date.UTC(year, month - 1, day));
+	return (
+		date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
+	);
+}
+
 /**
- * Parse Garmin date format (YYYY-MM-DD HH:MM:SS) to Date
+ * Parse YYYY-MM-DD HH:MM:SS, returning null for other formats or impossible dates.
  */
 export function parseGarminDate(dateStr: string): Date | null {
-	if (!dateStr) return null;
-	const date = new Date(dateStr);
-	return isNaN(date.getTime()) ? null : date;
+	const match = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(dateStr.trim());
+	if (!match) return null;
+	const [year, month, day, hours, minutes, seconds] = match.slice(1).map(Number);
+	if (!isValidGarminDate(year, month, day)) return null;
+	// A local date round trip can shift valid times in a daylight-saving gap.
+	if (hours > 23 || minutes > 59 || seconds > 59) return null;
+	return new Date(year, month - 1, day, hours, minutes, seconds);
 }
 
 /**

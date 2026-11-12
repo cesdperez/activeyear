@@ -126,6 +126,44 @@ describe('parseGarminDate', () => {
 		expect(date?.getFullYear()).toBe(2025);
 		expect(date?.getMonth()).toBe(11); // December (0-indexed)
 		expect(date?.getDate()).toBe(27);
+		expect(date?.getHours()).toBe(14);
+		expect(date?.getMinutes()).toBe(12);
+		expect(date?.getSeconds()).toBe(58);
+	});
+
+	it.each([
+		'Private 2026',
+		'2026',
+		'March 1, 2026',
+		'2026-03-01',
+		'2026-03-01T08:00:00',
+		'2026-03-01 08:00',
+		'2026-03-01 08:00:00.000',
+		'2026-03-01 08:00:00Z',
+		'2026-3-1 8:00:00',
+		'2026-03-01 08:00:00 extra',
+		'2026-02-30 08:00:00',
+		'2025-02-29 08:00:00',
+		'2026-13-01 08:00:00',
+		'2026-00-10 08:00:00',
+		'2026-03-00 08:00:00',
+		'2026-04-31 08:00:00',
+		'2026-03-01 24:00:00',
+		'2026-03-01 08:60:00',
+		'2026-03-01 08:00:60',
+		'0099-03-01 08:00:00'
+	])('rejects %s', (value) => {
+		expect(parseGarminDate(value)).toBeNull();
+	});
+
+	it('parses a leap day', () => {
+		const date = parseGarminDate('2024-02-29 08:00:00');
+		expect(date?.getMonth()).toBe(1);
+		expect(date?.getDate()).toBe(29);
+	});
+
+	it('parses surrounding whitespace', () => {
+		expect(parseGarminDate(' 2026-03-01 08:00:00 ')).not.toBeNull();
 	});
 
 	it('returns null for empty string', () => {
@@ -444,6 +482,12 @@ describe('parseGarminCsv rejected rows', () => {
 		`Running,${date},false,${title},10.0,600,00:50:00,100`;
 	const quoted = (line: string) => `"${line.replaceAll('"', '""')}"`;
 	const errorRows = (csv: string) => parseGarminCsv(csv, 2026).errors.map((e) => [e.type, e.row]);
+
+	it('rejects loose dates while retaining valid activities', () => {
+		const csv = [HEADER, row('Private 2026'), row('2026-03-01 08:00:00')].join('\n');
+		expect(parseGarminCsv(csv, 2026).activities).toHaveLength(1);
+		expect(errorRows(csv)).toEqual([['invalid-date', 2]]);
+	});
 
 	it('lists every year with a readable activity, whatever the target year', () => {
 		const csv = [HEADER, row('2025-12-31 08:00:00'), row('2023-01-01 08:00:00'), row('nope')];
