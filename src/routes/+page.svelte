@@ -57,6 +57,9 @@
 						Click Export CSV (top-right icon)
 					</li>
 				</ol>
+				<p class="mt-4 text-xs text-balance text-zinc-400">
+					Use the website on a computer. The Garmin Connect app can't export.
+				</p>
 			</div>
 		</div>
 	{/if}
