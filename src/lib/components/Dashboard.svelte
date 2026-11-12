@@ -10,6 +10,7 @@
 	import PersonalRecords from '#lib/components/dashboard/PersonalRecords.svelte';
 	import SportBreakdown from '#lib/components/dashboard/SportBreakdown.svelte';
 	import UploadAnotherFile from '#lib/components/dashboard/UploadAnotherFile.svelte';
+	import SaveYear from '#lib/components/dashboard/SaveYear.svelte';
 	import { useConfettiRain } from '#lib/components/dashboard/confettiRain.svelte.js';
 
 	useConfettiRain();
@@ -37,5 +38,6 @@
 	<PersonalRecords records={appStore.records} unit={appStore.unit} />
 	<SportBreakdown breakdown={appStore.breakdown} metric={appStore.breakdownMetric} />
 	<ExportPanel />
+	<SaveYear />
 	<UploadAnotherFile />
 </div>

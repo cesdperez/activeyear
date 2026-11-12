@@ -106,7 +106,7 @@
 <input
 	bind:this={fileInput}
 	type="file"
-	accept=".csv"
+	accept=".csv,.json"
 	class="hidden"
 	onchange={handleFileSelect}
 	id="file-upload"
@@ -152,6 +152,9 @@
 			>Drop your Garmin or Strava CSV here</span
 		>
 		<span class="mb-4 block text-sm text-[var(--color-text-muted)]">or click to browse</span>
+		<span class="mb-4 block text-xs text-[var(--color-text-dim)]"
+			>Saved your year before? Drop the .json file</span
+		>
 		<span class="flex items-center justify-center gap-1.5 text-xs text-[var(--color-text-dim)]">
 			<ShieldCheck class="h-3.5 w-3.5" weight="bold" aria-hidden="true" />
 			Your data never leaves this browser
