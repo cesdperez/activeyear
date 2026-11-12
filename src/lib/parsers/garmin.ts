@@ -224,6 +224,10 @@ export function isInYear(date: Date, year: number): boolean {
 	return date.getFullYear() === year;
 }
 
+function findHeaderIndex(lines: string[]): number {
+	return lines.findIndex((line) => line.trim() !== '');
+}
+
 function readHeaders(headerLine: string): string[] {
 	return (Papa.parse<string[]>(headerLine, { header: false }).data[0] ?? []).map((h) => h.trim());
 }
@@ -233,7 +237,7 @@ function readHeaders(headerLine: string): string[] {
  */
 function deduplicateHeaders(csvContent: string): string {
 	const lines = csvContent.split(/\r?\n/);
-	const headerIndex = lines.findIndex((line) => line.trim() !== '');
+	const headerIndex = findHeaderIndex(lines);
 	if (headerIndex === -1) return csvContent;
 	const headers = readHeaders(lines[headerIndex]);
 	if (headers.length === 0) return csvContent;
@@ -369,7 +373,7 @@ interface PendingRecord {
  */
 function repairMalformedQuotes(csvContent: string): { content: string; errors: ParseError[] } {
 	const allLines = csvContent.split(/\r?\n/);
-	const headerIndex = allLines.findIndex((line) => line.trim() !== '');
+	const headerIndex = findHeaderIndex(allLines);
 	if (headerIndex === -1) return { content: csvContent, errors: [] };
 	const headers = readHeaders(allLines[headerIndex]);
 	const rows = allLines.slice(0, headerIndex + 1);
