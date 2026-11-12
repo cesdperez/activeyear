@@ -46,7 +46,14 @@ export function formatCount(count: number): string {
 /** Whole percent, but "<1%" for a share that is above zero and would round to 0%. */
 export function formatPercentOfYear(percent: number): string {
 	if (percent > 0 && percent < 0.5) return '<1%';
-	return `${Math.round(percent)}%`;
+	return `${partialPercent(percent, 0)}%`;
+}
+
+function partialPercent(percent: number, decimals: number): string {
+	if (percent >= 100) return (100).toFixed(decimals);
+	// A share just under 100 would otherwise round up to a full 100.
+	const highestPartial = 100 - 10 ** -decimals;
+	return Math.min(Number(percent.toFixed(decimals)), highestPartial).toFixed(decimals);
 }
 
 /**
@@ -82,7 +89,7 @@ export function calculateEarthLaps(distanceKm: number): number {
 export function formatEarthLaps(distanceKm: number): string {
 	const laps = calculateEarthLaps(distanceKm);
 	if (laps < 1.0) {
-		return `${(laps * 100).toFixed(1)}% of a lap around the globe`;
+		return `${partialPercent(laps * 100, 1)}% of a lap around the globe`;
 	}
 	return `${laps.toFixed(2)}x laps around the globe`;
 }
@@ -100,7 +107,7 @@ export function calculateEverests(elevationM: number): number {
 export function formatEverests(elevationM: number): string {
 	const everests = calculateEverests(elevationM);
 	if (everests < 1.0) {
-		return `${(everests * 100).toFixed(0)}% the height of Mt. Everest`;
+		return `${partialPercent(everests * 100, 0)}% the height of Mt. Everest`;
 	}
 	return `${everests.toFixed(1)}x the height of Mt. Everest`;
 }

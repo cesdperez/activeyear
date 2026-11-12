@@ -125,6 +125,10 @@ describe('formatEarthLaps', () => {
 	it('formats values between 0.1 and 1.0 as percentage', () => {
 		expect(formatEarthLaps(8015)).toBe('20.0% of a lap around the globe');
 	});
+
+	it('never rounds a partial lap up to 100%', () => {
+		expect(formatEarthLaps(40070)).toBe('99.9% of a lap around the globe');
+	});
 });
 
 describe('calculateEverests', () => {
@@ -147,6 +151,10 @@ describe('formatEverests', () => {
 
 	it('formats values between 0.1 and 1.0 as percentage', () => {
 		expect(formatEverests(4424)).toBe('50% the height of Mt. Everest');
+	});
+
+	it('never rounds a partial Everest up to 100%', () => {
+		expect(formatEverests(8840)).toBe('99% the height of Mt. Everest');
 	});
 });
 
@@ -199,6 +207,11 @@ describe('formatPercentOfYear', () => {
 
 	it('shows a non-zero share under one percent as <1%', () => {
 		expect(formatPercentOfYear(0.27)).toBe('<1%');
+	});
+
+	it('never rounds a partial year up to 100%', () => {
+		expect(formatPercentOfYear((364 / 365) * 100)).toBe('99%');
+		expect(formatPercentOfYear(100)).toBe('100%');
 	});
 });
 
