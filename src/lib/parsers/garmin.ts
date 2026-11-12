@@ -238,6 +238,152 @@ function deduplicateHeaders(csvContent: string): string {
 	return lines.join('\n');
 }
 
+interface CsvField {
+	value: string;
+	end: number;
+}
+
+function readField(text: string, start: number): CsvField | null {
+	if (text[start] !== '"') {
+		const comma = text.indexOf(',', start);
+		const end = comma === -1 ? text.length : comma;
+		const value = text.slice(start, end);
+		return value.includes('"') ? null : { value, end };
+	}
+
+	let value = '';
+	let i = start + 1;
+	while (i < text.length) {
+		if (text[i] !== '"') {
+			value += text[i++];
+		} else if (text[i + 1] === '"') {
+			value += '"';
+			i += 2;
+		} else {
+			return { value, end: i + 1 };
+		}
+	}
+	return null;
+}
+
+// Reads `count` well-formed fields, each followed by a comma; `end` is just past the last comma.
+function readLeadingFields(text: string, count: number): { values: string[]; end: number } | null {
+	const values: string[] = [];
+	let pos = 0;
+	for (let n = 0; n < count; n++) {
+		const field = readField(text, pos);
+		if (!field || text[field.end] !== ',') return null;
+		values.push(field.value);
+		pos = field.end + 1;
+	}
+	return { values, end: pos };
+}
+
+// A quoted CSV field reads the same reversed, so trailing fields are leading fields of the reversed line.
+// Code unit reversal is deliberate: reversing twice restores surrogate pairs.
+function reverse(text: string): string {
+	return text.split('').reverse().join('');
+}
+
+function readTrailingFields(
+	text: string,
+	count: number
+): { values: string[]; start: number } | null {
+	const reversed = readLeadingFields(reverse(text), count);
+	if (!reversed) return null;
+	return { values: reversed.values.map(reverse).reverse(), start: text.length - reversed.end };
+}
+
+// Garmin writes titles without escaping their quotes, so a title can swallow the fields after it.
+// Every other column must read cleanly from its end of the line, leaving the title in between.
+function recoverTitleRow(line: string, headers: string[]): string[] | null {
+	const titleIndex = headers.indexOf('Title');
+	if (titleIndex === -1) return null;
+
+	const before = readLeadingFields(line, titleIndex);
+	const after = readTrailingFields(line, headers.length - titleIndex - 1);
+	if (!before || !after || before.end > after.start) return null;
+
+	const rawTitle = line.slice(before.end, after.start);
+	if (rawTitle.length < 2 || !rawTitle.startsWith('"') || !rawTitle.endsWith('"')) return null;
+
+	const title = rawTitle.slice(1, -1).replaceAll('""', '"');
+	return [...before.values, title, ...after.values];
+}
+
+function hasQuoteErrors(csvContent: string): boolean {
+	return Papa.parse(csvContent, { delimiter: ',' }).errors.some((e) => e.type === 'Quotes');
+}
+
+function isCleanRecord(text: string): boolean {
+	const result = Papa.parse(text, { delimiter: ',' });
+	return result.errors.length === 0 && result.data.length === 1;
+}
+
+function hasOddQuoteCount(text: string): boolean {
+	return (text.match(/"/g)?.length ?? 0) % 2 === 1;
+}
+
+function malformedQuotesError(row: number): ParseError {
+	return {
+		type: 'malformed-quotes',
+		row,
+		message: `Skipped row ${row} because its quote marks could not be read. Remove the quote marks from that activity's title in Garmin Connect, then export again.`
+	};
+}
+
+/**
+ * Rewrites rows whose unescaped title quotes would merge fields or rows, and skips rows
+ * that cannot be recovered, so a corrupt row never reaches the totals.
+ */
+function repairMalformedQuotes(csvContent: string): { content: string; errors: ParseError[] } {
+	if (!hasQuoteErrors(csvContent)) return { content: csvContent, errors: [] };
+
+	const [headerLine, ...lines] = csvContent.split(/\r?\n/);
+	const headers = (Papa.parse<string[]>(headerLine, { delimiter: ',' }).data[0] ?? []).map((h) =>
+		h.trim()
+	);
+	const rows = [headerLine];
+	const errors: ParseError[] = [];
+	// A line with an open quote may be the start of a field that spans lines.
+	let pending: { row: number; text: string } | null = null;
+
+	const readLine = (line: string) => {
+		if (line.trim() === '' || isCleanRecord(line)) {
+			rows.push(line);
+			return true;
+		}
+		const recovered = recoverTitleRow(line, headers);
+		if (recovered) {
+			rows.push(Papa.unparse([recovered]));
+			return true;
+		}
+		return false;
+	};
+
+	for (const [index, line] of lines.entries()) {
+		const row = index + 2;
+		if (pending) {
+			const joined = `${pending.text}\n${line}`;
+			if (isCleanRecord(joined)) {
+				rows.push(joined);
+				pending = null;
+			} else if (readLine(line)) {
+				errors.push(malformedQuotesError(pending.row));
+				pending = null;
+			} else {
+				pending.text = joined;
+			}
+		} else if (!readLine(line)) {
+			if (hasOddQuoteCount(line)) pending = { row, text: line };
+			else errors.push(malformedQuotesError(row));
+		}
+	}
+	if (pending) errors.push(malformedQuotesError(pending.row));
+
+	return { content: rows.join('\n'), errors };
+}
+
 /**
  * Parse a Garmin CSV string and return activities for the specified year
  */
@@ -282,7 +428,10 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 		}
 	}
 
-	const parseResult = Papa.parse<GarminRawActivity>(deduplicateHeaders(processedContent), {
+	const repaired = repairMalformedQuotes(processedContent);
+	errors.push(...repaired.errors);
+
+	const parseResult = Papa.parse<GarminRawActivity>(deduplicateHeaders(repaired.content), {
 		header: true,
 		skipEmptyLines: true,
 		transformHeader: (header) => header.trim()
