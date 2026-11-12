@@ -13,6 +13,16 @@ async function uploadFileWithoutTargetYear(page: Page) {
 	});
 }
 
+// Parsing finishes in milliseconds, too fast to assert on the loading state.
+async function slowFileReads(page: Page) {
+	await page.addInitScript(() => {
+		const read = File.prototype.text;
+		File.prototype.text = function () {
+			return new Promise((resolve) => setTimeout(resolve, 1500)).then(() => read.call(this));
+		};
+	});
+}
+
 function isFileDragCancelled(target: Locator, type: 'dragover' | 'drop') {
 	return target.evaluate((element, type) => {
 		const dataTransfer = new DataTransfer();
@@ -100,6 +110,7 @@ test.describe('Upload Flow', () => {
 	});
 
 	test('shows no drop highlight while a file loads', async ({ page }) => {
+		await slowFileReads(page);
 		await page.goto('/');
 		await uploadFileWithoutTargetYear(page);
 		const uploadZone = page.locator(`#${UPLOAD_ZONE_ID}`);
@@ -128,6 +139,7 @@ test.describe('Upload accessibility', () => {
 	});
 
 	test('announces loading progress and errors', async ({ page }) => {
+		await slowFileReads(page);
 		await page.goto('/');
 		await uploadFileWithoutTargetYear(page);
 
@@ -139,6 +151,7 @@ test.describe('Upload accessibility', () => {
 	});
 
 	test('blocks the demo while a file loads', async ({ page }) => {
+		await slowFileReads(page);
 		await page.goto('/');
 		await uploadFileWithoutTargetYear(page);
 
