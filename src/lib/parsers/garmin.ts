@@ -8,6 +8,7 @@ import type {
 	ParseResult
 } from '../types/index.js';
 import { TARGET_YEAR } from '../constants/time.js';
+import { MAX_RECORD_CHARS, MAX_RECORD_LINES } from '../constants/parsing.js';
 
 // Garmin localises headers, so other languages miss these.
 const KEY_HEADERS = ['Activity Type', 'Date', 'Distance'];
@@ -209,22 +210,20 @@ export function isInYear(date: Date, year: number): boolean {
 	return date.getFullYear() === year;
 }
 
+function readHeaders(headerLine: string): string[] {
+	return (Papa.parse<string[]>(headerLine, { header: false }).data[0] ?? []).map((h) => h.trim());
+}
+
 /**
  * Deduplicate headers in a CSV string to prevent PapaParse warnings
  */
 function deduplicateHeaders(csvContent: string): string {
 	const lines = csvContent.split(/\r?\n/);
-	if (lines.length === 0) return csvContent;
-
-	const headerLine = lines[0];
-	const parseResult = Papa.parse<string[]>(headerLine, { header: false });
-	const headers = parseResult.data[0];
-
-	if (!headers) return csvContent;
+	const headers = readHeaders(lines[0]);
+	if (headers.length === 0) return csvContent;
 
 	const seen = new Set<string>();
-	const deduplicatedHeaders = headers.map((h) => {
-		const trimmed = h.trim();
+	const deduplicatedHeaders = headers.map((trimmed) => {
 		let final = trimmed;
 		let i = 1;
 		while (seen.has(final)) {
@@ -311,17 +310,26 @@ function recoverTitleRow(line: string, headers: string[]): string[] | null {
 	return [...before.values, title, ...after.values];
 }
 
-function hasQuoteErrors(csvContent: string): boolean {
-	return Papa.parse(csvContent, { delimiter: ',' }).errors.some((e) => e.type === 'Quotes');
+function countQuotes(text: string): number {
+	return text.match(/"/g)?.length ?? 0;
 }
 
-function isCleanRecord(text: string): boolean {
-	const result = Papa.parse(text, { delimiter: ',' });
-	return result.errors.length === 0 && result.data.length === 1;
+function isCompleteRecord(text: string, headers: string[]): boolean {
+	const result = Papa.parse<string[]>(text, { delimiter: ',' });
+	return (
+		result.errors.length === 0 &&
+		result.data.length === 1 &&
+		result.data[0].length === headers.length
+	);
 }
 
-function hasOddQuoteCount(text: string): boolean {
-	return (text.match(/"/g)?.length ?? 0) % 2 === 1;
+/** True when quotes left a row unreadable or shifted its fields into other columns. */
+function hasMalformedRows(parsed: Papa.ParseResult<string[]>): boolean {
+	const [headers, ...rows] = parsed.data;
+	return (
+		parsed.errors.some((e) => e.type === 'Quotes') ||
+		rows.some((row) => row.length !== headers.length)
+	);
 }
 
 function malformedQuotesError(row: number): ParseError {
@@ -332,56 +340,82 @@ function malformedQuotesError(row: number): ParseError {
 	};
 }
 
+interface PendingRecord {
+	row: number;
+	lines: string[];
+	chars: number;
+	quotes: number;
+}
+
 /**
  * Rewrites rows whose unescaped title quotes would merge fields or rows, and skips rows
  * that cannot be recovered, so a corrupt row never reaches the totals.
  */
 function repairMalformedQuotes(csvContent: string): { content: string; errors: ParseError[] } {
-	if (!hasQuoteErrors(csvContent)) return { content: csvContent, errors: [] };
-
 	const [headerLine, ...lines] = csvContent.split(/\r?\n/);
-	const headers = (Papa.parse<string[]>(headerLine, { delimiter: ',' }).data[0] ?? []).map((h) =>
-		h.trim()
-	);
+	const headers = readHeaders(headerLine);
 	const rows = [headerLine];
 	const errors: ParseError[] = [];
-	// A line with an open quote may be the start of a field that spans lines.
-	let pending: { row: number; text: string } | null = null;
+	// A line with an open quote may start a field that spans lines.
+	let pending: PendingRecord | null = null;
 
 	const readLine = (line: string) => {
-		if (line.trim() === '' || isCleanRecord(line)) {
+		// A quote-free line cannot be quote-corrupted, so its field count is left to the main parse.
+		if (countQuotes(line) === 0 || isCompleteRecord(line, headers)) {
 			rows.push(line);
 			return true;
 		}
 		const recovered = recoverTitleRow(line, headers);
-		if (recovered) {
-			rows.push(Papa.unparse([recovered]));
-			return true;
-		}
-		return false;
+		if (recovered) rows.push(Papa.unparse([recovered]));
+		return recovered !== null;
+	};
+
+	const closePending = (record: PendingRecord) => {
+		const text = record.lines.join('\n');
+		if (isCompleteRecord(text, headers)) rows.push(text);
+		else errors.push(malformedQuotesError(record.row));
 	};
 
 	for (const [index, line] of lines.entries()) {
 		const row = index + 2;
-		if (pending) {
-			const joined = `${pending.text}\n${line}`;
-			if (isCleanRecord(joined)) {
-				rows.push(joined);
-				pending = null;
-			} else if (readLine(line)) {
-				errors.push(malformedQuotesError(pending.row));
-				pending = null;
-			} else {
-				pending.text = joined;
-			}
-		} else if (!readLine(line)) {
-			if (hasOddQuoteCount(line)) pending = { row, text: line };
-			else errors.push(malformedQuotesError(row));
+		if (!pending) {
+			if (readLine(line)) continue;
+			if (countQuotes(line) % 2 === 1) {
+				pending = { row, lines: [line], chars: line.length, quotes: countQuotes(line) };
+			} else errors.push(malformedQuotesError(row));
+			continue;
+		}
+
+		if (isCompleteRecord(line, headers) || recoverTitleRow(line, headers)) {
+			errors.push(malformedQuotesError(pending.row));
+			pending = null;
+			readLine(line);
+			continue;
+		}
+		pending.lines.push(line);
+		pending.chars += line.length;
+		pending.quotes += countQuotes(line);
+		if (pending.quotes % 2 === 0) {
+			closePending(pending);
+			pending = null;
+		} else if (pending.lines.length > MAX_RECORD_LINES || pending.chars > MAX_RECORD_CHARS) {
+			errors.push(malformedQuotesError(pending.row));
+			pending = null;
 		}
 	}
 	if (pending) errors.push(malformedQuotesError(pending.row));
 
 	return { content: rows.join('\n'), errors };
+}
+
+// Some tools wrap each CSV row in quotes and escape the quotes inside, so most data rows
+// parse as one column. The header may be left unquoted.
+function flattenWholeRowQuoted(rows: string[][]): string | null {
+	const dataRows = rows.slice(1);
+	const quotedDataRows = dataRows.filter((row) => row.length === 1).length;
+	if (dataRows.length === 0 || quotedDataRows <= dataRows.length / 2) return null;
+
+	return rows.map((row) => (row.length === 1 ? row[0] : Papa.unparse([row]))).join('\n');
 }
 
 /**
@@ -391,44 +425,17 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 	const activities: Activity[] = [];
 	const errors: ParseError[] = [];
 
-	// Preprocess content if it appears to be "whole-row quoted"
-	// This happens when some tools wrap each CSV row in quotes and escape internal quotes.
-	// We use a two-pass approach:
-	// 1. Parse as headerless CSV to correctly handle quotes and internal newlines.
-	// 2. If most rows have only 1 column, it's the weird format. Flatten it and re-parse.
-
-	let processedContent = csvContent;
 	const firstPass = Papa.parse<string[]>(csvContent, {
 		header: false,
 		skipEmptyLines: true
 	});
-
-	if (firstPass.data.length > 0) {
-		// Whole-row quoted format: most data rows parse as one column. The header may be unquoted.
-		const dataRows = firstPass.data.slice(1);
-		const quotedDataRows = dataRows.filter((row) => row.length === 1).length;
-
-		if (quotedDataRows > dataRows.length / 2 && dataRows.length > 0) {
-			// It's likely the whole-row quoted format. Flatten it.
-			const processedRows = firstPass.data.map((row) => {
-				if (row.length === 1) return row[0];
-				// If it already has multiple columns (like an unquoted header),
-				// we reconstruct it as CSV to keep it consistent for the second pass.
-				return row
-					.map((cell) => {
-						const cellStr = String(cell);
-						if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
-							return `"${cellStr.replace(/"/g, '""')}"`;
-						}
-						return cellStr;
-					})
-					.join(',');
-			});
-			processedContent = processedRows.join('\n');
-		}
-	}
-
-	const repaired = repairMalformedQuotes(processedContent);
+	const flattened = flattenWholeRowQuoted(firstPass.data);
+	const content = flattened ?? csvContent;
+	const parsed =
+		flattened === null ? firstPass : Papa.parse<string[]>(flattened, { skipEmptyLines: true });
+	const repaired = hasMalformedRows(parsed)
+		? repairMalformedQuotes(content)
+		: { content, errors: [] };
 	errors.push(...repaired.errors);
 
 	const parseResult = Papa.parse<GarminRawActivity>(deduplicateHeaders(repaired.content), {
