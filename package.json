@@ -17,6 +17,9 @@
 		"test:all": "vitest run && playwright test",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
+		"scan": "sh scripts/require-tools.sh gitleaks trivy && gitleaks git --no-banner --redact && trivy fs --scanners vuln,secret --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --skip-version-check --quiet .",
+		"scan:staged": "sh scripts/require-tools.sh gitleaks && gitleaks git --staged --no-banner --redact",
+		"knip": "knip",
 		"og-image": "node scripts/og-image.ts"
 	},
 	"devDependencies": {
@@ -33,6 +36,7 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.19.0",
 		"globals": "^17.6.0",
+		"knip": "^6.45.1",
 		"lint-staged": "^17.6.0",
 		"pixelmatch": "^8.0.0",
 		"pngjs": "^7.0.0",
@@ -62,8 +66,8 @@
 		"#lib/*": "./src/lib/*"
 	},
 	"simple-git-hooks": {
-		"pre-commit": "pnpm exec lint-staged",
-		"pre-push": "pnpm check && pnpm test:run"
+		"pre-commit": "pnpm exec lint-staged && pnpm scan:staged",
+		"pre-push": "pnpm check && pnpm test:run && pnpm scan && pnpm knip"
 	},
 	"lint-staged": {
 		"*.{js,ts,svelte}": [
