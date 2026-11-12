@@ -40,6 +40,9 @@ test.describe('Upload Flow', () => {
 		await expect(page.getByText('How to get your data')).toBeVisible();
 		await expect(page.getByText('connect.garmin.com')).toBeVisible();
 		await expect(
+			page.getByText("Use the website on a computer. The Garmin Connect app can't export.")
+		).toBeVisible();
+		await expect(
 			page.getByText(`Scroll down until all ${TARGET_YEAR} activities are loaded`)
 		).toBeVisible();
 	});

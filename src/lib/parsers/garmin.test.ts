@@ -291,3 +291,149 @@ describe('parseGarminCsv with special formats', () => {
 		expect(result.activities[0].title).toBe('Morning Run');
 	});
 });
+
+describe('parseGarminCsv with quoted fields', () => {
+	const HEADER = 'Activity Type,Date,Favorite,Title,Distance,Calories,Time,Total Ascent';
+	const NEXT_ROW = 'Cycling,2026-03-02 08:00:00,false,Ride,20.00,500,01:00:00,50';
+
+	it('reads a title with an embedded comma', () => {
+		const csv = `${HEADER}\nRunning,2026-03-01 08:00:00,true,"Easy, then hard",10.33,658,00:50:00,100`;
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(result.errors).toEqual([]);
+		expect(result.activities[0]).toMatchObject({ title: 'Easy, then hard', distance: 10.33 });
+	});
+
+	it('reads a title with escaped quotes', () => {
+		const csv = `${HEADER}\nRunning,2026-03-01 08:00:00,true,"Intervals ""Go Hard""",10.33,658,00:50:00,100`;
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(result.errors).toEqual([]);
+		expect(result.activities[0]).toMatchObject({ title: 'Intervals "Go Hard"', distance: 10.33 });
+	});
+
+	it('recovers a title with unescaped quotes and keeps the fields after it', () => {
+		const csv = `${HEADER}\nRunning,2026-03-01 08:00:00,true,"Intervalls - " Go Hard"",10.33,658,00:50:00,100`;
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(result.errors).toEqual([]);
+		expect(result.activities).toHaveLength(1);
+		expect(result.activities[0]).toMatchObject({
+			title: 'Intervalls - " Go Hard"',
+			distance: 10.33,
+			calories: 658,
+			duration: 3000,
+			elevation: 100,
+			favorite: true
+		});
+	});
+
+	it('keeps the row after a recovered title as its own activity', () => {
+		const csv = `${HEADER}\nRunning,2026-03-01 08:00:00,true,"Intervalls - " Go, Hard"",10.33,658,00:50:00,100\n${NEXT_ROW}`;
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(result.errors).toEqual([]);
+		expect(result.activities.map((a) => [a.title, a.distance])).toEqual([
+			['Intervalls - " Go, Hard"', 10.33],
+			['Ride', 20]
+		]);
+	});
+
+	it('recovers an unescaped title next to a quoted number with a thousands comma', () => {
+		const csv = `${HEADER}\nRunning,2026-03-01 08:00:00,true,"Long "slow" run",42.20,"2,658",03:50:00,100`;
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(result.errors).toEqual([]);
+		expect(result.activities[0]).toMatchObject({
+			title: 'Long "slow" run',
+			calories: 2658,
+			distance: 42.2
+		});
+	});
+
+	it('skips a row whose quotes cannot be resolved and says how to fix it', () => {
+		const csv = `${HEADER}\nRunning,2026-03-01 08:00:00,"tr"ue","Intervalls - " Go Hard"",10.33,658,00:50:00,100\n${NEXT_ROW}`;
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(result.activities.map((a) => a.title)).toEqual(['Ride']);
+		expect(result.errors).toEqual([
+			{
+				type: 'malformed-quotes',
+				row: 2,
+				message: expect.stringContaining('Garmin Connect')
+			}
+		]);
+	});
+
+	it('recovers a title whose unescaped quote sits right before a comma', () => {
+		const csv = `${HEADER}\nRunning,2026-03-01 08:00:00,true,"4x 1'30", easy",10.33,658,00:50:00,100`;
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(result.errors).toEqual([]);
+		expect(result.activities[0]).toMatchObject({
+			title: `4x 1'30", easy`,
+			distance: 10.33,
+			calories: 658
+		});
+	});
+
+	it('keeps the row after a recovered title with Windows line endings', () => {
+		const csv = `${HEADER}\r\nRunning,2026-03-01 08:00:00,true,"Intervalls - " Go, Hard"",10.33,658,00:50:00,100\r\n${NEXT_ROW}\r\n`;
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(result.errors).toEqual([]);
+		expect(result.activities.map((a) => [a.title, a.distance])).toEqual([
+			['Intervalls - " Go, Hard"', 10.33],
+			['Ride', 20]
+		]);
+	});
+
+	it('keeps a title spanning several lines in a file that needs repair', () => {
+		const csv =
+			`${HEADER}\nRunning,2026-03-01 08:00:00,true,"Intervalls - " Go Hard"",10.33,658,00:50:00,100\n` +
+			`Cycling,2026-03-02 08:00:00,false,"Multi\nline\n\ntitle",20.00,500,01:00:00,50`;
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(result.errors).toEqual([]);
+		expect(result.activities.map((a) => [a.title, a.distance])).toEqual([
+			['Intervalls - " Go Hard"', 10.33],
+			['Multi\nline\n\ntitle', 20]
+		]);
+	});
+
+	it('skips a row with an unclosed quote and keeps the complete row after it', () => {
+		const csv = `${HEADER}\nRunning,2026-03-01 08:00:00,true,"Open title,10.33,658,00:50:00,100\n${NEXT_ROW}`;
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(result.activities.map((a) => a.title)).toEqual(['Ride']);
+		expect(result.errors.map((e) => [e.type, e.row])).toEqual([['malformed-quotes', 2]]);
+	});
+
+	it('skips a row whose quote is still open at the end of the file', () => {
+		const csv = `${HEADER}\n${NEXT_ROW}\nRunning,2026-03-01 08:00:00,true,"Open title,10.33,658,00:50:00,100`;
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(result.activities.map((a) => a.title)).toEqual(['Ride']);
+		expect(result.errors.map((e) => [e.type, e.row])).toEqual([['malformed-quotes', 3]]);
+	});
+
+	it('stays fast on many lines that each open a quote', () => {
+		const csv = `${HEADER}\n` + '"x\n'.repeat(40_000) + NEXT_ROW;
+		const started = performance.now();
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(performance.now() - started).toBeLessThan(3000);
+		expect(result.activities.map((a) => a.title)).toEqual(['Ride']);
+	});
+
+	it('gives up on a quote that never closes and reads on', () => {
+		const csv =
+			`${HEADER}\nRunning,2026-03-01 08:00:00,true,"Open title,10.33,658,00:50:00,100\n` +
+			'x\n'.repeat(40_000) +
+			NEXT_ROW;
+		const result = parseGarminCsv(csv, 2026);
+
+		expect(result.activities.map((a) => a.title)).toEqual(['Ride']);
+		expect(result.errors[0]).toMatchObject({ type: 'malformed-quotes', row: 2 });
+	});
+});

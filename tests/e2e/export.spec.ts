@@ -1,5 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { uploadSample } from './helpers.js';
+import { PNG } from 'pngjs';
+import { downloadAllCards, uploadSample } from './helpers.js';
+
+const MAX_CARD_BYTES = 2 * 1024 * 1024;
 
 test.describe('Export Flow', () => {
 	test('export panel appears after upload', async ({ page }) => {
@@ -39,6 +42,16 @@ test.describe('Export Flow', () => {
 		await downloadButton.click();
 
 		expect((await downloadPromise).suggestedFilename()).toBe('activeyear-2026-summary.png');
+	});
+
+	test('downloads every card as a 1080x1920 PNG under 2 MB', async ({ page }) => {
+		await uploadSample(page);
+
+		for (const card of await downloadAllCards(page)) {
+			const { width, height } = PNG.sync.read(card);
+			expect({ width, height }).toEqual({ width: 1080, height: 1920 });
+			expect(card.length).toBeLessThan(MAX_CARD_BYTES);
+		}
 	});
 
 	test('theme selector is visible', async ({ page }) => {
