@@ -8,7 +8,8 @@
 		formatEarthLaps,
 		formatEverests,
 		formatPizzaSlices,
-		formatLotRMarathons
+		formatLotRMarathons,
+		showsValue
 	} from '#lib/utils/format.js';
 	import { Ruler, Timer, Mountains, Fire, Target } from 'phosphor-svelte';
 	import { sportIcons } from '#lib/constants/sports.js';
@@ -31,7 +32,6 @@
 		{
 			id: 'distance',
 			label: 'Total Distance',
-			amount: appStore.stats?.totalDistance ?? 0,
 			value: formatDistance(appStore.stats?.totalDistance ?? 0, appStore.unit),
 			icon: Ruler,
 			equivalent: `🌍 ${formatEarthLaps(appStore.stats?.totalDistance ?? 0)}`
@@ -39,7 +39,6 @@
 		{
 			id: 'elevation',
 			label: 'Elevation',
-			amount: appStore.stats?.totalElevation ?? 0,
 			value: formatElevation(appStore.stats?.totalElevation ?? 0, appStore.unit),
 			icon: Mountains,
 			equivalent: `🏔️ ${formatEverests(appStore.stats?.totalElevation ?? 0)}`
@@ -47,7 +46,6 @@
 		{
 			id: 'duration',
 			label: 'Time Active',
-			amount: appStore.stats?.totalDuration ?? 0,
 			value: formatDuration(appStore.stats?.totalDuration ?? 0),
 			icon: Timer,
 			equivalent: `💍 ${formatLotRMarathons(appStore.stats?.totalDuration ?? 0)}`
@@ -55,7 +53,6 @@
 		{
 			id: 'calories',
 			label: 'Calories',
-			amount: appStore.stats?.totalCalories ?? 0,
 			value: formatCalories(appStore.stats?.totalCalories ?? 0),
 			icon: Fire,
 			equivalent: `🍕 ${formatPizzaSlices(appStore.stats?.totalCalories ?? 0)}`
@@ -64,7 +61,9 @@
 
 	let heroStat = $derived(allStats.find((s) => s.id === appStore.summaryMetric) || allStats[0]);
 
-	let supportingStats = $derived(allStats.filter((s) => s.id !== heroStat.id && s.amount > 0));
+	let supportingStats = $derived(
+		allStats.filter((s) => s.id !== heroStat.id && showsValue(s.value))
+	);
 
 	// Middle cells draw both dividers so they sit right against the middle stat.
 	function dividerClass(index: number, count: number): string {

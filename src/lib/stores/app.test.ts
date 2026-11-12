@@ -12,6 +12,7 @@ import {
 describe('appStore', () => {
 	beforeEach(() => {
 		appStore.reset();
+		appStore.unit = 'km';
 	});
 
 	it('starts idle with empty results', () => {
@@ -107,6 +108,19 @@ describe('appStore', () => {
 		);
 
 		expect(appStore.summaryMetric).toBe('duration');
+	});
+
+	it('moves the focused stat off a value that shows as zero in the new unit', async () => {
+		await appStore.processFile(
+			csvFile(
+				`Activity Type,Date,Title,Distance,Calories,Time,Total Ascent\nRunning,${TARGET_YEAR}-03-01 08:00:00,Run,5.0,200,00:30:00,6`
+			)
+		);
+		appStore.summaryMetric = 'elevation';
+
+		appStore.unit = 'miles';
+
+		expect(appStore.summaryMetric).toBe('distance');
 	});
 
 	it('keeps the focused stat when the loaded data has a value for it', () => {

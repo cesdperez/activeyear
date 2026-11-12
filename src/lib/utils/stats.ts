@@ -9,7 +9,13 @@ import type {
 	WeeklyPattern,
 	YearStats
 } from '../types/index.js';
-import { formatCalories, formatDistance, formatDuration, formatElevation } from './format.js';
+import {
+	formatCalories,
+	formatDistance,
+	formatDuration,
+	formatElevation,
+	showsValue
+} from './format.js';
 
 /**
  * Calculate aggregate year stats from activities
@@ -184,7 +190,7 @@ export function summaryMetricWithValue(
 	unit: Unit
 ): SummaryMetric {
 	const withValue = SUMMARY_METRIC_DISPLAY.filter(([, display]) =>
-		/[1-9]/.test(display(stats, unit))
+		showsValue(display(stats, unit))
 	).map(([metric]) => metric);
 	return withValue.includes(current) ? current : (withValue[0] ?? current);
 }

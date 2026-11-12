@@ -38,6 +38,11 @@ export function formatDuration(seconds: number): string {
 	return `${formatCount(hours)}h ${minutes}m`;
 }
 
+/** Whether a formatted stat shows anything but zero, so "0.0km" and "0ft" do not count. */
+export function showsValue(formatted: string): boolean {
+	return /[1-9]/.test(formatted);
+}
+
 /** Whole number with thousands separators, matching the other stats. */
 export function formatCount(count: number): string {
 	return count.toLocaleString('en-US');
