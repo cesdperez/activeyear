@@ -5,7 +5,6 @@ import { inlinedFontFaceCss } from './fonts.js';
 
 export interface ExportOptions {
 	filename: string;
-	scale?: number;
 	backgroundColor?: string;
 	/** Export even when the app fonts cannot be embedded, letting the image fall back. */
 	allowFallbackFonts?: boolean;
@@ -23,7 +22,6 @@ const THEME_BACKGROUNDS: Record<Theme, string> = {
 export async function exportToPng(element: HTMLElement, options: ExportOptions): Promise<void> {
 	const {
 		filename,
-		scale = 1,
 		backgroundColor = THEME_BACKGROUNDS.neon,
 		allowFallbackFonts = false
 	} = options;
@@ -39,7 +37,7 @@ export async function exportToPng(element: HTMLElement, options: ExportOptions):
 			// The preview applies a CSS scale transform; size from layout, not the scaled rect.
 			width: element.offsetWidth,
 			height: element.offsetHeight,
-			scale,
+			scale: 1,
 			style: { textRendering: 'geometricPrecision' },
 			backgroundColor,
 			font: fontCss ? { cssText: fontCss } : undefined,
