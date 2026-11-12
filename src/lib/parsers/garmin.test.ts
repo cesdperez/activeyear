@@ -437,3 +437,64 @@ describe('parseGarminCsv with quoted fields', () => {
 		expect(result.errors[0]).toMatchObject({ type: 'malformed-quotes', row: 2 });
 	});
 });
+
+describe('parseGarminCsv rejected rows', () => {
+	const HEADER = 'Activity Type,Date,Favorite,Title,Distance,Calories,Time,Total Ascent';
+	const row = (date: string, title = 'Morning Run') =>
+		`Running,${date},false,${title},10.0,600,00:50:00,100`;
+	const errorRows = (csv: string) => parseGarminCsv(csv, 2026).errors.map((e) => [e.type, e.row]);
+
+	it('lists every year with a readable activity, whatever the target year', () => {
+		const csv = [HEADER, row('2025-12-31 08:00:00'), row('2023-01-01 08:00:00'), row('nope')];
+
+		expect(parseGarminCsv(csv.join('\n'), 2026).yearsInFile).toEqual([2023, 2025]);
+	});
+
+	it('includes the target year among the years in the file', () => {
+		expect(parseGarminCsv(`${HEADER}\n${row('2026-03-01 08:00:00')}`, 2026).yearsInFile).toEqual([
+			2026
+		]);
+	});
+
+	it('reports an invalid date without the cell contents', () => {
+		const result = parseGarminCsv(`${HEADER}\n${row('Private notes')}`, 2026);
+
+		expect(result.errors).toEqual([{ type: 'invalid-date', row: 2, message: expect.any(String) }]);
+		expect(result.errors[0].message).not.toContain('Private');
+	});
+
+	it('reports a row without a date as missing a required column', () => {
+		expect(errorRows(`${HEADER}\n${row('')}`)).toEqual([['missing-column', 2]]);
+	});
+
+	it('numbers a row by its line in the file after a skipped quoted row', () => {
+		const csv = [
+			HEADER,
+			row('2026-03-01 08:00:00', '"Open title'),
+			row('2026-03-02 08:00:00'),
+			row('bad')
+		];
+
+		expect(errorRows(csv.join('\n'))).toEqual([
+			['malformed-quotes', 2],
+			['invalid-date', 4]
+		]);
+	});
+
+	it('numbers a row by its line in the file after blank lines and a multi-line title', () => {
+		const csv = [HEADER, '', row('2026-03-01 08:00:00', '"Two\nlines"'), '', row('bad')];
+
+		expect(errorRows(csv.join('\n'))).toEqual([['invalid-date', 6]]);
+	});
+
+	it('numbers rows by line in a file that needs quote repair', () => {
+		const csv = [
+			HEADER,
+			row('2026-03-01 08:00:00', '"Go "Hard""'),
+			row('2026-03-02 08:00:00', '"Two\nlines"'),
+			row('bad')
+		];
+
+		expect(errorRows(csv.join('\n'))).toEqual([['invalid-date', 5]]);
+	});
+});

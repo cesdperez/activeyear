@@ -84,6 +84,8 @@ export type Unit = 'km' | 'miles';
 export interface ParseResult {
 	activities: Activity[];
 	errors: ParseError[];
+	/** Every year with a readable activity in the file, ascending, whatever the target year. */
+	yearsInFile: number[];
 }
 
 /** Reads one export format; `detect` decides whether `parse` should handle the file. */

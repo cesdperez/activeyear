@@ -370,10 +370,16 @@ function repairMalformedQuotes(csvContent: string): { content: string; errors: P
 		return recovered !== null;
 	};
 
+	// Blank lines in place of a skipped record keep every later row on its line in the file.
+	const skip = (row: number, lineCount: number) => {
+		errors.push(malformedQuotesError(row));
+		rows.push(...Array<string>(lineCount).fill(''));
+	};
+
 	const closePending = (record: PendingRecord) => {
 		const text = record.lines.join('\n');
 		if (isCompleteRecord(text, headers)) rows.push(text);
-		else errors.push(malformedQuotesError(record.row));
+		else skip(record.row, record.lines.length);
 	};
 
 	for (const [index, line] of lines.entries()) {
@@ -382,12 +388,12 @@ function repairMalformedQuotes(csvContent: string): { content: string; errors: P
 			if (readLine(line)) continue;
 			if (countQuotes(line) % 2 === 1) {
 				pending = { row, lines: [line], chars: line.length, quotes: countQuotes(line) };
-			} else errors.push(malformedQuotesError(row));
+			} else skip(row, 1);
 			continue;
 		}
 
 		if (isCompleteRecord(line, headers) || recoverTitleRow(line, headers)) {
-			errors.push(malformedQuotesError(pending.row));
+			skip(pending.row, pending.lines.length);
 			pending = null;
 			readLine(line);
 			continue;
@@ -399,11 +405,11 @@ function repairMalformedQuotes(csvContent: string): { content: string; errors: P
 			closePending(pending);
 			pending = null;
 		} else if (pending.lines.length > MAX_RECORD_LINES || pending.chars > MAX_RECORD_CHARS) {
-			errors.push(malformedQuotesError(pending.row));
+			skip(pending.row, pending.lines.length);
 			pending = null;
 		}
 	}
-	if (pending) errors.push(malformedQuotesError(pending.row));
+	if (pending) skip(pending.row, pending.lines.length);
 
 	return { content: rows.join('\n'), errors };
 }
@@ -418,12 +424,59 @@ function flattenWholeRowQuoted(rows: string[][]): string | null {
 	return rows.map((row) => (row.length === 1 ? row[0] : Papa.unparse([row]))).join('\n');
 }
 
+function readActivity(row: GarminRawActivity, date: Date): Activity {
+	const distance = DISTANCE_IN_METERS_TYPES.has(row['Activity Type'])
+		? parseGarminMeterDistance(row['Distance'])
+		: parseGarminDistance(row['Distance']);
+
+	return {
+		date,
+		type: mapActivityType(row['Activity Type']),
+		title: row['Title'] || '',
+		distance,
+		duration: parseGarminTime(row['Total Time'] || row['Time']),
+		calories: parseGarminCalories(row['Calories']),
+		elevation: parseGarminElevation(row['Total Ascent']),
+		favorite: row['Favorite']?.toLowerCase() === 'true'
+	};
+}
+
+function countNewlines(values: unknown[]): number {
+	return values.reduce<number>(
+		(sum, value) =>
+			sum +
+			(Array.isArray(value) ? countNewlines(value) : (String(value).match(/\n/g)?.length ?? 0)),
+		0
+	);
+}
+
+/** Calls `onRow` with each data row and the line it starts on, so errors match what a spreadsheet shows. */
+function readRows(
+	content: string,
+	onRow: (row: GarminRawActivity, line: number, errors: Papa.ParseError[]) => void
+): void {
+	let scanned = 0;
+	let newlines = 0;
+	Papa.parse<GarminRawActivity>(content, {
+		header: true,
+		skipEmptyLines: true,
+		transformHeader: (header) => header.trim(),
+		step: ({ data, errors, meta }) => {
+			// The cursor sits just past the row's line break, which must not count toward its own line.
+			for (; scanned < meta.cursor - 1; scanned++) if (content[scanned] === '\n') newlines++;
+			const lastLine = newlines + 1;
+			onRow(data, lastLine - countNewlines(Object.values(data)), errors);
+		}
+	});
+}
+
 /**
  * Parse a Garmin CSV string and return activities for the specified year
  */
 export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_YEAR): ParseResult {
 	const activities: Activity[] = [];
 	const errors: ParseError[] = [];
+	const years = new Set<number>();
 
 	const firstPass = Papa.parse<string[]>(csvContent, {
 		header: false,
@@ -438,70 +491,29 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 		: { content, errors: [] };
 	errors.push(...repaired.errors);
 
-	const parseResult = Papa.parse<GarminRawActivity>(deduplicateHeaders(repaired.content), {
-		header: true,
-		skipEmptyLines: true,
-		transformHeader: (header) => header.trim()
-	});
+	readRows(deduplicateHeaders(repaired.content), (row, line, rowErrors) => {
+		for (const { message } of rowErrors) errors.push({ type: 'unknown', row: line, message });
 
-	if (parseResult.errors.length > 0) {
-		parseResult.errors.forEach((error) => {
-			errors.push({
-				type: 'unknown',
-				row: error.row ?? 0,
-				message: error.message
-			});
-		});
-	}
-
-	parseResult.data.forEach((row, index) => {
-		const rowNum = index + 2; // +2 because of header row and 1-indexing
-
-		// Check required columns
 		if (!row['Activity Type'] || !row['Date']) {
 			errors.push({
 				type: 'missing-column',
-				row: rowNum,
+				row: line,
 				message: 'Missing required column (Activity Type or Date)'
 			});
 			return;
 		}
 
-		// Parse date
 		const date = parseGarminDate(row['Date']);
 		if (!date) {
-			errors.push({
-				type: 'invalid-date',
-				row: rowNum,
-				message: `Invalid date format: ${row['Date']}`
-			});
+			errors.push({ type: 'invalid-date', row: line, message: 'Invalid date format' });
 			return;
 		}
 
-		// Filter to target year
-		if (!isInYear(date, targetYear)) {
-			return;
-		}
-
-		const distance = DISTANCE_IN_METERS_TYPES.has(row['Activity Type'])
-			? parseGarminMeterDistance(row['Distance'])
-			: parseGarminDistance(row['Distance']);
-
-		const activity: Activity = {
-			date,
-			type: mapActivityType(row['Activity Type']),
-			title: row['Title'] || '',
-			distance,
-			duration: parseGarminTime(row['Total Time'] || row['Time']),
-			calories: parseGarminCalories(row['Calories']),
-			elevation: parseGarminElevation(row['Total Ascent']),
-			favorite: row['Favorite']?.toLowerCase() === 'true'
-		};
-
-		activities.push(activity);
+		years.add(date.getFullYear());
+		if (isInYear(date, targetYear)) activities.push(readActivity(row, date));
 	});
 
-	return { activities, errors };
+	return { activities, errors, yearsInFile: [...years].sort((a, b) => a - b) };
 }
 
 // Quotes are dropped before splitting so a header row wrapped whole in quotes still matches.

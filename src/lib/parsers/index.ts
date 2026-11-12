@@ -10,6 +10,7 @@ export function parseActivityCsv(csvContent: string, year: number): ParseResult 
 
 	return {
 		activities: [],
+		yearsInFile: [],
 		errors: [
 			{
 				type: 'unsupported-format',
