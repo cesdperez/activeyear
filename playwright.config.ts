@@ -29,6 +29,7 @@ export default defineConfig({
 	webServer: {
 		command: 'pnpm run build && pnpm run preview',
 		url: baseURL,
-		reuseExistingServer: !process.env.CI
+		// A reused server keeps serving the build it started with, so tests would miss new changes.
+		reuseExistingServer: process.env.E2E_REUSE_SERVER === '1'
 	}
 });
