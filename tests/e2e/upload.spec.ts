@@ -16,7 +16,7 @@ async function uploadFile(page: Page, csv: string) {
 async function uploadFileWithoutTargetYear(page: Page) {
 	await uploadFile(
 		page,
-		`Activity Type,Date,Title,Distance\nRunning,${TARGET_YEAR - 1}-03-01,Run,10.0`
+		`Activity Type,Date,Title,Distance\nRunning,${TARGET_YEAR - 1}-03-01 08:00:00,Run,10.0`
 	);
 }
 
