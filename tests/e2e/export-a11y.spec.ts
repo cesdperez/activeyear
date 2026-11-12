@@ -70,6 +70,21 @@ test.describe('Export panel accessibility', () => {
 		await expect(page.getByText(/upload an image file|could not be read/i)).toHaveCount(0);
 	});
 
+	test('choosing the same bad avatar file again re-announces the error', async ({ page }) => {
+		await uploadSample(page);
+		const avatarInput = page.locator('#userAvatar');
+		const avatarError = page.locator('#userAvatar-error');
+
+		await avatarInput.setInputFiles(TEXT_FILE);
+		await expect(avatarError).toBeVisible();
+		await avatarError.evaluate((alert) => alert.setAttribute('data-announced', ''));
+
+		await avatarInput.setInputFiles(TEXT_FILE);
+
+		await expect(avatarError).toBeVisible();
+		await expect(avatarError).not.toHaveAttribute('data-announced');
+	});
+
 	test('name input autocompletes the user name', async ({ page }) => {
 		await uploadSample(page);
 		await expect(page.locator('#userName')).toHaveAttribute('autocomplete', 'name');
