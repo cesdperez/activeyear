@@ -8,7 +8,6 @@ import {
 	mapActivityType,
 	parseGarminDate
 } from './garmin.js';
-import { isInYear } from './csv.js';
 import { TARGET_YEAR } from '../constants/time.js';
 import { loadFixture } from './__fixtures__/load.js';
 
@@ -181,16 +180,6 @@ describe('parseGarminDate', () => {
 
 	it('returns null for invalid date', () => {
 		expect(parseGarminDate('not-a-date')).toBeNull();
-	});
-});
-
-describe('isInYear', () => {
-	it('returns true for matching year', () => {
-		expect(isInYear(new Date('2025-06-15'), 2025)).toBe(true);
-	});
-
-	it('returns false for different year', () => {
-		expect(isInYear(new Date('2024-12-31'), 2025)).toBe(false);
 	});
 });
 
