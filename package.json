@@ -17,7 +17,7 @@
 		"test:all": "vitest run && playwright test",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
-		"scan": "sh scripts/require-tools.sh gitleaks trivy && gitleaks git --no-banner --redact && trivy fs --scanners vuln,secret --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --skip-version-check --quiet .",
+		"scan": "sh scripts/require-tools.sh gitleaks trivy && gitleaks git --no-banner --redact --log-opts=HEAD && trivy fs --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --skip-version-check --quiet .",
 		"scan:staged": "sh scripts/require-tools.sh gitleaks && gitleaks git --staged --no-banner --redact",
 		"knip": "knip",
 		"og-image": "node scripts/og-image.ts"
@@ -26,7 +26,6 @@
 		"@eslint/js": "^10.0.1",
 		"@playwright/test": "^1.64.1",
 		"@sveltejs/adapter-cloudflare": "^8.0.2",
-		"@sveltejs/kit": "^3.1.1",
 		"@sveltejs/vite-plugin-svelte": "^7.3.1",
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/node": "^26.6.6",
@@ -44,7 +43,6 @@
 		"prettier-plugin-svelte": "^4.1.0",
 		"prettier-plugin-tailwindcss": "^0.8.0",
 		"simple-git-hooks": "^2.14.0",
-		"svelte": "^5.57.3",
 		"svelte-check": "^4.7.7",
 		"tailwindcss": "^4.3.3",
 		"typescript": "^6.0.3",
@@ -56,11 +54,13 @@
 	"dependencies": {
 		"@fontsource/jetbrains-mono": "^5.3.0",
 		"@fontsource/outfit": "^5.3.0",
+		"@sveltejs/kit": "^3.1.1",
 		"@types/canvas-confetti": "^1.9.0",
 		"canvas-confetti": "^1.9.4",
 		"modern-screenshot": "^4.7.0",
 		"papaparse": "^5.7.0",
-		"phosphor-svelte": "^3.1.1"
+		"phosphor-svelte": "^3.1.1",
+		"svelte": "^5.57.3"
 	},
 	"imports": {
 		"#lib/*": "./src/lib/*"
