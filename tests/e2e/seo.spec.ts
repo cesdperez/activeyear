@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { TARGET_YEAR } from '../../src/lib/constants/time.js';
+import { recordCspViolations } from './helpers.js';
 
 const SITE_URL = 'https://activeyear.app';
 
@@ -30,10 +31,7 @@ test.describe('Search and AI discovery', () => {
 	});
 
 	test('structured data parses and its FAQ matches the visible FAQ', async ({ page }) => {
-		const cspViolations: string[] = [];
-		page.on('console', (message) => {
-			if (message.text().includes('Content Security Policy')) cspViolations.push(message.text());
-		});
+		const cspViolations = recordCspViolations(page);
 		await page.goto('/');
 
 		const blocks = await jsonLdBlocks(page);

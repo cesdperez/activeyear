@@ -81,3 +81,12 @@ export async function overflowingCardElements(page: Page, selector: string): Pro
 			.map((el) => (el.textContent ?? '').trim().slice(0, 40));
 	}, selector);
 }
+
+// Chrome reports violations from every frame on the console, including modern-screenshot's sandbox iframe.
+export function recordCspViolations(page: Page): string[] {
+	const violations: string[] = [];
+	page.on('console', (message) => {
+		if (message.text().includes('Content Security Policy')) violations.push(message.text());
+	});
+	return violations;
+}

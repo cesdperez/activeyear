@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { TARGET_YEAR } from '#lib/constants/time.js';
+	import { GARMIN_EXPORT_NOTE, GARMIN_EXPORT_STEPS } from '#lib/data/garminExport.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import { createHydrated } from '#lib/stores/hydrated.svelte.js';
 	import FileUpload from '#lib/components/FileUpload.svelte';
@@ -45,32 +46,24 @@
 			<div class="mt-12 max-w-md text-center">
 				<h2 class="mb-4 text-sm font-medium text-zinc-300">How to get your data</h2>
 				<ol class="space-y-2 text-left text-sm text-pretty text-zinc-400">
-					<li class="flex gap-2">
-						<span class="font-mono text-cyan-400">1.</span>
-						Log in at
-						<a
-							href="https://connect.garmin.com"
-							target="_blank"
-							rel="noopener noreferrer"
-							class="text-cyan-400 hover:underline">connect.garmin.com</a
-						>
-					</li>
-					<li class="flex gap-2">
-						<span class="font-mono text-cyan-400">2.</span>
-						Go to Activities → All Activities
-					</li>
-					<li class="flex gap-2">
-						<span class="font-mono text-cyan-400">3.</span>
-						Scroll down until all {TARGET_YEAR} activities are loaded
-					</li>
-					<li class="flex gap-2">
-						<span class="font-mono text-cyan-400">4.</span>
-						Click Export CSV (top-right icon)
-					</li>
+					{#each GARMIN_EXPORT_STEPS as { text, link }, i (text)}
+						<li class="flex gap-2">
+							<span class="font-mono text-cyan-400">{i + 1}.</span>
+							{text}
+							{#if link}
+								<!-- eslint-disable svelte/no-navigation-without-resolve -- external site, not an app route -->
+								<a
+									href={link.href}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="text-cyan-400 hover:underline">{link.label}</a
+								>
+								<!-- eslint-enable svelte/no-navigation-without-resolve -->
+							{/if}
+						</li>
+					{/each}
 				</ol>
-				<p class="mt-4 text-xs text-balance text-zinc-400">
-					Use the website on a computer. The Garmin Connect app can't export.
-				</p>
+				<p class="mt-4 text-xs text-balance text-zinc-400">{GARMIN_EXPORT_NOTE}</p>
 			</div>
 
 			<HomeFaq />

@@ -5,17 +5,15 @@ import {
 	SITE_NAME,
 	SITE_URL
 } from '#lib/constants/site.js';
-import type { FaqItem } from '#lib/types/index.js';
-
-type JsonLd = Record<string, unknown>;
+import type { FaqItem, JsonLdObject } from '#lib/types/index.js';
 
 /** Renders JSON-LD as a script tag that is safe to insert with `{@html}`. */
-export function serializeJsonLd(data: JsonLd): string {
+export function serializeJsonLd(data: JsonLdObject): string {
 	const json = JSON.stringify(data).replaceAll('<', '\\u003c');
 	return `<script type="application/ld+json">${json}</script>`;
 }
 
-export function webApplicationSchema(): JsonLd {
+export function webApplicationSchema(): JsonLdObject {
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'WebApplication',
@@ -32,7 +30,7 @@ export function webApplicationSchema(): JsonLd {
 	};
 }
 
-export function faqPageSchema(items: FaqItem[]): JsonLd {
+export function faqPageSchema(items: FaqItem[]): JsonLdObject {
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'FAQPage',

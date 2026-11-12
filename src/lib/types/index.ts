@@ -108,3 +108,10 @@ export interface FaqItem {
 	question: string;
 	answer: string;
 }
+
+export type JsonLdObject = Record<string, unknown>;
+
+export interface ExportStep {
+	text: string;
+	link?: { href: string; label: string };
+}

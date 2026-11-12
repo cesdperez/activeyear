@@ -1,17 +1,8 @@
-import { test, expect, type Page } from '@playwright/test';
-import { uploadSample } from './helpers.js';
+import { test, expect } from '@playwright/test';
+import { recordCspViolations, uploadSample } from './helpers.js';
 
 const BEACON_URL = 'https://static.cloudflareinsights.com/beacon.min.js';
 const RUM_URL = 'https://cloudflareinsights.com/cdn-cgi/rum';
-
-// Chrome reports violations from every frame on the console, including modern-screenshot's sandbox iframe.
-function recordCspViolations(page: Page): string[] {
-	const violations: string[] = [];
-	page.on('console', (message) => {
-		if (message.text().includes('Content Security Policy')) violations.push(message.text());
-	});
-	return violations;
-}
 
 test.describe('Content Security Policy', () => {
 	test('prerendered page is served with the security headers', async ({ page }) => {

@@ -1,7 +1,8 @@
 <script lang="ts">
+	import type { JsonLdObject } from '#lib/types/index.js';
 	import { serializeJsonLd } from '#lib/utils/structuredData.js';
 
-	let { data }: { data: Record<string, unknown> } = $props();
+	let { data }: { data: JsonLdObject } = $props();
 </script>
 
 <svelte:head>
