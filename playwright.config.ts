@@ -1,4 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
+import { PREVIEW_PORT } from './scripts/ports.js';
+
+const baseURL = `http://localhost:${PREVIEW_PORT}`;
 
 export default defineConfig({
 	testDir: './tests/e2e',
@@ -8,7 +11,7 @@ export default defineConfig({
 	workers: 5,
 	reporter: 'html',
 	use: {
-		baseURL: 'http://localhost:4173',
+		baseURL,
 		reducedMotion: 'reduce',
 		trace: 'on-first-retry'
 	},
@@ -25,7 +28,7 @@ export default defineConfig({
 	],
 	webServer: {
 		command: 'pnpm run build && pnpm run preview',
-		url: 'http://localhost:4173',
+		url: baseURL,
 		reuseExistingServer: !process.env.CI
 	}
 });

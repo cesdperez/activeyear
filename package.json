@@ -6,7 +6,8 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"preview": "wrangler pages dev .svelte-kit/cloudflare --port 4173",
+		"preview": "wrangler pages dev .svelte-kit/cloudflare --port $(node scripts/ports.ts)",
+		"ports": "node scripts/ports.ts --urls",
 		"prepare": "svelte-kit sync || echo '' && simple-git-hooks",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",

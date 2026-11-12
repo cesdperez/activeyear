@@ -1,9 +1,10 @@
-// Regenerates static/og-image.png from the demo dashboard. Needs `pnpm build && pnpm preview` running.
+// Regenerates static/og-image.png from the demo dashboard. Needs `pnpm build && pnpm preview` running in this checkout.
 // Usage: pnpm og-image [baseUrl]
 import { chromium } from '@playwright/test';
 import { OG_IMAGE_WIDTH, OG_IMAGE_HEIGHT } from '../src/lib/constants/og.ts';
+import { PREVIEW_PORT } from './ports.ts';
 
-const baseUrl = process.argv[2] ?? 'http://localhost:4173';
+const baseUrl = process.argv[2] ?? `http://localhost:${PREVIEW_PORT}`;
 
 // Keeps only the heading and the four main stats, centred in the frame.
 const COMPOSITION_CSS = `
