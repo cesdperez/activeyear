@@ -1,8 +1,7 @@
 <script lang="ts">
+	import type { Activity, Unit, Theme } from '#lib/types/index.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { tick } from 'svelte';
-	import { highlightsStore } from '#lib/stores/highlights.svelte.js';
-	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
 	import { activityTitle, formatCount, formatDistance, formatDuration } from '#lib/utils/format.js';
 	import { monthLabels } from '#lib/utils/date.js';
 	import { timelineGap } from '#lib/utils/export.js';
@@ -10,6 +9,20 @@
 	import { Target } from 'phosphor-svelte';
 	import { sportIcons } from '#lib/constants/sports.js';
 	import ExportCardBase from './ExportCardBase.svelte';
+
+	let {
+		highlights: allHighlights,
+		unit,
+		theme,
+		displayName,
+		yearSoFar
+	}: {
+		highlights: Activity[];
+		unit: Unit;
+		theme: Theme;
+		displayName: string;
+		yearSoFar: boolean;
+	} = $props();
 
 	const monthNames = $derived(monthLabels(i18n.locale));
 
@@ -46,8 +59,8 @@
 	let area = $state<HTMLElement>();
 	let list = $state<HTMLElement>();
 
-	let highlights = $derived(highlightsStore.highlights.slice(0, limit));
-	let hiddenCount = $derived(highlightsStore.highlights.length - highlights.length);
+	let highlights = $derived(allHighlights.slice(0, limit));
+	let hiddenCount = $derived(allHighlights.length - highlights.length);
 	let compact = $state(false);
 	let dense = $state(false);
 	let size = $derived(dense ? SIZES.dense : compact ? SIZES.compact : SIZES.full);
@@ -95,21 +108,19 @@
 	}
 
 	$effect(() => {
-		void [
-			highlightsStore.highlights,
-			exportSettings.displayName,
-			exportSettings.theme,
-			exportSettings.unit,
-			i18n.locale,
-			area,
-			list
-		];
+		void [allHighlights, displayName, theme, unit, i18n.locale, area, list];
 		fitToCard();
 		document.fonts.ready.then(fitToCard);
 	});
 </script>
 
-<ExportCardBase variant="highlights" title={i18n.m.export.highlights}>
+<ExportCardBase
+	{theme}
+	{displayName}
+	{yearSoFar}
+	variant="highlights"
+	title={i18n.m.export.highlights}
+>
 	<div class="flex min-h-0 flex-1 flex-col">
 		{#if highlights.length === 0}
 			<div class="flex flex-1 items-center">
@@ -171,7 +182,7 @@
 									>
 										{#if fav.distance > 0}
 											<span class="stat-value"
-												>{formatDistance(i18n.locale, fav.distance, exportSettings.unit)}</span
+												>{formatDistance(i18n.locale, fav.distance, unit)}</span
 											>
 										{/if}
 										<span class="stat-value">{formatDuration(i18n.locale, fav.duration)}</span>

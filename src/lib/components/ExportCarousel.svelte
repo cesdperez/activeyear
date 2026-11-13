@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
+	import { yearData } from '#lib/stores/yearData.svelte.js';
+	import { highlightsStore } from '#lib/stores/highlights.svelte.js';
+	import { summaryCardModel, breakdownCardModel } from '#lib/utils/cardModels.js';
 	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
 	import { exportLock } from '#lib/stores/exportLock.svelte.js';
 	import SummaryCard from './SummaryCard.svelte';
@@ -8,6 +11,9 @@
 	import HighlightsCard from './HighlightsCard.svelte';
 	import { exportFileStem, exportToPng } from '#lib/utils/export.js';
 	import { CaretLeft, CaretRight } from 'phosphor-svelte';
+
+	const summaryModel = $derived(summaryCardModel(yearData, exportSettings, i18n.locale));
+	const breakdownModel = $derived(breakdownCardModel(yearData, exportSettings));
 
 	let currentSlide = $state<0 | 1 | 2>(0);
 	const slideLabels = $derived([
@@ -102,11 +108,36 @@
 		onpointercancel={() => (swipeStart = null)}
 	>
 		{#if currentSlide === 0}
-			<SummaryCard />
+			<SummaryCard
+				model={summaryModel}
+				userPfp={exportSettings.userPfp}
+				activities={yearData.activities}
+				highlights={highlightsStore.highlights}
+				daysCounted={yearData.daysCounted}
+				yearSoFar={yearData.yearSoFar}
+				theme={exportSettings.theme}
+				displayName={exportSettings.displayName}
+			/>
 		{:else if currentSlide === 1}
-			<BreakdownCard />
+			<BreakdownCard
+				model={breakdownModel}
+				weeklyPattern={yearData.weeklyPattern}
+				records={yearData.records}
+				unit={exportSettings.unit}
+				theme={exportSettings.theme}
+				breakdownMetric={exportSettings.breakdownMetric}
+				displayName={exportSettings.displayName}
+				yearSoFar={yearData.yearSoFar}
+				daysCounted={yearData.daysCounted}
+			/>
 		{:else}
-			<HighlightsCard />
+			<HighlightsCard
+				highlights={highlightsStore.highlights}
+				unit={exportSettings.unit}
+				theme={exportSettings.theme}
+				displayName={exportSettings.displayName}
+				yearSoFar={yearData.yearSoFar}
+			/>
 		{/if}
 	</div>
 

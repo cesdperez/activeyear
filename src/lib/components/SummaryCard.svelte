@@ -1,42 +1,41 @@
 <script lang="ts">
+	import type { Activity, Theme, SummaryCardModel } from '#lib/types/index.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
-	import { yearData } from '#lib/stores/yearData.svelte.js';
-	import { highlightsStore } from '#lib/stores/highlights.svelte.js';
-	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
-	import { showsValue } from '#lib/utils/format.js';
-	import { scaledLength, totalStats, UNIT_SCALE } from '#lib/utils/totals.js';
-	import { recordActivities } from '#lib/utils/yearLane.js';
-	import { CENTERED_AVATAR_THEMES } from '#lib/constants/themes.js';
+	import { scaledLength, UNIT_SCALE } from '#lib/utils/totals.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { Target } from 'phosphor-svelte';
 	import { sportIcons } from '#lib/constants/sports.js';
-	import { rankSports } from '#lib/utils/breakdown.js';
 	import ExportCardBase from './ExportCardBase.svelte';
 	import ValueWithUnits from './ValueWithUnits.svelte';
 	import YearLane from './widgets/YearLane.svelte';
 
-	const centeredAvatar = $derived(CENTERED_AVATAR_THEMES.includes(exportSettings.theme));
-	const topSport = $derived(rankSports(yearData.breakdown, exportSettings.breakdownMetric)[0]);
+	let {
+		model,
+		userPfp,
+		activities,
+		highlights,
+		daysCounted,
+		yearSoFar,
+		theme,
+		displayName
+	}: {
+		model: SummaryCardModel;
+		userPfp: string | null;
+		activities: Activity[];
+		highlights: Activity[];
+		daysCounted: number;
+		yearSoFar: boolean;
+		theme: Theme;
+		displayName: string;
+	} = $props();
+	const { centeredAvatar, hero, supporting, fitChars, records, topSport } = $derived(model);
 	const TopIcon = $derived(topSport ? (sportIcons[topSport.type] ?? Target) : Target);
-
-	const totals = $derived(
-		yearData.stats ? totalStats(i18n.locale, yearData.stats, exportSettings.unit) : []
-	);
-	const hero = $derived(totals.find((s) => s.id === exportSettings.summaryMetric) ?? totals[0]);
-	const supporting = $derived(totals.filter((s) => s !== hero && showsValue(s.value)));
-	const fitChars = $derived(
-		Math.max(...supporting.map((s) => scaledLength(s.value, UNIT_SCALE.board)))
-	);
 </script>
 
 {#snippet avatar()}
 	<div class="avatar-container">
-		{#if exportSettings.userPfp}
-			<img
-				src={exportSettings.userPfp}
-				alt={i18n.m.export.profile}
-				class="h-full w-full object-cover"
-			/>
+		{#if userPfp}
+			<img src={userPfp} alt={i18n.m.export.profile} class="h-full w-full object-cover" />
 		{:else}
 			<div class="flex h-full w-full items-center justify-center text-[var(--color-accent)]">
 				<TopIcon class="h-24 w-24" weight="bold" aria-hidden="true" />
@@ -45,7 +44,13 @@
 	</div>
 {/snippet}
 
-<ExportCardBase variant="summary" title={i18n.m.export.yearInSport}>
+<ExportCardBase
+	{theme}
+	{displayName}
+	{yearSoFar}
+	variant="summary"
+	title={i18n.m.export.yearInSport}
+>
 	{#snippet headerAside()}
 		{#if !centeredAvatar}{@render avatar()}{/if}
 	{/snippet}
@@ -132,13 +137,13 @@
 		<p class="card-label mb-3 text-[var(--color-text-muted)]">{i18n.m.common.dayByDay}</p>
 		<YearLane
 			variant="export"
-			theme={exportSettings.theme}
-			activities={yearData.activities}
-			highlights={highlightsStore.highlights}
-			records={recordActivities(yearData.records)}
+			{theme}
+			{activities}
+			{highlights}
+			{records}
 			year={TARGET_YEAR}
-			elapsedDays={yearData.daysCounted}
-			yearSoFar={yearData.yearSoFar}
+			elapsedDays={daysCounted}
+			{yearSoFar}
 		/>
 	</section>
 

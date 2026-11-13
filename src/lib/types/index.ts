@@ -219,6 +219,16 @@ export interface SummaryCardSettings {
 	breakdownMetric: BreakdownMetric;
 }
 
+export interface SummaryCardModel {
+	centeredAvatar: boolean;
+	topSport: SportBreakdown | undefined;
+	totals: import('#lib/utils/totals.js').TotalStat[];
+	hero: import('#lib/utils/totals.js').TotalStat | undefined;
+	supporting: import('#lib/utils/totals.js').TotalStat[];
+	fitChars: number;
+	records: Activity[];
+}
+
 export interface BreakdownCardData {
 	stats: YearStats | null;
 	breakdown: SportBreakdown[] | null;
@@ -227,6 +237,13 @@ export interface BreakdownCardData {
 export interface BreakdownCardSettings {
 	theme: Theme;
 	breakdownMetric: BreakdownMetric;
+}
+
+export interface BreakdownCardModel {
+	topSports: SportBreakdown[];
+	colors: import('#lib/utils/breakdown.js').SportColors;
+	activeDays: number;
+	longestStreak: number;
 }
 
 export type AppStatus = 'idle' | 'parsing' | 'ready' | 'error';

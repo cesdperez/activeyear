@@ -2,8 +2,10 @@ import type {
 	BreakdownCardData,
 	BreakdownCardSettings,
 	Locale,
+	BreakdownCardModel,
 	SummaryCardData,
-	SummaryCardSettings
+	SummaryCardSettings,
+	SummaryCardModel
 } from '#lib/types/index.js';
 import { CENTERED_AVATAR_THEMES } from '#lib/constants/themes.js';
 import { rankSports, selectTopSports, sportColorsFor } from '#lib/utils/breakdown.js';
@@ -15,7 +17,7 @@ export function summaryCardModel(
 	data: SummaryCardData,
 	settings: SummaryCardSettings,
 	locale: Locale
-) {
+): SummaryCardModel {
 	const centeredAvatar = CENTERED_AVATAR_THEMES.includes(settings.theme);
 	const topSport = rankSports(data.breakdown, settings.breakdownMetric)[0];
 	const totals = data.stats ? totalStats(locale, data.stats, settings.unit) : [];
@@ -35,7 +37,10 @@ export function summaryCardModel(
 	};
 }
 
-export function breakdownCardModel(data: BreakdownCardData, settings: BreakdownCardSettings) {
+export function breakdownCardModel(
+	data: BreakdownCardData,
+	settings: BreakdownCardSettings
+): BreakdownCardModel {
 	const topSports = selectTopSports(data.breakdown ?? [], settings.breakdownMetric);
 	return {
 		topSports,

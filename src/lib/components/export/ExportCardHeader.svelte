@@ -1,19 +1,25 @@
 <script lang="ts">
+	import type { Theme } from '#lib/types/index.js';
 	import type { Snippet } from 'svelte';
-	import { yearData } from '#lib/stores/yearData.svelte.js';
-	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { nameFontSize } from '#lib/utils/export.js';
 	import Logotype from '#lib/components/Logotype.svelte';
 	import LightmileWordmark from './LightmileWordmark.svelte';
 
-	let { title, userName, aside }: { title: string; userName: string; aside?: Snippet } = $props();
+	let {
+		title,
+		userName,
+		aside,
+		theme,
+		yearSoFar
+	}: { title: string; userName: string; aside?: Snippet; theme: Theme; yearSoFar: boolean } =
+		$props();
 </script>
 
 <header class="mb-[56px]">
 	<div class="flex items-center justify-between gap-10">
-		{#if exportSettings.theme === 'lightmile'}
+		{#if theme === 'lightmile'}
 			<div class="flex shrink-0 items-center gap-4 whitespace-nowrap">
 				<Logotype class="text-[64px]" />
 				<span class="text-[40px] font-normal text-[var(--color-text-muted)]">×</span>
@@ -22,8 +28,8 @@
 		{:else}
 			<Logotype class="text-[64px]" />
 		{/if}
-		<p class:lightmile-season={exportSettings.theme === 'lightmile'} class="season card-label">
-			{(yearData.yearSoFar ? i18n.m.export.seasonSoFar : i18n.m.export.season)(TARGET_YEAR)}
+		<p class:lightmile-season={theme === 'lightmile'} class="season card-label">
+			{(yearSoFar ? i18n.m.export.seasonSoFar : i18n.m.export.season)(TARGET_YEAR)}
 		</p>
 	</div>
 	<div class="mt-12 flex items-end justify-between gap-10">
