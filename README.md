@@ -18,9 +18,9 @@
 
 ## 📖 Overview
 
-**ActiveYear** ([activeyear.app](https://activeyear.app)) is a web tool that takes your Garmin activity export CSV and generates beautiful, social-media-ready stats cards for your year in sport.
+**ActiveYear** ([activeyear.app](https://activeyear.app)) is a web tool that takes your Garmin Connect or Strava activity export and generates beautiful, social-media-ready stats cards for your year in sport.
 
-Whether you're a runner, cyclist, or multi-sport athlete, visualize your hard work with themes like **Neon**, **Minimalist**, and **Retro**.
+Whether you're a runner, cyclist, or multi-sport athlete, visualize your hard work with six card themes, including **Neon**, **Minimal**, and **Retro**.
 
 ## ✨ Features
 
@@ -34,15 +34,15 @@ Whether you're a runner, cyclist, or multi-sport athlete, visualize your hard wo
 
 ## 🚀 How to Use
 
-1. **Export your Data (Garmin)**:
+1. **Export your Data (Garmin)**, or upload `activities.csv` from your Strava account export:
    - Go to [Garmin Connect](https://connect.garmin.com) -> **Activities** -> **All Activities**.
    - Filter by the year you want to review.
    - **Important**: Scroll down until all activities are loaded in the table.
    - Click the "Export CSV" icon (top right).
-2. **Upload**: Drag & drop your `Activities.csv` file into ActiveYear.
+2. **Upload**: Drag & drop the CSV into ActiveYear.
    - If the file has no activities for the year, ActiveYear says which years it covers, or how many rows it could not read and why. Rows it skips are counted under the dashboard heading.
-3. **Customize**: Pick your theme, adjust your name, and toggle stats.
-4. **Export**: Download your personalized PNG and share!
+3. **Customize**: Pick your theme, units, headline stat, name and photo.
+4. **Export**: Download your three PNG cards and share!
 
 ## 💻 Development
 
