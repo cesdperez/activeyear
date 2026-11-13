@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { track } from '#lib/analytics/track.js';
+	import { KOFI_URL } from '#lib/constants/site.js';
 	import { faqItems } from '#lib/data/faq.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { faqPageSchema } from '#lib/utils/structuredData.js';
@@ -14,10 +16,25 @@
 	<dl
 		class="divide-y divide-[var(--color-border)] border-y border-[var(--color-border)] text-sm text-pretty"
 	>
-		{#each faqItems(i18n.locale) as { question, answer } (question)}
+		{#each faqItems(i18n.locale) as { question, answer, tip } (question)}
 			<div class="py-4">
 				<dt class="font-semibold text-[var(--color-text-primary)]">{question}</dt>
-				<dd class="mt-1 leading-relaxed text-[var(--color-text-muted)]">{answer}</dd>
+				<dd class="mt-1 leading-relaxed text-[var(--color-text-muted)]">
+					{answer}
+					{#if tip}
+						{tip.text}
+						<!-- eslint-disable svelte/no-navigation-without-resolve -- external site, not an app route -->
+						<a
+							href={KOFI_URL}
+							target="_blank"
+							rel="noopener"
+							onclick={() => track('support_clicked', 'faq')}
+							class="underline decoration-[var(--color-border)] underline-offset-4 hover:text-[var(--color-text-primary)] hover:decoration-[var(--color-accent)]"
+							>{tip.label}<span class="sr-only"> {i18n.m.dashboard.opensKofi}</span></a
+						>.
+						<!-- eslint-enable svelte/no-navigation-without-resolve -->
+					{/if}
+				</dd>
 			</div>
 		{/each}
 	</dl>

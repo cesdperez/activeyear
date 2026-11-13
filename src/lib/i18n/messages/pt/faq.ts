@@ -34,7 +34,11 @@ export const faq: typeof en = {
 		},
 		{
 			question: 'É grátis?',
-			answer: 'Sim. Sem cadastro nem anúncios, e o código é aberto no GitHub.'
+			answer: 'Sim. Sem cadastro nem anúncios, e o código é aberto no GitHub.',
+			tip: {
+				text: 'Se você gosta do app, pode deixar uma gorjeta:',
+				label: 'me paga um gel no Ko-fi'
+			}
 		}
 	],
 	garminSteps: [

@@ -149,6 +149,7 @@ export type UnusableFileError =
 export interface FaqItem {
 	question: string;
 	answer: string;
+	tip?: { text: string; label: string };
 }
 
 export type JsonLdObject = Record<string, unknown>;
