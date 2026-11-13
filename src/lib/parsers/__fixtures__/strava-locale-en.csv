@@ -1,0 +1,6 @@
+Activity Date,Activity Name,Activity Type,Distance,Moving Time,Distance,Elevation Gain,Calories
+"Aug 2, 2026, 12:20:32 PM",Activity 1,Run,9.75,100,9750.0,10,100
+"Aug 3, 2026, 12:20:32 PM",Activity 2,Ride,7.28,200,10750.0,20,150
+"Aug 4, 2026, 12:20:32 PM",Activity 3,Walk,3.14,300,11750.0,30,200
+"Aug 5, 2026, 12:20:32 PM",Activity 4,Unknown,4.56,400,12750.0,40,250
+"Aug 6, 2025, 12:20:32 PM",Activity 5,Run,5.67,500,13750.0,50,300

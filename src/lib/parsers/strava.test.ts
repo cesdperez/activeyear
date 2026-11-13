@@ -171,3 +171,76 @@ describe('Strava sport distances', () => {
 		]);
 	});
 });
+
+function oneRowCsv(header: string, date: string): string {
+	const columns = header.split(',');
+	const dateIndex = columns.findIndex((column) =>
+		/^(Fecha de la actividad|Date de l'activité|Aktivitätsdatum|Data dell’attività|Datum van activiteit)$/.test(
+			column
+		)
+	);
+	const typeIndex = columns.findIndex((column) =>
+		/^(Tipo de actividad|Type d'activité|Aktivitätsart|Tipo attività|Activiteitstype)$/.test(column)
+	);
+	const values = columns.map(() => '');
+	values[dateIndex] = `"${date}"`;
+	values[typeIndex] = 'Unknown';
+	return `${header}\n${values.join(',')}`;
+}
+
+describe('localized Strava exports', () => {
+	it.each(['es', 'fr', 'de', 'it'])('matches English totals for %s', (locale) => {
+		const english = stravaParser.parse(loadFixture('strava-locale-en.csv'), 2026);
+		const localized = stravaParser.parse(loadFixture(`strava-locale-${locale}.csv`), 2026);
+		expect(localized.errors).toEqual([]);
+		expect(localized.activities).toEqual(english.activities);
+	});
+	it('parses Dutch activities without elevation or calories headers', () => {
+		const result = stravaParser.parse(loadFixture('strava-locale-nl.csv'), 2026);
+		expect(result.errors).toEqual([]);
+		expect(result.yearsInFile).toEqual([2025, 2026]);
+		expect(
+			result.activities.map(({ type, distance, duration, elevation, calories }) => [
+				type,
+				distance,
+				duration,
+				elevation,
+				calories
+			])
+		).toEqual([
+			['running', 9.75, 100, 0, 0],
+			['cycling', 10.75, 200, 0, 0],
+			['walking', 11.75, 300, 0, 0],
+			['other', 12.75, 400, 0, 0]
+		]);
+	});
+	it('parses Portuguese dates and unknown activity types', () => {
+		const csv =
+			'Data da atividade,Nome da atividade,Tipo de atividade,Tempo em movimento,Distância\n"2 de mar. de 2026, 06:34:08",Activity,Unknown,100,1450';
+		const result = stravaParser.parse(csv, 2026);
+		expect(result.errors).toEqual([]);
+		expect(result.activities[0].date.toISOString()).toBe('2026-03-02T06:34:08.000Z');
+		expect(result.activities[0].type).toBe('other');
+	});
+
+	it.each([
+		['es', '2 ago 2026, 12:20:32\u202fp.m.', '2026-08-02T12:20:32.000Z'],
+		['es', '1 ago 2026, 12:53:54\u202fa.m.', '2026-08-01T00:53:54.000Z'],
+		['es', '9 sept. 2018 17:26:30', '2018-09-09T17:26:30.000Z'],
+		['fr', '9 juin 2026, 15:13:37', '2026-06-09T15:13:37.000Z'],
+		['fr', '31 mai 2026, 08:47:48', '2026-05-31T08:47:48.000Z'],
+		['de', '02.04.2024, 14:05:15', '2024-04-02T14:05:15.000Z'],
+		['it', '28 apr 2018, 19:39:53', '2018-04-28T19:39:53.000Z'],
+		['it', '08 mag 2018, 16:07:41', '2018-05-08T16:07:41.000Z'],
+		['nl', '9 mei 2026, 00:03:01', '2026-05-09T00:03:01.000Z'],
+		['es', '30 feb 2026, 08:00:00', null]
+	])('parses %s date %s', (locale, date, expected) => {
+		const header = loadFixture(`strava-locale-${locale}.csv`).split('\n')[0];
+		const parsed = stravaParser.parse(
+			oneRowCsv(header, date),
+			Number(expected?.slice(0, 4) ?? 2026)
+		);
+		if (expected) expect(parsed.activities[0]?.date.toISOString()).toBe(expected);
+		else expect(parsed.errors[0]?.type).toBe('invalid-date');
+	});
+});
