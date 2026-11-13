@@ -38,6 +38,10 @@
 	}
 </script>
 
+{#snippet empty()}<span aria-hidden="true">–</span><span class="sr-only"
+		>{i18n.m.dashboard.noData}</span
+	>{/snippet}
+
 <div class="mb-24">
 	<button
 		type="button"
@@ -65,17 +69,17 @@
 							<div class="quarter">
 								<h4 class="stat-label">{i18n.m.dashboard.quarter(quarter.quarter)}</h4>
 								{#if quarter.count}
-									<p class="stat-value mt-1 text-3xl leading-none wrap-anywhere">
+									<p class="stat-value mt-1 text-3xl leading-none whitespace-nowrap">
 										{quarter.distance > 0
 											? formatDistance(i18n.locale, quarter.distance, unit)
 											: formatDuration(i18n.locale, quarter.duration)}
 									</p>
 									<p class="mt-2 text-sm text-[var(--color-text-muted)]">
 										{formatCount(i18n.locale, quarter.count)}
-										{i18n.m.common.nouns.activity(quarter.count)}, {formatDuration(
-											i18n.locale,
-											quarter.duration
-										)}
+										{i18n.m.common.nouns.activity(quarter.count)},
+										<span class="whitespace-nowrap"
+											>{formatDuration(i18n.locale, quarter.duration)}</span
+										>
 									</p>
 								{:else}
 									<p class="stat-value mt-1 text-3xl leading-none text-[var(--color-text-dim)]">
@@ -129,8 +133,19 @@
 								{#each weekdaysLabels as day, i (day)}
 									<tr class:busiest={i === busiestWeekday && weekdays.duration[i] > 0}>
 										<th scope="row">{day}</th>
-										<td>{formatDistance(i18n.locale, weekdays.distance[i], unit)}</td>
-										<td>{formatDuration(i18n.locale, weekdays.duration[i])}</td>
+										<td>
+											{#if weekdays.distance[i] > 0}{formatDistance(
+													i18n.locale,
+													weekdays.distance[i],
+													unit
+												)}{:else}{@render empty()}{/if}
+										</td>
+										<td>
+											{#if weekdays.duration[i] > 0}{formatDuration(
+													i18n.locale,
+													weekdays.duration[i]
+												)}{:else}{@render empty()}{/if}
+										</td>
 									</tr>
 								{/each}
 							</tbody>
@@ -150,11 +165,13 @@
 								{#each averages as average (average.type)}
 									<tr>
 										<th scope="row">{i18n.m.common.sports[average.type]}</th>
-										<td
-											>{average.averageDistance > 0
-												? formatDistance(i18n.locale, average.averageDistance, unit)
-												: ''}</td
-										>
+										<td>
+											{#if average.averageDistance > 0}{formatDistance(
+													i18n.locale,
+													average.averageDistance,
+													unit
+												)}{:else}{@render empty()}{/if}
+										</td>
 										<td>{formatDuration(i18n.locale, average.averageDuration)}</td>
 									</tr>
 								{/each}

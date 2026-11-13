@@ -78,6 +78,7 @@ export const dashboard: typeof en = {
 	moreStats: 'Meer statistieken',
 	quarters: 'Kwartalen',
 	rest: 'Rust',
+	noData: 'Geen gegevens',
 	noActivities: 'Geen activiteiten',
 	longestBreak: 'Langste pauze',
 	day: 'dag',

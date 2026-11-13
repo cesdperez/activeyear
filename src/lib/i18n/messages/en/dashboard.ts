@@ -79,6 +79,7 @@ export const dashboard = {
 	moreStats: 'More stats',
 	quarters: 'Quarters',
 	rest: 'Rest',
+	noData: 'No data',
 	noActivities: 'No activities',
 	longestBreak: 'Longest break',
 	day: 'day',
