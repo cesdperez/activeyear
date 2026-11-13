@@ -1,3 +1,4 @@
+import { plural } from '#lib/i18n/plural.js';
 export const upload = {
 	garminUnits: 'Units in your Garmin account',
 	metric: 'Metric',
@@ -8,29 +9,36 @@ export const upload = {
 	privacy: 'Your data never leaves this browser',
 	retry: 'Click to try again',
 	analyzing: 'Analyzing activities...',
-	invalidExtension: 'Please upload a CSV or saved .json file',
+	invalidExtension: 'Please upload a CSV or saved .json file.',
+	zipArchive:
+		'This is a .zip file. Unzip your Strava export and upload its activities.csv, or upload the Activities CSV from Garmin Connect.',
 	unrecognised:
 		"We couldn't recognise this file. Upload the Activities CSV from Garmin Connect or activities.csv from your Strava account export in English, Spanish, German, French, Italian, Dutch or Portuguese.",
 	stravaUnsupportedLanguage:
 		"This Strava export is in a language we can't read yet. Set Strava to English, Spanish, German, French, Italian, Dutch or Portuguese, request a new archive, and upload its activities.csv.",
-	unknown: 'Failed to parse file',
+	unknown: 'Failed to parse file.',
 	'invalid-date': 'the date is not valid',
 	'malformed-quotes': 'the quote marks do not match',
 	'missing-column': 'the activity type or date is missing',
-	singleRow: (row: number, reason: string) => `Row ${row} could not be read: ${reason}`,
+	singleRow: (row: number, reason: string) => `Row ${row} could not be read: ${reason}.`,
 	multipleRows: (count: string, row: number, reason: string) =>
-		`${count} rows could not be read, e.g. row ${row}: ${reason}`,
-	noActivities: (year: number) => `No ${year} activities found in the file`,
+		`${count} rows could not be read, e.g. row ${row}: ${reason}.`,
+	noActivities: (year: number) => `No ${year} activities found in the file.`,
 	years: (range: string, year: number) =>
-		`This file has activities from ${range}, none from ${year}`,
+		`This file has activities from ${range}, none from ${year}.`,
+	exportAgain: (year: number) => `Export your activities again to include ${year}.`,
 	range: (first: number, last: number) => `${first} to ${last}`,
-	skipped: (count: string, noun: string) => `Skipped ${count} ${noun} that could not be read`,
-	one: 'row',
-	other: 'rows',
-	unsupportedVersion: 'This saved year is from an older or newer version of ActiveYear',
+	skipped: (count: number, formatted: string) =>
+		plural('en', count, {
+			one: `Skipped ${formatted} row that could not be read`,
+			other: `Skipped ${formatted} rows that could not be read`
+		}),
+	unsupportedVersion: 'This saved year is from an older or newer version of ActiveYear.',
 	wrongYear: (year: number, expected: number) =>
-		`This file holds your ${year} year, not ${expected}`,
-	invalidSaved: 'This file is not a saved ActiveYear year',
+		`This file holds your ${year} year, not ${expected}. Upload your ${expected} export instead.`,
+	invalidSaved: 'This file is not a saved ActiveYear year.',
+	garminDataExport:
+		'This file is from a Garmin data export. Upload the Activities CSV from Garmin Connect instead.',
 	loading: [
 		'Warming up the calves...',
 		'Inflating the tires...',

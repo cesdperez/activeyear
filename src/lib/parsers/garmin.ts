@@ -211,17 +211,35 @@ function isClockTime(hours: number, minutes: number, seconds: number): boolean {
 	return hours <= 23 && minutes <= 59 && seconds <= 59;
 }
 
+type DateOrder = 'day-first' | 'month-first';
+
+const SPREADSHEET_DATE = /^(\d{1,2})([/.])(\d{1,2})\2(\d{4}) (\d{1,2}):(\d{2})(?::(\d{2}))?$/;
+
+// Spreadsheet dates keep one order per file, so a single part above 12 settles it for every row.
+function detectDateOrder(dates: string[]): DateOrder {
+	for (const date of dates) {
+		const match = SPREADSHEET_DATE.exec(date.trim());
+		if (!match) continue;
+		if (Number(match[1]) > 12) return 'day-first';
+		if (Number(match[3]) > 12) return 'month-first';
+	}
+	return 'day-first';
+}
+
 /**
  * Parse Garmin or spreadsheet dates, returning null for impossible dates.
  */
-export function parseGarminDate(dateStr: string): Date | null {
+export function parseGarminDate(dateStr: string, order: DateOrder = 'day-first'): Date | null {
 	const input = dateStr.trim();
 	const iso = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(input);
-	const local = /^(\d{1,2})([/.])(\d{1,2})\2(\d{4}) (\d{1,2}):(\d{2})(?::(\d{2}))?$/.exec(input);
+	const local = SPREADSHEET_DATE.exec(input);
 	if (!iso && !local) return null;
+	const [monthPart, dayPart] = order === 'day-first' ? [3, 1] : [1, 3];
 	const [year, month, day, hours, minutes, seconds] = iso
 		? iso.slice(1).map(Number)
-		: [local![4], local![3], local![1], local![5], local![6], local![7] ?? '0'].map(Number);
+		: [local![4], local![monthPart], local![dayPart], local![5], local![6], local![7] ?? '0'].map(
+				Number
+			);
 	if (!isCalendarDate(year, month, day) || !isClockTime(hours, minutes, seconds)) return null;
 	return new Date(year, month - 1, day, hours, minutes, seconds);
 }
@@ -249,6 +267,12 @@ function deduplicateHeaders(csvContent: string): string {
 
 	lines[headerIndex] = Papa.unparse([deduplicatedHeaders]);
 	return lines.join('\n');
+}
+
+// Moving time drops the rests between sets and pool lengths, which are part of those sessions.
+function readDuration(row: GarminRawActivity, includeRests: boolean): number {
+	const timer = parseGarminTime(row['Total Time'] || row['Time']);
+	return (includeRests ? timer : 0) || parseGarminTime(row['Moving Time']) || timer;
 }
 
 function readActivity(
@@ -281,8 +305,7 @@ function readActivity(
 		type,
 		title: row['Title'] || '',
 		distance: distance * distanceFactor,
-		duration:
-			parseGarminTime(row['Moving Time']) || parseGarminTime(row['Total Time'] || row['Time']),
+		duration: readDuration(row, distance === 0 || activityType === 'Pool Swim'),
 		calories: parseGarminCalories(row['Calories']),
 		elevation: Math.round(
 			parseGarminElevation(row['Total Ascent']) * (imperial ? FEET_TO_METERS : 1)
@@ -324,6 +347,8 @@ export function parseGarminCsv(
 	const content = flattened ?? csvContent;
 	const parsed =
 		flattened === null ? firstPass : Papa.parse<string[]>(flattened, { skipEmptyLines: true });
+	const dateColumn = (parsed.data[0] ?? []).map((cell) => cell.trim()).indexOf('Date');
+	const dateOrder = detectDateOrder(parsed.data.slice(1).map((row) => row[dateColumn] ?? ''));
 	const repaired = hasMalformedRows(parsed)
 		? repairMalformedQuotes(content)
 		: { content, errors: [] };
@@ -335,7 +360,7 @@ export function parseGarminCsv(
 		readDate: (row) => row.Date,
 		hasRequired: (row) => Boolean(row['Activity Type'] && row.Date),
 		missingMessage: 'Missing required column (Activity Type or Date)',
-		parseDate: parseGarminDate,
+		parseDate: (value) => parseGarminDate(value, dateOrder),
 		readActivity: (row, date) => readActivity(row, date, locale?.types ?? {}, options),
 		initialErrors: repaired.errors
 	});

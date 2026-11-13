@@ -1,3 +1,4 @@
+import { plural } from '#lib/i18n/plural.js';
 import type { upload as en } from '../en/upload.js';
 export const upload: typeof en = {
 	garminUnits: 'Eenheden in je Garmin-account',
@@ -9,28 +10,35 @@ export const upload: typeof en = {
 	privacy: 'Je gegevens verlaten deze browser nooit',
 	retry: 'Klik om opnieuw te proberen',
 	analyzing: 'Activiteiten analyseren...',
-	invalidExtension: 'Upload een CSV of opgeslagen .json-bestand',
+	invalidExtension: 'Upload een CSV of opgeslagen .json-bestand.',
+	zipArchive:
+		'Dit is een .zip-bestand. Pak je Strava-export uit en upload de activities.csv daaruit, of upload de activiteiten-CSV van Garmin Connect.',
 	unrecognised:
 		'Dit bestand is niet herkend. Upload de activiteiten-CSV van Garmin Connect of activities.csv uit je Strava-export in het Engels, Spaans, Duits, Frans, Italiaans, Nederlands of Portugees.',
 	stravaUnsupportedLanguage:
 		'Deze Strava-export is in een taal die we nog niet kunnen lezen. Stel Strava in op Engels, Spaans, Duits, Frans, Italiaans, Nederlands of Portugees, vraag een nieuw archief aan en upload de activities.csv daaruit.',
-	unknown: 'Bestand kon niet worden verwerkt',
+	unknown: 'Bestand kon niet worden verwerkt.',
 	'invalid-date': 'de datum is ongeldig',
 	'malformed-quotes': 'de aanhalingstekens komen niet overeen',
 	'missing-column': 'het activiteitstype of de datum ontbreekt',
-	singleRow: (row: number, reason: string) => `Rij ${row} kon niet worden gelezen: ${reason}`,
+	singleRow: (row: number, reason: string) => `Rij ${row} kon niet worden gelezen: ${reason}.`,
 	multipleRows: (count: string, row: number, reason: string) =>
-		`${count} rijen konden niet worden gelezen, bijvoorbeeld rij ${row}: ${reason}`,
-	noActivities: (year: number) => `Geen activiteiten uit ${year} gevonden in het bestand`,
+		`${count} rijen konden niet worden gelezen, bijvoorbeeld rij ${row}: ${reason}.`,
+	noActivities: (year: number) => `Geen activiteiten uit ${year} gevonden in het bestand.`,
 	years: (range: string, year: number) =>
-		`Dit bestand bevat activiteiten van ${range}, geen uit ${year}`,
+		`Dit bestand bevat activiteiten van ${range}, geen uit ${year}.`,
+	exportAgain: (year: number) => `Exporteer je activiteiten opnieuw zodat ${year} erin staat.`,
 	range: (first: number, last: number) => `${first} tot ${last}`,
-	skipped: (count: string, noun: string) => `${count} onleesbare ${noun} overgeslagen`,
-	one: 'rij',
-	other: 'rijen',
-	unsupportedVersion: 'Dit opgeslagen jaar komt uit een andere versie van ActiveYear',
+	skipped: (count: number, formatted: string) =>
+		plural('nl', count, {
+			one: `${formatted} onleesbare rij overgeslagen`,
+			other: `${formatted} onleesbare rijen overgeslagen`
+		}),
+	unsupportedVersion: 'Dit opgeslagen jaar komt uit een andere versie van ActiveYear.',
 	wrongYear: (year: number, expected: number) =>
-		`Dit bestand bevat je jaar ${year}, niet ${expected}`,
-	invalidSaved: 'Dit bestand is geen opgeslagen ActiveYear-jaar',
+		`Dit bestand bevat je jaar ${year}, niet ${expected}. Upload je export van ${expected}.`,
+	invalidSaved: 'Dit bestand is geen opgeslagen ActiveYear-jaar.',
+	garminDataExport:
+		'Dit bestand komt uit een Garmin-gegevensexport. Upload in plaats daarvan de activiteiten-CSV van Garmin Connect.',
 	loading: ['Kuiten opwarmen...']
 };

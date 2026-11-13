@@ -141,6 +141,14 @@ describe('Strava parser', () => {
 				.type
 		).toBe(expected);
 	});
+	it('falls back to elapsed time when an English export has no moving time', () => {
+		const csv =
+			'Activity Date,Activity Name,Activity Type,Elapsed Time,Distance,Elapsed Time,Distance\n"Oct 27, 2026, 7:32:12 PM",Lift,Weight Training,551,0,551.0,0.0';
+		expect(stravaParser.detect(csv)).toBe(true);
+		const result = parseActivityCsv(csv, 2026);
+		expect(result.errors).toEqual([]);
+		expect(result.activities[0]).toMatchObject({ type: 'strength', duration: 551 });
+	});
 	it('detects English and localized Strava exports but not Garmin', () => {
 		expect(stravaParser.detect(header)).toBe(true);
 		expect(stravaParser.detect('Activity Type,Date,Distance\nRunning,2026-01-01,1')).toBe(false);
@@ -234,6 +242,27 @@ describe('localized Strava exports', () => {
 			['walking', 11.75, 300, 0, 0],
 			['other', 12.75, 400, 0, 0]
 		]);
+	});
+	it.each([
+		[
+			'Aktivitätsdatum,Name der Aktivität,Aktivitätsart,Bewegungszeit,Distanz',
+			'"02.03.2026, 06:34:08"',
+			'Krafttraining'
+		],
+		[
+			'Datum van activiteit,Naam activiteit,Activiteitstype,Beweegtijd,Afstand',
+			'"2 mrt 2026, 06:34:08"',
+			'Krachttraining'
+		],
+		[
+			'Data da atividade,Nome da atividade,Tipo de atividade,Tempo em movimento,Distância',
+			'"2 de mar. de 2026, 06:34:08"',
+			'Musculação'
+		]
+	])('maps localized weight training under %s', (header, date, type) => {
+		const result = stravaParser.parse(`${header}\n${date},Lift,${type},100,0`, 2026);
+		expect(result.errors).toEqual([]);
+		expect(result.activities[0].type).toBe('strength');
 	});
 	it('parses Portuguese dates and unknown activity types', () => {
 		const csv =

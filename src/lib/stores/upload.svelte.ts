@@ -8,16 +8,19 @@ import type {
 	GarminUnits
 } from '#lib/types/index.js';
 import { activityCountBucket, sportsCountBucket } from '#lib/utils/events.js';
-import { hasYearFileExtension, loadYearFile } from '#lib/utils/yearFile.js';
+import { isSavedYearFileName, loadYearFile, unsupportedFileError } from '#lib/utils/yearFile.js';
 import { describeSkippedRows } from '#lib/utils/uploadErrors.js';
+import { decodeText } from '#lib/utils/decodeText.js';
 import { TARGET_YEAR } from '#lib/constants/time.js';
 import { demoActivities } from '#lib/data/demo.js';
 import { yearData } from './yearData.svelte.js';
 import { highlightsStore } from './highlights.svelte.js';
 import { exportSettings } from './exportSettings.svelte.js';
+import { browser } from '$app/env';
+import { unitsForLanguages } from '#lib/utils/regionUnits.js';
 
 class UploadStore {
-	garminUnits = $state<GarminUnits>('metric');
+	garminUnits = $state<GarminUnits>(browser ? unitsForLanguages(navigator.languages) : 'metric');
 	#status = $state<AppStatus>('idle');
 	#error = $state<UploadError | null>(null);
 	#parseErrors = $state<ParseError[]>([]);
@@ -51,8 +54,9 @@ class UploadStore {
 	}
 
 	async processFile(file: File) {
-		if (!hasYearFileExtension(file.name)) {
-			this.#fail('unsupported-file-type', { type: 'invalid-extension' });
+		const unsupported = unsupportedFileError(file.name);
+		if (unsupported) {
+			this.#fail('unsupported-file-type', unsupported);
 			return;
 		}
 
@@ -60,7 +64,7 @@ class UploadStore {
 		this.#error = null;
 
 		try {
-			const content = await file.text();
+			const content = decodeText(await file.arrayBuffer());
 			const result = loadYearFile(file.name, content, TARGET_YEAR, {
 				garminUnits: this.garminUnits
 			});
@@ -68,6 +72,9 @@ class UploadStore {
 				this.#fail(result.event, result.error, result.parseErrors);
 				return;
 			}
+			// The Metric/Imperial choice describes a Garmin CSV, not a saved year.
+			if (result.source === 'garmin' && !isSavedYearFileName(file.name))
+				exportSettings.unit = this.garminUnits === 'imperial' ? 'miles' : 'km';
 			this.#load({
 				activities: result.activities,
 				source: result.source,

@@ -120,6 +120,50 @@ describe('localized Garmin exports', () => {
 		});
 		expect(parseGarminDate('31/02/2025 12:00')).toBeNull();
 	});
+	it('reads US spreadsheet dates month first when a day passes 12', () => {
+		const csv =
+			'Activity Type,Date,Distance\nRunning,11/12/2026 21:12,5\nRunning,11/5/2026 10:22,5\nRunning,10/27/2026 20:32,5';
+		const result = parseGarminCsv(csv, 2026);
+		expect(result.errors).toEqual([]);
+		expect(result.activities.map(({ date }) => date)).toEqual([
+			new Date(2026, 10, 12, 21, 12),
+			new Date(2026, 10, 5, 10, 22),
+			new Date(2026, 9, 27, 20, 32)
+		]);
+	});
+	it('reads spreadsheet dates day first when a day passes 12 or none tells', () => {
+		const dayFirst = parseGarminCsv(
+			'Activity Type,Date,Distance\nRunning,5/11/2026 10:22,5\nRunning,27/10/2026 20:32,5',
+			2026
+		);
+		expect(dayFirst.activities[0].date).toEqual(new Date(2026, 10, 5, 10, 22));
+		const ambiguous = parseGarminCsv(
+			'Activity Type,Date,Distance\nRunning,5/11/2026 10:22,5',
+			2026
+		);
+		expect(ambiguous.activities[0].date).toEqual(new Date(2026, 10, 5, 10, 22));
+	});
+	it.each([
+		['Tipo de actividad,Fecha,Distancia', 'Ciclismo en carretera', 'cycling'],
+		['Tipo de actividad,Fecha,Distancia', 'Ciclismo de montaña', 'cycling'],
+		['Tipo de actividad,Fecha,Distancia', 'Esquí de fondo', 'winter'],
+		['Aktivitätstyp,Datum,Distanz', 'Rennradfahren', 'cycling'],
+		['Aktivitätstyp,Datum,Distanz', 'Mountainbiken', 'cycling'],
+		["Type d'activité,Date,Distance", 'Vélo de route', 'cycling'],
+		["Type d'activité,Date,Distance", 'VTT', 'cycling'],
+		["Type d'activité,Date,Distance", 'Ski de fond', 'winter'],
+		['Tipo di attività,Data,Distanza', 'Mountain bike', 'cycling'],
+		['Tipo di attività,Data,Distanza', 'Ciclismo indoor', 'cycling'],
+		['Tipo di attività,Data,Distanza', 'Sci di fondo', 'winter'],
+		['Activiteittype,Datum,Afstand', 'Mountainbiken', 'cycling'],
+		['Activiteittype,Datum,Afstand', 'Langlaufen', 'winter'],
+		['Tipo de atividade,Data,Distância', 'Ciclismo de estrada', 'cycling'],
+		['Tipo de atividade,Data,Distância', 'Mountain bike', 'cycling'],
+		['Tipo de atividade,Data,Distância', 'Corrida em trilha', 'running']
+	])('maps %s type %s', (header, type, expected) => {
+		const result = parseGarminCsv(`${header}\n${type},2025-01-01 12:00:00,10`, 2025);
+		expect(result.activities[0].type).toBe(expected);
+	});
 	it('does not detect localized Strava headers', () => {
 		expect(
 			garminParser.detect(

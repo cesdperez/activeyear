@@ -72,6 +72,16 @@ describe('saved year', () => {
 			'2025'
 		);
 	});
+	it('recognises a Garmin data export JSON', () => {
+		const json = JSON.stringify([{ summarizedActivitiesExport: [{ activityId: 1 }] }]);
+		expect(parseSavedYear(json, 2026)).toEqual({
+			ok: false,
+			error: { type: 'garmin-data-export' }
+		});
+		expect(savedYearErrorMessage({ type: 'garmin-data-export' })).toContain(
+			'Activities CSV from Garmin Connect'
+		);
+	});
 	it.each([
 		{ date: '2025-12-31T23:59:59' },
 		{ date: '2027-01-01T00:00:00' },
@@ -109,9 +119,9 @@ describe('saved year', () => {
 
 it('translates saved-year errors', () => {
 	expect(savedYearErrorMessage({ type: 'invalid-file' }, 'es')).toBe(
-		'Este archivo no es un año guardado de ActiveYear'
+		'Este archivo no es un año guardado de ActiveYear.'
 	);
 	expect(savedYearErrorMessage({ type: 'invalid-file' }, 'de')).toBe(
-		'Diese Datei ist kein gespeichertes ActiveYear-Jahr'
+		'Diese Datei ist kein gespeichertes ActiveYear-Jahr.'
 	);
 });

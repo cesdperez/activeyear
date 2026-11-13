@@ -101,6 +101,7 @@ export type ExportStatus = { type: 'generating' | 'done' };
 
 export type SavedYearError =
 	| { type: 'invalid-file' }
+	| { type: 'garmin-data-export' }
 	| { type: 'unsupported-version'; version: unknown }
 	| { type: 'wrong-year'; year: unknown; expected: number }
 	| { type: 'invalid-activities' };
@@ -110,7 +111,11 @@ export type UploadError =
 	| UnusableFileError
 	| {
 			type:
-				'invalid-extension' | 'unrecognised' | 'strava-unsupported-language' | 'unknown-failure';
+				| 'invalid-extension'
+				| 'zip-archive'
+				| 'unrecognised'
+				| 'strava-unsupported-language'
+				| 'unknown-failure';
 	  };
 
 export type YearFileResult =

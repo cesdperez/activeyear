@@ -36,6 +36,13 @@ describe('upload', () => {
 		expect(track).toHaveBeenCalledExactlyOnceWith('upload_error', 'unsupported-file-type');
 	});
 
+	it('asks to unzip a .zip export', async () => {
+		await uploadStore.processFile(new File(['PK'], 'export_123.zip'));
+
+		expect(uploadStore.error).toEqual({ type: 'zip-archive' });
+		expect(track).toHaveBeenCalledExactlyOnceWith('upload_error', 'unsupported-file-type');
+	});
+
 	it('loads a saved JSON year', async () => {
 		await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
 		const activities = yearData.activities;
@@ -68,7 +75,7 @@ describe('upload', () => {
 		['a non-error rejection', 'not an Error']
 	])('shows %s when reading the file fails', async (_, failure) => {
 		const file = csvFile('');
-		file.text = () => Promise.reject(failure);
+		file.arrayBuffer = () => Promise.reject(failure);
 
 		await uploadStore.processFile(file);
 
@@ -105,6 +112,39 @@ describe('upload', () => {
 		expect(yearData.activities[0].distance).toBeCloseTo(16.09344);
 		uploadStore.reset();
 		expect(uploadStore.garminUnits).toBe('imperial');
+	});
+
+	it('shows miles after an imperial Garmin upload and km after a metric one', async () => {
+		uploadStore.garminUnits = 'imperial';
+		await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
+		expect(exportSettings.unit).toBe('miles');
+
+		uploadStore.reset();
+		uploadStore.garminUnits = 'metric';
+		await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
+		expect(exportSettings.unit).toBe('km');
+	});
+
+	it('keeps the chosen display unit after a saved year loads', async () => {
+		uploadStore.garminUnits = 'imperial';
+		await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
+		const json = yearData.savedYearJson();
+		uploadStore.reset();
+		exportSettings.unit = 'km';
+
+		await uploadStore.processFile(new File([json], 'year.json'));
+
+		expect(exportSettings.unit).toBe('km');
+	});
+
+	it('reads a Windows-1252 export with accented headers', async () => {
+		const csv = `Tipo de actividad,Fecha,Título,Distancia,Calorías,Tiempo\nCarrera,${TARGET_YEAR}-03-01 08:00:00,Run,"10,0",600,00:50:00`;
+		const bytes = Uint8Array.from(csv, (char) => char.charCodeAt(0));
+
+		await uploadStore.processFile(new File([bytes], 'activities.csv'));
+
+		expect(uploadStore.status).toBe('ready');
+		expect(yearData.activities[0]).toMatchObject({ type: 'running', calories: 600 });
 	});
 
 	it('counts the rows left out of a file that loads', async () => {

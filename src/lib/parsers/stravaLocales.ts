@@ -74,7 +74,8 @@ export const STRAVA_LOCALES: StravaLocale[] = [
 			Kanu: 'Canoeing',
 			Schwimmen: 'Swim',
 			Wanderung: 'Hike',
-			Spaziergang: 'Walk'
+			Spaziergang: 'Walk',
+			Krafttraining: 'Weight Training'
 		},
 		months: []
 	},
@@ -99,7 +100,13 @@ export const STRAVA_LOCALES: StravaLocale[] = [
 			Beweegtijd: 'Moving Time',
 			Afstand: 'Distance'
 		},
-		types: { Hardloopsessie: 'Run', Fietsrit: 'Ride', Wandeling: 'Walk', Zwemmen: 'Swim' },
+		types: {
+			Hardloopsessie: 'Run',
+			Fietsrit: 'Ride',
+			Wandeling: 'Walk',
+			Zwemmen: 'Swim',
+			Krachttraining: 'Weight Training'
+		},
 		months: ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']
 	},
 	{
@@ -110,7 +117,14 @@ export const STRAVA_LOCALES: StravaLocale[] = [
 			'Tempo em movimento': 'Moving Time',
 			Distância: 'Distance'
 		},
-		types: { Corrida: 'Run', Caminhada: 'Walk', Pedalada: 'Ride', Natação: 'Swim', Trilha: 'Hike' },
+		types: {
+			Corrida: 'Run',
+			Caminhada: 'Walk',
+			Pedalada: 'Ride',
+			Natação: 'Swim',
+			Trilha: 'Hike',
+			Musculação: 'Weight Training'
+		},
 		months: ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 	}
 ];

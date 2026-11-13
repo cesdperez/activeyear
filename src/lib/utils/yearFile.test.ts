@@ -26,6 +26,17 @@ describe('year file loading', () => {
 		});
 	});
 
+	it.each([
+		['export.zip', 'PK\u0003\u0004'],
+		['activities.csv', 'PK\u0003\u0004\u0014\u0000']
+	])('asks to unzip %s', (name, content) => {
+		expect(loadYearFile(name, content, year)).toEqual({
+			type: 'failed',
+			event: 'unsupported-file-type',
+			error: { type: 'zip-archive' }
+		});
+	});
+
 	it('rejects invalid saved years without parse errors', () => {
 		expect(loadYearFile('year.json', '{', year)).toEqual({
 			type: 'failed',

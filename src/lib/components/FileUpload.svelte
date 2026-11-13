@@ -4,6 +4,7 @@
 	import { uploadStore } from '#lib/stores/upload.svelte.js';
 	import { createHydrated } from '#lib/stores/hydrated.svelte.js';
 	import { UPLOAD_ZONE_ID } from '#lib/constants/dom.js';
+	import { isFileDrag } from './fileDrag.js';
 	import { MIN_UPLOAD_LOADING_MS } from '#lib/constants/time.js';
 	import { UploadSimple, Warning, SpinnerGap, ShieldCheck } from 'phosphor-svelte';
 
@@ -21,10 +22,6 @@
 			return;
 		}
 		isDragOver = true;
-	}
-
-	function isFileDrag(event: DragEvent) {
-		return event.dataTransfer?.types.includes('Files') ?? false;
 	}
 
 	// Without this, a file dropped beside the zone makes the browser open or download it.
@@ -121,7 +118,7 @@
 				aria-hidden="true"
 			/>
 		</span>
-		<span class="mb-2 block text-lg text-[var(--color-text-primary)]"
+		<span class="mb-2 block text-lg text-balance text-[var(--color-text-primary)]"
 			>{uploadStore.error ? uploadErrorMessage(uploadStore.error, i18n.locale) : ''}</span
 		>
 		<span class="block text-sm text-[var(--color-text-dim)]">{i18n.m.upload.retry}</span>

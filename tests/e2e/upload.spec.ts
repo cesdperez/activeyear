@@ -12,7 +12,7 @@ import {
 	uploadSample
 } from './helpers.js';
 
-const WRONG_YEAR_MESSAGE = `This file has activities from ${TARGET_YEAR - 1}, none from ${TARGET_YEAR}`;
+const WRONG_YEAR_MESSAGE = `This file has activities from ${TARGET_YEAR - 1}, none from ${TARGET_YEAR}. Export your activities again to include ${TARGET_YEAR}.`;
 
 async function uploadFile(page: Page, csv: string) {
 	await page.locator('input[type="file"]').setInputFiles({
@@ -35,8 +35,8 @@ type ShownAtWindow = Window & { shownAt?: Record<string, number> };
 // Parsing finishes in milliseconds, too fast to assert on the loading state.
 async function slowFileReads(page: Page) {
 	await page.addInitScript(() => {
-		const read = File.prototype.text;
-		File.prototype.text = function () {
+		const read = File.prototype.arrayBuffer;
+		File.prototype.arrayBuffer = function () {
 			(window as SlowReadWindow).slowedFileRead = true;
 			return new Promise((resolve) => setTimeout(resolve, 1500)).then(() => read.call(this));
 		};
@@ -74,7 +74,44 @@ test.describe('Upload Flow', () => {
 			`Activity Type,Date,Title,Distance\nRunning,${TARGET_YEAR}-03-01 08:00:00,Run,6.21`
 		);
 		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
+		await expect(page.getByTestId('main-stats').getByText('6.2mi')).toBeVisible();
+		await page
+			.getByRole('group', { name: 'Distance unit' })
+			.getByRole('button', { name: 'km' })
+			.click();
 		await expect(page.getByTestId('main-stats').getByText('10.0km')).toBeVisible();
+	});
+
+	test.describe('in a US browser', () => {
+		test.use({ locale: 'en-US' });
+
+		test('starts on Imperial', async ({ page }) => {
+			await gotoUpload(page);
+			const group = page.getByRole('group', { name: 'Units in your Garmin account' });
+			await expect(group.getByRole('button', { name: 'Imperial' })).toHaveAttribute(
+				'aria-pressed',
+				'true'
+			);
+		});
+	});
+
+	test('loads a file dropped on the dashboard', async ({ page }) => {
+		await uploadCsv(page, garminCsv([{ title: 'Morning Run' }]));
+		await expect(page.getByText(/1\s+activity across/)).toBeVisible();
+
+		const cancelled = await page.locator('main').evaluate(
+			(main, csv) => {
+				const dataTransfer = new DataTransfer();
+				dataTransfer.items.add(new File([csv], 'activities.csv', { type: 'text/csv' }));
+				const event = new DragEvent('drop', { dataTransfer, bubbles: true, cancelable: true });
+				main.dispatchEvent(event);
+				return event.defaultPrevented;
+			},
+			garminCsv([{ title: 'Morning Run' }, { title: 'Evening Run' }])
+		);
+
+		expect(cancelled).toBe(true);
+		await expect(page.getByText(/2\s+activities across/)).toBeVisible();
 	});
 
 	test('home page displays upload UI', async ({ page }) => {
@@ -249,7 +286,7 @@ test.describe('Upload Flow', () => {
 		await uploadFile(page, [garminCsv([]), ...rows].join('\n'));
 
 		await expect(page.getByRole('alert')).toHaveText(
-			'3 rows could not be read, e.g. row 2: the date is not valid',
+			'3 rows could not be read, e.g. row 2: the date is not valid.',
 			{ timeout: 10000 }
 		);
 	});

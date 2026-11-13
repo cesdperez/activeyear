@@ -6,7 +6,8 @@ import {
 	unusableFileMessage,
 	uploadErrorMessage
 } from './uploadErrors.js';
-import type { ParseError, ParseResult } from '#lib/types/index.js';
+import type { ParseError, ParseResult, UploadError } from '#lib/types/index.js';
+import { LOCALES } from '#lib/constants/locales.js';
 
 function rowError(type: ParseError['type'], row: number): ParseError {
 	return { type, row, message: '' };
@@ -84,18 +85,18 @@ describe('unusableFileMessage', () => {
 	const skipped = { count: 12, reason: 'invalid-date', exampleRow: 4 } as const;
 
 	it.each([
-		[[2023, 2024, 2025], 'This file has activities from 2023 to 2025, none from 2026'],
-		[[2025], 'This file has activities from 2025, none from 2026'],
-		[[], 'No 2026 activities found in the file']
+		[[2023, 2024, 2025], 'This file has activities from 2023 to 2025, none from 2026.'],
+		[[2025], 'This file has activities from 2025, none from 2026.'],
+		[[], 'No 2026 activities found in the file.']
 	])('describes a file with activities from %j', (yearsInFile, message) => {
 		expect(
 			unusableFileMessage({ type: 'no-activities-in-year', year: 2026, yearsInFile, skipped: null })
-		).toBe(message);
+		).toBe(`${message} Export your activities again to include 2026.`);
 	});
 
 	it('says how many rows failed, why, and where', () => {
 		expect(unusableFileMessage({ type: 'rows-rejected', skipped })).toBe(
-			'12 rows could not be read, e.g. row 4: the date is not valid'
+			'12 rows could not be read, e.g. row 4: the date is not valid.'
 		);
 	});
 
@@ -105,7 +106,7 @@ describe('unusableFileMessage', () => {
 				type: 'rows-rejected',
 				skipped: { count: 1, reason: 'missing-column', exampleRow: 7 }
 			})
-		).toBe('Row 7 could not be read: the activity type or date is missing');
+		).toBe('Row 7 could not be read: the activity type or date is missing.');
 	});
 
 	it('explains rows with unreadable quote marks', () => {
@@ -114,7 +115,7 @@ describe('unusableFileMessage', () => {
 				type: 'rows-rejected',
 				skipped: { count: 2, reason: 'malformed-quotes', exampleRow: 3 }
 			})
-		).toBe('2 rows could not be read, e.g. row 3: the quote marks do not match');
+		).toBe('2 rows could not be read, e.g. row 3: the quote marks do not match.');
 	});
 
 	it('adds the rejected rows after the years', () => {
@@ -126,7 +127,7 @@ describe('unusableFileMessage', () => {
 				skipped
 			})
 		).toBe(
-			'This file has activities from 2025, none from 2026. 12 rows could not be read, e.g. row 4: the date is not valid'
+			'This file has activities from 2025, none from 2026. 12 rows could not be read, e.g. row 4: the date is not valid. Export your activities again to include 2026.'
 		);
 	});
 
@@ -144,19 +145,82 @@ describe('skippedRowsNotice', () => {
 	])('reports %i skipped rows', (count, notice) => {
 		expect(skippedRowsNotice(count)).toBe(notice);
 	});
+
+	it.each([
+		['es', 1, 'Se omitió 1 fila que no se pudo leer'],
+		['es', 3, 'Se omitieron 3 filas que no se pudieron leer'],
+		['pt', 1, '1 linha não pôde ser lida e foi ignorada'],
+		['pt', 3, '3 linhas não puderam ser lidas e foram ignoradas'],
+		['fr', 1, '1 ligne illisible ignorée'],
+		['fr', 3, '3 lignes illisibles ignorées'],
+		['de', 1, '1 nicht lesbare Zeile übersprungen'],
+		['nl', 3, '3 onleesbare rijen overgeslagen']
+	] as const)('agrees the whole %s notice with %i rows', (locale, count, notice) => {
+		expect(skippedRowsNotice(count, locale)).toBe(notice);
+	});
+});
+
+describe('upload error copy', () => {
+	const skipped = { count: 2, reason: 'invalid-date', exampleRow: 3 } as const;
+	const errors: UploadError[] = [
+		{ type: 'invalid-extension' },
+		{ type: 'zip-archive' },
+		{ type: 'unrecognised' },
+		{ type: 'strava-unsupported-language' },
+		{ type: 'unknown-failure' },
+		{ type: 'invalid-file' },
+		{ type: 'garmin-data-export' },
+		{ type: 'unsupported-version', version: 9 },
+		{ type: 'wrong-year', year: 2025, expected: 2026 },
+		{ type: 'invalid-activities' },
+		{ type: 'rows-rejected', skipped: { ...skipped, count: 1 } },
+		{ type: 'rows-rejected', skipped },
+		{ type: 'no-activities-in-year', year: 2026, yearsInFile: [], skipped: null },
+		{ type: 'no-activities-in-year', year: 2026, yearsInFile: [2024, 2025], skipped }
+	];
+
+	it.each(LOCALES.flatMap((locale) => errors.map((error) => [locale, error] as const)))(
+		'ends the %s message for %j with a period',
+		(locale, error) => {
+			expect(uploadErrorMessage(error, locale)).toMatch(/\.$/);
+		}
+	);
+
+	it.each(LOCALES)('asks for a new %s export that includes the year', (locale) => {
+		const message = uploadErrorMessage(
+			{ type: 'no-activities-in-year', year: 2031, yearsInFile: [2030], skipped: null },
+			locale
+		);
+		expect(message.match(/2031/g)).toHaveLength(2);
+	});
 });
 
 describe('localized upload errors', () => {
+	it('puts the German verb particles at the end', () => {
+		expect(uploadErrorMessage({ type: 'unrecognised' }, 'de')).toMatch(
+			/aus deinem Strava-Export auf Englisch, .* oder Portugiesisch hoch\.$/
+		);
+		expect(uploadErrorMessage({ type: 'strava-unsupported-language' }, 'de')).toContain(
+			'Stelle Strava auf Englisch, Spanisch, Deutsch, Französisch, Italienisch, Niederländisch oder Portugiesisch um,'
+		);
+	});
+
+	it('says in French that the file was not recognised', () => {
+		expect(uploadErrorMessage({ type: 'unrecognised' }, 'fr')).toMatch(
+			/^Nous n’avons pas reconnu ce fichier\./
+		);
+	});
+
 	it('translates the same error into Spanish and German', () => {
 		const error = {
 			type: 'rows-rejected',
 			skipped: { count: 1, reason: 'invalid-date', exampleRow: 2 }
 		} as const;
 		expect(uploadErrorMessage(error, 'es')).toBe(
-			'No se pudo leer la fila 2: la fecha no es válida'
+			'No se pudo leer la fila 2: la fecha no es válida.'
 		);
 		expect(uploadErrorMessage(error, 'de')).toBe(
-			'Zeile 2 konnte nicht gelesen werden: das Datum ist ungültig'
+			'Zeile 2 konnte nicht gelesen werden: das Datum ist ungültig.'
 		);
 	});
 });
