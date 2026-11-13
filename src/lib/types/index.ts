@@ -121,6 +121,13 @@ export type YearFileResult =
 			parseErrors?: ParseError[];
 	  };
 
+export interface LoadedYear {
+	activities: Activity[];
+	source: ActivitySource | null;
+	cutShort: Date | null;
+	loadedAt: Date | null;
+}
+
 export type ActivitySource = 'garmin' | 'strava';
 
 export interface ParseResult {

@@ -1,12 +1,6 @@
 import { track } from '#lib/analytics/track.js';
 import type { EventValue } from '#lib/constants/events.js';
-import type {
-	Activity,
-	ActivitySource,
-	UploadError,
-	ParseError,
-	AppStatus
-} from '#lib/types/index.js';
+import type { LoadedYear, UploadError, ParseError, AppStatus } from '#lib/types/index.js';
 import { activityCountBucket, sportsCountBucket } from '#lib/utils/events.js';
 import { hasYearFileExtension, loadYearFile } from '#lib/utils/yearFile.js';
 import { describeSkippedRows } from '#lib/utils/uploadErrors.js';
@@ -65,7 +59,12 @@ class UploadStore {
 				this.#fail(result.event, result.error, result.parseErrors);
 				return;
 			}
-			this.#load(result.activities, result.source, result.cutShort, new Date());
+			this.#load({
+				activities: result.activities,
+				source: result.source,
+				cutShort: result.cutShort,
+				loadedAt: new Date()
+			});
 			this.#parseErrors = result.parseErrors;
 			this.#trackUpload();
 		} catch {
@@ -75,19 +74,14 @@ class UploadStore {
 
 	loadDemoData() {
 		this.reset();
-		this.#load(demoActivities, null, null, null);
+		this.#load({ activities: demoActivities, source: null, cutShort: null, loadedAt: null });
 	}
 	#trackUpload() {
 		track('upload_success', activityCountBucket(yearData.activities.length));
 		track('sports_count', sportsCountBucket(yearData.breakdown.length));
 	}
-	#load(
-		activities: Activity[],
-		source: ActivitySource | null,
-		cutShort: Date | null,
-		loadedAt: Date | null
-	) {
-		yearData.load({ activities, source, cutShort, loadedAt });
+	#load(loadedYear: LoadedYear) {
+		yearData.load(loadedYear);
 		highlightsStore.applyHighlightPreset('longest');
 		exportSettings.focusStatWithValue();
 		this.#status = 'ready';

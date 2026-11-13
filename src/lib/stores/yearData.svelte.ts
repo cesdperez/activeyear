@@ -1,4 +1,4 @@
-import type { Activity, ActivitySource } from '#lib/types/index.js';
+import type { Activity, ActivitySource, LoadedYear } from '#lib/types/index.js';
 import { TARGET_YEAR } from '#lib/constants/time.js';
 import { daysElapsed, daysInYear, isYearRunning } from '#lib/utils/date.js';
 import {
@@ -62,17 +62,7 @@ class YearData {
 		return this.#weeklyPattern;
 	}
 
-	load({
-		activities,
-		source,
-		cutShort,
-		loadedAt
-	}: {
-		activities: Activity[];
-		source: ActivitySource | null;
-		cutShort: Date | null;
-		loadedAt: Date | null;
-	}) {
+	load({ activities, source, cutShort, loadedAt }: LoadedYear) {
 		this.#activities = activities;
 		this.#source = source;
 		this.#cutShort = cutShort;
