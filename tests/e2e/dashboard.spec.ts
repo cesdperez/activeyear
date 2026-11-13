@@ -91,6 +91,17 @@ test('Jump to Export moves focus to the export heading', async ({ page }) => {
 	await expect(page.getByRole('heading', { name: 'Export', exact: true })).toBeFocused();
 });
 
+test('Jump to Export from the keyboard focuses the export heading without a focus ring', async ({
+	page
+}) => {
+	await openDemo(page);
+	await page.getByRole('button', { name: 'Jump to Export' }).focus();
+	await page.keyboard.press('Enter');
+	const heading = page.getByRole('heading', { name: 'Export', exact: true });
+	await expect(heading).toBeFocused();
+	await expect(heading).toHaveCSS('outline-style', 'none');
+});
+
 test('dashboard icons outside the export panel are hidden from assistive tech', async ({
 	page
 }) => {

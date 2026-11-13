@@ -3,6 +3,7 @@ import { MIN_UPLOAD_LOADING_MS, TARGET_YEAR } from '../../src/lib/constants/time
 import { UPLOAD_ZONE_ID } from '../../src/lib/constants/dom.js';
 import {
 	DASHBOARD_HEADING,
+	SAMPLE_CSV,
 	STRAVA_CSV,
 	garminCsv,
 	gotoUpload,
@@ -300,6 +301,20 @@ test.describe('Upload accessibility', () => {
 		await uploadSample(page);
 
 		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeFocused();
+	});
+
+	test('moves focus to the dashboard heading without a focus ring after a keyboard upload', async ({
+		page
+	}) => {
+		await gotoUpload(page);
+		await uploadZone(page).focus();
+		const fileChooser = page.waitForEvent('filechooser');
+		await page.keyboard.press('Space');
+		await (await fileChooser).setFiles(SAMPLE_CSV);
+
+		const heading = page.getByRole('heading', { name: DASHBOARD_HEADING });
+		await expect(heading).toBeFocused({ timeout: 10000 });
+		await expect(heading).toHaveCSS('outline-style', 'none');
 	});
 
 	test('moves focus to the dashboard heading after loading the demo', async ({ page }) => {

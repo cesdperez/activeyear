@@ -172,6 +172,11 @@ body {
 	outline-offset: 2px;
 }
 
+/* Headings take focus only from script, to move a screen reader along; a ring there is noise. */
+:is(h1, h2, h3, h4, h5, h6)[tabindex='-1']:focus {
+	outline: none;
+}
+
 /* Forced colours paint every background as Canvas, which hides the pressed toggle. */
 @media (forced-colors: active) {
 	[aria-pressed='true'] {
