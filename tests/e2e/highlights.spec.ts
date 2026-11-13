@@ -37,6 +37,13 @@ for (const source of ['Garmin', 'Strava'] as const) {
 		);
 		await showSlide(page, 2);
 		await expect(page.locator('#export-card .highlight-title')).toHaveText(titles);
+		await section.getByRole('button', { name: `Remove ${title} from highlights` }).click();
+		await expect(section.locator('.stat-card span[title]').filter({ hasText: title })).toHaveCount(
+			0
+		);
+		await expect(
+			page.locator('#export-card .highlight-title').filter({ hasText: title })
+		).toHaveCount(0);
 		await chips.getByRole('button', { name: 'Farthest' }).click();
 		await expect(chips.getByRole('button', { name: 'Farthest' })).toHaveAttribute(
 			'aria-pressed',
