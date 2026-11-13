@@ -44,7 +44,7 @@ export const exportMessages = {
 	arcade: 'Arcade',
 	classic: 'The original',
 	synthwave: 'Eighties glow',
-	comingSoon: 'Coming soon',
+	lightmile: 'Paper & ink',
 	consistency: 'Consistency',
 	withoutRestDay: 'Without a rest day',
 	sports: 'Sports',

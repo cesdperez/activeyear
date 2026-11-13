@@ -46,7 +46,7 @@ export const exportMessages: typeof en = {
 	arcade: 'Arcade',
 	classic: 'L’original',
 	synthwave: 'Éclat des années 80',
-	comingSoon: 'Bientôt disponible',
+	lightmile: 'Papier et encre',
 	consistency: 'Régularité',
 	withoutRestDay: 'Sans jour de repos',
 	sports: 'Sports',

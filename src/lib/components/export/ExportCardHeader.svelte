@@ -54,4 +54,9 @@
 		letter-spacing: 0;
 		text-shadow: var(--hero-shadow);
 	}
+
+	:global(.theme-lightmile) .export-title {
+		letter-spacing: -0.04em;
+		text-transform: uppercase;
+	}
 </style>

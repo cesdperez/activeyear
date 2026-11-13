@@ -152,7 +152,9 @@ test.describe('Export card layout', () => {
 		'Wolfgang Amadeus Mozart Bartholdy Wilhelmina'.slice(0, 40)
 	]) {
 		for (const [index, card] of CARDS.entries()) {
-			for (const theme of card === 'summary' ? ['neon', 'classic', 'synthwave'] : ['neon']) {
+			for (const theme of card === 'summary'
+				? ['neon', 'classic', 'synthwave', 'lightmile']
+				: ['neon']) {
 				test(`${card} ${theme} card fits the ${name.length} character name ${name.slice(0, 8)}...`, async ({
 					page
 				}) => {

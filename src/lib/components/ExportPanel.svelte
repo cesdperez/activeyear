@@ -14,7 +14,7 @@
 		ExportError,
 		ExportStatus
 	} from '#lib/types/index.js';
-	import { THEME_OPTIONS, UPCOMING_THEMES, USER_NAME_MAX_LENGTH } from '#lib/constants/export.js';
+	import { THEME_OPTIONS, USER_NAME_MAX_LENGTH } from '#lib/constants/export.js';
 	import { FontsUnavailableError } from '#lib/utils/fonts.js';
 
 	let exportError = $state<ExportError | null>(null);
@@ -31,7 +31,8 @@
 		minimalist: i18n.m.export.resultSheet,
 		retro: i18n.m.export.arcade,
 		classic: i18n.m.export.classic,
-		synthwave: i18n.m.export.synthwave
+		synthwave: i18n.m.export.synthwave,
+		lightmile: i18n.m.export.lightmile
 	});
 
 	const metrics = $derived<{ value: SummaryMetric; label: string }[]>([
@@ -250,15 +251,6 @@
 							<div class="theme-description text-xs">
 								{descriptions[theme.value]}
 							</div>
-						</button>
-					{/each}
-					{#each UPCOMING_THEMES as theme (theme.label)}
-						<button
-							disabled
-							class="toggle px-4 py-3 text-center disabled:cursor-not-allowed disabled:opacity-50"
-						>
-							<div class="text-sm">{theme.label}</div>
-							<div class="theme-description text-xs">{i18n.m.export.comingSoon}</div>
 						</button>
 					{/each}
 				</div>

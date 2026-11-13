@@ -145,7 +145,14 @@ Classic and Synthwave use the centered 320px Summary-card avatar with glow and s
 
 ### Lightmile
 
-Reserved and disabled in the theme picker until designed. Add it to `Theme` when it ships.
+**Aesthetic:** Paper & ink. An editorial paper surface lets the athlete's numbers lead, with a quiet route line as a nod to running.
+
+- **Surface:** Paper `#f4f3ef`, elevated mist `#e4e3de`, line `#0a0a0a24`.
+- **Text:** Ink `#0a0a0a`, muted `#404040`, dim `#555555` (all above 4.5:1 on paper).
+- **Accent:** Electric blue `#2438d6`, with paper text on blue.
+- **Effects:** A thin dashed blue route line in the background.
+- **Fonts:** Archivo for display and statistics, Geist Mono for labels and metadata.
+- **Sport palette:** Blue, ink, and dark distinct hues, with mid-grey for other.
 
 ---
 

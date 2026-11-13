@@ -86,6 +86,10 @@ export const SPORT_PALETTES: Record<Theme, SportPalette> = {
 		colors: ['#22d3ee', '#ff7d66', '#d3e85e', '#ffbf47', '#b69cff', '#ff80b5'],
 		other: '#a1a1aa'
 	},
+	lightmile: {
+		colors: ['#2438d6', '#0a0a0a', '#9b2920', '#17603f', '#71419a', '#805100', '#006279'],
+		other: '#666666'
+	},
 	synthwave: {
 		colors: ['#facc15', ...RETRO_SECONDARY_COLORS],
 		other: '#a5a0d8'

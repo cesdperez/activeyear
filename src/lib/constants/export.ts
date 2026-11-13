@@ -5,10 +5,9 @@ export const THEME_OPTIONS = [
 	{ value: 'minimalist', label: 'Minimal' },
 	{ value: 'retro', label: 'Retro' },
 	{ value: 'classic', label: 'Classic' },
-	{ value: 'synthwave', label: 'Synthwave' }
+	{ value: 'synthwave', label: 'Synthwave' },
+	{ value: 'lightmile', label: 'Lightmile' }
 ] as const satisfies readonly { value: Theme; label: string }[];
-
-export const UPCOMING_THEMES = [{ label: 'Lightmile' }] as const;
 
 export const USER_NAME_MAX_LENGTH = 40;
 export const NAME_LONG_AFTER_CHARS = 16;

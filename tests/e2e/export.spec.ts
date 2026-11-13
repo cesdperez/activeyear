@@ -73,9 +73,11 @@ test.describe('Export Flow', () => {
 		await expect(page.getByRole('button', { name: /Neon/i })).toBeVisible();
 		await expect(page.getByRole('button', { name: /Minimal/i })).toBeVisible();
 		await expect(page.getByRole('button', { name: /Retro/i })).toBeVisible();
-		const lightmile = page.getByRole('button', { name: /Lightmile.*Coming soon/i });
+		const lightmile = page.getByRole('button', { name: /Lightmile/i });
 		await expect(lightmile).toBeVisible();
-		await expect(lightmile).toBeDisabled();
+		await expect(lightmile).toBeEnabled();
+		await lightmile.click();
+		await expect(page.locator('#export-card')).toHaveAttribute('data-theme', 'lightmile');
 	});
 
 	test('classic centers the summary avatar and neon restores it to the header', async ({

@@ -77,6 +77,11 @@
 		--hero-shadow: none;
 	}
 
+	.theme-lightmile {
+		--title-size: 90px;
+		--hero-shadow: none;
+	}
+
 	.theme-retro {
 		--font-label: var(--font-display);
 		--label-size: 16px;

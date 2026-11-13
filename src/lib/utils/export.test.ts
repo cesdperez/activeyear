@@ -60,9 +60,14 @@ describe('theme font CSS', () => {
 			baseURI: 'https://example.com/',
 			styleSheets: [
 				{
-					cssRules: ['Big Shoulders Display', 'Archivo', 'Press Start 2P', 'VT323', 'Outfit'].map(
-						(family) => new Face(family)
-					)
+					cssRules: [
+						'Big Shoulders Display',
+						'Archivo',
+						'Press Start 2P',
+						'VT323',
+						'Outfit',
+						'Geist Mono'
+					].map((family) => new Face(family))
 				}
 			]
 		});
@@ -74,7 +79,8 @@ describe('theme font CSS', () => {
 				minimalist: ['Big Shoulders Display', 'Archivo'],
 				retro: ['Press Start 2P', 'VT323', 'Big Shoulders Display'],
 				classic: ['Outfit', 'Big Shoulders Display'],
-				synthwave: ['Outfit', 'Big Shoulders Display']
+				synthwave: ['Outfit', 'Big Shoulders Display'],
+				lightmile: ['Archivo', 'Geist Mono']
 			}) as [import('#lib/types/index.js').Theme, string[]][]) {
 				const css = await inlinedFontFaceCss(theme);
 				for (const family of [
@@ -82,7 +88,8 @@ describe('theme font CSS', () => {
 					'Archivo',
 					'Press Start 2P',
 					'VT323',
-					'Outfit'
+					'Outfit',
+					'Geist Mono'
 				]) {
 					expect(css.includes(`font-family: "${family}"`)).toBe(expected.includes(family));
 				}

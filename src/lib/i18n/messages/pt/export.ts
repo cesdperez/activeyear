@@ -44,7 +44,7 @@ export const exportMessages: typeof en = {
 	arcade: 'Fliperama',
 	classic: 'O original',
 	synthwave: 'Brilho dos anos 80',
-	comingSoon: 'Em breve',
+	lightmile: 'Papel e tinta',
 	consistency: 'Constância',
 	withoutRestDay: 'Sem dia de descanso',
 	sports: 'Esportes',

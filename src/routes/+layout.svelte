@@ -11,6 +11,14 @@
 	import '@fontsource/archivo/latin-ext-500';
 	import '@fontsource/archivo/latin-600';
 	import '@fontsource/archivo/latin-ext-600';
+	import '@fontsource/archivo/latin-800';
+	import '@fontsource/archivo/latin-ext-800';
+	import '@fontsource/archivo/latin-900';
+	import '@fontsource/archivo/latin-ext-900';
+	import '@fontsource/geist-mono/latin-400';
+	import '@fontsource/geist-mono/latin-ext-400';
+	import '@fontsource/geist-mono/latin-700';
+	import '@fontsource/geist-mono/latin-ext-700';
 	import '@fontsource/archivo/latin-700';
 	import '@fontsource/archivo/latin-ext-700';
 	import '@fontsource/press-start-2p/latin-400';
