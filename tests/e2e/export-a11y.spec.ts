@@ -398,7 +398,9 @@ test.describe('Export progress and results', () => {
 	test('without highlights the export promises and downloads two images', async ({ page }) => {
 		await uploadCsv(page, garminCsv([{ title: 'Long run' }, { title: 'Easy run' }]));
 		for (const title of ['Long run', 'Easy run'])
-			await page.getByRole('button', { name: `Remove ${title} from highlights` }).click();
+			await page
+				.getByRole('button', { name: new RegExp(`^Remove ${title}, .+, from highlights$`) })
+				.click();
 
 		await expect(page.getByText('Downloads two images: Summary and Breakdown')).toBeVisible();
 		const downloads: Download[] = [];

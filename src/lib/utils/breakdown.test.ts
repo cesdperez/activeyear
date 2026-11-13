@@ -84,7 +84,7 @@ describe('selectTopSports', () => {
 
 		const top = selectTopSports(breakdown, 'duration');
 
-		expect(top.map((s) => s.type)).toEqual(['swimming', 'running', 'other', 'hiking']);
+		expect(top.map((s) => s.type)).toEqual(['swimming', 'running', 'hiking', 'other']);
 		expect(top.reduce((sum, s) => sum + s.duration, 0)).toBe(154800);
 	});
 
@@ -113,6 +113,33 @@ describe('selectTopSports', () => {
 			'walking',
 			'running'
 		]);
+	});
+
+	describe('with one long session among one-off short ones', () => {
+		const year = [
+			sport({ type: 'running', count: 2, duration: 16574 }),
+			sport({ type: 'cycling', count: 1, duration: 1503 }),
+			sport({ type: 'strength', count: 1, duration: 1266 }),
+			sport({ type: 'swimming', count: 1, duration: 2700 }),
+			sport({ type: 'walking', count: 1, duration: 3600 }),
+			sport({ type: 'hiking', count: 1, duration: 14100 }),
+			sport({ type: 'yoga', count: 1, duration: 1176 })
+		];
+
+		it('keeps the longer sports named when counts tie', () => {
+			expect(selectTopSports(year, 'count').map((s) => s.type)).toEqual([
+				'running',
+				'hiking',
+				'walking',
+				'other'
+			]);
+		});
+
+		it('lists the roll-up last even when it holds more than a named sport', () => {
+			const top = selectTopSports(year, 'count');
+
+			expect(top.at(-1)).toMatchObject({ type: 'other', count: 4, rollup: true });
+		});
 	});
 
 	it('returns an empty list for no data', () => {

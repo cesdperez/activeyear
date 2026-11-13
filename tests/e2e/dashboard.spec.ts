@@ -130,6 +130,14 @@ test('more stats mark every empty value the same way', async ({ page }) => {
 	await expect(marked).toHaveCount(5 * 2 + 2);
 });
 
+test('more stats leave out the longest break with a single active day', async ({ page }) => {
+	await uploadCsv(page, garminCsv([{ title: 'Morning run' }]));
+	await page.getByRole('button', { name: 'More stats', exact: true }).click();
+	const section = page.getByTestId('more-stats');
+	await expect(section.getByRole('heading', { name: 'Quarters' })).toBeVisible();
+	await expect(section.getByRole('heading', { name: 'Longest break' })).toHaveCount(0);
+});
+
 test('Jump to Export moves focus to the export heading', async ({ page }) => {
 	await openDemo(page);
 	await page.getByRole('button', { name: 'Jump to Export' }).click();
@@ -246,6 +254,24 @@ for (const width of [320, 360, 768, 1024, 1280, 1920]) {
 			.evaluateAll((values) => values.map((value) => getComputedStyle(value).fontSize));
 		expect(sizes).toHaveLength(5);
 		expect(new Set(sizes).size).toBe(1);
+	});
+}
+
+for (const width of [640, 768, 820, 1024, 1280]) {
+	test(`results board values stay well above label size at ${width}px`, async ({ page }) => {
+		await page.setViewportSize({ width, height: 900 });
+		await openDemo(page);
+		const board = page.getByTestId('main-stats');
+		const labelSize = await board
+			.locator('dt')
+			.first()
+			.evaluate((label) => parseFloat(getComputedStyle(label).fontSize));
+		const valueSize = await board
+			.getByTestId('board-value')
+			.first()
+			.evaluate((value) => parseFloat(getComputedStyle(value).fontSize));
+
+		expect(valueSize).toBeGreaterThanOrEqual(labelSize * 1.6);
 	});
 }
 

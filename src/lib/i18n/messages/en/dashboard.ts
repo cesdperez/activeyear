@@ -16,7 +16,7 @@ export const dashboard = {
 		`Showing ${shown} of ${total}. Add words to narrow it down.`,
 	noSearchMatches: 'No activities match',
 	noPicks: 'No highlights picked. Pick a preset or search your activities.',
-	removeHighlight: (x: string) => `Remove ${x} from highlights`,
+	removeHighlight: (title: string, date: string) => `Remove ${title}, ${date}, from highlights`,
 	removedHighlight: (x: string) => `Removed ${x}`,
 	addedHighlight: (x: string) => `Added ${x}`,
 	highlightLimit: (n: number) => `${n} highlights max. Remove one to add another.`,

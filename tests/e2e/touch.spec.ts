@@ -87,6 +87,12 @@ test.describe('on a touch screen', () => {
 		expect(small).toEqual([]);
 	});
 
+	test('Jump to Export is at least 44px tall', async ({ page }) => {
+		await uploadSample(page);
+		const box = await page.getByRole('button', { name: 'Jump to Export' }).boundingBox();
+		expect(box!.height).toBeGreaterThanOrEqual(44);
+	});
+
 	test.describe('on a tablet in landscape', () => {
 		test.use({ viewport: { width: 1280, height: 800 } });
 

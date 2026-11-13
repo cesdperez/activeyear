@@ -43,6 +43,8 @@
 			funFact: ''
 		}
 	]);
+	// Below 1024px a row of five is too narrow for prominent values, so the board wraps.
+	const wrapColumns = $derived(cells.length === 4 ? 2 : Math.min(cells.length, 3));
 	const fitChars = $derived(
 		Math.max(...cells.map((cell) => scaledLength(cell.value, UNIT_SCALE.board)))
 	);
@@ -64,9 +66,17 @@
 			<p class="fun-fact mt-4 justify-center">{headline.funFact}</p>
 		</div>
 
-		<dl class="board mt-12 md:mt-16" style:--cells={cells.length}>
-			{#each cells as { label, value, funFact } (label)}
-				<div class="cell">
+		<dl
+			class="board mt-12 md:mt-16"
+			style:--cells={cells.length}
+			style:--wrap-columns={wrapColumns}
+		>
+			{#each cells as { label, value, funFact }, i (label)}
+				<div
+					class="cell"
+					class:wrap-row-start={i % wrapColumns === 0}
+					class:wrap-next-row={i >= wrapColumns}
+				>
 					<dt class="stat-label">{label}</dt>
 					<dd class="@container min-w-0">
 						<span
@@ -131,7 +141,7 @@
 	@media (min-width: 768px) {
 		.board {
 			display: grid;
-			grid-template-columns: repeat(var(--cells), minmax(0, 1fr));
+			grid-template-columns: repeat(var(--wrap-columns), minmax(0, 1fr));
 		}
 
 		.cell {
@@ -155,6 +165,22 @@
 		.cell dd:first-of-type {
 			order: -1;
 			text-align: left;
+		}
+	}
+
+	@media (min-width: 768px) and (max-width: 1023.98px) {
+		.cell.wrap-row-start {
+			border-left-color: transparent;
+		}
+
+		.cell.wrap-next-row {
+			border-top: 1px solid var(--color-border);
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.board {
+			grid-template-columns: repeat(var(--cells), minmax(0, 1fr));
 		}
 	}
 </style>

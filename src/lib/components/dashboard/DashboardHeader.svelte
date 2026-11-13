@@ -92,7 +92,7 @@
 	{/if}
 
 	<button
-		class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-accent)] transition-colors duration-200 hover:text-[var(--color-text-primary)]"
+		class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-accent)] transition-colors duration-200 hover:text-[var(--color-text-primary)] pointer-coarse:min-h-11"
 		onclick={jumpToExport}
 	>
 		{i18n.m.dashboard.jumpExport}

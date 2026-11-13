@@ -64,6 +64,7 @@
 	<SportBreakdown breakdown={yearData.breakdown} metric={exportSettings.breakdownMetric} />
 	<MoreStats
 		activities={yearData.activities}
+		activeDays={yearData.stats?.activeDays ?? 0}
 		breakdown={yearData.breakdown}
 		unit={exportSettings.unit}
 	/>
