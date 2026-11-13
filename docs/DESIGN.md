@@ -68,7 +68,7 @@ The app, including landing page and dashboard, always uses Neon tokens. Themes a
 - **Retro:** arcade high score. Yellow accent only. 4px solid borders, radius 0, hard offset shadow `8px 8px 0 #000` instead of glow.
 - **Classic:** Neon's original palette (`#22d3ee` accent) in the current card layout. Export background: `classic-gradient.png` with the same noise tile.
 - **Synthwave:** retro arcade in indigo and yellow. Avatar border and decoration `#ff00cc`, 20% radius and a hard shadow.
-- **Lightmile:** paper and ink. An editorial paper surface lets the athlete's numbers lead, with a thin dashed blue route line in the background as a nod to running. Electric blue accent with paper text on blue. In the picker, a small `?` opens a non-modal introduction and link on hover, focus or tap; Escape closes it. The export header pairs the ActiveYear and Lightmile wordmarks with a muted multiplication sign, and the footer credits both activeyear.app and lightmile.nl.
+- **Lightmile:** paper and ink. An editorial paper surface lets the athlete's numbers lead, with a thin dashed blue route line in the background as a nod to running. Electric blue accent with paper text on blue. Under the theme picker, an "About Lightmile" button opens a non-modal introduction and link on hover, focus or tap; Escape or a tap outside closes it, and a click after hovering keeps it open. The export header pairs the ActiveYear and Lightmile wordmarks with a muted multiplication sign, and the footer credits both activeyear.app and lightmile.nl.
 
 Classic and Synthwave use the centred Summary-card avatar with glow and spiral decoration. `CENTERED_AVATAR_THEMES` in `src/lib/constants/themes.ts` identifies them.
 
@@ -115,9 +115,16 @@ The shareable image. This is what users actually care about.
 - Hero numbers use the display font and fit with the existing `.fit-value` rule.
 - Card header: logotype and "Season <TARGET_YEAR>" on one row, then the name and the card title. A running season adds “so far” to the season label. The Summary card shows the headline number, the year lane and a ruled list of the other totals.
 
+### Export panel
+
+- The preview comes first. Stacked on phones, it takes at most 55% of the large viewport height, so a theme tapped under it changes the card in view. From 1024px it sits beside the controls, and the two columns are centred together.
+- The preview sizes from the width and the large viewport height only, so a phone's URL bar or browser zoom never shrinks it below 240px.
+- Theme tiles are two equal-height columns in every locale.
+- After a download, a confirmation takes the helper line's place under the button for a few seconds.
+
 ### Landing page
 
-- On phones, show a short export hint and a full-width demo button before the upload zone.
+- On phones and touch tablets, show a short export hint and a full-width demo button before the upload zone.
 - The upload zone is a flat elevated surface with a dashed border; on hover or dragover the border turns solid accent and the surface lifts one step in colour.
 
 ### Support link
@@ -141,6 +148,7 @@ Nothing else moves on its own: no staggered entrances, no hover lift or scale. M
 
 ## Accessibility
 
+- Controls are at least 44px tall on touch screens (`pointer: coarse`), and text fields have a border with 3:1 contrast. Hover styles in plain CSS go under `@media (hover: hover)` (Tailwind's `hover:` already does), because a tap leaves them stuck on touch screens.
 - Focus rings use the accent colour. Headings that take focus from script (`tabindex="-1"`) show no ring: they are not controls.
 - Announce state changes to screen readers (upload complete, errors).
 
