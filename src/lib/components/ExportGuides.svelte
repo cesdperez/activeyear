@@ -2,7 +2,6 @@
 	import { garminExportNote, garminExportSteps } from '#lib/data/garminExport.js';
 	import { stravaExportNote, stravaExportSteps } from '#lib/data/stravaExport.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
-	import { faqMessages } from '#lib/data/faq.js';
 	import type { ExportStep } from '#lib/types/index.js';
 	let selected = $state<'garmin' | 'strava'>('garmin');
 	let garminTab: HTMLButtonElement;
@@ -46,7 +45,7 @@
 
 <div
 	role="tablist"
-	aria-label={faqMessages[i18n.locale].guidesAria}
+	aria-label={i18n.m.faq.guidesAria}
 	class="mb-4 inline-flex items-center rounded-full border border-zinc-700 bg-zinc-900 p-1"
 >
 	<button

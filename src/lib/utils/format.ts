@@ -1,7 +1,7 @@
-import type { Activity, Locale, Unit } from '../types/index.js';
+import type { Activity, Locale, Unit } from '#lib/types/index.js';
 import { INTL_LOCALES } from '#lib/constants/locales.js';
 import { MESSAGES } from '#lib/i18n/messages/index.js';
-import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '../constants/time.js';
+import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '#lib/constants/time.js';
 
 export function activityTitle(locale: Locale, activity: Activity): string {
 	return (

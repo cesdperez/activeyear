@@ -1,2 +1,4 @@
+import { ROUTED_LOCALES } from '#lib/constants/locales.js';
+
 export const trailingSlash = 'always';
-export const entries = () => [{}, ...['es', 'pt', 'fr', 'de', 'nl'].map((lang) => ({ lang }))];
+export const entries = () => [{}, ...ROUTED_LOCALES.map((lang) => ({ lang }))];

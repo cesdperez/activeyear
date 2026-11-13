@@ -182,3 +182,5 @@ export interface SportAverage {
 }
 
 export type Locale = (typeof import('#lib/constants/locales.js').LOCALES)[number];
+
+export type Messages = typeof import('#lib/i18n/messages/en/index.js').en;

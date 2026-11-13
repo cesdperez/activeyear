@@ -332,10 +332,9 @@ German, Dutch, and French can run 20 to 35% longer than English. Every card and 
 ### Add a Language
 
 1. Add the code to `LOCALES`, `LOCALE_NAMES`, `INTL_LOCALES`, and `OG_LOCALES` in `src/lib/constants/locales.ts`.
-2. Add it to the matcher in `src/params.ts` and to `entries` in `src/routes/[[lang=locale]]/+page.ts` and the llms.txt route.
-3. Copy `src/lib/i18n/messages/en/` to the new locale, translate the strings, type each namespace as `typeof en`, and register it in `src/lib/i18n/messages/index.ts`.
-4. Check that the font covers the script. Outfit and JetBrains Mono are Latin only; RTL languages also need layout work.
-5. Run `pnpm check`, then inspect all three cards in the new language.
+2. Copy `src/lib/i18n/messages/en/` to the new locale, translate the strings, type each namespace as `typeof en`, and register it in `src/lib/i18n/messages/index.ts`.
+3. Check that the font covers the script. Outfit and JetBrains Mono are Latin only; RTL languages also need layout work.
+4. Run `pnpm check`, then inspect all three cards in the new language.
 
 ---
 

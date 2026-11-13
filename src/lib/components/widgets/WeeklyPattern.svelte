@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { INTL_LOCALES } from '#lib/constants/locales.js';
+	import { weekdayLabels } from '#lib/utils/date.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { weeklyBars } from '#lib/utils/breakdown.js';
 	import type {
@@ -32,15 +32,7 @@
 
 	const hasActivity = $derived(pattern.some((v) => v > 0));
 	const bars = $derived(weeklyBars(pattern, barContainerHeight));
-	const weekdays = $derived.by(() => {
-		const formatter = new Intl.DateTimeFormat(INTL_LOCALES[i18n.locale], {
-			weekday: 'short',
-			timeZone: 'UTC'
-		});
-		return Array.from({ length: 7 }, (_, i) =>
-			formatter.format(new Date(Date.UTC(2024, 0, i + 1)))
-		);
-	});
+	const weekdays = $derived(weekdayLabels(i18n.locale));
 </script>
 
 {#if hasActivity}
