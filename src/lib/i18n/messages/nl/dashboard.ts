@@ -2,6 +2,33 @@ import { plural } from '#lib/i18n/plural.js';
 import type { dashboard as en } from '../en/dashboard.js';
 
 export const dashboard: typeof en = {
+	customPicks: 'Je eigen selectie.',
+	highlightPresets: 'Hoogtepuntselecties',
+	searchActivities: 'Zoek je activiteiten',
+	searchPlaceholder: 'Zoek op titel, sport, maand of afstand',
+	noSearchMatches: 'Geen activiteiten gevonden',
+	noPicks: 'Geen hoogtepunten gekozen. Kies een selectie of zoek je activiteiten.',
+	removeHighlight: (x: string) => `${x} uit hoogtepunten verwijderen`,
+	removedHighlight: (x: string) => `${x} verwijderd`,
+	addedHighlight: (x: string) => `${x} toegevoegd`,
+	highlightLimit: (n: number) =>
+		`Maximaal ${n} hoogtepunten. Verwijder er één om een andere toe te voegen.`,
+	searchResults: (n: number) => `${n} ${n === 1 ? 'resultaat' : 'resultaten'}`,
+	presets: {
+		longest: { label: 'Langste', description: 'Je langste sessies van het jaar.' },
+		farthest: { label: 'Verste', description: 'De dagen waarop je het verst ging.' },
+		climbs: {
+			label: 'Grootste beklimmingen',
+			description: 'Waar je de meeste hoogtemeters maakte.'
+		},
+		'per-sport': { label: 'Beste per sport', description: 'Je langste sessie in elke sport.' },
+		'best-month': { label: 'Epische maand', description: 'Het beste van je actiefste maand.' },
+		favorites: {
+			label: 'Garmin-favorieten',
+			description: 'De activiteiten die je in Garmin Connect als favoriet markeerde.'
+		}
+	},
+
 	totalDistance: 'Totale afstand',
 	elevationGained: 'Hoogtemeters',
 	timeActive: 'Actieve tijd',

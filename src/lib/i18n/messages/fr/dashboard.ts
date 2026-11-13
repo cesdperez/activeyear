@@ -2,6 +2,33 @@ import { plural } from '#lib/i18n/plural.js';
 import type { dashboard as en } from '../en/dashboard.js';
 
 export const dashboard: typeof en = {
+	customPicks: 'Votre sélection personnelle.',
+	highlightPresets: 'Sélections de moments forts',
+	searchActivities: 'Rechercher vos activités',
+	searchPlaceholder: 'Rechercher par titre, sport, mois ou distance',
+	noSearchMatches: 'Aucune activité correspondante',
+	noPicks: 'Aucun moment fort sélectionné. Choisissez une sélection ou recherchez vos activités.',
+	removeHighlight: (x: string) => `Retirer ${x} des moments forts`,
+	removedHighlight: (x: string) => `${x} retiré`,
+	addedHighlight: (x: string) => `${x} ajouté`,
+	highlightLimit: (n: number) =>
+		`${n} moments forts maximum. Retirez-en un pour en ajouter un autre.`,
+	searchResults: (n: number) => `${n} ${n === 1 ? 'résultat' : 'résultats'}`,
+	presets: {
+		longest: { label: 'Plus longues', description: 'Vos séances les plus longues de l’année.' },
+		farthest: { label: 'Plus loin', description: 'Les jours où vous êtes allé le plus loin.' },
+		climbs: { label: 'Plus de dénivelé', description: 'Vos plus grands dénivelés positifs.' },
+		'per-sport': {
+			label: 'Le meilleur par sport',
+			description: 'Votre séance la plus longue dans chaque sport.'
+		},
+		'best-month': { label: 'Mois épique', description: 'Le meilleur de votre mois le plus actif.' },
+		favorites: {
+			label: 'Favoris Garmin',
+			description: 'Les activités marquées comme favorites dans Garmin Connect.'
+		}
+	},
+
 	totalDistance: 'Distance totale',
 	elevationGained: 'Dénivelé positif',
 	timeActive: 'Temps actif',

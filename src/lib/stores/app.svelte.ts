@@ -1,11 +1,18 @@
+import { HIGHLIGHTS_LIMIT } from '#lib/constants/export.js';
+import { HIGHLIGHT_SEARCH_LIMIT } from '#lib/constants/highlights.js';
+import {
+	activitySearchText,
+	availablePresets,
+	presetHighlights,
+	searchActivities
+} from '#lib/utils/highlights.js';
 import { parseActivityCsv } from '../parsers/index.js';
 import {
 	calculateYearStats,
 	calculatePersonalRecords,
 	calculateSportBreakdown,
 	calculateWeeklyPattern,
-	summaryMetricWithValue,
-	selectHighlights
+	summaryMetricWithValue
 } from '../utils/stats.js';
 import { parseSavedYear, serializeSavedYear } from '#lib/utils/savedYear.js';
 import { TARGET_YEAR } from '../constants/time.js';
@@ -14,6 +21,7 @@ import { describeSkippedRows, describeUnusableFile } from '#lib/utils/uploadErro
 import type {
 	Activity,
 	UploadError,
+	HighlightPreset,
 	ActivitySource,
 	ParseError,
 	Theme,
@@ -28,7 +36,10 @@ class AppStore {
 	// Raw because the list is only ever replaced whole, and the derived stats read every activity.
 	#activities = $state.raw<Activity[]>([]);
 	#source = $state<ActivitySource | null>(null);
-	#highlights = $derived(selectHighlights(this.#activities, this.#source));
+	#highlights = $state.raw<Activity[]>([]);
+	#highlightPreset = $state<HighlightPreset | 'custom'>('longest');
+	#highlightPresets = $derived(availablePresets(this.#activities));
+	#searchTexts = $derived(this.#activities.map(activitySearchText));
 	#stats = $derived(this.#activities.length > 0 ? calculateYearStats(this.#activities) : null);
 	#records = $derived(
 		this.#activities.length > 0 ? calculatePersonalRecords(this.#activities) : null
@@ -76,6 +87,44 @@ class AppStore {
 		return this.#highlights;
 	}
 
+	get highlightPreset() {
+		return this.#highlightPreset;
+	}
+
+	get highlightPresets() {
+		return this.#highlightPresets;
+	}
+
+	get canAddHighlight() {
+		return this.#highlights.length < HIGHLIGHTS_LIMIT;
+	}
+
+	applyHighlightPreset(preset: HighlightPreset) {
+		this.#highlights = presetHighlights(this.#activities, preset);
+		this.#highlightPreset = preset;
+	}
+
+	addHighlight(activity: Activity) {
+		if (!this.canAddHighlight || this.isHighlight(activity)) return;
+		this.#highlights = [...this.#highlights, activity].sort(
+			(a, b) => a.date.getTime() - b.date.getTime()
+		);
+		this.#highlightPreset = 'custom';
+	}
+
+	removeHighlight(activity: Activity) {
+		this.#highlights = this.#highlights.filter((item) => item !== activity);
+		this.#highlightPreset = 'custom';
+	}
+
+	isHighlight(activity: Activity): boolean {
+		return this.#highlights.includes(activity);
+	}
+
+	searchActivities(query: string): Activity[] {
+		return searchActivities(this.#activities, this.#searchTexts, query, HIGHLIGHT_SEARCH_LIMIT);
+	}
+
 	get stats() {
 		return this.#stats;
 	}
@@ -111,6 +160,8 @@ class AppStore {
 
 	reset() {
 		this.#activities = [];
+		this.#highlights = [];
+		this.#highlightPreset = 'longest';
 		this.#source = null;
 		this.#status = 'idle';
 		this.#error = null;
@@ -173,6 +224,7 @@ class AppStore {
 
 	#load(activities: Activity[]) {
 		this.#activities = activities;
+		this.applyHighlightPreset('longest');
 		this.#focusStatWithValue();
 		this.#status = 'ready';
 	}

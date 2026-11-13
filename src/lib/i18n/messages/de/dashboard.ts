@@ -2,6 +2,39 @@ import { plural } from '#lib/i18n/plural.js';
 import type { dashboard as en } from '../en/dashboard.js';
 
 export const dashboard: typeof en = {
+	customPicks: 'Deine eigene Auswahl.',
+	highlightPresets: 'Highlight-Auswahl',
+	searchActivities: 'Aktivitäten suchen',
+	searchPlaceholder: 'Nach Titel, Sportart, Monat oder Distanz suchen',
+	noSearchMatches: 'Keine passenden Aktivitäten',
+	noPicks: 'Keine Highlights ausgewählt. Wähle eine Auswahl oder suche deine Aktivitäten.',
+	removeHighlight: (x: string) => `${x} aus Highlights entfernen`,
+	removedHighlight: (x: string) => `${x} entfernt`,
+	addedHighlight: (x: string) => `${x} hinzugefügt`,
+	highlightLimit: (n: number) =>
+		`Maximal ${n} Highlights. Entferne eines, um ein anderes hinzuzufügen.`,
+	searchResults: (n: number) => `${n} ${n === 1 ? 'Ergebnis' : 'Ergebnisse'}`,
+	presets: {
+		longest: { label: 'Längste', description: 'Deine längsten Einheiten des Jahres.' },
+		farthest: {
+			label: 'Weiteste',
+			description: 'Die Tage, an denen du am weitesten gekommen bist.'
+		},
+		climbs: {
+			label: 'Größte Anstiege',
+			description: 'Hier hast du die meisten Höhenmeter gesammelt.'
+		},
+		'per-sport': {
+			label: 'Beste je Sportart',
+			description: 'Deine längste Einheit in jeder Sportart.'
+		},
+		'best-month': { label: 'Epischer Monat', description: 'Das Beste aus deinem aktivsten Monat.' },
+		favorites: {
+			label: 'Garmin-Favoriten',
+			description: 'Deine in Garmin Connect favorisierten Aktivitäten.'
+		}
+	},
+
 	totalDistance: 'Gesamtdistanz',
 	elevationGained: 'Höhenmeter',
 	timeActive: 'Aktive Zeit',

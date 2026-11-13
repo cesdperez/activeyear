@@ -31,11 +31,7 @@
 		longestStreak={appStore.stats?.longestStreak ?? 0}
 	/>
 	<WeeklyPattern variant="dashboard" pattern={appStore.weeklyPattern} />
-	<HighlightsSection
-		highlights={appStore.highlights}
-		unit={appStore.unit}
-		source={appStore.source}
-	/>
+	<HighlightsSection />
 	<PersonalRecords records={appStore.records} unit={appStore.unit} />
 	<SportBreakdown breakdown={appStore.breakdown} metric={appStore.breakdownMetric} />
 	<MoreStats activities={appStore.activities} breakdown={appStore.breakdown} unit={appStore.unit} />

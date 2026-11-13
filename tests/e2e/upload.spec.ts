@@ -121,16 +121,13 @@ test.describe('Upload Flow', () => {
 		const highlights = page.locator('section').filter({
 			has: page.getByRole('heading', { name: 'Highlights', exact: true })
 		});
-		const caption = page.getByText(
-			"Your longest sessions of the year. Strava exports don't include favorites."
-		);
+		const caption = page.getByText('Your longest sessions of the year.');
 		await expect(highlights.locator('.stat-card').first()).toBeVisible();
 		await expect(caption).toBeVisible();
 
 		await page.getByRole('button', { name: 'Upload different file' }).click();
 		await page.getByRole('button', { name: 'See how it works with demo data' }).click();
 		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
-		await expect(caption).toHaveCount(0);
 	});
 
 	test('shows Strava highlights on the export card', async ({ page }) => {

@@ -2,6 +2,35 @@ import { plural } from '#lib/i18n/plural.js';
 import type { dashboard as en } from '../en/dashboard.js';
 
 export const dashboard: typeof en = {
+	customPicks: 'Suas próprias escolhas.',
+	highlightPresets: 'Seleções de destaques',
+	searchActivities: 'Buscar atividades',
+	searchPlaceholder: 'Buscar por título, esporte, mês ou distância',
+	noSearchMatches: 'Nenhuma atividade encontrada',
+	noPicks: 'Nenhum destaque escolhido. Escolha uma seleção ou busque suas atividades.',
+	removeHighlight: (x: string) => `Remover ${x} dos destaques`,
+	removedHighlight: (x: string) => `${x} removido`,
+	addedHighlight: (x: string) => `${x} adicionado`,
+	highlightLimit: (n: number) => `Máximo de ${n} destaques. Remova um para adicionar outro.`,
+	searchResults: (n: number) => `${n} ${n === 1 ? 'resultado' : 'resultados'}`,
+	presets: {
+		longest: { label: 'Mais longas', description: 'Suas sessões mais longas do ano.' },
+		farthest: { label: 'Mais distantes', description: 'Os dias em que você foi mais longe.' },
+		climbs: { label: 'Maiores subidas', description: 'Onde você acumulou mais elevação.' },
+		'per-sport': {
+			label: 'Melhor de cada esporte',
+			description: 'Sua sessão mais longa em cada esporte.'
+		},
+		'best-month': {
+			label: 'Mês épico',
+			description: 'O melhor do mês em que você mais se movimentou.'
+		},
+		favorites: {
+			label: 'Favoritos do Garmin',
+			description: 'As atividades marcadas como favoritas no Garmin Connect.'
+		}
+	},
+
 	totalDistance: 'Distância total',
 	elevationGained: 'Elevação acumulada',
 	timeActive: 'Tempo ativo',

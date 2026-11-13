@@ -2,12 +2,11 @@
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { tick } from 'svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
-	import { formatCount, formatDistance, formatDuration } from '#lib/utils/format.js';
+	import { activityTitle, formatCount, formatDistance, formatDuration } from '#lib/utils/format.js';
 	import { timelineGap } from '#lib/utils/export.js';
 	import { HIGHLIGHTS_LIMIT, TIMELINE_GAP } from '#lib/constants/export.js';
-	import { Star, Target } from 'phosphor-svelte';
+	import { Target } from 'phosphor-svelte';
 	import { sportIcons } from '#lib/constants/sports.js';
-	import type { Activity } from '#lib/types/index.js';
 	import ExportCardBase from './ExportCardBase.svelte';
 
 	let limit = $state(HIGHLIGHTS_LIMIT);
@@ -19,11 +18,8 @@
 	let highlights = $derived(appStore.highlights.slice(0, limit));
 	let hiddenCount = $derived(appStore.highlights.length - highlights.length);
 	let compact = $state(false);
+	let dense = $state(false);
 	let fitRun = 0;
-
-	function titleOf(fav: Activity): string {
-		return fav.title || i18n.m.common.sports[fav.type] || i18n.m.export.activity;
-	}
 
 	// How titles wrap depends on the rendered font, so only the DOM knows how many items fit.
 	async function fitToCard() {
@@ -35,11 +31,15 @@
 
 	async function fitItems(isStale: () => boolean) {
 		compact = false;
+		dense = false;
 		limit = HIGHLIGHTS_LIMIT;
 		gap = TIMELINE_GAP.min;
 		await tick();
 		if (isStale()) return;
 		compact = overflows();
+		await tick();
+		if (isStale()) return;
+		dense = overflows();
 		await tick();
 		while (!isStale() && limit > 1 && overflows()) {
 			limit -= 1;
@@ -63,7 +63,15 @@
 	}
 
 	$effect(() => {
-		void [appStore.highlights, appStore.displayName, appStore.theme, appStore.unit, area, list];
+		void [
+			appStore.highlights,
+			appStore.displayName,
+			appStore.theme,
+			appStore.unit,
+			i18n.locale,
+			area,
+			list
+		];
 		fitToCard();
 		document.fonts.ready.then(fitToCard);
 	});
@@ -112,44 +120,43 @@
 
 							<!-- Activity Card -->
 							<div
-								class="flex min-w-0 flex-1 items-center {compact
-									? 'gap-4 p-4'
-									: 'gap-8 p-8'} timeline-card rounded-2xl"
+								class="flex min-w-0 flex-1 items-center {dense
+									? 'gap-3 p-2'
+									: compact
+										? 'gap-4 p-4'
+										: 'gap-8 p-8'} timeline-card rounded-2xl"
 							>
 								<div
-									class="{compact
-										? 'h-12 w-12 rounded-xl'
-										: 'h-16 w-16 rounded-2xl'} flex shrink-0 items-center justify-center bg-[var(--color-accent)]/20 text-[var(--color-accent)]"
+									class="{dense
+										? 'h-10 w-10 rounded-lg'
+										: compact
+											? 'h-12 w-12 rounded-xl'
+											: 'h-16 w-16 rounded-2xl'} flex shrink-0 items-center justify-center bg-[var(--color-accent)]/20 text-[var(--color-accent)]"
 								>
 									<IconComponent
-										class={compact ? 'h-6 w-6' : 'h-8 w-8'}
+										class={dense ? 'h-5 w-5' : compact ? 'h-6 w-6' : 'h-8 w-8'}
 										weight="bold"
 										aria-hidden="true"
 									/>
 								</div>
 								<div class="min-w-0 flex-1">
 									<div class="mb-1 flex items-center gap-2">
-										{#if fav.favorite}
-											<Star
-												class="{compact
-													? 'h-4 w-4'
-													: 'h-6 w-6'} highlight-star shrink-0 text-yellow-500"
-												weight="fill"
-												aria-hidden="true"
-											/>
-										{/if}
 										<div
-											class="{compact
-												? 'text-[22px]'
-												: 'text-[32px]'} highlight-title line-clamp-2 min-w-0 flex-1 font-bold [overflow-wrap:anywhere] text-[var(--color-text-primary)]"
+											class="{dense
+												? 'line-clamp-1 text-[20px]'
+												: compact
+													? 'line-clamp-2 text-[22px]'
+													: 'line-clamp-2 text-[32px]'} highlight-title min-w-0 flex-1 font-bold [overflow-wrap:anywhere] text-[var(--color-text-primary)]"
 										>
-											{titleOf(fav)}
+											{activityTitle(i18n.locale, fav)}
 										</div>
 									</div>
 									<div
-										class="flex flex-wrap items-center gap-x-3 gap-y-1 {compact
-											? 'text-[16px]'
-											: 'text-[22px]'} text-[var(--color-text-muted)]"
+										class="flex flex-wrap items-center gap-x-3 gap-y-1 {dense
+											? 'text-[14px]'
+											: compact
+												? 'text-[16px]'
+												: 'text-[22px]'} text-[var(--color-text-muted)]"
 									>
 										{#if fav.distance > 0}
 											<span class="font-mono">

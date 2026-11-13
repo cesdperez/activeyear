@@ -2,6 +2,32 @@ import { plural } from '#lib/i18n/plural.js';
 import type { dashboard as en } from '../en/dashboard.js';
 
 export const dashboard: typeof en = {
+	customPicks: 'Tu propia selección.',
+	highlightPresets: 'Selecciones de destacados',
+	searchActivities: 'Buscar actividades',
+	searchPlaceholder: 'Buscar por título, deporte, mes o distancia',
+	noSearchMatches: 'No hay actividades coincidentes',
+	noPicks: 'No has elegido destacados. Elige una selección o busca tus actividades.',
+	removeHighlight: (x: string) => `Quitar ${x} de destacados`,
+	removedHighlight: (x: string) => `Se quitó ${x}`,
+	addedHighlight: (x: string) => `Se añadió ${x}`,
+	highlightLimit: (n: number) => `Máximo ${n} destacados. Quita uno para añadir otro.`,
+	searchResults: (n: number) => `${n} ${n === 1 ? 'resultado' : 'resultados'}`,
+	presets: {
+		longest: { label: 'Más largas', description: 'Tus sesiones más largas del año.' },
+		farthest: { label: 'Más distancia', description: 'Los días en que llegaste más lejos.' },
+		climbs: { label: 'Mayor desnivel', description: 'Donde acumulaste más desnivel.' },
+		'per-sport': {
+			label: 'Lo mejor de cada deporte',
+			description: 'Tu sesión más larga de cada deporte.'
+		},
+		'best-month': { label: 'Mes épico', description: 'Lo mejor del mes en que más te moviste.' },
+		favorites: {
+			label: 'Favoritos de Garmin',
+			description: 'Las actividades marcadas como favoritas en Garmin Connect.'
+		}
+	},
+
 	totalDistance: 'Distancia total',
 	elevationGained: 'Desnivel acumulado',
 	timeActive: 'Tiempo activo',
