@@ -247,4 +247,28 @@ test.describe('Export card layout', () => {
 		expect(caps.length).toBeGreaterThan(1);
 		expect(new Set(caps)).toEqual(new Set(['butt']));
 	});
+
+	test('record bibs keep values and rules level when one value shrinks to fit', async ({
+		page
+	}) => {
+		const header = 'Activity Type,Date,Favorite,Title,Distance,Calories,Time,Total Ascent';
+		await uploadCsv(
+			page,
+			[
+				header,
+				`Running,${TARGET_YEAR}-03-01 08:00:00,false,"Marathon",42.6,4200,03:30:00,100`,
+				`Hiking,${TARGET_YEAR}-03-02 08:00:00,false,"Mountain Hike",12.0,900,03:55:00,800`
+			].join('\n')
+		);
+		await showSlide(page, 1);
+
+		const card = page.locator('#export-card');
+		await expect(card.getByTestId('record-value').last()).toHaveText('4,200kcal');
+		const bottoms = (selector: string) =>
+			card
+				.locator(selector)
+				.evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().bottom)));
+		expect(new Set(await bottoms('[data-testid="record-value"]')).size).toBe(1);
+		expect(new Set(await bottoms('[data-testid="record-title"]')).size).toBe(1);
+	});
 });

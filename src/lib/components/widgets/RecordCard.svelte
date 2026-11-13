@@ -35,18 +35,21 @@
 	<span class="min-w-0 text-balance {style.label}">{label}</span>
 
 	<div class="@container">
+		<!-- The full-size font sets every bib's line box and baseline, so a shrunk value still lines up. -->
 		<div
 			data-testid="record-value"
-			class="stat-value fit-value leading-[1.05] text-[var(--color-text-primary)]"
-			style:--fit-chars={value.length}
-			style:--fit-max={style.fitMax}
+			class="stat-value leading-[1.05] whitespace-nowrap text-[var(--color-text-primary)]"
+			style:font-size={style.fitMax}
 		>
-			{value}
+			<span class="fit-value" style:--fit-chars={value.length} style:--fit-max={style.fitMax}
+				>{value}</span
+			>
 		</div>
 	</div>
 
 	{#if activityTitle}
 		<div
+			data-testid="record-title"
 			class="mt-auto min-w-0 border-t border-[var(--color-border)] pt-3 wrap-anywhere text-[var(--color-text-muted)] {style.title}"
 			title={activityTitle}
 		>
