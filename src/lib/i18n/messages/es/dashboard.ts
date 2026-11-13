@@ -2,6 +2,10 @@ import { plural } from '#lib/i18n/plural.js';
 import type { dashboard as en } from '../en/dashboard.js';
 
 export const dashboard: typeof en = {
+	supportExport: '¿Te gustó tu resumen? ActiveYear es gratis y lo hace una sola persona.',
+	supportFooter: '¿Te gusta ActiveYear?',
+	buyMeAGel: 'Invítame a un gel',
+	opensKofi: '(abre Ko-fi en una pestaña nueva)',
 	customPicks: 'Tu propia selección.',
 	highlightPresets: 'Selecciones de destacados',
 	searchActivities: 'Buscar actividades',

@@ -1,4 +1,5 @@
 export const SITE_URL = 'https://activeyear.app';
+export const KOFI_URL = 'https://ko-fi.com/chechoxyz';
 export const SITE_NAME = 'ActiveYear';
 export const REPOSITORY_URL = 'https://github.com/cesdperez/activeyear';
 

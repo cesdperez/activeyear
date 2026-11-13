@@ -4,6 +4,7 @@
 	import { track } from '#lib/analytics/track.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import ExportCarousel from './ExportCarousel.svelte';
+	import SupportLink from './dashboard/SupportLink.svelte';
 	import SectionHeading from './dashboard/SectionHeading.svelte';
 	import { DownloadSimple, Image as ImageIcon, SpinnerGap, Trash } from 'phosphor-svelte';
 	import type {
@@ -295,6 +296,10 @@
 					{/if}
 				{/if}
 			</div>
+
+			{#if exportStatus?.type === 'done'}
+				<SupportLink placement="export" />
+			{/if}
 
 			<p class="text-xs text-[var(--color-text-dim)]">
 				{i18n.m.export.downloads}

@@ -39,6 +39,8 @@ test.describe('Export Flow', () => {
 		await page.getByRole('button', { name: /Minimal/i }).click();
 		await page.getByRole('button', { name: 'More stats' }).click();
 
+		const support = page.locator('#export-panel').getByRole('link', { name: /Buy me a gel/ });
+		await expect(support).toHaveCount(0);
 		const downloadButton = page.getByRole('button', { name: /Download All Images/i });
 		await expect(downloadButton).toBeEnabled();
 
@@ -49,6 +51,9 @@ test.describe('Export Flow', () => {
 
 		expect((await downloadPromise).suggestedFilename()).toBe('activeyear-2026-summary.png');
 		await expect(page.locator('#export-status')).toHaveText('Downloaded three images');
+		await expect(support).toBeVisible();
+		await expect(support).toHaveAttribute('href', 'https://ko-fi.com/chechoxyz');
+		await expect(support).toHaveAttribute('target', '_blank');
 		expect(events).toEqual([]);
 	});
 

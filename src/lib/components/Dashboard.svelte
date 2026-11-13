@@ -14,6 +14,7 @@
 	import SportBreakdown from '#lib/components/dashboard/SportBreakdown.svelte';
 	import MoreStats from '#lib/components/dashboard/MoreStats.svelte';
 	import UploadAnotherFile from '#lib/components/dashboard/UploadAnotherFile.svelte';
+	import SupportLink from '#lib/components/dashboard/SupportLink.svelte';
 	import SaveYear from '#lib/components/dashboard/SaveYear.svelte';
 	import { useConfettiRain } from '#lib/components/dashboard/confettiRain.svelte.js';
 
@@ -46,5 +47,6 @@
 	<div class="mt-24 flex flex-col items-center gap-6">
 		<SaveYear />
 		<UploadAnotherFile />
+		<SupportLink placement="footer" />
 	</div>
 </div>

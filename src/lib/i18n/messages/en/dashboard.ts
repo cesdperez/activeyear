@@ -1,6 +1,10 @@
 import { plural } from '#lib/i18n/plural.js';
 
 export const dashboard = {
+	supportExport: 'Enjoyed your recap? ActiveYear is free and made by one person.',
+	supportFooter: 'Enjoying ActiveYear?',
+	buyMeAGel: 'Buy me a gel',
+	opensKofi: '(opens Ko-fi in a new tab)',
 	customPicks: 'Your own picks.',
 	highlightPresets: 'Highlight presets',
 	searchActivities: 'Search your activities',

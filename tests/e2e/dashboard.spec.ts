@@ -67,6 +67,13 @@ test.describe('dashboard toggles', () => {
 	});
 });
 
+test('footer offers a support link', async ({ page }) => {
+	await openDemo(page);
+	const support = page.getByRole('link', { name: /Buy me a gel/ });
+	await expect(support).toBeVisible();
+	await expect(support).toHaveAttribute('href', 'https://ko-fi.com/chechoxyz');
+});
+
 test('more stats are hidden until expanded', async ({ page }) => {
 	await openDemo(page);
 	const toggle = page.getByRole('button', { name: 'More stats', exact: true });
