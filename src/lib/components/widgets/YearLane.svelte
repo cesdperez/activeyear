@@ -67,8 +67,9 @@
 		mergeCloseMarkers(markers, days, laneWidth ? (style.headPx * days) / laneWidth : 0)
 	);
 	const activeDays = $derived(ticks.slice(0, counted).filter((height) => height > 0).length);
-	const hasRecords = $derived(markers.some((m) => m.kind === 'record'));
-	const hasHighlights = $derived(markers.some((m) => m.kind === 'highlight'));
+	// A highlight merged into a record head is not drawn, so the legend follows the heads.
+	const hasRecords = $derived(heads.some((head) => head.kind === 'record'));
+	const hasHighlights = $derived(heads.some((head) => head.kind === 'highlight'));
 
 	const activePath = $derived(path(ticks.map((h, day) => (day < counted ? h * 100 : 0))));
 	const restPath = $derived(
