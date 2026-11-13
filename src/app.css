@@ -316,7 +316,7 @@ body {
 }
 
 @media (hover: hover) {
-	.btn-secondary:enabled:hover {
+	.btn-secondary:not(:disabled):hover {
 		border-color: var(--color-text-dim);
 		color: var(--color-text-primary);
 	}
