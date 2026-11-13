@@ -1,14 +1,11 @@
-import Papa from 'papaparse';
 import { STRAVA_LOCALES } from './stravaLocales.js';
 import {
 	bestLocale,
 	firstLine,
 	readHeaderCells,
 	isCalendarDate,
-	isInYear,
-	sortedYears,
-	papaRowErrors,
-	invalidDateError
+	parseRows,
+	emptyResult
 } from './csv.js';
 import { TYPES_WITHOUT_DISTANCE } from '#lib/constants/parsing.js';
 import type {
@@ -133,21 +130,13 @@ function parseNumber(value: string | undefined): number {
 }
 
 function unsupportedLanguageExportResult(): ParseResult {
-	return {
-		source: 'strava',
-		activities: [],
-		yearsInFile: [],
-		rowCount: 0,
-		errors: [
-			{
-				type: 'unsupported-format',
-				reason: 'strava-unsupported-language',
-				row: 0,
-				message:
-					"This Strava export is in a language we can't read yet. Set Strava to English, Spanish, German, French, Italian, Dutch or Portuguese, request a new archive, and upload its activities.csv."
-			}
-		]
-	};
+	return emptyResult('strava', {
+		type: 'unsupported-format',
+		reason: 'strava-unsupported-language',
+		row: 0,
+		message:
+			"This Strava export is in a language we can't read yet. Set Strava to English, Spanish, German, French, Italian, Dutch or Portuguese, request a new archive, and upload its activities.csv."
+	});
 }
 
 function columnIndexes(columns: string[]) {
@@ -182,34 +171,6 @@ function readActivity(
 	};
 }
 
-function rowStartLine(segment: string, line: number): number {
-	const leading = segment.match(/^(?:\s*\r?\n)*/)?.[0] ?? '';
-	return line + (leading.match(/\n/g)?.length ?? 0);
-}
-
-function readRows(
-	csv: string,
-	onRow: (data: string[], line: number, errors: Papa.ParseError[]) => void
-): void {
-	let previousCursor = 0;
-	let line = 1;
-	let header = true;
-	Papa.parse<string[]>(csv, {
-		skipEmptyLines: 'greedy',
-		step: ({ data, errors, meta }) => {
-			const segment = csv.slice(previousCursor, meta.cursor);
-			const rowLine = rowStartLine(segment, line);
-			line += segment.match(/\n/g)?.length ?? 0;
-			previousCursor = meta.cursor;
-			if (header) {
-				header = false;
-				return;
-			}
-			onRow(data, rowLine, errors);
-		}
-	});
-}
-
 function parse(csv: string, year: number): ParseResult {
 	const headers = readHeaders(csv);
 	const locale = hasEnglishHeaders(headers) ? undefined : bestLocale(headers, STRAVA_LOCALES);
@@ -218,48 +179,24 @@ function parse(csv: string, year: number): ParseResult {
 		return unsupportedLanguageExportResult();
 
 	const columns = columnIndexes(translated);
-	const result: ParseResult = {
+	return parseRows<string[]>(csv, {
 		source: 'strava',
-		activities: [],
-		errors: [],
-		yearsInFile: [],
-		rowCount: 0
-	};
-	const years = new Set<number>();
-	readRows(csv, (data, rowLine, errors) => {
-		result.rowCount++;
+		year,
+		header: false,
+		skipEmptyLines: 'greedy',
+		readDate: (data) => data[columns.date],
+		hasRequired: (data) => Boolean(data[columns.type] && data[columns.date]),
+		missingMessage: 'Missing required column (Activity Type or Activity Date)',
+		parseDate: (value) => (locale ? parseLocalizedDate(value, locale) : parseStravaDate(value)),
+		readActivity: (data, date) => readActivity(data, columns, date, locale),
 		// A broken quote reads on to the next quote mark, so swallowed rows count as one skipped row.
 		// Descriptions span lines, so there is no line boundary to resync on.
-		if (errors.some((error) => error.type === 'Quotes')) {
-			result.errors.push({
-				type: 'malformed-quotes',
-				row: rowLine,
-				message: `Skipped row ${rowLine} because its quote marks could not be read.`
-			});
-			return;
-		}
-		result.errors.push(...papaRowErrors(errors, rowLine));
-
-		const type = data[columns.type] ?? '';
-		const dateText = data[columns.date] ?? '';
-		if (!type || !dateText) {
-			result.errors.push({
-				type: 'missing-column',
-				row: rowLine,
-				message: 'Missing required column (Activity Type or Activity Date)'
-			});
-			return;
-		}
-		const date = locale ? parseLocalizedDate(dateText, locale) : parseStravaDate(dateText);
-		if (!date) {
-			result.errors.push(invalidDateError(rowLine));
-			return;
-		}
-		years.add(date.getFullYear());
-		if (isInYear(date, year)) result.activities.push(readActivity(data, columns, date, locale));
+		quoteError: (row) => ({
+			type: 'malformed-quotes',
+			row,
+			message: `Skipped row ${row} because its quote marks could not be read.`
+		})
 	});
-	result.yearsInFile = sortedYears(years);
-	return result;
 }
 
 /** Detects English and localized Strava exports, including unsupported languages. */

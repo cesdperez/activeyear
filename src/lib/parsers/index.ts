@@ -1,4 +1,5 @@
 import type { ActivityParser, ParseResult, ParseOptions } from '#lib/types/index.js';
+import { emptyResult } from './csv.js';
 import { garminParser } from './garmin.js';
 import { stravaParser } from './strava.js';
 
@@ -13,19 +14,11 @@ export function parseActivityCsv(
 	const parser = PARSERS.find((p) => p.detect(csvContent));
 	if (parser) return parser.parse(csvContent, year, options);
 
-	return {
-		source: null,
-		activities: [],
-		yearsInFile: [],
-		rowCount: 0,
-		errors: [
-			{
-				type: 'unsupported-format',
-				reason: 'unrecognised',
-				row: 0,
-				message:
-					"We couldn't recognise this file. Upload the Activities CSV from Garmin Connect or activities.csv from your Strava account export in English, Spanish, German, French, Italian, Dutch or Portuguese."
-			}
-		]
-	};
+	return emptyResult(null, {
+		type: 'unsupported-format',
+		reason: 'unrecognised',
+		row: 0,
+		message:
+			"We couldn't recognise this file. Upload the Activities CSV from Garmin Connect or activities.csv from your Strava account export in English, Spanish, German, French, Italian, Dutch or Portuguese."
+	});
 }
