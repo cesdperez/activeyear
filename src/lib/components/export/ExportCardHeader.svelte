@@ -15,6 +15,12 @@
 		yearSoFar
 	}: { title: string; userName: string; aside?: Snippet; theme: Theme; yearSoFar: boolean } =
 		$props();
+
+	const season = $derived(
+		(yearSoFar ? i18n.m.export.seasonSoFar : i18n.m.export.season)(TARGET_YEAR)
+	);
+	const owner = $derived(i18n.m.export.owner(userName));
+	const longestWord = $derived(Math.max(...owner.split(/\s+/).map((word) => word.length)));
 </script>
 
 <header class="mb-[56px]">
@@ -28,18 +34,20 @@
 		{:else}
 			<Logotype class="text-[64px]" />
 		{/if}
-		<p class:lightmile-season={theme === 'lightmile'} class="season card-label">
-			{(yearSoFar ? i18n.m.export.seasonSoFar : i18n.m.export.season)(TARGET_YEAR)}
-		</p>
+		<div class="@container min-w-0 flex-1">
+			<p class="season card-label" style:--season-chars={season.length}>{season}</p>
+		</div>
 	</div>
 	<div class="mt-12 flex items-end justify-between gap-10">
-		<div class="min-w-0 flex-1">
+		<div class="@container min-w-0 flex-1">
 			{#if userName}
 				<p
 					class="export-name mb-3 line-clamp-2 leading-[1.1] [overflow-wrap:anywhere] text-[var(--color-text-primary)]"
-					style="font-size: calc({nameFontSize(userName)}px * var(--name-scale));"
+					style:--name-size="calc({nameFontSize(userName)}px * var(--name-scale))"
+					style:--name-chars={owner.length}
+					style:--name-word-chars={longestWord}
 				>
-					{i18n.m.export.owner(userName)}
+					{owner}
 				</p>
 			{/if}
 			<p class="export-title">{title}</p>
@@ -49,16 +57,22 @@
 </header>
 
 <style>
-	.season {
+	/* One row beside the wordmarks: a long translation shrinks instead of wrapping. */
+	:global(.export-card) .season {
 		color: var(--color-accent);
-	}
-
-	.lightmile-season {
-		min-width: 0;
+		white-space: nowrap;
 		text-align: right;
+		font-size: min(var(--label-size), 100cqi / (var(--season-chars) * var(--label-char-em)));
 	}
 
+	/* A long name shrinks so it fits in two lines and its longest word in one, so the clamp never
+	   cuts the possessive. Wrapping at word ends wastes some of each line, hence 1.8 lines. */
 	.export-name {
+		font-size: min(
+			var(--name-size),
+			180cqi / (var(--name-chars) * var(--name-char-em)),
+			100cqi / (var(--name-word-chars) * var(--name-char-em))
+		);
 		font-family: var(--font-stat);
 		font-weight: 700;
 		letter-spacing: 0.01em;
