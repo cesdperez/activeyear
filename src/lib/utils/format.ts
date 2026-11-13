@@ -40,7 +40,7 @@ export function formatDistance(locale: Locale, km: number, unit: Unit = 'km'): s
 	if (Number(oneDecimal) >= 100) {
 		return `${formatCount(locale, Math.round(value))}${suffix}`;
 	}
-	return `${Number(oneDecimal).toLocaleString(INTL_LOCALES[locale], { minimumFractionDigits: 1, maximumFractionDigits: 1 })}${suffix}`;
+	return `${localeNumber(locale, Number(oneDecimal), { minimumFractionDigits: 1, maximumFractionDigits: 1 })}${suffix}`;
 }
 
 /** "Xh Ym", "Xh" on a whole hour, "Ym" under an hour, or "Xs" under a minute. */
@@ -70,7 +70,15 @@ export function showsValue(formatted: string): boolean {
 
 /** Whole number with thousands separators, matching the other stats. */
 export function formatCount(locale: Locale, count: number): string {
-	return count.toLocaleString(INTL_LOCALES[locale]);
+	return localeNumber(locale, count);
+}
+
+// The theme fonts lack U+202F, the French group and percent space, so each engine would draw it
+// with a different fallback font and width.
+function localeNumber(locale: Locale, value: number, options?: Intl.NumberFormatOptions): string {
+	return new Intl.NumberFormat(INTL_LOCALES[locale], options)
+		.format(value)
+		.replaceAll('\u202f', '\u00a0');
 }
 
 /** Whole percent, but "<1%" for a share that is above zero and would round to 0%. */
@@ -93,15 +101,15 @@ function partialPercent(percent: number, decimals: number): number {
 }
 
 function formatPercent(locale: Locale, percent: number, decimals: number): string {
-	return new Intl.NumberFormat(INTL_LOCALES[locale], {
+	return localeNumber(locale, percent / 100, {
 		style: 'percent',
 		minimumFractionDigits: decimals,
 		maximumFractionDigits: decimals
-	}).format(percent / 100);
+	});
 }
 
 function fixed(locale: Locale, value: number, decimals: number): string {
-	return Number(value.toFixed(decimals)).toLocaleString(INTL_LOCALES[locale], {
+	return localeNumber(locale, Number(value.toFixed(decimals)), {
 		minimumFractionDigits: decimals,
 		maximumFractionDigits: decimals,
 		useGrouping: false
@@ -112,7 +120,7 @@ function fixed(locale: Locale, value: number, decimals: number): string {
  * Format calories with thousands separator
  */
 export function formatCalories(locale: Locale, calories: number): string {
-	return `${Math.round(calories).toLocaleString(INTL_LOCALES[locale])}kcal`;
+	return `${localeNumber(locale, Math.round(calories))}kcal`;
 }
 
 /**
@@ -121,10 +129,10 @@ export function formatCalories(locale: Locale, calories: number): string {
 export function formatElevation(locale: Locale, meters: number, unit: Unit = 'km'): string {
 	if (unit === 'miles') {
 		const rounded = roundedElevation(meters, unit);
-		return `${rounded.toLocaleString(INTL_LOCALES[locale])}ft`;
+		return `${localeNumber(locale, rounded)}ft`;
 	}
 	const rounded = roundedElevation(meters, unit);
-	return `${rounded.toLocaleString(INTL_LOCALES[locale])}m`;
+	return `${localeNumber(locale, rounded)}m`;
 }
 
 /**

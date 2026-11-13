@@ -245,6 +245,16 @@ describe('formatCount', () => {
 		expect(formatCount('en', 7)).toBe('7');
 		expect(formatCount('en', 1008)).toBe('1,008');
 	});
+
+	// The theme fonts have no U+202F, so its width would come from a per-engine fallback font.
+	it('groups French thousands with a no-break space the fonts contain', () => {
+		expect(formatCount('fr', 127641)).toBe('127 641');
+		expect(formatCalories('fr', 127641)).toBe('127 641kcal');
+		expect(formatDistance('fr', 3485)).toBe('3 485km');
+		expect(formatElevation('fr', 14650)).toBe('14 650m');
+		expect(formatElevation('fr', 14650, 'miles')).toBe('48 050ft');
+		expect(formatDuration('fr', 1500 * 3600)).toBe('1 500h');
+	});
 });
 
 describe('formatPercentOfYear', () => {
