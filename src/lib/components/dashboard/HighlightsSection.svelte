@@ -52,6 +52,7 @@
 				id="highlight-search"
 				type="search"
 				placeholder={i18n.m.dashboard.searchPlaceholder}
+				aria-describedby="highlight-search-hint"
 				bind:value={query}
 				oninput={() => (announcement = '')}
 				onkeydown={(event) => {
@@ -63,6 +64,13 @@
 				disabled={appStore.isExporting}
 				class="w-full rounded-[var(--radius-control)] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-4 py-2.5 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-dim)] focus-visible:border-[var(--color-accent)] disabled:opacity-50"
 			/>
+			<p
+				id="highlight-search-hint"
+				class="mt-2 text-sm text-[var(--color-text-muted)]"
+				class:sr-only={query.trim()}
+			>
+				{i18n.m.dashboard.searchHint}
+			</p>
 			<div class="sr-only" aria-live="polite">
 				{announcement || (query.trim() ? i18n.m.dashboard.searchResults(results.length) : '')}
 			</div>

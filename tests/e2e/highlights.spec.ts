@@ -1,5 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
-import { DASHBOARD_HEADING, gotoUpload, showSlide, STRAVA_CSV, uploadSample } from './helpers.js';
+import {
+	DASHBOARD_HEADING,
+	gotoUpload,
+	SAMPLE_CSV,
+	showSlide,
+	STRAVA_CSV,
+	uploadSample
+} from './helpers.js';
 
 async function uploadStrava(page: Page) {
 	await gotoUpload(page);
@@ -72,4 +79,27 @@ test('presets and search work with a keyboard on mobile', async ({ page }) => {
 	await page.keyboard.press('Tab');
 	await page.keyboard.press('Enter');
 	await expect(section.getByText('Your own picks.')).toBeVisible();
+});
+
+test.describe('on a phone', () => {
+	test.use({ viewport: { width: 390, height: 844 } });
+
+	for (const lang of ['en', 'es', 'pt', 'fr', 'de', 'nl']) {
+		test(`the ${lang} search placeholder fits the input`, async ({ page }) => {
+			await gotoUpload(page, lang === 'en' ? '/' : `/${lang}/`);
+			await page.locator('input[type="file"]').setInputFiles(SAMPLE_CSV);
+			const search = page.locator('#highlight-search');
+			await expect(search).toBeVisible({ timeout: 10000 });
+
+			const overflow = await search.evaluate((input: HTMLInputElement) => {
+				const style = getComputedStyle(input);
+				const context = document.createElement('canvas').getContext('2d')!;
+				context.font = style.font;
+				const room =
+					input.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+				return context.measureText(input.placeholder).width - room;
+			});
+			expect(overflow).toBeLessThanOrEqual(0);
+		});
+	}
 });
