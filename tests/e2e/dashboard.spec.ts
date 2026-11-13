@@ -249,6 +249,24 @@ for (const width of [320, 360, 768, 1024, 1280, 1920]) {
 	});
 }
 
+for (const width of [640, 768, 820, 1024, 1280]) {
+	test(`results board values stay well above label size at ${width}px`, async ({ page }) => {
+		await page.setViewportSize({ width, height: 900 });
+		await openDemo(page);
+		const board = page.getByTestId('main-stats');
+		const labelSize = await board
+			.locator('dt')
+			.first()
+			.evaluate((label) => parseFloat(getComputedStyle(label).fontSize));
+		const valueSize = await board
+			.getByTestId('board-value')
+			.first()
+			.evaluate((value) => parseFloat(getComputedStyle(value).fontSize));
+
+		expect(valueSize).toBeGreaterThanOrEqual(labelSize * 1.6);
+	});
+}
+
 const LONG_TITLES = [
 	"New Year's Resolution Run",
 	'Sunday long run with the club along the river',
