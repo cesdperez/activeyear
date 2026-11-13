@@ -1,9 +1,8 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { Star, Plus, Check } from 'phosphor-svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
-	import { HIGHLIGHT_PRESETS } from '#lib/constants/highlights.js';
 	import { HIGHLIGHTS_LIMIT } from '#lib/constants/export.js';
-	import { sportNames } from '#lib/constants/sports.js';
 	import {
 		activityTitle,
 		formatDistance,
@@ -19,24 +18,26 @@
 	let results = $derived(query.trim() ? appStore.searchActivities(query) : []);
 	let caption = $derived(
 		appStore.highlightPreset === 'custom'
-			? 'Your own picks.'
-			: HIGHLIGHT_PRESETS[appStore.highlightPreset].description
+			? i18n.m.dashboard.customPicks
+			: i18n.m.dashboard.presets[appStore.highlightPreset].description
 	);
 
 	function toggle(activity: Activity) {
 		const selected = appStore.isHighlight(activity);
 		if (selected) appStore.removeHighlight(activity);
 		else appStore.addHighlight(activity);
-		announcement = `${selected ? 'Removed' : 'Added'} ${activityTitle(activity)}`;
+		announcement = selected
+			? i18n.m.dashboard.removedHighlight(activityTitle(i18n.locale, activity))
+			: i18n.m.dashboard.addedHighlight(activityTitle(i18n.locale, activity));
 	}
 </script>
 
 <section class="mb-16">
-	<SectionHeading title="Highlights" class="mb-2" />
+	<SectionHeading title={i18n.m.dashboard.highlights} class="mb-2" />
 	<p class="mb-4 text-sm text-[var(--color-text-muted)]">{caption}</p>
 	<div
 		role="group"
-		aria-label="Highlight presets"
+		aria-label={i18n.m.dashboard.highlightPresets}
 		class="mb-4 flex flex-wrap gap-1 rounded-lg bg-[var(--color-surface-elevated)] p-1"
 	>
 		{#each appStore.highlightPresets as preset (preset)}
@@ -48,16 +49,16 @@
 				aria-pressed={pressed}
 				disabled={appStore.isExporting}
 				onclick={() => appStore.applyHighlightPreset(preset)}
-				>{HIGHLIGHT_PRESETS[preset].label}</button
+				>{i18n.m.dashboard.presets[preset].label}</button
 			>
 		{/each}
 	</div>
 	<div class="mb-8">
-		<label for="highlight-search" class="sr-only">Search your activities</label>
+		<label for="highlight-search" class="sr-only">{i18n.m.dashboard.searchActivities}</label>
 		<input
 			id="highlight-search"
 			type="search"
-			placeholder="Search by title, sport, month or distance"
+			placeholder={i18n.m.dashboard.searchPlaceholder}
 			bind:value={query}
 			oninput={() => (announcement = '')}
 			onkeydown={(event) => {
@@ -70,12 +71,11 @@
 			class="w-full rounded-lg bg-[var(--color-surface-elevated)] px-4 py-3 text-sm text-[var(--color-text-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)] disabled:opacity-50"
 		/>
 		<div class="sr-only" aria-live="polite">
-			{announcement ||
-				(query.trim() ? `${results.length} ${results.length === 1 ? 'result' : 'results'}` : '')}
+			{announcement || (query.trim() ? i18n.m.dashboard.searchResults(results.length) : '')}
 		</div>
 		{#if query.trim()}
 			{#if !appStore.canAddHighlight}<p class="mt-2 text-sm text-[var(--color-text-muted)]">
-					{HIGHLIGHTS_LIMIT} highlights max. Remove one to add another.
+					{i18n.m.dashboard.highlightLimit(HIGHLIGHTS_LIMIT)}
 				</p>{/if}
 			{#if results.length}
 				<ul class="mt-2 space-y-1">
@@ -88,14 +88,17 @@
 								disabled={appStore.isExporting || (!selected && !appStore.canAddHighlight)}
 								onclick={() => toggle(activity)}
 								><span class="min-w-0 flex-1"
-									><span class="block font-bold wrap-anywhere">{activityTitle(activity)}</span><span
-										class="block text-sm text-[var(--color-text-muted)]"
-										>{formatShortDate(new Date(activity.date))} · {#if activity.distance > 0}{formatDistance(
+									><span class="block font-bold wrap-anywhere"
+										>{activityTitle(i18n.locale, activity)}</span
+									><span class="block text-sm text-[var(--color-text-muted)]"
+										>{formatShortDate(i18n.locale, new Date(activity.date))} · {#if activity.distance > 0}{formatDistance(
+												i18n.locale,
 												activity.distance,
 												appStore.unit
 											)} ·
-										{/if}{formatDuration(activity.duration)} · {sportNames[activity.type] ||
-											activity.type}</span
+										{/if}{formatDuration(i18n.locale, activity.duration)} · {i18n.m.common.sports[
+											activity.type
+										] || activity.type}</span
 									></span
 								>{#if selected}<Check
 										class="h-5 w-5 shrink-0 text-[var(--color-accent)]"
@@ -108,7 +111,9 @@
 						</li>
 					{/each}
 				</ul>
-			{:else}<p class="mt-2 text-sm text-[var(--color-text-muted)]">No activities match</p>{/if}
+			{:else}<p class="mt-2 text-sm text-[var(--color-text-muted)]">
+					{i18n.m.dashboard.noSearchMatches}
+				</p>{/if}
 		{/if}
 	</div>
 	{#if appStore.highlights.length > 0}
@@ -130,7 +135,7 @@
 				<Star class="h-10 w-10 text-yellow-500" weight="fill" aria-hidden="true" />
 			</div>
 			<p class="max-w-md text-sm text-balance text-[var(--color-text-muted)]">
-				No highlights picked. Pick a preset or search your activities.
+				{i18n.m.dashboard.noPicks}
 			</p>
 		</div>
 	{/if}

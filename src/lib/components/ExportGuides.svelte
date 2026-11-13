@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { GARMIN_EXPORT_NOTE, GARMIN_EXPORT_STEPS } from '#lib/data/garminExport.js';
-	import { STRAVA_EXPORT_NOTE, STRAVA_EXPORT_STEPS } from '#lib/data/stravaExport.js';
+	import { garminExportNote, garminExportSteps } from '#lib/data/garminExport.js';
+	import { stravaExportNote, stravaExportSteps } from '#lib/data/stravaExport.js';
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import type { ExportStep } from '#lib/types/index.js';
 	let selected = $state<'garmin' | 'strava'>('garmin');
 	let garminTab: HTMLButtonElement;
@@ -44,7 +45,7 @@
 
 <div
 	role="tablist"
-	aria-label="Choose your data source"
+	aria-label={i18n.m.faq.guidesAria}
 	class="mb-4 inline-flex items-center rounded-full border border-zinc-700 bg-zinc-900 p-1"
 >
 	<button
@@ -79,8 +80,8 @@
 	>
 </div>
 <div id="garmin-panel" role="tabpanel" aria-labelledby="garmin-tab" hidden={selected !== 'garmin'}>
-	{@render exportGuide(GARMIN_EXPORT_STEPS, GARMIN_EXPORT_NOTE)}
+	{@render exportGuide(garminExportSteps(i18n.locale), garminExportNote(i18n.locale))}
 </div>
 <div id="strava-panel" role="tabpanel" aria-labelledby="strava-tab" hidden={selected !== 'strava'}>
-	{@render exportGuide(STRAVA_EXPORT_STEPS, STRAVA_EXPORT_NOTE)}
+	{@render exportGuide(stravaExportSteps(i18n.locale), stravaExportNote(i18n.locale))}
 </div>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import type { Unit } from '#lib/types/index.js';
 	import { Confetti } from 'phosphor-svelte';
@@ -9,10 +10,10 @@
 	];
 </script>
 
-<div class="absolute top-4 right-4 z-10 flex items-center gap-2 md:right-8">
+<div class="absolute top-4 right-28 z-10 flex items-center gap-2 md:right-32">
 	<div
 		role="group"
-		aria-label="Distance unit"
+		aria-label={i18n.m.dashboard.distanceUnit}
 		class="flex rounded-full border border-[rgba(255,255,255,0.05)] bg-[var(--color-surface-elevated)] p-0.5"
 	>
 		{#each units as { unit, label } (unit)}
@@ -34,8 +35,10 @@
 			? 'bg-[var(--color-surface-elevated)] text-[var(--color-accent)] shadow-lg'
 			: 'bg-transparent text-[var(--color-text-dim)] hover:text-white'}"
 		onclick={() => (appStore.confettiEnabled = !appStore.confettiEnabled)}
-		title={appStore.confettiEnabled ? 'Disable celebration mode' : 'Enable celebration mode'}
-		aria-label="Celebration confetti"
+		title={appStore.confettiEnabled
+			? i18n.m.dashboard.disableCelebration
+			: i18n.m.dashboard.enableCelebration}
+		aria-label={i18n.m.dashboard.celebrationConfetti}
 		aria-pressed={appStore.confettiEnabled}
 	>
 		<Confetti class="h-6 w-6" aria-hidden="true" />

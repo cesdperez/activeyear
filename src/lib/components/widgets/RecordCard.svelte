@@ -54,7 +54,7 @@
 			</div>
 
 			<div class="@container min-w-0 flex-1">
-				<div class="stat-label mb-1 text-xs tracking-wider opacity-70">
+				<div class="stat-label mb-1 text-xs tracking-wider wrap-anywhere opacity-70">
 					{label}
 				</div>
 
@@ -85,7 +85,7 @@
 		></div>
 	</div>
 {:else}
-	<div class="record-card-compact">
+	<div class="record-card-compact min-w-0">
 		<div class="record-icon-compact">
 			<Icon class="h-14 w-14" weight="fill" aria-hidden="true" />
 		</div>
@@ -95,7 +95,7 @@
 			{value}
 		</div>
 		<div
-			class="text-[18px] tracking-widest whitespace-nowrap text-[var(--color-text-muted)] uppercase"
+			class="w-full text-[18px] tracking-widest text-balance wrap-anywhere text-[var(--color-text-muted)] uppercase"
 		>
 			{label}
 		</div>

@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { PNG } from 'pngjs';
 import pixelmatch from 'pixelmatch';
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
-import { uploadSample } from './helpers.js';
+import { gotoUpload, uploadSample } from './helpers.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -77,7 +77,9 @@ async function captureExportCardAtFullResolution(page: Page): Promise<Buffer> {
 }
 
 async function captureSpecificCardDownload(page: Page, cardIndex: number): Promise<Buffer> {
-	const downloadButton = page.getByRole('button', { name: /Download All Images/i });
+	const downloadButton = page.getByRole('button', {
+		name: /Download All Images|Alle Bilder herunterladen/i
+	});
 
 	// Collect all downloads
 	const downloads: Download[] = [];
@@ -86,12 +88,12 @@ async function captureSpecificCardDownload(page: Page, cardIndex: number): Promi
 	};
 	page.on('download', downloadHandler);
 
-	await downloadButton.click();
-
-	// Wait for all 3 downloads to complete
-	await page.waitForTimeout(3000);
-
-	page.off('download', downloadHandler);
+	try {
+		await downloadButton.click();
+		await expect.poll(() => downloads.length, { timeout: 15000 }).toBe(3);
+	} finally {
+		page.off('download', downloadHandler);
+	}
 
 	// Get the download for our specific card
 	const download = downloads[cardIndex];
@@ -212,6 +214,21 @@ test.describe('Export Visual Fidelity', () => {
 
 			// Save snapshot of downloaded image for regression testing
 			expect(downloadBuffer).toMatchSnapshot(`${cardName}-export.png`);
+		});
+	}
+
+	for (const [cardIndex, cardName] of CARDS.entries()) {
+		test(`German ${cardName} card snapshot`, async ({ page }) => {
+			await gotoUpload(page, '/de/');
+			await page
+				.locator('input[type="file"]')
+				.first()
+				.setInputFiles(join(__dirname, 'fixtures', 'garmin-heavy.csv'));
+			await expect(page.locator('#export-card')).toBeVisible();
+			await navigateToSlide(page, cardIndex);
+			expect(await captureSpecificCardDownload(page, cardIndex)).toMatchSnapshot(
+				`german-${cardName}.png`
+			);
 		});
 	}
 

@@ -17,16 +17,13 @@ import {
 	calculateWeeklyPattern,
 	summaryMetricWithValue
 } from '../utils/stats.js';
-import { parseSavedYear, savedYearErrorMessage, serializeSavedYear } from '#lib/utils/savedYear.js';
+import { parseSavedYear, serializeSavedYear } from '#lib/utils/savedYear.js';
 import { TARGET_YEAR } from '../constants/time.js';
 import { demoActivities } from '../data/demo.js';
-import {
-	describeSkippedRows,
-	describeUnusableFile,
-	unusableFileMessage
-} from '#lib/utils/uploadErrors.js';
+import { describeSkippedRows, describeUnusableFile } from '#lib/utils/uploadErrors.js';
 import type {
 	Activity,
+	UploadError,
 	HighlightPreset,
 	ActivitySource,
 	ParseError,
@@ -45,7 +42,7 @@ class AppStore {
 	#highlights = $state.raw<Activity[]>([]);
 	#highlightPreset = $state<HighlightPreset | 'custom'>('longest');
 	#highlightPresets = $derived(availablePresets(this.#activities));
-	#searchTexts = $derived(this.#activities.map(activitySearchText));
+	#searchTexts = $derived(this.#activities.map((activity) => activitySearchText(activity)));
 	#stats = $derived(this.#activities.length > 0 ? calculateYearStats(this.#activities) : null);
 	#records = $derived(
 		this.#activities.length > 0 ? calculatePersonalRecords(this.#activities) : null
@@ -53,7 +50,7 @@ class AppStore {
 	#breakdown = $derived(calculateSportBreakdown(this.#activities));
 	#weeklyPattern = $derived(calculateWeeklyPattern(this.#activities));
 	#status = $state<AppStatus>('idle');
-	#error = $state<string | null>(null);
+	#error = $state<UploadError | null>(null);
 	#parseErrors = $state<ParseError[]>([]);
 	#skippedRowCount = $derived(describeSkippedRows(this.#parseErrors)?.count ?? 0);
 
@@ -178,7 +175,7 @@ class AppStore {
 	async processFile(file: File) {
 		const name = file.name.toLowerCase();
 		if (!name.endsWith('.csv') && !name.endsWith('.json')) {
-			this.#fail('unsupported-file-type', 'Please upload a CSV or saved .json file');
+			this.#fail('unsupported-file-type', { type: 'invalid-extension' });
 			return;
 		}
 
@@ -190,7 +187,7 @@ class AppStore {
 			if (name.endsWith('.json')) {
 				const saved = parseSavedYear(content, TARGET_YEAR);
 				if (!saved.ok) {
-					this.#fail('invalid-saved-year', savedYearErrorMessage(saved.error));
+					this.#fail('invalid-saved-year', saved.error);
 					return;
 				}
 				this.#load(saved.activities);
@@ -203,13 +200,17 @@ class AppStore {
 
 			const unreadable = result.errors.find((e) => e.type === 'unsupported-format');
 			if (unreadable) {
-				this.#fail('unsupported-format', unreadable.message, result.errors);
+				this.#fail(
+					'unsupported-format',
+					{ type: unreadable.reason ?? 'unrecognised' },
+					result.errors
+				);
 				return;
 			}
 
 			if (result.activities.length === 0) {
 				const error = describeUnusableFile(result, TARGET_YEAR);
-				this.#fail(error.type, unusableFileMessage(error), result.errors);
+				this.#fail(error.type, error, result.errors);
 				return;
 			}
 
@@ -217,8 +218,8 @@ class AppStore {
 			this.#load(result.activities);
 			this.#parseErrors = result.errors;
 			this.#trackUpload();
-		} catch (err) {
-			this.#fail('read-failed', err instanceof Error ? err.message : 'Failed to parse file');
+		} catch {
+			this.#fail('read-failed', { type: 'unknown-failure' });
 		}
 	}
 
@@ -249,7 +250,7 @@ class AppStore {
 	}
 
 	// Leaves parseErrors untouched when none are given, matching the CSV-extension and thrown-error paths.
-	#fail(type: EventValue<'upload_error'>, message: string, parseErrors?: ParseError[]) {
+	#fail(type: EventValue<'upload_error'>, message: UploadError, parseErrors?: ParseError[]) {
 		track('upload_error', type);
 		this.#status = 'error';
 		this.#error = message;

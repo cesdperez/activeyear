@@ -87,11 +87,20 @@ export type SummaryMetric = 'distance' | 'elevation' | 'duration' | 'calories';
 
 export type Unit = 'km' | 'miles';
 
+export type AvatarError = { type: 'invalid' | 'unreadable' };
+export type ExportError = { type: 'ready' | 'fontsUnavailable' | 'failed' };
+export type ExportStatus = { type: 'generating' | 'done' };
+
 export type SavedYearError =
 	| { type: 'invalid-file' }
 	| { type: 'unsupported-version'; version: unknown }
 	| { type: 'wrong-year'; year: unknown; expected: number }
 	| { type: 'invalid-activities' };
+
+export type UploadError =
+	| SavedYearError
+	| UnusableFileError
+	| { type: 'invalid-extension' | 'unrecognised' | 'strava-not-english' | 'unknown-failure' };
 
 export type ActivitySource = 'garmin' | 'strava';
 
@@ -115,6 +124,7 @@ export type RowErrorType = 'invalid-date' | 'malformed-quotes' | 'missing-column
 export interface ParseError {
 	type: RowErrorType | 'invalid-number' | 'unsupported-format' | 'unknown';
 	row: number;
+	reason?: 'unrecognised' | 'strava-not-english';
 	message: string;
 }
 
@@ -170,3 +180,7 @@ export interface SportAverage {
 	averageDistance: number; // in km
 	averageDuration: number; // in seconds
 }
+
+export type Locale = (typeof import('#lib/constants/locales.js').LOCALES)[number];
+
+export type Messages = typeof import('#lib/i18n/messages/en/index.js').en;

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import type { Unit, YearStats } from '#lib/types/index.js';
 	import StatCard from '#lib/components/StatCard.svelte';
 	import {
@@ -18,31 +19,31 @@
 	const cards = $derived([
 		{
 			Icon: Ruler,
-			value: formatDistance(stats?.totalDistance ?? 0, unit),
-			label: 'Total Distance',
+			value: formatDistance(i18n.locale, stats?.totalDistance ?? 0, unit),
+			label: i18n.m.dashboard.totalDistance,
 			delay: 0,
-			equivalent: `🌍 ${formatEarthLaps(stats?.totalDistance ?? 0)}`
+			equivalent: `🌍 ${formatEarthLaps(i18n.locale, stats?.totalDistance ?? 0)}`
 		},
 		{
 			Icon: Mountains,
-			value: formatElevation(stats?.totalElevation ?? 0, unit),
-			label: 'Elevation Gained',
+			value: formatElevation(i18n.locale, stats?.totalElevation ?? 0, unit),
+			label: i18n.m.dashboard.elevationGained,
 			delay: 150,
-			equivalent: `🏔️ ${formatEverests(stats?.totalElevation ?? 0)}`
+			equivalent: `🏔️ ${formatEverests(i18n.locale, stats?.totalElevation ?? 0)}`
 		},
 		{
 			Icon: Timer,
-			value: formatDuration(stats?.totalDuration ?? 0),
-			label: 'Time Active',
+			value: formatDuration(i18n.locale, stats?.totalDuration ?? 0),
+			label: i18n.m.dashboard.timeActive,
 			delay: 50,
-			equivalent: `💍 ${formatLotRMarathons(stats?.totalDuration ?? 0)}`
+			equivalent: `💍 ${formatLotRMarathons(i18n.locale, stats?.totalDuration ?? 0)}`
 		},
 		{
 			Icon: Fire,
-			value: formatCalories(stats?.totalCalories ?? 0),
-			label: 'Calories Burned',
+			value: formatCalories(i18n.locale, stats?.totalCalories ?? 0),
+			label: i18n.m.dashboard.caloriesBurned,
 			delay: 100,
-			equivalent: `🍕 ${formatPizzaSlices(stats?.totalCalories ?? 0)}`
+			equivalent: `🍕 ${formatPizzaSlices(i18n.locale, stats?.totalCalories ?? 0)}`
 		}
 	]);
 

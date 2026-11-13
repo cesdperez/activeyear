@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import SummaryCard from './SummaryCard.svelte';
@@ -8,7 +9,12 @@
 	import { CaretLeft, CaretRight } from 'phosphor-svelte';
 
 	let currentSlide = $state<0 | 1 | 2>(0);
-	const slideLabels = ['Summary', 'Breakdown', 'Highlights'];
+	const slideLabels = $derived([
+		i18n.m.export.summary,
+		i18n.m.export.breakdown,
+		i18n.m.export.highlights
+	]);
+	const fileLabels = ['summary', 'breakdown', 'highlights'];
 
 	const SLIDE_COUNT = 3;
 	const SWIPE_THRESHOLD_PX = 50;
@@ -61,7 +67,7 @@
 		const originalSlide = currentSlide;
 
 		try {
-			for (const [index, label] of slideLabels.entries()) {
+			for (const [index, label] of fileLabels.entries()) {
 				currentSlide = index as 0 | 1 | 2;
 				await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for render
 				const cardEl = getExportElement();
@@ -82,8 +88,8 @@
 <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
 <section
 	class="carousel-container"
-	aria-label="Export card preview"
-	aria-roledescription="carousel"
+	aria-label={i18n.m.export.previewLabel}
+	aria-roledescription={i18n.m.export.carousel}
 	tabindex="0"
 	onkeydown={handleKeydown}
 >
@@ -108,7 +114,7 @@
 			onclick={prevSlide}
 			disabled={appStore.isExporting}
 			class="nav-button"
-			aria-label="Previous slide"
+			aria-label={i18n.m.export.previous}
 		>
 			<CaretLeft class="h-5 w-5" weight="bold" aria-hidden="true" />
 		</button>
@@ -120,7 +126,7 @@
 					aria-current={currentSlide === i ? 'true' : undefined}
 					onclick={() => (currentSlide = i as 0 | 1 | 2)}
 					disabled={appStore.isExporting}
-					aria-label="Go to slide {i + 1}"
+					aria-label={i18n.m.export.goToSlide(i + 1)}
 				></button>
 			{/each}
 		</div>
@@ -129,7 +135,7 @@
 			onclick={nextSlide}
 			disabled={appStore.isExporting}
 			class="nav-button"
-			aria-label="Next slide"
+			aria-label={i18n.m.export.next}
 		>
 			<CaretRight class="h-5 w-5" weight="bold" aria-hidden="true" />
 		</button>

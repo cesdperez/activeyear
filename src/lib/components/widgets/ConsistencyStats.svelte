@@ -1,9 +1,10 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import type { Component } from 'svelte';
 	import { CalendarCheck, Lightning, type IconComponentProps } from 'phosphor-svelte';
 	import { activeDaysPercent } from '#lib/utils/breakdown.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
-	import { formatCount, formatPercentOfYear, pluralize } from '#lib/utils/format.js';
+	import { formatCount, formatPercentOfYear } from '#lib/utils/format.js';
 	import type { WidgetVariant } from '#lib/types/index.js';
 
 	interface DashboardStat {
@@ -32,10 +33,8 @@
 	}: { activeDays: number; longestStreak: number; variant: WidgetVariant } = $props();
 
 	const yearPercent = $derived(activeDaysPercent(activeDays, TARGET_YEAR));
-	const activeDaysLabel = $derived(pluralize(activeDays, 'Active Day', 'Active Days'));
-	const streakCaption = $derived(
-		pluralize(longestStreak, 'most consecutive active day', 'most consecutive active days')
-	);
+	const activeDaysLabel = $derived(i18n.m.dashboard.activeDaysLabel(activeDays));
+	const streakCaption = $derived(i18n.m.dashboard.streakCaption(longestStreak));
 </script>
 
 {#snippet dashboardStat({ Icon, value, label, delay }: DashboardStat)}
@@ -69,7 +68,7 @@
 	label,
 	caption
 }: ExportStat)}
-	<div class="consistency-card flex flex-col items-center rounded-2xl p-8 text-center">
+	<div class="consistency-card flex min-w-0 flex-col items-center rounded-2xl p-8 text-center">
 		<div class="mb-4 h-44 w-44">
 			<svg viewBox="0 0 120 120" class="h-full w-full">
 				<circle
@@ -103,11 +102,16 @@
 				>
 			</svg>
 		</div>
-		<div class="flex items-center gap-3 {colorClass}">
-			<Icon class="h-8 w-8" weight="bold" aria-hidden="true" />
-			<span class="text-[28px] font-bold tracking-wider uppercase">{label}</span>
+		<div class="flex max-w-full items-center gap-3 {colorClass}">
+			<Icon class="h-8 w-8 shrink-0" weight="bold" aria-hidden="true" />
+			<span
+				class="min-w-0 text-[28px] font-bold tracking-wider text-balance wrap-anywhere uppercase"
+				>{label}</span
+			>
 		</div>
-		<div class="mt-2 text-[20px] whitespace-nowrap text-[var(--color-text-muted)]">
+		<div
+			class="mt-2 max-w-full text-[20px] text-balance wrap-anywhere text-[var(--color-text-muted)]"
+		>
 			{caption}
 		</div>
 	</div>
@@ -120,13 +124,13 @@
 	>
 		{@render dashboardStat({
 			Icon: CalendarCheck,
-			value: formatCount(activeDays),
+			value: formatCount(i18n.locale, activeDays),
 			label: activeDaysLabel,
 			delay: 350
 		})}
 		{@render dashboardStat({
 			Icon: Lightning,
-			value: formatCount(longestStreak),
+			value: formatCount(i18n.locale, longestStreak),
 			label: streakCaption,
 			delay: 400
 		})}
@@ -135,22 +139,22 @@
 	<div class="mb-16 grid grid-cols-2 gap-8">
 		{@render exportStat({
 			Icon: CalendarCheck,
-			value: formatCount(activeDays),
+			value: formatCount(i18n.locale, activeDays),
 			ringStroke: 'var(--color-accent)',
 			ringDashArray: `${yearPercent * 3.27} 327`,
 			ringClass: 'progress-ring',
 			colorClass: 'text-[var(--color-accent)]',
 			label: activeDaysLabel,
-			caption: `${formatPercentOfYear(yearPercent)} of the year`
+			caption: i18n.m.dashboard.percentOfYear(formatPercentOfYear(i18n.locale, yearPercent))
 		})}
 		{@render exportStat({
 			Icon: Lightning,
-			value: formatCount(longestStreak),
+			value: formatCount(i18n.locale, longestStreak),
 			ringStroke: '#ff6b6b',
 			ringDashArray: '20 10',
 			ringClass: 'streak-ring',
 			colorClass: 'streak-label text-[#ff6b6b]',
-			label: 'Day Streak',
+			label: i18n.m.dashboard.dayStreak,
 			caption: streakCaption
 		})}
 	</div>

@@ -1,33 +1,13 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { tick } from 'svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
-	import {
-		activityTitle,
-		formatCount,
-		formatDistance,
-		formatDuration,
-		pluralize
-	} from '#lib/utils/format.js';
+	import { activityTitle, formatCount, formatDistance, formatDuration } from '#lib/utils/format.js';
 	import { timelineGap } from '#lib/utils/export.js';
 	import { HIGHLIGHTS_LIMIT, TIMELINE_GAP } from '#lib/constants/export.js';
 	import { Target } from 'phosphor-svelte';
-	import { sportNames, sportIcons } from '#lib/constants/sports.js';
+	import { sportIcons } from '#lib/constants/sports.js';
 	import ExportCardBase from './ExportCardBase.svelte';
-
-	const monthNames = [
-		'JAN',
-		'FEB',
-		'MAR',
-		'APR',
-		'MAY',
-		'JUN',
-		'JUL',
-		'AUG',
-		'SEP',
-		'OCT',
-		'NOV',
-		'DEC'
-	];
 
 	let limit = $state(HIGHLIGHTS_LIMIT);
 	let gap = $state(TIMELINE_GAP.min);
@@ -83,18 +63,26 @@
 	}
 
 	$effect(() => {
-		void [appStore.highlights, appStore.displayName, appStore.theme, appStore.unit, area, list];
+		void [
+			appStore.highlights,
+			appStore.displayName,
+			appStore.theme,
+			appStore.unit,
+			i18n.locale,
+			area,
+			list
+		];
 		fitToCard();
 		document.fonts.ready.then(fitToCard);
 	});
 </script>
 
-<ExportCardBase variant="highlights" title="HIGHLIGHTS">
+<ExportCardBase variant="highlights" title={i18n.m.export.highlights}>
 	<div class="-mt-[52px] flex min-h-0 flex-1 flex-col px-6">
 		{#if highlights.length === 0}
 			<div class="flex flex-1 items-center justify-center">
 				<div class="text-center text-[28px] text-[var(--color-text-muted)]">
-					No highlight activities yet
+					{i18n.m.export.noHighlights}
 				</div>
 			</div>
 		{:else}
@@ -107,7 +95,9 @@
 					{#each highlights as fav, i (i)}
 						{@const IconComponent = sportIcons[fav.type] ?? Target}
 						{@const date = new Date(fav.date)}
-						{@const month = monthNames[date.getMonth()]}
+						{@const month = new Intl.DateTimeFormat(i18n.locale, { month: 'short' })
+							.format(date)
+							.toLocaleUpperCase(i18n.locale)}
 						{@const day = date.getDate()}
 
 						<div class="timeline-item relative flex shrink-0 items-center gap-6">
@@ -158,7 +148,7 @@
 													? 'line-clamp-2 text-[22px]'
 													: 'line-clamp-2 text-[32px]'} highlight-title min-w-0 flex-1 font-bold [overflow-wrap:anywhere] text-[var(--color-text-primary)]"
 										>
-											{activityTitle(fav)}
+											{activityTitle(i18n.locale, fav)}
 										</div>
 									</div>
 									<div
@@ -170,16 +160,16 @@
 									>
 										{#if fav.distance > 0}
 											<span class="font-mono">
-												{formatDistance(fav.distance, appStore.unit)}
+												{formatDistance(i18n.locale, fav.distance, appStore.unit)}
 											</span>
 										{/if}
 										<span class="font-mono">
-											{formatDuration(fav.duration)}
+											{formatDuration(i18n.locale, fav.duration)}
 										</span>
 										<span
 											class="rounded-full bg-[var(--color-accent)]/10 px-2 py-0.5 text-[12px] tracking-wider text-[var(--color-accent)] uppercase"
 										>
-											{sportNames[fav.type] ?? fav.type}
+											{i18n.m.common.sports[fav.type] ?? fav.type}
 										</span>
 									</div>
 								</div>
@@ -191,7 +181,7 @@
 
 			{#if hiddenCount > 0}
 				<div class="mt-6 text-center text-[20px] text-[var(--color-text-muted)]">
-					+{formatCount(hiddenCount)} more {pluralize(hiddenCount, 'highlight', 'highlights')}
+					{i18n.m.export.moreHighlights(formatCount(i18n.locale, hiddenCount), hiddenCount)}
 				</div>
 			{/if}
 		{/if}

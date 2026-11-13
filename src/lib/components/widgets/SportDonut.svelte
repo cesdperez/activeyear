@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { donutCentre, sportDonutSegments, type SportColors } from '#lib/utils/breakdown.js';
 	import type { BreakdownMetric, SportBreakdown, WidgetVariant } from '#lib/types/index.js';
 
@@ -19,7 +20,7 @@
 
 	const isDashboard = $derived(variant === 'dashboard');
 	const segments = $derived(sportDonutSegments(sports, colors, metric, circumference, variant));
-	const centre = $derived(donutCentre(sports, metric));
+	const centre = $derived(donutCentre(i18n.locale, sports, metric));
 </script>
 
 <div class="relative shrink-0">

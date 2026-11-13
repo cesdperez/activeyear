@@ -16,23 +16,22 @@ import {
 } from 'phosphor-svelte';
 import type { ActivityType } from '#lib/types/index.js';
 
-// Sport type display names
-export const sportNames: Record<ActivityType, string> = {
-	running: 'Running',
-	cycling: 'Cycling',
-	swimming: 'Swimming',
-	walking: 'Walking',
-	hiking: 'Hiking',
-	strength: 'Strength',
-	yoga: 'Yoga',
-	paddling: 'Paddling',
-	rowing: 'Rowing',
-	cardio: 'Cardio',
-	winter: 'Winter sports',
-	racket: 'Racket sports',
-	climbing: 'Climbing',
-	other: 'Other'
-};
+export const ACTIVITY_TYPES: ActivityType[] = [
+	'running',
+	'cycling',
+	'swimming',
+	'walking',
+	'hiking',
+	'strength',
+	'yoga',
+	'paddling',
+	'rowing',
+	'cardio',
+	'winter',
+	'racket',
+	'climbing',
+	'other'
+];
 
 // Sport icons mapping (using Phosphor for bold, activity-specific icons)
 export const sportIcons: Record<ActivityType, typeof PersonSimpleRun> = {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 
 	import { nameFontSize } from '#lib/utils/export.js';
@@ -12,7 +13,7 @@
 			class="export-name relative z-10 mr-[-0.1em] mb-2 line-clamp-2 leading-[1.1] font-bold tracking-widest [overflow-wrap:anywhere] text-[var(--color-accent)] uppercase"
 			style="font-size: {nameFontSize(userName)}px;"
 		>
-			{userName}'s
+			{i18n.m.export.owner(userName)}
 		</p>
 	{/if}
 	<div class="flex flex-col items-center justify-center">
@@ -22,7 +23,8 @@
 			{TARGET_YEAR}
 		</p>
 		<p
-			class="export-title relative z-10 mr-[-0.15em] text-[72px] leading-none font-bold tracking-[0.15em] text-[var(--color-text-dim)] uppercase"
+			style:--title-chars={i18n.locale === 'en' ? 1 : title.length}
+			class="export-title relative z-10 mr-[-0.15em] text-[min(72px,calc(900px/var(--title-chars)))] leading-none font-bold tracking-[0.15em] text-[var(--color-text-dim)] uppercase"
 		>
 			{title}
 		</p>

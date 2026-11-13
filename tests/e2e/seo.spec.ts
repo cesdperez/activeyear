@@ -30,6 +30,30 @@ test.describe('Search and AI discovery', () => {
 		);
 	});
 
+	test('German page has localized metadata and language alternates', async ({ page }) => {
+		await page.goto('/de/');
+		await expect(page).toHaveTitle(/Jahresrückblick/);
+		await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${SITE_URL}/de/`);
+		for (const locale of ['en', 'es', 'pt', 'fr', 'de', 'nl', 'x-default']) {
+			const path = locale === 'en' || locale === 'x-default' ? '/' : `/${locale}/`;
+			await expect(page.locator(`link[rel="alternate"][hreflang="${locale}"]`)).toHaveAttribute(
+				'href',
+				`${SITE_URL}${path}`
+			);
+		}
+	});
+
+	test('prerendered pages declare their language', async ({ request }) => {
+		for (const [path, lang] of [
+			['/', 'en'],
+			['/de/', 'de']
+		]) {
+			const response = await request.get(path);
+			expect(response.status()).toBe(200);
+			expect(await response.text()).toMatch(new RegExp(`<html\\s+lang="${lang}"`));
+		}
+	});
+
 	test('apple touch icon is available as a PNG', async ({ page, request }) => {
 		await page.goto('/');
 
@@ -71,14 +95,31 @@ test.describe('Search and AI discovery', () => {
 		const response = await request.get('/sitemap.xml');
 
 		expect(response.headers()['content-type']).toContain('xml');
-		expect(await response.text()).toContain(`<loc>${SITE_URL}/</loc>`);
+		const body = await response.text();
+		for (const locale of ['en', 'es', 'pt', 'fr', 'de', 'nl']) {
+			const path = locale === 'en' ? '/' : `/${locale}/`;
+			expect(body).toContain(`<loc>${SITE_URL}${path}</loc>`);
+		}
 	});
 
-	test('llms.txt describes the app for language models', async ({ request }) => {
+	test('llms.txt describes the app for language models', async ({ request, page }) => {
+		await page.goto('/');
+		const englishDescription = await page
+			.locator('meta[name="description"]')
+			.getAttribute('content');
+		await page.goto('/de/');
+		const germanDescription = await page
+			.locator('meta[name="description"]')
+			.getAttribute('content');
 		const response = await request.get('/llms.txt');
 
 		expect(response.headers()['content-type']).toContain('text/plain');
 		const body = await response.text();
+		expect(body).toContain(englishDescription);
+		const german = await request.get('/de/llms.txt');
+		expect(german.status()).toBe(200);
+		expect(german.headers()['content-type']).toContain('text/plain');
+		expect(await german.text()).toContain(germanDescription);
 		expect(body).toMatch(/^# ActiveYear\n\n> /);
 		expect(body).toContain(`${TARGET_YEAR} activities`);
 		expect(body).toContain('never uploaded');

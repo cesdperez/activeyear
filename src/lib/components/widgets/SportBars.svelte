@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { sportNames, sportIcons } from '#lib/constants/sports.js';
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
+	import { sportIcons } from '#lib/constants/sports.js';
 	import type { SportColors } from '#lib/utils/breakdown.js';
 	import { formatCount, formatDuration } from '#lib/utils/format.js';
 	import type { BreakdownMetric, SportBreakdown, WidgetVariant } from '#lib/types/index.js';
@@ -20,11 +21,12 @@
 	const maxValue = $derived(Math.max(...sports.map((s) => s[metric]), 1));
 </script>
 
-<div class={isDashboard ? 'w-full max-w-2xl flex-1 space-y-6' : 'flex-1 space-y-6'}>
+<div class={isDashboard ? 'w-full max-w-2xl min-w-0 flex-1 space-y-6' : 'min-w-0 flex-1 space-y-6'}>
 	{#each sports as sport, i (sport.type)}
 		{@const IconComponent = sportIcons[sport.type]}
 		{@const value = sport[metric]}
-		{@const formattedValue = metric === 'count' ? formatCount(value) : formatDuration(value)}
+		{@const formattedValue =
+			metric === 'count' ? formatCount(i18n.locale, value) : formatDuration(i18n.locale, value)}
 		{@const percentage = (value / maxValue) * 100}
 		{@const color = colors[sport.type]}
 
@@ -34,25 +36,25 @@
 				? `animation: fadeInUp 0.4s ease-out both; animation-delay: ${600 + i * 50}ms`
 				: undefined}
 		>
-			<div class="flex items-center justify-between">
-				<div class="flex items-center gap-3">
+			<div class="flex items-center justify-between gap-3">
+				<div class="flex min-w-0 items-center gap-3">
 					<div
 						class={isDashboard
-							? 'flex h-8 w-8 items-center justify-center rounded-lg transition-transform group-hover:scale-110'
-							: 'flex h-8 w-8 items-center justify-center rounded-lg'}
+							? 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-transform group-hover:scale-110'
+							: 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg'}
 						style="background: {color}20; color: {color};"
 					>
 						<IconComponent class="h-5 w-5" weight="bold" aria-hidden="true" />
 					</div>
 					<span
 						class={isDashboard
-							? 'font-bold tracking-wide text-white uppercase'
-							: 'text-[24px] font-bold tracking-wide text-[var(--color-text-primary)] uppercase'}
+							? 'min-w-0 font-bold tracking-wide wrap-anywhere text-white uppercase'
+							: 'min-w-0 text-[24px] font-bold tracking-wide wrap-anywhere text-[var(--color-text-primary)] uppercase'}
 					>
-						{sportNames[sport.type]}
+						{i18n.m.common.sports[sport.type]}
 					</span>
 				</div>
-				<div class="text-right">
+				<div class="shrink-0 text-right">
 					{#if isDashboard}
 						<span class="font-mono font-bold text-[var(--color-accent)]">
 							{formattedValue}

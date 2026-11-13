@@ -1,9 +1,14 @@
-import type { Activity, Unit } from '../types/index.js';
-import { sportNames } from '../constants/sports.js';
-import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '../constants/time.js';
+import type { Activity, Locale, Unit } from '#lib/types/index.js';
+import { INTL_LOCALES } from '#lib/constants/locales.js';
+import { MESSAGES } from '#lib/i18n/messages/index.js';
+import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '#lib/constants/time.js';
 
-export function activityTitle(activity: Activity): string {
-	return activity.title || sportNames[activity.type] || 'Activity';
+export function activityTitle(locale: Locale, activity: Activity): string {
+	return (
+		activity.title ||
+		MESSAGES[locale].common.sports[activity.type] ||
+		MESSAGES[locale].export.activity
+	);
 }
 
 const EARTH_CIRCUMFERENCE_KM = 40075;
@@ -17,21 +22,21 @@ const METERS_TO_FEET = 3.28084;
  * - Under 100: one decimal
  * - 100+: no decimals
  */
-export function formatDistance(km: number, unit: Unit = 'km'): string {
+export function formatDistance(locale: Locale, km: number, unit: Unit = 'km'): string {
 	const value = unit === 'miles' ? km * KM_TO_MILES : km;
 	const suffix = unit === 'miles' ? 'mi' : 'km';
 
 	const oneDecimal = value.toFixed(1);
 	if (Number(oneDecimal) >= 100) {
-		return `${formatCount(Math.round(value))}${suffix}`;
+		return `${formatCount(locale, Math.round(value))}${suffix}`;
 	}
-	return `${oneDecimal}${suffix}`;
+	return `${Number(oneDecimal).toLocaleString(INTL_LOCALES[locale], { minimumFractionDigits: 1, maximumFractionDigits: 1 })}${suffix}`;
 }
 
 /**
  * Format duration in seconds to "Xh Ym" format, or "Xs" under a minute
  */
-export function formatDuration(seconds: number): string {
+export function formatDuration(locale: Locale, seconds: number): string {
 	if (seconds <= 0) return '0m';
 	const underAMinute = secondsUnderAMinute(seconds);
 	if (underAMinute !== undefined) return `${underAMinute}s`;
@@ -42,7 +47,7 @@ export function formatDuration(seconds: number): string {
 	if (hours === 0) {
 		return `${minutes}m`;
 	}
-	return `${formatCount(hours)}h ${minutes}m`;
+	return `${formatCount(locale, hours)}h ${minutes}m`;
 }
 
 /** Whole seconds, at least 1, for a duration under a minute; `undefined` for none or a minute and up. */
@@ -57,41 +62,49 @@ export function showsValue(formatted: string): boolean {
 }
 
 /** Whole number with thousands separators, matching the other stats. */
-export function formatCount(count: number): string {
-	return count.toLocaleString('en-US');
+export function formatCount(locale: Locale, count: number): string {
+	return count.toLocaleString(INTL_LOCALES[locale]);
 }
 
 /** Whole percent, but "<1%" for a share that is above zero and would round to 0%. */
-export function formatPercentOfYear(percent: number): string {
+export function formatPercentOfYear(locale: Locale, percent: number): string {
 	if (percent > 0 && percent < 0.5) return '<1%';
-	return `${partialPercent(percent, 0)}%`;
+	return `${partialPercent(locale, percent, 0)}%`;
 }
 
-function partialPercent(percent: number, decimals: number): string {
-	if (percent >= 100) return (100).toFixed(decimals);
+function partialPercent(locale: Locale, percent: number, decimals: number): string {
+	if (percent >= 100) return fixed(locale, 100, decimals);
 	// A share just under 100 would otherwise round up to a full 100.
 	const highestPartial = 100 - 10 ** -decimals;
-	return Math.min(Number(percent.toFixed(decimals)), highestPartial).toFixed(decimals);
+	return fixed(locale, Math.min(Number(percent.toFixed(decimals)), highestPartial), decimals);
+}
+
+function fixed(locale: Locale, value: number, decimals: number): string {
+	return Number(value.toFixed(decimals)).toLocaleString(INTL_LOCALES[locale], {
+		minimumFractionDigits: decimals,
+		maximumFractionDigits: decimals,
+		useGrouping: false
+	});
 }
 
 /**
  * Format calories with thousands separator
  */
-export function formatCalories(calories: number): string {
-	return `${Math.round(calories).toLocaleString('en-US')}kcal`;
+export function formatCalories(locale: Locale, calories: number): string {
+	return `${Math.round(calories).toLocaleString(INTL_LOCALES[locale])}kcal`;
 }
 
 /**
  * Format elevation rounded to nearest 10m (or 50ft)
  */
-export function formatElevation(meters: number, unit: Unit = 'km'): string {
+export function formatElevation(locale: Locale, meters: number, unit: Unit = 'km'): string {
 	if (unit === 'miles') {
 		const feet = meters * METERS_TO_FEET;
 		const rounded = Math.round(feet / 50) * 50; // Round to nearest 50ft
-		return `${rounded.toLocaleString('en-US')}ft`;
+		return `${rounded.toLocaleString(INTL_LOCALES[locale])}ft`;
 	}
 	const rounded = Math.round(meters / 10) * 10;
-	return `${rounded.toLocaleString('en-US')}m`;
+	return `${rounded.toLocaleString(INTL_LOCALES[locale])}m`;
 }
 
 /**
@@ -104,12 +117,12 @@ export function calculateEarthLaps(distanceKm: number): number {
 /**
  * Format Earth laps for display
  */
-export function formatEarthLaps(distanceKm: number): string {
+export function formatEarthLaps(locale: Locale, distanceKm: number): string {
 	const laps = calculateEarthLaps(distanceKm);
 	if (laps < 1.0) {
-		return `${partialPercent(laps * 100, 1)}% of a lap around the globe`;
+		return `${partialPercent(locale, laps * 100, 1)}% ${MESSAGES[locale].common.earthPartial}`;
 	}
-	return `${laps.toFixed(2)}x laps around the globe`;
+	return `${fixed(locale, laps, 2)}x ${MESSAGES[locale].common.earthLaps}`;
 }
 
 /**
@@ -122,12 +135,12 @@ export function calculateEverests(elevationM: number): number {
 /**
  * Format Everests for display
  */
-export function formatEverests(elevationM: number): string {
+export function formatEverests(locale: Locale, elevationM: number): string {
 	const everests = calculateEverests(elevationM);
 	if (everests < 1.0) {
-		return `${partialPercent(everests * 100, 0)}% the height of Mt. Everest`;
+		return `${partialPercent(locale, everests * 100, 0)}% ${MESSAGES[locale].common.everest}`;
 	}
-	return `${everests.toFixed(1)}x the height of Mt. Everest`;
+	return `${fixed(locale, everests, 1)}x ${MESSAGES[locale].common.everest}`;
 }
 
 /**
@@ -140,33 +153,16 @@ export function calculatePizzaSlices(calories: number): number {
 /**
  * Format pizza slices for display
  */
-export function formatPizzaSlices(calories: number): string {
+export function formatPizzaSlices(locale: Locale, calories: number): string {
 	const slices = calculatePizzaSlices(calories);
-	if (slices === 0 && calories > 0) return 'Less than a pizza slice burnt';
-	return `${slices.toLocaleString('en-US')} pizza ${pluralize(slices, 'slice', 'slices')} burnt`;
+	if (slices === 0 && calories > 0) return MESSAGES[locale].common.lessPizza;
+	return `${formatCount(locale, slices)} ${MESSAGES[locale].common.pizza(slices)}`;
 }
 
-/** `singular` when English treats `count` as one, `plural` otherwise. */
-export function pluralize(count: number, singular: string, plural: string): string {
-	return new Intl.PluralRules('en-US').select(count) === 'one' ? singular : plural;
-}
-
-export function formatActivityCount(count: number, type: string): string {
-	const pluralRules = new Intl.PluralRules('en-US');
-	const rule = pluralRules.select(count);
-
-	// Simple mapping for now, but better than just adding 's'
-	const plurals: Record<string, string> = {
-		activity: 'activities',
-		swim: 'swims',
-		run: 'runs',
-		ride: 'rides',
-		walk: 'walks',
-		workout: 'workouts'
-	};
-
-	const pluralType = rule === 'one' ? type : (plurals[type.toLowerCase()] ?? `${type}s`);
-	return `${formatCount(count)} ${pluralType}`;
+export function formatActivityCount(locale: Locale, count: number, type: string): string {
+	const nouns = MESSAGES[locale].common.nouns;
+	const noun = nouns[type.toLowerCase() as keyof typeof nouns];
+	return `${formatCount(locale, count)} ${noun ? noun(count) : count === 1 ? type : `${type}s`}`;
 }
 
 const LOTR_MARATHON_SECONDS = 42960; // 11h 56m (Extended Editions total)
@@ -181,11 +177,11 @@ export function calculateLotRMarathons(seconds: number): number {
 /**
  * Format LotR marathons for display
  */
-export function formatLotRMarathons(seconds: number): string {
+export function formatLotRMarathons(locale: Locale, seconds: number): string {
 	const marathons = calculateLotRMarathons(seconds);
-	return `${marathons.toFixed(1)} LotR marathons`;
+	return `${fixed(locale, marathons, 1)} ${MESSAGES[locale].common.lotr}`;
 }
 
-export function formatShortDate(date: Date): string {
-	return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+export function formatShortDate(locale: Locale, date: Date): string {
+	return date.toLocaleDateString(INTL_LOCALES[locale], { month: 'short', day: 'numeric' });
 }

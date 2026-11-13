@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { formatCount } from '#lib/utils/format.js';
 	import { skippedRowsNotice } from '#lib/utils/uploadErrors.js';
@@ -20,37 +21,41 @@
 	}
 </script>
 
+{#snippet summaryPhrase(phrase: string, count: string)}
+	{@const [before, after] = phrase.split(count)}
+	<span class="text-[var(--color-text-muted)]">
+		{before}<span class="font-mono font-bold text-[var(--color-accent)]">{count}</span>{after}
+	</span>
+{/snippet}
+
 <header class="mb-16 text-center md:mb-24">
 	<h1
-		class="glow-text mb-6 text-5xl font-bold tracking-tight md:text-7xl"
+		class="glow-text mb-6 text-5xl font-bold tracking-tight wrap-anywhere md:text-7xl"
 		tabindex="-1"
 		{@attach (heading) => heading.focus()}
 	>
-		Your {TARGET_YEAR}
+		{i18n.m.dashboard.yourYear(TARGET_YEAR)}
 	</h1>
 	<div
 		data-testid="activity-summary"
 		class="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full border border-[rgba(255,255,255,0.05)] bg-[var(--color-surface-elevated)] px-4 py-2"
 	>
-		<span class="inline-flex items-center gap-2 whitespace-nowrap">
-			<span class="font-mono font-bold text-[var(--color-accent)]"
-				>{formatCount(activityCount)}</span
-			>
-			<span class="text-[var(--color-text-muted)]"
-				>{activityCount === 1 ? 'activity' : 'activities'} across</span
-			>
-		</span>
-		<span class="inline-flex items-center gap-2 whitespace-nowrap">
-			<span class="font-mono font-bold text-[var(--color-accent)]">{formatCount(activeDays)}</span>
-			<span class="text-[var(--color-text-muted)]"
-				>{activeDays === 1 ? 'active day' : 'active days'}</span
-			>
-		</span>
+		{@render summaryPhrase(
+			i18n.m.dashboard.activitySummaryActivities(
+				formatCount(i18n.locale, activityCount),
+				activityCount
+			),
+			formatCount(i18n.locale, activityCount)
+		)}
+		{@render summaryPhrase(
+			i18n.m.dashboard.activitySummaryDays(formatCount(i18n.locale, activeDays), activeDays),
+			formatCount(i18n.locale, activeDays)
+		)}
 	</div>
 	{#if skippedRowCount > 0}
 		<p class="mt-3 flex items-center justify-center gap-1.5 text-sm text-[var(--color-text-muted)]">
 			<Warning class="h-4 w-4 shrink-0" weight="bold" aria-hidden="true" />
-			{skippedRowsNotice(skippedRowCount)}
+			{skippedRowsNotice(skippedRowCount, i18n.locale)}
 		</p>
 	{/if}
 
@@ -59,7 +64,7 @@
 			class="group inline-flex items-center gap-2 text-sm font-medium text-[var(--color-accent)] transition-colors duration-200 hover:text-white"
 			onclick={jumpToExport}
 		>
-			<span>Jump to Export</span>
+			<span>{i18n.m.dashboard.jumpExport}</span>
 			<ArrowDown
 				class="h-4 w-4 transition-transform group-hover:translate-y-1"
 				aria-hidden="true"

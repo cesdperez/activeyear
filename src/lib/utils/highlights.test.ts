@@ -94,11 +94,28 @@ describe('activity search', () => {
 		for (const query of ['42.6 km', '42.6km', '26.5 mi', '26.5mi'])
 			expect(searchActivities([run], [activitySearchText(run)], query, 8)).toEqual([run]);
 	});
+	it('matches localized months, decimal distances and comma titles', () => {
+		const january = activity(1, { title: '5,5km tempo', distance: 12.5 });
+		const march = activity(1, { date: new Date(2025, 2, 1) });
+		for (const [item, query] of [
+			[january, 'enero'],
+			[january, 'january'],
+			[march, 'März'],
+			[january, '12,5'],
+			[january, '5,5km tempo']
+		] as const) {
+			expect(searchActivities([item], [activitySearchText(item)], query, 8)).toEqual([item]);
+		}
+	});
 	it('returns newest matches first up to the limit', () => {
 		const activities = [activity(1), activity(3), activity(2)];
-		expect(searchActivities(activities, activities.map(activitySearchText), 'RUN', 2)).toEqual([
-			activities[1],
-			activities[2]
-		]);
+		expect(
+			searchActivities(
+				activities,
+				activities.map((a) => activitySearchText(a)),
+				'RUN',
+				2
+			)
+		).toEqual([activities[1], activities[2]]);
 	});
 });

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { tick } from 'svelte';
 	import { track } from '#lib/analytics/track.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
@@ -12,39 +13,56 @@
 		Timer,
 		Fire
 	} from 'phosphor-svelte';
-	import type { Theme, SummaryMetric } from '#lib/types/index.js';
+	import type {
+		Theme,
+		SummaryMetric,
+		AvatarError,
+		ExportError,
+		ExportStatus
+	} from '#lib/types/index.js';
 	import { THEME_OPTIONS, USER_NAME_MAX_LENGTH } from '#lib/constants/export.js';
 	import { FontsUnavailableError } from '#lib/utils/fonts.js';
 
-	let exportError = $state<{ message: string; fontsUnavailable: boolean } | null>(null);
-	let exportStatus = $state('');
-	let avatarError = $state<string | null>(null);
+	let exportError = $state<ExportError | null>(null);
+	let exportStatus = $state<ExportStatus | null>(null);
+	let avatarError = $state<AvatarError | null>(null);
 	let avatarInput = $state<HTMLInputElement | null>(null);
 	let removeImageButton = $state<HTMLButtonElement | null>(null);
 	let carouselRef = $state<{
 		exportAllCards: (options?: { allowFallbackFonts?: boolean }) => Promise<void>;
 	} | null>(null);
 
+	const themes = $derived(
+		THEME_OPTIONS.map((theme) => ({
+			...theme,
+			description:
+				theme.value === 'neon'
+					? i18n.m.export.cyberpunk
+					: theme.value === 'minimalist'
+						? i18n.m.export.swiss
+						: theme.description
+		}))
+	);
+
 	async function handleExport(allowFallbackFonts = false) {
 		if (appStore.isExporting) return;
 		if (!carouselRef) {
-			exportError = { message: 'Export component not ready', fontsUnavailable: false };
+			exportError = { type: 'ready' };
 			return;
 		}
 
 		appStore.isExporting = true;
 		exportError = null;
-		exportStatus = 'Generating images...';
+		exportStatus = { type: 'generating' };
 
 		try {
 			await carouselRef.exportAllCards({ allowFallbackFonts });
 			track('export', appStore.theme);
-			exportStatus = 'Downloaded three images';
+			exportStatus = { type: 'done' };
 		} catch (error) {
-			exportStatus = '';
+			exportStatus = null;
 			exportError = {
-				message: error instanceof Error ? error.message : 'Failed to export',
-				fontsUnavailable: error instanceof FontsUnavailableError
+				type: error instanceof FontsUnavailableError ? 'fontsUnavailable' : 'failed'
 			};
 		} finally {
 			appStore.isExporting = false;
@@ -86,13 +104,13 @@
 		if (!file) return;
 
 		if (!file.type.startsWith('image/')) {
-			await showAvatarError('Please upload an image file');
+			await showAvatarError({ type: 'invalid' });
 			return;
 		}
 
 		const dataUrl = await loadImageDataUrl(file);
 		if (!dataUrl) {
-			await showAvatarError('That file could not be read as an image');
+			await showAvatarError({ type: 'unreadable' });
 			return;
 		}
 
@@ -103,11 +121,11 @@
 		removeImageButton?.focus();
 	}
 
-	async function showAvatarError(message: string) {
+	async function showAvatarError(error: AvatarError) {
 		// Re-inserting the alert makes screen readers announce a repeated message again.
 		avatarError = null;
 		await tick();
-		avatarError = message;
+		avatarError = error;
 	}
 
 	async function removeImage() {
@@ -119,7 +137,7 @@
 
 <section class="export-panel" id="export-panel">
 	<div class="mb-8 flex items-end gap-4">
-		<h2 class="text-3xl font-bold tracking-tight">Export</h2>
+		<h2 class="text-3xl font-bold tracking-tight">{i18n.m.export.export}</h2>
 		<div
 			class="mb-2 h-px flex-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent opacity-20"
 		></div>
@@ -132,7 +150,7 @@
 			<!-- Name Input -->
 			<div>
 				<label for="userName" class="mb-2 block text-sm font-medium text-zinc-400">
-					Your Name (optional)
+					{i18n.m.export.name}
 				</label>
 				<input
 					type="text"
@@ -149,7 +167,7 @@
 			<!-- Profile Picture Upload -->
 			<div>
 				<label for="userAvatar" class="mb-2 block text-sm font-medium text-zinc-400">
-					Profile Picture (optional)
+					{i18n.m.export.picture}
 				</label>
 				{#if appStore.userPfp}
 					<div
@@ -157,18 +175,18 @@
 					>
 						<img
 							src={appStore.userPfp}
-							alt="Preview"
+							alt={i18n.m.export.preview}
 							class="h-12 w-12 rounded-full border border-white/10 object-cover"
 						/>
 						<div class="min-w-0 flex-1">
-							<p class="truncate text-xs text-zinc-400">Custom pfp active</p>
+							<p class="truncate text-xs text-zinc-400">{i18n.m.export.custom}</p>
 						</div>
 						<button
 							bind:this={removeImageButton}
 							onclick={removeImage}
 							disabled={appStore.isExporting}
 							class="p-2 text-zinc-400 transition-colors enabled:hover:text-red-400 disabled:cursor-not-allowed disabled:opacity-50"
-							title="Remove image"
+							title={i18n.m.export.remove}
 						>
 							<Trash class="h-4 w-4" aria-hidden="true" />
 						</button>
@@ -190,22 +208,24 @@
 							class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg border border-dashed border-[rgba(255,255,255,0.2)] bg-[var(--color-surface-elevated)] px-4 py-3 text-zinc-400 transition-all peer-focus-visible:border-[var(--color-accent)] peer-focus-visible:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[color:var(--color-accent)] peer-disabled:cursor-not-allowed peer-disabled:opacity-50 peer-enabled:hover:border-[var(--color-accent)] peer-enabled:hover:text-white"
 						>
 							<ImageIcon class="h-5 w-5" aria-hidden="true" />
-							<span class="text-sm font-medium">Upload Image</span>
+							<span class="text-sm font-medium">{i18n.m.export.upload}</span>
 						</label>
 					</div>
 				{/if}
 				{#if avatarError}
-					<p id="userAvatar-error" role="alert" class="mt-2 text-sm text-red-400">{avatarError}</p>
+					<p id="userAvatar-error" role="alert" class="mt-2 text-sm text-red-400">
+						{i18n.m.export[avatarError.type]}
+					</p>
 				{/if}
 			</div>
 
 			<!-- Summary Metric Selector -->
 			<div>
 				<span id="summary-metric-label" class="mb-2 block text-sm font-medium text-zinc-400">
-					Focused Stat (Summary Card)
+					{i18n.m.export.focused}
 				</span>
 				<div role="group" aria-labelledby="summary-metric-label" class="grid grid-cols-2 gap-2">
-					{#each [{ value: 'distance', label: 'Distance', icon: Ruler }, { value: 'elevation', label: 'Elevation', icon: Mountains }, { value: 'duration', label: 'Time', icon: Timer }, { value: 'calories', label: 'Calories', icon: Fire }] as metric (metric.value)}
+					{#each [{ value: 'distance', label: i18n.m.export.distance, icon: Ruler }, { value: 'elevation', label: i18n.m.export.elevation, icon: Mountains }, { value: 'duration', label: i18n.m.export.time, icon: Timer }, { value: 'calories', label: i18n.m.export.calories, icon: Fire }] as metric (metric.value)}
 						<button
 							onclick={() => (appStore.summaryMetric = metric.value as SummaryMetric)}
 							aria-pressed={appStore.summaryMetric === metric.value}
@@ -224,9 +244,11 @@
 
 			<!-- Theme Selector -->
 			<div>
-				<span id="theme-label" class="mb-2 block text-sm font-medium text-zinc-400">Theme</span>
+				<span id="theme-label" class="mb-2 block text-sm font-medium text-zinc-400"
+					>{i18n.m.export.theme}</span
+				>
 				<div role="group" aria-labelledby="theme-label" class="flex gap-2">
-					{#each THEME_OPTIONS as theme (theme.value)}
+					{#each themes as theme (theme.value)}
 						<button
 							onclick={() => setTheme(theme.value)}
 							aria-pressed={appStore.theme === theme.value}
@@ -254,36 +276,38 @@
 			>
 				{#if appStore.isExporting}
 					<span class="animate-spin" aria-hidden="true">⏳</span>
-					Generating...
+					{i18n.m.export.generating}
 				{:else}
 					<DownloadSimple class="h-5 w-5" weight="bold" aria-hidden="true" />
-					Download All Images
+					{i18n.m.export.download}
 				{/if}
 			</button>
 
-			<p id="export-status" role="status" class="sr-only">{exportStatus}</p>
+			<p id="export-status" role="status" class="sr-only">
+				{exportStatus ? i18n.m.export[exportStatus.type] : ''}
+			</p>
 			<div id="export-error" role="alert" class="empty:hidden">
 				{#if exportError}
-					<p class="text-sm text-red-400">{exportError.message}</p>
-					{#if exportError.fontsUnavailable}
+					<p class="text-sm text-red-400">{i18n.m.export[exportError.type]}</p>
+					{#if exportError.type === 'fontsUnavailable'}
 						<button
 							onclick={() => handleExport(true)}
 							class="mt-2 text-sm font-semibold text-[var(--color-accent)] underline underline-offset-4 hover:text-white"
 						>
-							Export with fallback fonts
+							{i18n.m.export.fallback}
 						</button>
 					{/if}
 				{/if}
 			</div>
 
 			<p class="text-xs text-zinc-400">
-				Downloads three images: Summary, Breakdown, and Highlights
+				{i18n.m.export.downloads}
 			</p>
 		</div>
 
 		<!-- Right: Preview -->
 		<div class="preview-container flex w-full flex-1 flex-col items-center">
-			<div class="mb-4 text-sm text-zinc-400">Preview</div>
+			<div class="mb-4 text-sm text-zinc-400">{i18n.m.export.preview}</div>
 			<div class="preview-wrapper">
 				<ExportCarousel bind:this={carouselRef} />
 			</div>

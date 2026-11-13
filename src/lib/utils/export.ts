@@ -1,3 +1,4 @@
+import { i18n } from '#lib/i18n/i18n.svelte.js';
 import { domToPng } from 'modern-screenshot';
 import type { Theme } from '#lib/types/index.js';
 import { NAME_FONT_SIZE, NAME_LONG_AFTER_CHARS, TIMELINE_GAP } from '#lib/constants/export.js';
@@ -52,7 +53,7 @@ export async function exportToPng(element: HTMLElement, options: ExportOptions):
 		link.click();
 	} catch (error) {
 		console.error('Failed to export image:', error);
-		throw new Error('Failed to generate image. Please try again.', { cause: error });
+		throw new Error(i18n.m.export.filenameError, { cause: error });
 	}
 }
 
@@ -78,7 +79,13 @@ export function getExportDimensions(): {
 
 /** File name stem for the downloaded cards. `name` must already be trimmed. */
 export function exportFileStem(name: string, year: number): string {
-	return name ? `${name.toLowerCase().replace(/\s+/g, '-')}-${year}` : `activeyear-${year}`;
+	const safeName = name
+		.normalize('NFKD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/^-|-$/g, '');
+	return `${safeName || 'activeyear'}-${year}`;
 }
 
 export function nameFontSize(name: string): number {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import { createHydrated } from '#lib/stores/hydrated.svelte.js';
@@ -19,14 +20,12 @@
 		<div class="flex min-h-screen flex-col items-center justify-center px-4 py-12">
 			<div class="mb-8 text-center">
 				<h1 class="glow-text mb-3 text-4xl font-bold md:text-5xl">ActiveYear</h1>
-				<p class="text-lg text-zinc-400">Your {TARGET_YEAR} in Sport</p>
+				<p class="text-lg text-zinc-400">{i18n.m.landing.tagline(TARGET_YEAR)}</p>
 			</div>
 
 			<noscript>
 				<p class="mb-6 max-w-md text-center text-sm text-pretty text-zinc-300">
-					ActiveYear needs JavaScript to read your Garmin or Strava CSV. Everything is processed in
-					your browser and your data never leaves your device, so please enable JavaScript and
-					reload this page.
+					{i18n.m.landing.noscript}
 				</p>
 			</noscript>
 
@@ -38,13 +37,13 @@
 						disabled={uploading || !hydrated.current}
 						onclick={() => appStore.loadDemoData()}
 					>
-						No CSV file? See how it works with demo data
+						{i18n.m.landing.demo}
 					</button>
 				</div>
 			</div>
 
 			<div class="mt-12 w-full max-w-md text-center">
-				<h2 class="mb-4 text-sm font-medium text-zinc-300">How to get your data</h2>
+				<h2 class="mb-4 text-sm font-medium text-zinc-300">{i18n.m.landing.how}</h2>
 				<ExportGuides />
 			</div>
 

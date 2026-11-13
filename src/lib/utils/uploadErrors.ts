@@ -1,15 +1,19 @@
+import { MESSAGES } from '#lib/i18n/messages/index.js';
+import { savedYearErrorMessage } from './savedYear.js';
+import { plural } from '#lib/i18n/plural.js';
 import type {
+	Locale,
+	UploadError,
 	ParseError,
 	ParseResult,
 	RowErrorType,
 	SkippedRows,
 	UnusableFileError
 } from '#lib/types/index.js';
-import { ROW_ERROR_REASONS } from '#lib/constants/parsing.js';
-import { formatCount, pluralize } from './format.js';
+import { formatCount } from './format.js';
 
 function isRowErrorType(type: ParseError['type']): type is RowErrorType {
-	return type in ROW_ERROR_REASONS;
+	return type === 'invalid-date' || type === 'malformed-quotes' || type === 'missing-column';
 }
 
 /** Sums up the rows kept out of the totals, or null when every row was read. */
@@ -36,25 +40,53 @@ export function describeUnusableFile(result: ParseResult, year: number): Unusabl
 	return { type: 'no-activities-in-year', year, yearsInFile: result.yearsInFile, skipped };
 }
 
-function skippedRowsMessage({ count, reason, exampleRow }: SkippedRows): string {
-	if (count === 1) return `Row ${exampleRow} could not be read: ${ROW_ERROR_REASONS[reason]}`;
-	return `${formatCount(count)} rows could not be read, e.g. row ${exampleRow}: ${ROW_ERROR_REASONS[reason]}`;
+export function skippedRowsMessage(
+	{ count, reason, exampleRow }: SkippedRows,
+	locale: Locale = 'en'
+): string {
+	const m = MESSAGES[locale].upload;
+	return count === 1
+		? m.singleRow(exampleRow, m[reason])
+		: m.multipleRows(formatCount(locale, count), exampleRow, m[reason]);
 }
 
-function yearsMessage(year: number, yearsInFile: number[]): string {
-	if (yearsInFile.length === 0) return `No ${year} activities found in the file`;
+export function yearsMessage(year: number, yearsInFile: number[], locale: Locale = 'en'): string {
+	const m = MESSAGES[locale].upload;
+	if (yearsInFile.length === 0) return m.noActivities(year);
 	const first = yearsInFile[0];
 	const last = yearsInFile[yearsInFile.length - 1];
-	const range = first === last ? `${first}` : `${first} to ${last}`;
-	return `This file has activities from ${range}, none from ${year}`;
+	return m.years(first === last ? `${first}` : m.range(first, last), year);
 }
 
-export function unusableFileMessage(error: UnusableFileError): string {
-	if (error.type === 'rows-rejected') return skippedRowsMessage(error.skipped);
-	const years = yearsMessage(error.year, error.yearsInFile);
-	return error.skipped ? `${years}. ${skippedRowsMessage(error.skipped)}` : years;
+export function unusableFileMessage(error: UnusableFileError, locale: Locale = 'en'): string {
+	if (error.type === 'rows-rejected') return skippedRowsMessage(error.skipped, locale);
+	const years = yearsMessage(error.year, error.yearsInFile, locale);
+	return error.skipped ? `${years}. ${skippedRowsMessage(error.skipped, locale)}` : years;
 }
 
-export function skippedRowsNotice(count: number): string {
-	return `Skipped ${formatCount(count)} ${pluralize(count, 'row', 'rows')} that could not be read`;
+export function skippedRowsNotice(count: number, locale: Locale = 'en'): string {
+	const m = MESSAGES[locale].upload;
+	return m.skipped(
+		formatCount(locale, count),
+		plural(locale, count, { one: m.one, other: m.other })
+	);
+}
+
+export function uploadErrorMessage(error: UploadError, locale: Locale): string {
+	const m = MESSAGES[locale].upload;
+	switch (error.type) {
+		case 'invalid-extension':
+			return m.invalidExtension;
+		case 'unrecognised':
+			return m.unrecognised;
+		case 'strava-not-english':
+			return m.stravaNotEnglish;
+		case 'unknown-failure':
+			return m.unknown;
+		case 'rows-rejected':
+		case 'no-activities-in-year':
+			return unusableFileMessage(error, locale);
+		default:
+			return savedYearErrorMessage(error, locale);
+	}
 }

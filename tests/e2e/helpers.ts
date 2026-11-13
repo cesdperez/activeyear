@@ -22,8 +22,8 @@ export const STRAVA_CSV = fixturePath('strava-activities.csv');
 
 export const DASHBOARD_HEADING = `Your ${TARGET_YEAR}`;
 
-export async function gotoUpload(page: Page): Promise<void> {
-	await page.goto('/');
+export async function gotoUpload(page: Page, path = '/'): Promise<void> {
+	await page.goto(path);
 	await expect(page.locator(`#${UPLOAD_ZONE_ID}`)).not.toHaveAttribute('aria-disabled', 'true');
 }
 

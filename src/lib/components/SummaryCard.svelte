@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import {
 		formatDistance,
@@ -31,31 +32,31 @@
 	const allStats = $derived([
 		{
 			id: 'distance',
-			label: 'Total Distance',
-			value: formatDistance(appStore.stats?.totalDistance ?? 0, appStore.unit),
+			label: i18n.m.export.totalDistance,
+			value: formatDistance(i18n.locale, appStore.stats?.totalDistance ?? 0, appStore.unit),
 			icon: Ruler,
-			equivalent: `🌍 ${formatEarthLaps(appStore.stats?.totalDistance ?? 0)}`
+			equivalent: `🌍 ${formatEarthLaps(i18n.locale, appStore.stats?.totalDistance ?? 0)}`
 		},
 		{
 			id: 'elevation',
-			label: 'Elevation',
-			value: formatElevation(appStore.stats?.totalElevation ?? 0, appStore.unit),
+			label: i18n.m.export.elevation,
+			value: formatElevation(i18n.locale, appStore.stats?.totalElevation ?? 0, appStore.unit),
 			icon: Mountains,
-			equivalent: `🏔️ ${formatEverests(appStore.stats?.totalElevation ?? 0)}`
+			equivalent: `🏔️ ${formatEverests(i18n.locale, appStore.stats?.totalElevation ?? 0)}`
 		},
 		{
 			id: 'duration',
-			label: 'Time Active',
-			value: formatDuration(appStore.stats?.totalDuration ?? 0),
+			label: i18n.m.export.timeActive,
+			value: formatDuration(i18n.locale, appStore.stats?.totalDuration ?? 0),
 			icon: Timer,
-			equivalent: `💍 ${formatLotRMarathons(appStore.stats?.totalDuration ?? 0)}`
+			equivalent: `💍 ${formatLotRMarathons(i18n.locale, appStore.stats?.totalDuration ?? 0)}`
 		},
 		{
 			id: 'calories',
-			label: 'Calories',
-			value: formatCalories(appStore.stats?.totalCalories ?? 0),
+			label: i18n.m.export.calories,
+			value: formatCalories(i18n.locale, appStore.stats?.totalCalories ?? 0),
 			icon: Fire,
-			equivalent: `🍕 ${formatPizzaSlices(appStore.stats?.totalCalories ?? 0)}`
+			equivalent: `🍕 ${formatPizzaSlices(i18n.locale, appStore.stats?.totalCalories ?? 0)}`
 		}
 	]);
 
@@ -72,7 +73,7 @@
 	}
 </script>
 
-<ExportCardBase variant="summary" title="YEAR IN SPORT">
+<ExportCardBase variant="summary" title={i18n.m.export.yearInSport}>
 	<!-- User Avatar / Sport Icon -->
 	<div class="relative -mt-[30px] mb-[140px] flex justify-center">
 		<!-- Decorative Spiral Effects -->
@@ -144,7 +145,11 @@
 		<div class="avatar-glow"></div>
 		<div class="avatar-container">
 			{#if appStore.userPfp}
-				<img src={appStore.userPfp} alt="Profile" class="h-full w-full rounded-full object-cover" />
+				<img
+					src={appStore.userPfp}
+					alt={i18n.m.export.profile}
+					class="h-full w-full rounded-full object-cover"
+				/>
 			{:else}
 				{@const TopIcon = topSportIcon}
 				<div class="flex h-full w-full items-center justify-center text-[var(--color-accent)]">
@@ -161,7 +166,8 @@
 				<heroStat.icon class="h-16 w-16" weight="bold" aria-hidden="true" />
 			</div>
 			<div
-				class="stat-value text-[140px] leading-none font-bold -tracking-[0.04em] text-[var(--color-text-primary)]"
+				style:--chars={i18n.locale === 'en' ? 1 : heroStat.value.length}
+				class="stat-value text-[min(140px,calc(1350px/var(--chars)))] leading-none font-bold -tracking-[0.04em] text-[var(--color-text-primary)]"
 			>
 				{heroStat.value}
 			</div>

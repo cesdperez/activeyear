@@ -1,3 +1,5 @@
+import type { Locale } from '#lib/types/index.js';
+import { MESSAGES } from '#lib/i18n/messages/index.js';
 import type {
 	ActivityType,
 	BreakdownMetric,
@@ -11,12 +13,12 @@ import {
 	TOP_DAYS_COUNT,
 	TOP_SPORTS_LIMIT
 } from '#lib/constants/breakdown.js';
-import { OTHER_SPORT_COLOR, sportColors, sportNames } from '#lib/constants/sports.js';
+import { OTHER_SPORT_COLOR, sportColors, ACTIVITY_TYPES } from '#lib/constants/sports.js';
 import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '#lib/constants/time.js';
 import { consolidateBreakdown, mergeIntoOther } from './activity.js';
 import { donutSegments, scaledBarHeight, topIndices } from './charts.js';
 import { daysInYear } from './date.js';
-import { pluralize, secondsUnderAMinute } from './format.js';
+import { formatCount, secondsUnderAMinute } from './format.js';
 
 export interface SportDonutSegment {
 	dashArray: string;
@@ -66,7 +68,7 @@ export type SportColors = Record<ActivityType, string>;
  */
 export function sportColorsFor(breakdown: SportBreakdown[]): SportColors {
 	const colors = Object.fromEntries(
-		Object.keys(sportNames).map((type) => [type, OTHER_SPORT_COLOR])
+		ACTIVITY_TYPES.map((type) => [type, OTHER_SPORT_COLOR])
 	) as SportColors;
 
 	consolidateBreakdown(breakdown)
@@ -109,7 +111,11 @@ export function sportDonutSegments(
 }
 
 /** The total the donut is split by, shown in its centre. */
-export function donutCentre(sports: SportBreakdown[], metric: BreakdownMetric): DonutCentre {
+export function donutCentre(
+	locale: Locale,
+	sports: SportBreakdown[],
+	metric: BreakdownMetric
+): DonutCentre {
 	const total = sports.reduce((sum, s) => sum + s[metric], 0);
 
 	if (metric === 'duration') {
@@ -117,17 +123,17 @@ export function donutCentre(sports: SportBreakdown[], metric: BreakdownMetric): 
 		const hours = Math.floor(total / ONE_HOUR_IN_SECONDS);
 		const seconds = secondsUnderAMinute(total);
 		if (seconds !== undefined) {
-			return { value: seconds.toString(), label: pluralize(seconds, 'Second', 'Seconds') };
+			return { value: seconds.toString(), label: MESSAGES[locale].common.nouns.second(seconds) };
 		}
 		if (hours === 0) {
 			const minutes = Math.floor(total / ONE_MINUTE_IN_SECONDS);
-			return { value: minutes.toString(), label: pluralize(minutes, 'Minute', 'Minutes') };
+			return { value: minutes.toString(), label: MESSAGES[locale].common.nouns.minute(minutes) };
 		}
-		return { value: hours.toLocaleString('en-US'), label: pluralize(hours, 'Hour', 'Hours') };
+		return { value: formatCount(locale, hours), label: MESSAGES[locale].common.nouns.hour(hours) };
 	}
 	return {
-		value: total.toLocaleString('en-US'),
-		label: pluralize(total, 'Activity', 'Activities')
+		value: formatCount(locale, total),
+		label: MESSAGES[locale].common.nouns.activityLabel(total)
 	};
 }
 
