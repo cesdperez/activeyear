@@ -186,8 +186,8 @@ describe('formatEverests', () => {
 	});
 
 	it('words the share and the multiple separately in each locale', () => {
-		expect(formatEverests('de', 1062)).toBe('12\u00a0% der Höhe des Mount\u00a0Everest');
-		expect(formatEverests('de', 15042)).toBe('1,7-mal so hoch wie der Mount\u00a0Everest');
+		expect(formatEverests('de', 1062)).toBe('12\u00a0% des Mount\u00a0Everest');
+		expect(formatEverests('de', 15042)).toBe('1,7-mal der Mount\u00a0Everest');
 		expect(formatEverests('es', 15042)).toBe('1,7 veces la altura del Everest');
 	});
 });
@@ -302,7 +302,7 @@ describe('formatShortDate', () => {
 it('formats localized numbers and words', () => {
 	expect(formatDistance('de', 42.7)).toBe('42,7km');
 	expect(formatCount('de', 12345)).toBe('12.345');
-	expect(formatPizzaSlices('es', 285)).toBe('1 porción de pizza compensada');
-	expect(formatPizzaSlices('es', 570)).toBe('2 porciones de pizza compensadas');
+	expect(formatPizzaSlices('es', 285)).toBe('1 porción de pizza quemada');
+	expect(formatPizzaSlices('es', 570)).toBe('2 porciones de pizza quemadas');
 	expect(formatActivityCount('de', 2, 'run')).toBe('2 Läufe');
 });

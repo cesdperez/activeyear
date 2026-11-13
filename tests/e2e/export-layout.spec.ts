@@ -278,4 +278,33 @@ test.describe('Export card layout', () => {
 		expect(new Set(await bottoms('[data-testid="record-value"]')).size).toBe(1);
 		expect(new Set(await bottoms('[data-testid="record-title"]')).size).toBe(1);
 	});
+
+	// Translated fun facts fit one line in the narrowest fact columns, so the stat rows stay even.
+	for (const locale of ['en', 'de', 'fr', 'es', 'nl', 'pt']) {
+		test(`summary fun facts in ${locale} fit one line on Retro and Lightmile`, async ({ page }) => {
+			await page.goto(locale === 'en' ? '/' : `/${locale}/`);
+			await page.locator('[data-testid="demo-data"]:visible').click();
+			const wrappedFacts = () =>
+				page
+					.locator('#export-card .result .fun-fact')
+					.evaluateAll((els) =>
+						els
+							.filter(
+								(el) =>
+									(el as HTMLElement).offsetHeight >
+									1.5 * parseFloat(getComputedStyle(el).lineHeight)
+							)
+							.map((el) => el.textContent?.trim())
+					);
+			for (const [index, theme] of [
+				[2, 'retro'],
+				[5, 'lightmile']
+			] as const) {
+				await page.locator('[aria-labelledby="theme-label"] button').nth(index).click();
+				await expect(page.locator('#export-card')).toHaveAttribute('data-theme', theme);
+				// Reduced motion still runs a short transition on the font size.
+				await expect.poll(wrappedFacts, { message: theme }).toEqual([]);
+			}
+		});
+	}
 });
