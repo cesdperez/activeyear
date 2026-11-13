@@ -156,7 +156,7 @@
 					bind:value={exportSettings.userName}
 					maxlength={USER_NAME_MAX_LENGTH}
 					disabled={exportLock.isExporting}
-					placeholder="César"
+					placeholder={i18n.m.export.namePlaceholder}
 					class="w-full rounded-[var(--radius-control)] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-4 py-3 text-[var(--color-text-primary)] placeholder-[var(--color-text-dim)] transition-colors focus-visible:border-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
 				/>
 			</div>

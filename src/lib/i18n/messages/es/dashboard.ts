@@ -20,7 +20,8 @@ export const dashboard: typeof en = {
 	removedHighlight: (x: string) => `Se quitó ${x}`,
 	addedHighlight: (x: string) => `Se añadió ${x}`,
 	highlightLimit: (n: number) => `Máximo ${n} destacados. Quita uno para añadir otro.`,
-	searchResults: (n: number) => `${n} ${n === 1 ? 'resultado' : 'resultados'}`,
+	searchResults: (n: number) =>
+		`${n} ${plural('es', n, { one: 'resultado', other: 'resultados' })}`,
 	presets: {
 		longest: { label: 'Más largas', description: 'Tus sesiones más largas del año.' },
 		farthest: { label: 'Más distancia', description: 'Los días en que llegaste más lejos.' },
@@ -66,10 +67,10 @@ export const dashboard: typeof en = {
 	breakdownMetric: 'Métrica del desglose',
 	activities: 'Actividades',
 	time: 'Tiempo',
-	highlights: 'Momentos destacados',
+	highlights: 'Destacados',
 	stravaHighlights:
 		'Tus sesiones más largas del año. Las exportaciones de Strava no incluyen favoritos.',
-	noHighlights: 'Aún no hay momentos destacados',
+	noHighlights: 'Aún no hay destacados',
 	garminFavoritesHint:
 		'Marca actividades como favoritas en Garmin Connect tocando la estrella de cualquier actividad y vuelve a exportar tus datos para verlas aquí.',
 	quarter: (quarter) => `T${quarter}`,

@@ -1,9 +1,11 @@
+import { plural } from '#lib/i18n/plural.js';
 export const exportMessages = {
 	export: 'Export',
 	name: 'Your name (optional)',
 	picture: 'Profile picture (optional)',
 	preview: 'Preview',
-	custom: 'Custom pfp active',
+	custom: 'Photo added',
+	namePlaceholder: 'Your name',
 	remove: 'Remove image',
 	upload: 'Upload image',
 	focused: 'Headline stat on the summary card',
@@ -40,7 +42,7 @@ export const exportMessages = {
 	owner: (name: string) => `${name}'s`,
 	goToSlide: (n: number) => `Go to slide ${n}`,
 	moreHighlights: (n: string, count: number) =>
-		`+${n} more ${count === 1 ? 'highlight' : 'highlights'}`,
+		`+${n} more ${plural('en', count, { one: 'highlight', other: 'highlights' })}`,
 	intro: 'Three story-sized cards to share. Pick what they show, then download.',
 	nightRace: 'Night race',
 	resultSheet: 'Result sheet',

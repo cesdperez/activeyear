@@ -1,10 +1,12 @@
+import { plural } from '#lib/i18n/plural.js';
 import type { exportMessages as en } from '../en/export.js';
 export const exportMessages: typeof en = {
 	export: 'Exportar',
 	name: 'Tu nombre (opcional)',
 	picture: 'Foto de perfil (opcional)',
 	preview: 'Vista previa',
-	custom: 'Foto personalizada activa',
+	custom: 'Foto añadida',
+	namePlaceholder: 'Tu nombre',
 	remove: 'Eliminar imagen',
 	upload: 'Subir imagen',
 	focused: 'Dato principal de la tarjeta de resumen',
@@ -15,7 +17,7 @@ export const exportMessages: typeof en = {
 	generating: 'Generando...',
 	download: 'Descargar todas las imágenes',
 	fallback: 'Exportar con fuentes alternativas',
-	downloads: 'Descarga tres imágenes: resumen, desglose y momentos destacados',
+	downloads: 'Descarga tres imágenes: resumen, desglose y destacados',
 	ready: 'La exportación aún no está lista',
 	done: 'Se descargaron tres imágenes',
 	failed: 'Error al exportar',
@@ -30,7 +32,7 @@ export const exportMessages: typeof en = {
 	highlights: 'Destacados',
 	yearInSport: 'Año deportivo',
 	profile: 'Perfil',
-	noHighlights: 'Todavía no hay actividades destacadas',
+	noHighlights: 'Aún no hay destacados',
 	activity: 'Actividad',
 	previous: 'Diapositiva anterior',
 	next: 'Diapositiva siguiente',
@@ -41,7 +43,7 @@ export const exportMessages: typeof en = {
 	owner: (name: string) => `De ${name}`,
 	goToSlide: (n: number) => `Ir a la diapositiva ${n}`,
 	moreHighlights: (n: string, count: number) =>
-		`+${n} ${count === 1 ? 'destacado más' : 'destacados más'}`,
+		`+${n} ${plural('es', count, { one: 'destacado más', other: 'destacados más' })}`,
 	intro: 'Tres tarjetas en formato historia para compartir. Elige qué muestran y descárgalas.',
 	nightRace: 'Carrera nocturna',
 	resultSheet: 'Hoja de resultados',

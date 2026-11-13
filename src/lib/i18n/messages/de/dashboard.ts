@@ -22,7 +22,7 @@ export const dashboard: typeof en = {
 	addedHighlight: (x: string) => `${x} hinzugefügt`,
 	highlightLimit: (n: number) =>
 		`Maximal ${n} Highlights. Entferne eines, um ein anderes hinzuzufügen.`,
-	searchResults: (n: number) => `${n} ${n === 1 ? 'Ergebnis' : 'Ergebnisse'}`,
+	searchResults: (n: number) => `${n} ${plural('de', n, { one: 'Ergebnis', other: 'Ergebnisse' })}`,
 	presets: {
 		longest: { label: 'Längste', description: 'Deine längsten Einheiten des Jahres.' },
 		farthest: {
@@ -74,10 +74,10 @@ export const dashboard: typeof en = {
 	breakdownMetric: 'Kennzahl der Verteilung',
 	activities: 'Aktivitäten',
 	time: 'Zeit',
-	highlights: 'Höhepunkte',
+	highlights: 'Highlights',
 	stravaHighlights:
 		'Deine längsten Einheiten des Jahres. Strava-Exporte enthalten keine Favoriten.',
-	noHighlights: 'Noch keine Höhepunkte',
+	noHighlights: 'Noch keine Highlights',
 	garminFavoritesHint:
 		'Markiere Aktivitäten in Garmin Connect über das Sternsymbol als Favoriten und exportiere deine Daten erneut, um sie hier zu sehen.',
 	quarter: (quarter) => `Q${quarter}`,

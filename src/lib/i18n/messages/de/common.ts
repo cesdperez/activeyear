@@ -31,22 +31,23 @@ export const common: typeof en = {
 		activityLabel: (count: number) =>
 			plural('de', count, { one: 'Aktivität', other: 'Aktivitäten' })
 	},
-	pizza: (count: number) =>
-		plural('de', count, { one: 'verbranntes Stück Pizza', other: 'verbrannte Stücke Pizza' }),
-	lessPizza: 'Weniger als ein Stück Pizza verbrannt',
-	earthLaps: 'Erdumrundungen',
-	earthPartial: 'einer Erdumrundung',
-	everest: 'der Höhe des Mount Everest',
+	// "Stück" stays singular after a number, as in "3 Stück Pizza".
+	pizza: () => 'Stück Pizza abtrainiert',
+	lessPizza: 'Weniger als ein Stück Pizza abtrainiert',
+	earthPartial: (share) => `${share} einer Erdumrundung`,
+	earthLaps: (laps) => `${laps} Erdumrundungen`,
+	everestPartial: (share) => `${share} der Höhe des Mount\u00a0Everest`,
+	everestMultiple: (times) => `${times}-mal so hoch wie der Mount\u00a0Everest`,
 	lotr: 'Herr-der-Ringe-Marathons',
 	dayByDay: 'Tag für Tag',
 	yearLane: {
 		summary: (n, count, days, year) =>
 			`${n} ${plural('de', count, { one: 'aktiver Tag', other: 'aktive Tage' })} von ${days} im Jahr ${year}`,
 		summarySoFar: (n, count, days, year) =>
-			`${n} ${plural('de', count, { one: 'aktiver Tag', other: 'aktive Tage' })} von ${days} im Jahr ${year} bisher`,
-		highlightsMarked: 'Höhepunkte markiert',
+			`${n} ${plural('de', count, { one: 'aktiver Tag', other: 'aktive Tage' })} von ${days} bisher im Jahr ${year}`,
+		highlightsMarked: 'Highlights markiert',
 		recordsMarked: 'Bestleistungen markiert',
-		highlight: 'Höhepunkt',
+		highlight: 'Highlight',
 		record: 'Bestleistung'
 	}
 };

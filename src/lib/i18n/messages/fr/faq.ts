@@ -1,4 +1,6 @@
 import { TARGET_YEAR } from '#lib/constants/time.js';
+import { dashboard } from './dashboard.js';
+import { upload } from './upload.js';
 import type { faq as en } from '../en/faq.js';
 
 export const faq: typeof en = {
@@ -14,23 +16,21 @@ export const faq: typeof en = {
 		},
 		{
 			question: 'Quel fichier faut-il utiliser ?',
-			answer:
-				'Le CSV Activities de Garmin Connect ou activities.csv issu de l’export de votre compte Strava, en anglais, espagnol, allemand, français, italien, néerlandais ou portugais. Si votre compte Garmin utilise les unités impériales, choisissez Imperial sur la page d’import. Les activités comprennent la course, le vélo, la natation, la marche, la randonnée, la musculation, le yoga, les sports de pagaie, l’aviron, le cardio, les sports d’hiver, de raquette et l’escalade.'
+			answer: `Le CSV Activities de Garmin Connect ou activities.csv issu de l’export de votre compte Strava, en anglais, espagnol, allemand, français, italien, néerlandais ou portugais. Si votre compte Garmin utilise les unités impériales, choisissez ${upload.imperial} sur la page d’import. Les activités comprennent la course, le vélo, la natation, la marche, la randonnée, la musculation, le yoga, les sports de pagaie, l’aviron, le cardio, les sports d’hiver, de raquette et l’escalade.`
 		},
 		{
 			question: 'Que puis-je partager ?',
 			answer:
-				'Trois cartes au format story (PNG 1080 × 1920) : un résumé, une répartition par sport et vos temps forts, en style Neon, Minimal ou Retro.'
+				'Trois cartes au format story (PNG 1080 × 1920) : un résumé, une répartition par sport et vos temps forts, en six styles : Neon, Minimal, Retro, Classic, Synthwave et Lightmile.'
 		},
 		{
 			question: 'Puis-je rouvrir mon bilan plus tard ?',
-			answer:
-				'Oui. Utilisez Enregistrer mon année sur le tableau de bord pour télécharger un petit fichier .json, puis déposez-le dans la zone d’import pour rouvrir le bilan à tout moment. Il reste sur votre appareil.'
+			answer: `Oui. Utilisez ${dashboard.saveMyYear} sur le tableau de bord pour télécharger un petit fichier .json, puis déposez-le dans la zone d’import pour rouvrir le bilan à tout moment. Il reste sur votre appareil.`
 		},
 		{
 			question: 'Est-ce compatible avec Strava ?',
 			answer:
-				'Oui. Importez activities.csv issu de l’export de votre compte Strava (Settings, My Account, Download or Delete Your Account), avec Strava réglé en anglais, espagnol, allemand, français, italien, néerlandais ou portugais.'
+				'Oui. Importez activities.csv issu de l’export de votre compte Strava, à demander dans « Settings » (Paramètres) → « My Account » (Mon compte) → « Download or Delete Your Account » (Télécharger ou supprimer votre compte). Strava doit être réglé en anglais, espagnol, allemand, français, italien, néerlandais ou portugais.'
 		},
 		{
 			question: 'Est-ce gratuit ?',
@@ -46,11 +46,11 @@ export const faq: typeof en = {
 			text: 'Connectez-vous sur',
 			link: { href: 'https://connect.garmin.com', label: 'connect.garmin.com' }
 		},
-		{ text: 'Allez dans Activities → All Activities' },
+		{ text: 'Allez dans Activités → Toutes les activités' },
 		{
 			text: `Faites défiler la page jusqu’au chargement de toutes les activités de ${TARGET_YEAR}`
 		},
-		{ text: 'Cliquez sur Export CSV (icône en haut à droite)' }
+		{ text: 'Cliquez sur « Export CSV » (Exporter en CSV), l’icône en haut à droite' }
 	],
 	garminNote:
 		'Utilisez le site sur un ordinateur. L’application Garmin Connect ne permet pas l’export.',
@@ -59,8 +59,10 @@ export const faq: typeof en = {
 			text: 'Connectez-vous sur',
 			link: { href: 'https://www.strava.com/account', label: 'strava.com' }
 		},
-		{ text: 'Allez dans Settings → My Account → Download or Delete Your Account' },
-		{ text: 'Cliquez sur Request your archive' },
+		{
+			text: 'Allez dans « Settings » (Paramètres) → « My Account » (Mon compte) → « Download or Delete Your Account » (Télécharger ou supprimer votre compte)'
+		},
+		{ text: 'Cliquez sur « Request your archive » (Demander votre archive)' },
 		{
 			text: 'Ouvrez le lien de téléchargement envoyé par Strava par e-mail et décompressez le fichier'
 		},

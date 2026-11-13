@@ -11,7 +11,7 @@ export const meta = {
 			'Works in any modern browser on a computer. No install, no account, no login.',
 			'The CSV is parsed and analysed in the browser. The activity data is never uploaded to a server.',
 			'Input: the Activities CSV from Garmin Connect or activities.csv from a Strava account export, in English, Spanish, German, French, Italian, Dutch or Portuguese.',
-			'Output: a dashboard and three shareable 1080 × 1920 PNG cards in Neon, Minimal or Retro style.',
+			'Output: a dashboard and three shareable 1080 × 1920 PNG cards in six styles: Neon, Minimal, Retro, Classic, Synthwave and Lightmile.',
 			'Save: the dashboard can download the parsed year as a .json file, which reopens the recap when dropped on the upload area.',
 			'A demo with sample data is available on the home page.'
 		],

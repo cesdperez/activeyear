@@ -19,7 +19,7 @@ export const dashboard = {
 	removedHighlight: (x: string) => `Removed ${x}`,
 	addedHighlight: (x: string) => `Added ${x}`,
 	highlightLimit: (n: number) => `${n} highlights max. Remove one to add another.`,
-	searchResults: (n: number) => `${n} ${n === 1 ? 'result' : 'results'}`,
+	searchResults: (n: number) => `${n} ${plural('en', n, { one: 'result', other: 'results' })}`,
 	presets: {
 		longest: { label: 'Longest', description: 'Your longest sessions of the year.' },
 		farthest: { label: 'Farthest', description: 'The days you went the distance.' },

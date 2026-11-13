@@ -85,7 +85,7 @@ export function scaledLength(value: string, unitScale: number): number {
 	return value.length - units + units * unitScale;
 }
 
-/** "150h 0m" as [150, h] and [0, m], so units can be set smaller than their numbers. */
+/** "150h 30m" as [150, h] and [30, m], so units can be set smaller than their numbers. */
 export function splitUnits(value: string): ValuePart[] {
 	// Some locales group thousands with a no-break or narrow no-break space, which \s also matches.
 	return [...value.matchAll(/(\d[\d.,\u00a0\u202f]*)([^\d\s]*)/g)].map(([, number, unit]) => ({

@@ -177,7 +177,7 @@ Confident, concise, celebratory.
 
 - Distances: one decimal under 100, none from 100 ("42.2km", "847km"). No space before the unit.
 - Elevation: nearest 10m (50ft).
-- Time: hours and minutes ("127h 34m"); seconds only for a total under a minute ("45s").
+- Time: hours and minutes ("127h 34m"), hours alone on a whole hour ("150h"); seconds only for a total under a minute ("45s").
 - Calories: whole kcal with a thousands separator.
 - Counts: exact numbers ("94 runs", not "~90 runs").
 

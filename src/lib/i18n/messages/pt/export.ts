@@ -1,16 +1,18 @@
+import { plural } from '#lib/i18n/plural.js';
 import type { exportMessages as en } from '../en/export.js';
 export const exportMessages: typeof en = {
 	export: 'Exportar',
 	name: 'Seu nome (opcional)',
 	picture: 'Foto de perfil (opcional)',
 	preview: 'Prévia',
-	custom: 'Foto personalizada ativa',
+	custom: 'Foto adicionada',
+	namePlaceholder: 'Seu nome',
 	remove: 'Remover imagem',
 	upload: 'Enviar imagem',
 	focused: 'Estatística principal do cartão de resumo',
 	aboutLightmile: 'Sobre o Lightmile',
 	lightmileInfo:
-		'Lightmile é o clube de corrida que considero a minha comunidade. Se estiveres por Eindhoven, vem correr connosco!',
+		'O Lightmile é o clube de corrida que considero minha comunidade. Se você passar por Eindhoven, venha correr com a gente!',
 	theme: 'Tema',
 	generating: 'Gerando...',
 	download: 'Baixar todas as imagens',
@@ -40,7 +42,8 @@ export const exportMessages: typeof en = {
 	fontsUnavailable: 'Não foi possível carregar as fontes. Tente novamente.',
 	owner: (name: string) => `De ${name}`,
 	goToSlide: (n: number) => `Ir para o slide ${n}`,
-	moreHighlights: (n: string, count: number) => `+${n} ${count === 1 ? 'destaque' : 'destaques'}`,
+	moreHighlights: (n: string, count: number) =>
+		`+${n} ${plural('pt', count, { one: 'destaque', other: 'destaques' })}`,
 	intro: 'Três cartões no formato de story para compartilhar. Escolha o que mostram e baixe.',
 	nightRace: 'Corrida noturna',
 	resultSheet: 'Folha de resultados',

@@ -22,7 +22,7 @@ describe('totalStats', () => {
 				funFact: '5.1% of a lap around the globe'
 			}),
 			expect.objectContaining({ id: 'elevation', label: 'Elevation gained', value: '15,420m' }),
-			expect.objectContaining({ id: 'duration', label: 'Time active', value: '150h 0m' }),
+			expect.objectContaining({ id: 'duration', label: 'Time active', value: '150h' }),
 			expect.objectContaining({
 				id: 'calories',
 				label: 'Calories burned',
@@ -43,14 +43,14 @@ describe('totalStats', () => {
 		const [distance, , duration] = totalStats('de', stats, 'km');
 
 		expect(distance).toEqual(expect.objectContaining({ label: 'Gesamtdistanz', value: '2.032km' }));
-		expect(duration.value).toBe('150h 0m');
+		expect(duration.value).toBe('150h');
 	});
 });
 
 describe('scaledLength', () => {
 	it('counts unit characters at their smaller size', () => {
 		expect(scaledLength('2,032km', 0.5)).toBe(6);
-		expect(scaledLength('150h 0m', 0.5)).toBe(6);
+		expect(scaledLength('150h 30m', 0.5)).toBe(7);
 		expect(scaledLength('180', 0.5)).toBe(3);
 	});
 
@@ -63,9 +63,9 @@ describe('scaledLength', () => {
 describe('splitUnits', () => {
 	it('splits each number from the unit after it', () => {
 		expect(splitUnits('2,032km')).toEqual([{ number: '2,032', unit: 'km' }]);
-		expect(splitUnits('150h 0m')).toEqual([
+		expect(splitUnits('150h 30m')).toEqual([
 			{ number: '150', unit: 'h' },
-			{ number: '0', unit: 'm' }
+			{ number: '30', unit: 'm' }
 		]);
 		expect(splitUnits('42.5mi')).toEqual([{ number: '42.5', unit: 'mi' }]);
 	});

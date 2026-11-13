@@ -43,9 +43,7 @@ export function formatDistance(locale: Locale, km: number, unit: Unit = 'km'): s
 	return `${Number(oneDecimal).toLocaleString(INTL_LOCALES[locale], { minimumFractionDigits: 1, maximumFractionDigits: 1 })}${suffix}`;
 }
 
-/**
- * Format duration in seconds to "Xh Ym" format, or "Xs" under a minute
- */
+/** "Xh Ym", "Xh" on a whole hour, "Ym" under an hour, or "Xs" under a minute. */
 export function formatDuration(locale: Locale, seconds: number): string {
 	if (seconds <= 0) return '0m';
 	const underAMinute = secondsUnderAMinute(seconds);
@@ -54,9 +52,8 @@ export function formatDuration(locale: Locale, seconds: number): string {
 	const hours = Math.floor(seconds / ONE_HOUR_IN_SECONDS);
 	const minutes = Math.floor((seconds % ONE_HOUR_IN_SECONDS) / ONE_MINUTE_IN_SECONDS);
 
-	if (hours === 0) {
-		return `${minutes}m`;
-	}
+	if (hours === 0) return `${minutes}m`;
+	if (minutes === 0) return `${formatCount(locale, hours)}h`;
 	return `${formatCount(locale, hours)}h ${minutes}m`;
 }
 
@@ -78,15 +75,29 @@ export function formatCount(locale: Locale, count: number): string {
 
 /** Whole percent, but "<1%" for a share that is above zero and would round to 0%. */
 export function formatPercentOfYear(locale: Locale, percent: number): string {
-	if (percent > 0 && percent < 0.5) return '<1%';
-	return `${partialPercent(locale, percent, 0)}%`;
+	return formatShare(locale, percent, 0);
 }
 
-function partialPercent(locale: Locale, percent: number, decimals: number): string {
-	if (percent >= 100) return fixed(locale, 100, decimals);
+/** A share under 100%, floored to "<1%" (or "<0.1%") so a non-zero share never shows as 0. */
+function formatShare(locale: Locale, percent: number, decimals: number): string {
+	const smallest = 10 ** -decimals;
+	if (percent > 0 && percent < smallest / 2) return `<${formatPercent(locale, smallest, decimals)}`;
+	return formatPercent(locale, partialPercent(percent, decimals), decimals);
+}
+
+function partialPercent(percent: number, decimals: number): number {
+	if (percent >= 100) return 100;
 	// A share just under 100 would otherwise round up to a full 100.
 	const highestPartial = 100 - 10 ** -decimals;
-	return fixed(locale, Math.min(Number(percent.toFixed(decimals)), highestPartial), decimals);
+	return Math.min(Number(percent.toFixed(decimals)), highestPartial);
+}
+
+function formatPercent(locale: Locale, percent: number, decimals: number): string {
+	return new Intl.NumberFormat(INTL_LOCALES[locale], {
+		style: 'percent',
+		minimumFractionDigits: decimals,
+		maximumFractionDigits: decimals
+	}).format(percent / 100);
 }
 
 function fixed(locale: Locale, value: number, decimals: number): string {
@@ -128,10 +139,9 @@ export function calculateEarthLaps(distanceKm: number): number {
  */
 export function formatEarthLaps(locale: Locale, distanceKm: number): string {
 	const laps = calculateEarthLaps(distanceKm);
-	if (laps < 1.0) {
-		return `${partialPercent(locale, laps * 100, 1)}% ${MESSAGES[locale].common.earthPartial}`;
-	}
-	return `${fixed(locale, laps, 2)}x ${MESSAGES[locale].common.earthLaps}`;
+	const common = MESSAGES[locale].common;
+	if (laps < 1.0) return common.earthPartial(formatShare(locale, laps * 100, 1));
+	return common.earthLaps(fixed(locale, laps, 2));
 }
 
 /**
@@ -146,10 +156,9 @@ export function calculateEverests(elevationM: number): number {
  */
 export function formatEverests(locale: Locale, elevationM: number): string {
 	const everests = calculateEverests(elevationM);
-	if (everests < 1.0) {
-		return `${partialPercent(locale, everests * 100, 0)}% ${MESSAGES[locale].common.everest}`;
-	}
-	return `${fixed(locale, everests, 1)}x ${MESSAGES[locale].common.everest}`;
+	const common = MESSAGES[locale].common;
+	if (everests < 1.0) return common.everestPartial(formatShare(locale, everests * 100, 0));
+	return common.everestMultiple(fixed(locale, everests, 1));
 }
 
 /**
@@ -188,7 +197,9 @@ export function calculateLotRMarathons(seconds: number): number {
  */
 export function formatLotRMarathons(locale: Locale, seconds: number): string {
 	const marathons = calculateLotRMarathons(seconds);
-	return `${fixed(locale, marathons, 1)} ${MESSAGES[locale].common.lotr}`;
+	const shown =
+		marathons > 0 && marathons < 0.05 ? `<${fixed(locale, 0.1, 1)}` : fixed(locale, marathons, 1);
+	return `${shown} ${MESSAGES[locale].common.lotr}`;
 }
 
 export function formatDayMonth(locale: Locale, date: Date): string {

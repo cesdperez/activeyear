@@ -31,9 +31,10 @@ export const common = {
 	pizza: (count: number) =>
 		plural('en', count, { one: 'pizza slice burnt', other: 'pizza slices burnt' }),
 	lessPizza: 'Less than a pizza slice burnt',
-	earthLaps: 'laps around the globe',
-	earthPartial: 'of a lap around the globe',
-	everest: 'the height of Mt. Everest',
+	earthPartial: (share: string) => `${share} of a lap around the globe`,
+	earthLaps: (laps: string) => `${laps} laps around the globe`,
+	everestPartial: (share: string) => `${share} of the height of Mt.\u00a0Everest`,
+	everestMultiple: (times: string) => `${times}x Mt.\u00a0Everest`,
 	lotr: 'LotR marathons',
 	dayByDay: 'Day by day',
 	yearLane: {

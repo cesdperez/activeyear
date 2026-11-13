@@ -1,10 +1,12 @@
+import { plural } from '#lib/i18n/plural.js';
 import type { exportMessages as en } from '../en/export.js';
 export const exportMessages: typeof en = {
 	export: 'Exporter',
 	name: 'Votre nom (facultatif)',
 	picture: 'Photo de profil (facultatif)',
 	preview: 'Aperçu',
-	custom: 'Photo personnalisée active',
+	custom: 'Photo ajoutée',
+	namePlaceholder: 'Votre nom',
 	remove: 'Supprimer l’image',
 	upload: 'Ajouter une image',
 	focused: 'Statistique phare de la carte résumé',
@@ -30,7 +32,7 @@ export const exportMessages: typeof en = {
 	highlights: 'Temps forts',
 	yearInSport: 'Année sportive',
 	profile: 'Profil',
-	noHighlights: 'Aucune activité à la une pour le moment',
+	noHighlights: 'Pas encore de temps forts',
 	activity: 'Activité',
 	previous: 'Diapositive précédente',
 	next: 'Diapositive suivante',
@@ -41,7 +43,7 @@ export const exportMessages: typeof en = {
 	owner: (name: string) => `De ${name}`,
 	goToSlide: (n: number) => `Aller à la diapositive ${n}`,
 	moreHighlights: (n: string, count: number) =>
-		`+${n} ${count === 1 ? 'temps fort' : 'temps forts'}`,
+		`+${n} ${plural('fr', count, { one: 'temps fort', other: 'temps forts' })}`,
 	intro:
 		'Trois cartes au format story à partager. Choisissez ce qu’elles affichent, puis téléchargez-les.',
 	nightRace: 'Course de nuit',
