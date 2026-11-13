@@ -319,6 +319,24 @@ Confident, concise, celebratory.
 - Calories: Round to nearest 100 for totals
 - Counts: Exact numbers ("94 runs", not "~90 runs")
 
+## Languages
+
+Locale comes from the URL. `/` is English; the other prerendered copies use `src/routes/[[lang=locale]]` and the matcher in `src/params.ts`. Do not redirect based on `Accept-Language`, because the CSP blocks inline scripts. `src/lib/components/LanguagePicker.svelte` lets visitors choose a language and shows returning visitors a dismissible prompt stored in localStorage as `activeyear.locale`.
+
+Strings live in typed catalogs at `src/lib/i18n/messages/<locale>/<namespace>.ts`. English defines the shape; other locales are typed as `typeof en`, so `pnpm check` catches missing keys. Components read `i18n.m` and `i18n.locale` from `#lib/i18n/i18n.svelte.js`; plain TypeScript uses `MESSAGES[locale]`. Use `plural(locale, n, { one, other })` for plurals. Keep phrases with values as whole functions, never glued fragments, because word order differs between languages.
+
+Number and date formatting takes a `locale` and uses `INTL_LOCALES`. Unit suffixes (`km`, `mi`, `m`, `ft`, `kcal`, `h`, `m`, `s`) stay the same in every language. Parsing stays independent of the UI language: parsers keep English messages for logs, and the UI maps error types to translated text.
+
+German, Dutch, and French can run 20 to 35% longer than English. Every card and widget must fit the longest translation. The German card snapshots in `tests/e2e/visual-export.spec.ts` guard this.
+
+### Add a Language
+
+1. Add the code to `LOCALES`, `LOCALE_NAMES`, `INTL_LOCALES`, and `OG_LOCALES` in `src/lib/constants/locales.ts`.
+2. Add it to the matcher in `src/params.ts` and to `entries` in `src/routes/[[lang=locale]]/+page.ts` and the llms.txt route.
+3. Copy `src/lib/i18n/messages/en/` to the new locale, translate the strings, type each namespace as `typeof en`, and register it in `src/lib/i18n/messages/index.ts`.
+4. Check that the font covers the script. Outfit and JetBrains Mono are Latin only; RTL languages also need layout work.
+5. Run `pnpm check`, then inspect all three cards in the new language.
+
 ---
 
 ## Implementation Checklist
