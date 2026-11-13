@@ -77,7 +77,9 @@ async function captureExportCardAtFullResolution(page: Page): Promise<Buffer> {
 }
 
 async function captureSpecificCardDownload(page: Page, cardIndex: number): Promise<Buffer> {
-	const downloadButton = page.getByRole('button', { name: /Download All Images/i });
+	const downloadButton = page.getByRole('button', {
+		name: /Download All Images|Alle Bilder herunterladen/i
+	});
 
 	// Collect all downloads
 	const downloads: Download[] = [];
@@ -212,6 +214,21 @@ test.describe('Export Visual Fidelity', () => {
 
 			// Save snapshot of downloaded image for regression testing
 			expect(downloadBuffer).toMatchSnapshot(`${cardName}-export.png`);
+		});
+	}
+
+	for (const [cardIndex, cardName] of CARDS.entries()) {
+		test(`German ${cardName} card snapshot`, async ({ page }) => {
+			await page.goto('/de/');
+			await page
+				.locator('input[type="file"]')
+				.first()
+				.setInputFiles(join(__dirname, 'fixtures', 'garmin-heavy.csv'));
+			await expect(page.locator('#export-card')).toBeVisible();
+			await navigateToSlide(page, cardIndex);
+			expect(await captureSpecificCardDownload(page, cardIndex)).toMatchSnapshot(
+				`german-${cardName}.png`
+			);
 		});
 	}
 
