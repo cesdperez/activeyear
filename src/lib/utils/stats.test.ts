@@ -9,7 +9,8 @@ import {
 	calculatePersonalRecords,
 	calculateSportBreakdown,
 	calculateWeeklyPattern,
-	summaryMetricWithValue
+	summaryMetricWithValue,
+	summaryMetricsWithValue
 } from './stats.js';
 import type { Activity } from '../types/index.js';
 
@@ -359,6 +360,13 @@ describe('summaryMetricWithValue', () => {
 
 	it('keeps the current stat when no stat has a value', () => {
 		expect(summaryMetricWithValue(statsOf({ duration: 0 }), 'distance', 'km')).toBe('distance');
+	});
+
+	it('lists every stat with a value in panel order', () => {
+		expect(
+			summaryMetricsWithValue(statsOf({ duration: 0, elevation: 6, calories: 200 }), 'km')
+		).toEqual(['elevation', 'calories']);
+		expect(summaryMetricsWithValue(statsOf({ duration: 0, elevation: 6 }), 'miles')).toEqual([]);
 	});
 
 	it('counts a sub-minute duration as a value', () => {

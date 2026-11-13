@@ -10,6 +10,7 @@ import type {
 import { CENTERED_AVATAR_THEMES } from '#lib/constants/themes.js';
 import { rankSports, selectTopSports, sportColorsFor } from '#lib/utils/breakdown.js';
 import { showsValue } from '#lib/utils/format.js';
+import { summaryMetricWithValue } from '#lib/utils/stats.js';
 import { scaledLength, totalStats, UNIT_SCALE } from '#lib/utils/totals.js';
 import { recordActivities } from '#lib/utils/yearLane.js';
 
@@ -21,7 +22,10 @@ export function summaryCardModel(
 	const centeredAvatar = CENTERED_AVATAR_THEMES.includes(settings.theme);
 	const topSport = rankSports(data.breakdown, settings.breakdownMetric)[0];
 	const totals = data.stats ? totalStats(locale, data.stats, settings.unit) : [];
-	const hero = totals.find((stat) => stat.id === settings.summaryMetric) ?? totals[0];
+	const heroMetric = data.stats
+		? summaryMetricWithValue(data.stats, settings.summaryMetric, settings.unit)
+		: settings.summaryMetric;
+	const hero = totals.find((stat) => stat.id === heroMetric) ?? totals[0];
 	const supporting = totals.filter((stat) => stat !== hero && showsValue(stat.value));
 	const fitChars = Math.max(
 		...supporting.map((stat) => scaledLength(stat.value, UNIT_SCALE.board))
