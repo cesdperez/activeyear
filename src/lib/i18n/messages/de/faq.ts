@@ -15,7 +15,7 @@ export const faq: typeof en = {
 		{
 			question: 'Welche Datei brauche ich?',
 			answer:
-				'Die Activities-CSV aus Garmin Connect oder activities.csv aus dem Export deines Strava-Kontos, jeweils auf Englisch. Unterstützt werden Laufen, Radfahren, Schwimmen, Gehen, Wandern, Krafttraining, Yoga, Paddeln, Rudern, Cardio, Wintersport, Schlägersport und Klettern.'
+				'Die Activities-CSV aus Garmin Connect oder activities.csv aus dem Export deines Strava-Kontos, auf Englisch, Spanisch, Deutsch, Französisch, Italienisch, Niederländisch oder Portugiesisch. Wenn dein Garmin-Konto imperiale Einheiten verwendet, wähle Imperial auf der Upload-Seite. Unterstützt werden Laufen, Radfahren, Schwimmen, Gehen, Wandern, Krafttraining, Yoga, Paddeln, Rudern, Cardio, Wintersport, Schlägersport und Klettern.'
 		},
 		{
 			question: 'Was kann ich teilen?',
@@ -30,7 +30,7 @@ export const faq: typeof en = {
 		{
 			question: 'Funktioniert es mit Strava?',
 			answer:
-				'Ja. Lade activities.csv aus dem Export deines Strava-Kontos hoch (Settings, My Account, Download or Delete Your Account). Strava muss auf Englisch eingestellt sein.'
+				'Ja. Lade activities.csv aus dem Export deines Strava-Kontos hoch (Settings, My Account, Download or Delete Your Account). Strava muss auf Englisch, Spanisch, Deutsch, Französisch, Italienisch, Niederländisch oder Portugiesisch eingestellt sein.'
 		},
 		{
 			question: 'Ist es kostenlos?',
@@ -62,7 +62,8 @@ export const faq: typeof en = {
 		{ text: 'Öffne den Download-Link aus der E-Mail von Strava und entpacke die Datei' },
 		{ text: 'Lade activities.csv hoch' }
 	],
-	stravaNote: 'Lade nur activities.csv hoch. Strava muss auf Englisch eingestellt sein.',
+	stravaNote:
+		'Lade nur activities.csv hoch. Strava muss auf Englisch, Spanisch, Deutsch, Französisch, Italienisch, Niederländisch oder Portugiesisch eingestellt sein.',
 	heading: 'Fragen',
 	guidesAria: 'Wähle deine Datenquelle'
 };

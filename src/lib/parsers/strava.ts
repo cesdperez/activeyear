@@ -1,5 +1,7 @@
 import Papa from 'papaparse';
+import { STRAVA_LOCALES } from './stravaLocales.js';
 import {
+	bestLocale,
 	firstLine,
 	readHeaderCells,
 	isCalendarDate,
@@ -9,7 +11,13 @@ import {
 	invalidDateError
 } from './csv.js';
 import { TYPES_WITHOUT_DISTANCE } from '#lib/constants/parsing.js';
-import type { Activity, ActivityParser, ActivityType, ParseResult } from '#lib/types/index.js';
+import type {
+	Activity,
+	ActivityParser,
+	ActivityType,
+	ParseResult,
+	StravaLocale
+} from '#lib/types/index.js';
 
 const KEY_HEADERS = ['Activity Date', 'Activity Type', 'Moving Time'];
 // Localized exports translate headers but keep activities/<id>.fit.gz filenames.
@@ -61,9 +69,8 @@ function readHeaders(csv: string): string[] {
 	return readHeaderCells(firstLine(csv));
 }
 
-function hasEnglishHeaders(csv: string): boolean {
-	const found = readHeaders(csv);
-	return KEY_HEADERS.every((header) => found.includes(header));
+function hasEnglishHeaders(headers: string[]): boolean {
+	return KEY_HEADERS.every((header) => headers.includes(header));
 }
 
 function parseStravaDate(value: string): Date | null {
@@ -86,13 +93,46 @@ function parseStravaDate(value: string): Date | null {
 	);
 }
 
+function parseLocalizedDate(value: string, locale: StravaLocale): Date | null {
+	const text = value.trim().replace(/[\u00a0\u202f]/g, ' ');
+	const numeric = /^(\d{1,2})\.(\d{1,2})\.(\d{4}),?\s+(\d{1,2}):(\d{2}):(\d{2})$/.exec(text);
+	const named =
+		/^(\d{1,2})\s+(?:de\s+)?([\p{L}]+)\.?\s+(?:de\s+)?(\d{4}),?\s+(\d{1,2}):(\d{2}):(\d{2})(?:\s+([ap])\.\s*m\.)?$/iu.exec(
+			text
+		);
+	const match = locale.months.length ? named : numeric;
+	if (!match) return null;
+	const day = Number(match[1]);
+	const month = locale.months.length
+		? locale.months.indexOf(
+				match[2].toLowerCase() === 'sept' && locale.months[8] === 'sep'
+					? 'sep'
+					: match[2].toLowerCase()
+			) + 1
+		: Number(match[2]);
+	const year = Number(match[3]);
+	let hour = Number(match[4]);
+	const minute = Number(match[5]);
+	const second = Number(match[6]);
+	const period = match[7]?.toLowerCase();
+	if (
+		minute > 59 ||
+		second > 59 ||
+		(period ? hour < 1 || hour > 12 : hour > 23) ||
+		!isCalendarDate(year, month, day)
+	)
+		return null;
+	if (period) hour = (hour % 12) + (period === 'p' ? 12 : 0);
+	return new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+}
+
 function parseNumber(value: string | undefined): number {
 	if (!value?.trim()) return 0;
 	const parsed = Number(value);
 	return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function nonEnglishExportResult(): ParseResult {
+function unsupportedLanguageExportResult(): ParseResult {
 	return {
 		source: 'strava',
 		activities: [],
@@ -101,10 +141,10 @@ function nonEnglishExportResult(): ParseResult {
 		errors: [
 			{
 				type: 'unsupported-format',
-				reason: 'strava-not-english',
+				reason: 'strava-unsupported-language',
 				row: 0,
 				message:
-					"This Strava export isn't in English. Set your Strava language to English, request a new archive, and upload its activities.csv."
+					"This Strava export is in a language we can't read yet. Set Strava to English, Spanish, German, French, Italian, Dutch or Portuguese, request a new archive, and upload its activities.csv."
 			}
 		]
 	};
@@ -126,9 +166,10 @@ function columnIndexes(columns: string[]) {
 function readActivity(
 	data: string[],
 	columns: ReturnType<typeof columnIndexes>,
-	date: Date
+	date: Date,
+	locale?: StravaLocale
 ): Activity {
-	const type = ACTIVITY_TYPES[data[columns.type]] ?? 'other';
+	const type = ACTIVITY_TYPES[locale?.types[data[columns.type]] ?? data[columns.type]] ?? 'other';
 	return {
 		date,
 		type,
@@ -170,9 +211,13 @@ function readRows(
 }
 
 function parse(csv: string, year: number): ParseResult {
-	if (!hasEnglishHeaders(csv)) return nonEnglishExportResult();
+	const headers = readHeaders(csv);
+	const locale = hasEnglishHeaders(headers) ? undefined : bestLocale(headers, STRAVA_LOCALES);
+	const translated = locale ? headers.map((header) => locale.headers[header] ?? header) : headers;
+	if (!KEY_HEADERS.every((header) => translated.includes(header)))
+		return unsupportedLanguageExportResult();
 
-	const columns = columnIndexes(readHeaders(csv));
+	const columns = columnIndexes(translated);
 	const result: ParseResult = {
 		source: 'strava',
 		activities: [],
@@ -205,20 +250,28 @@ function parse(csv: string, year: number): ParseResult {
 			});
 			return;
 		}
-		const date = parseStravaDate(dateText);
+		const date = locale ? parseLocalizedDate(dateText, locale) : parseStravaDate(dateText);
 		if (!date) {
 			result.errors.push(invalidDateError(rowLine));
 			return;
 		}
 		years.add(date.getFullYear());
-		if (isInYear(date, year)) result.activities.push(readActivity(data, columns, date));
+		if (isInYear(date, year)) result.activities.push(readActivity(data, columns, date, locale));
 	});
 	result.yearsInFile = sortedYears(years);
 	return result;
 }
 
-/** Also detects localized Strava exports so they can be rejected with English-language guidance. */
+/** Detects English and localized Strava exports, including unsupported languages. */
 export const stravaParser: ActivityParser = {
-	detect: (csv) => hasEnglishHeaders(csv) || ACTIVITY_FILENAME.test(csv.slice(0, 65536)),
+	detect: (csv) => {
+		const headers = readHeaders(csv);
+		const locale = bestLocale(headers, STRAVA_LOCALES);
+		return (
+			hasEnglishHeaders(headers) ||
+			KEY_HEADERS.every((header) => headers.some((cell) => locale?.headers[cell] === header)) ||
+			ACTIVITY_FILENAME.test(csv.slice(0, 65536))
+		);
+	},
 	parse
 };

@@ -60,6 +60,21 @@
 						{i18n.m.landing.demo}
 					</button>
 				</div>
+				<div class="mt-4 flex flex-wrap items-center justify-center gap-2">
+					<span class="text-sm text-[var(--color-text-muted)]">{i18n.m.upload.garminUnits}</span>
+					<div role="group" aria-label={i18n.m.upload.garminUnits} class="segmented">
+						<button
+							aria-pressed={appStore.garminUnits === 'metric'}
+							disabled={uploading || !hydrated.current}
+							onclick={() => (appStore.garminUnits = 'metric')}>{i18n.m.upload.metric}</button
+						>
+						<button
+							aria-pressed={appStore.garminUnits === 'imperial'}
+							disabled={uploading || !hydrated.current}
+							onclick={() => (appStore.garminUnits = 'imperial')}>{i18n.m.upload.imperial}</button
+						>
+					</div>
+				</div>
 			</div>
 
 			<section aria-labelledby="guides-heading" class="mt-16 w-full">

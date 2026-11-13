@@ -2,6 +2,7 @@ import type { Activity, Locale, Unit } from '#lib/types/index.js';
 import { INTL_LOCALES } from '#lib/constants/locales.js';
 import { MESSAGES } from '#lib/i18n/messages/index.js';
 import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '#lib/constants/time.js';
+import { KM_TO_MILES, METERS_TO_FEET } from '#lib/constants/units.js';
 
 export function activityTitle(locale: Locale, activity: Activity): string {
 	return (
@@ -14,8 +15,6 @@ export function activityTitle(locale: Locale, activity: Activity): string {
 const EARTH_CIRCUMFERENCE_KM = 40075;
 const EVEREST_HEIGHT_M = 8848;
 const PIZZA_SLICE_CALORIES = 285;
-const KM_TO_MILES = 0.621371;
-const METERS_TO_FEET = 3.28084;
 
 /**
  * Format distance with appropriate precision

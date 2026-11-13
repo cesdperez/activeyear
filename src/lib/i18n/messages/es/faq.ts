@@ -15,7 +15,7 @@ export const faq: typeof en = {
 		{
 			question: '¿Qué archivo necesito?',
 			answer:
-				'El CSV de Activities de Garmin Connect o activities.csv de la exportación de tu cuenta de Strava, en inglés. Incluye carrera, ciclismo, natación, caminata, senderismo, fuerza, yoga, deportes de remo, cardio, deportes de invierno, deportes de raqueta y escalada.'
+				'El CSV de Activities de Garmin Connect o activities.csv de la exportación de tu cuenta de Strava, en inglés, español, alemán, francés, italiano, neerlandés o portugués. Si tu cuenta de Garmin usa unidades imperiales, elige Imperial en la pantalla de carga. Incluye carrera, ciclismo, natación, caminata, senderismo, fuerza, yoga, deportes de remo, cardio, deportes de invierno, deportes de raqueta y escalada.'
 		},
 		{
 			question: '¿Qué puedo compartir?',
@@ -30,7 +30,7 @@ export const faq: typeof en = {
 		{
 			question: '¿Funciona con Strava?',
 			answer:
-				'Sí. Sube activities.csv de la exportación de tu cuenta de Strava (Settings, My Account, Download or Delete Your Account), con Strava configurado en inglés.'
+				'Sí. Sube activities.csv de la exportación de tu cuenta de Strava (Settings, My Account, Download or Delete Your Account), con Strava configurado en inglés, español, alemán, francés, italiano, neerlandés o portugués.'
 		},
 		{
 			question: '¿Es gratis?',
@@ -58,7 +58,8 @@ export const faq: typeof en = {
 		{ text: 'Abre el enlace de descarga que Strava te envía por correo y descomprime el archivo' },
 		{ text: 'Sube activities.csv' }
 	],
-	stravaNote: 'Sube solo activities.csv. El idioma de Strava debe ser inglés.',
+	stravaNote:
+		'Sube solo activities.csv. Strava debe estar configurado en inglés, español, alemán, francés, italiano, neerlandés o portugués.',
 	heading: 'Preguntas',
 	guidesAria: 'Elige la fuente de tus datos'
 };

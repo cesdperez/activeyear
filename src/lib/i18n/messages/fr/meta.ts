@@ -11,7 +11,7 @@ export const meta: typeof en = {
 		bullets: [
 			'Fonctionne dans tout navigateur moderne sur ordinateur. Sans installation, compte ni connexion.',
 			'Le CSV est traité et analysé dans le navigateur. Les données d’activité ne sont jamais envoyées à un serveur.',
-			'Entrée : le CSV des activités Garmin Connect ou activities.csv d’une exportation Strava, tous deux en anglais.',
+			'Entrée : le CSV des activités Garmin Connect ou activities.csv d’une exportation Strava, en anglais, espagnol, allemand, français, italien, néerlandais ou portugais.',
 			'Résultat : un tableau de bord et trois cartes PNG de 1080 × 1920 à partager, aux styles Neon, Minimal ou Retro.',
 			'Enregistrement : le tableau de bord permet de télécharger l’année traitée en fichier .json, qui rouvre le bilan lorsqu’il est déposé dans la zone de chargement.',
 			'Une démonstration avec des données fictives est disponible sur la page d’accueil.'

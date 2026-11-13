@@ -15,7 +15,7 @@ export const faq: typeof en = {
 		{
 			question: 'Welk bestand heb ik nodig?',
 			answer:
-				'De Activities-CSV van Garmin Connect of activities.csv uit de export van je Strava-account, in het Engels. Het omvat hardlopen, fietsen, zwemmen, wandelen, hiken, krachttraining, yoga, peddelen, roeien, cardio, wintersport, racketsport en klimmen.'
+				'De Activities-CSV van Garmin Connect of activities.csv uit de export van je Strava-account, in het Engels, Spaans, Duits, Frans, Italiaans, Nederlands of Portugees. Gebruikt je Garmin-account imperiale eenheden, kies dan Imperial op het uploadscherm. Het omvat hardlopen, fietsen, zwemmen, wandelen, hiken, krachttraining, yoga, peddelen, roeien, cardio, wintersport, racketsport en klimmen.'
 		},
 		{
 			question: 'Wat kan ik delen?',
@@ -30,7 +30,7 @@ export const faq: typeof en = {
 		{
 			question: 'Werkt het met Strava?',
 			answer:
-				'Ja. Upload activities.csv uit de export van je Strava-account (Settings, My Account, Download or Delete Your Account), met Strava ingesteld op Engels.'
+				'Ja. Upload activities.csv uit de export van je Strava-account (Settings, My Account, Download or Delete Your Account), met Strava ingesteld op Engels, Spaans, Duits, Frans, Italiaans, Nederlands of Portugees.'
 		},
 		{
 			question: 'Is het gratis?',
@@ -58,7 +58,8 @@ export const faq: typeof en = {
 		{ text: 'Open de downloadlink die Strava je mailt en pak het bestand uit' },
 		{ text: 'Upload activities.csv' }
 	],
-	stravaNote: 'Upload alleen activities.csv. De taal van Strava moet Engels zijn.',
+	stravaNote:
+		'Upload alleen activities.csv. Stel de taal van Strava in op Engels, Spaans, Duits, Frans, Italiaans, Nederlands of Portugees.',
 	heading: 'Vragen',
 	guidesAria: 'Kies je gegevensbron'
 };

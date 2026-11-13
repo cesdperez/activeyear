@@ -32,6 +32,7 @@ import type {
 	Theme,
 	SummaryMetric,
 	Unit,
+	GarminUnits,
 	BreakdownMetric
 } from '../types/index.js';
 
@@ -68,6 +69,7 @@ class AppStore {
 	userPfp = $state<string | null>(null);
 	confettiEnabled = $state<boolean>(false);
 	summaryMetric = $state<SummaryMetric>('distance');
+	garminUnits = $state<GarminUnits>('metric');
 	#unit = $state<Unit>('km');
 	breakdownMetric = $state<BreakdownMetric>('count');
 	/** Freezes every control that changes the cards, so one export cannot mix settings. */
@@ -219,7 +221,7 @@ class AppStore {
 				this.#trackUpload();
 				return;
 			}
-			const result = parseActivityCsv(content, TARGET_YEAR);
+			const result = parseActivityCsv(content, TARGET_YEAR, { garminUnits: this.garminUnits });
 
 			const unreadable = result.errors.find((e) => e.type === 'unsupported-format');
 			if (unreadable) {
