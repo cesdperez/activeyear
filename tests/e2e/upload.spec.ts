@@ -6,6 +6,7 @@ import {
 	STRAVA_CSV,
 	garminCsv,
 	gotoUpload,
+	showSlide,
 	uploadCsv,
 	uploadSample
 } from './helpers.js';
@@ -130,6 +131,21 @@ test.describe('Upload Flow', () => {
 		await page.getByRole('button', { name: 'See how it works with demo data' }).click();
 		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
 		await expect(caption).toHaveCount(0);
+	});
+
+	test('shows Strava highlights on the export card', async ({ page }) => {
+		await gotoUpload(page);
+		await page.locator('input[type="file"]').setInputFiles(STRAVA_CSV);
+		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible({
+			timeout: 10000
+		});
+		await expect(page.locator('body')).not.toContainText(/Garmin/i);
+
+		await showSlide(page, 2);
+		const card = page.locator('#export-card');
+		await expect(card.locator('.highlight-title').first()).toBeVisible();
+		await expect(card).not.toContainText('No highlight activities yet');
+		await expect(page.locator('body')).not.toContainText(/Garmin/i);
 	});
 
 	test('rejects a localized Strava export', async ({ page }) => {
