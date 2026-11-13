@@ -307,7 +307,7 @@ test('browser back returns to the start screen in the same language', async ({ p
 
 test('switching language keeps the dashboard until Back to start', async ({ page }) => {
 	await openDemo(page);
-	await page.getByRole('button', { name: /^Language/ }).click();
+	await page.getByRole('button', { name: 'EN, language: English' }).click();
 	await page.getByRole('menuitem', { name: 'Español' }).click();
 	await expect(page).toHaveURL(/\/es\/$/);
 	await expect(page.getByRole('button', { name: 'Volver al inicio' })).toBeVisible();
@@ -320,7 +320,7 @@ test('the top bar is a banner landmark', async ({ page }) => {
 	await openDemo(page);
 	const banner = page.getByRole('banner');
 	await expect(banner.getByRole('button', { name: 'Back to start' })).toBeVisible();
-	await expect(banner.getByRole('button', { name: /^Language/ })).toBeVisible();
+	await expect(banner.getByRole('button', { name: 'EN, language: English' })).toBeVisible();
 });
 
 test('jump to export leaves room above the export heading', async ({ page }) => {
