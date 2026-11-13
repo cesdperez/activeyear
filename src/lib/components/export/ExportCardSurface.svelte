@@ -31,6 +31,8 @@
 	   condensed display font, so Retro rescales text and swaps the title sizes. */
 	.export-card {
 		--font-label: var(--font-text);
+		/* The advance per character of a typical word in --font-label, tracking included. */
+		--label-char-em: 0.52;
 		--label-size: 24px;
 		--label-tracking: 0.01em;
 		--text-scale: 1;
@@ -78,12 +80,14 @@
 	}
 
 	.theme-lightmile {
+		--label-char-em: 0.62;
 		--title-size: 90px;
 		--hero-shadow: none;
 	}
 
 	.theme-retro {
 		--font-label: var(--font-display);
+		--label-char-em: 1;
 		--label-size: 16px;
 		--label-tracking: 0;
 		--text-scale: 1.4;
