@@ -38,6 +38,8 @@ Returning users must recognise the app at a glance, so the anchors stay: a centr
 
 Use CSS variables for all colors. Define in `:root` with theme-specific overrides. None of the values come from the Tailwind palette.
 
+Where CSS cannot reach (the PNG background fill and the `theme-color` meta tag), read each theme's surface from `THEME_SURFACES` in `src/lib/constants/themes.ts`. It is the one copy of those hex values outside `app.css`, and `themes.test.ts` fails if the two drift apart.
+
 ```css
 :root {
 	--color-surface: #0c1013;
@@ -77,7 +79,9 @@ Fonts are self-hosted with Fontsource and included in dependencies. Never use mo
 | Stat label       | 0.875rem                | 500, Archivo, sentence |
 | Body text        | 1rem                    | 400                    |
 
-Units in a stat value ("km", "h") are set smaller than the digits; size such a value with `scaledLength` so the digits, not the units, fill the space.
+Units in a stat value ("km", "h") are set smaller than the digits; size such a value with `scaledLength` so the digits, not the units, fill the space. Draw it with `ValueWithUnits.svelte` and pass the same `UNIT_SCALE` entry (from `src/lib/utils/totals.ts`) to both, so the drawn unit size matches the size the fit was measured with.
+
+Month and weekday labels come from `monthLabels` and `weekdayLabels` in `src/lib/utils/date.ts`, which format with `Intl.DateTimeFormat` in the current locale. Never hard-code month or day names.
 
 ---
 
@@ -183,6 +187,8 @@ For upload/processing states:
 | < 640px    | Single column. Stacked cards. Full-bleed export preview. |
 | 640-1024px | 2-column grid for stats. Preview centered.               |
 | > 1024px   | Sidebar controls + main preview area.                    |
+
+The language picker sits in the top-right corner of every page except the 404, 16px from the top and 16px from the right (32px from `md`). On the dashboard the toolbar (km/mi toggle and celebration button) sits directly to its left in the same row, vertically centred on it. The root layout holds both in one bar, so they cannot drift apart or overlap at any width.
 
 ### Export Canvas
 
@@ -321,7 +327,7 @@ German, Dutch, and French can run 20 to 35% longer than English. Every card and 
 
 1. Add the code to `LOCALES`, `LOCALE_NAMES`, `INTL_LOCALES`, and `OG_LOCALES` in `src/lib/constants/locales.ts`.
 2. Copy `src/lib/i18n/messages/en/` to the new locale, translate the strings, type each namespace as `typeof en`, and register it in `src/lib/i18n/messages/index.ts`.
-3. Check that the font covers the script. Outfit and JetBrains Mono are Latin only; RTL languages also need layout work.
+3. Check that the fonts cover the script. The layout loads only the `latin` and `latin-ext` subsets of Big Shoulders Display, Archivo, Press Start 2P and VT323, which cover every letter of the six current languages but no Cyrillic, Greek or CJK. None of them has U+202F (the narrow no-break space French uses as a thousands separator) or the → arrow in the export guides; those come from the system fallback font. RTL languages also need layout work.
 4. Run `pnpm check`, then inspect all three cards in the new language.
 
 ---
