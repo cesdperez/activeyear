@@ -24,7 +24,7 @@ Whether you're a runner, cyclist, or multi-sport athlete, visualize your hard wo
 
 ## ✨ Features
 
-- **🔒 Privacy First**: All data processing happens **100% in your browser**. Your CSV never leaves your device.
+- **🔒 Privacy First**: The file is read and analysed on your device, and there is no account to create. We record a few anonymous counts (like which theme you export and whether uploads work) to improve the app. No cookies, no tracking, and your activity data never leaves your device.
 - **📊 Deep Insights**:
   - **Activity Breakdown**: Distance, time, and count per sport.
   - **Fun Stats**: "Earth Laps", "Everests Climbed", and "Pizza Index" (calories burned).

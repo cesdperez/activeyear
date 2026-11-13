@@ -9,7 +9,7 @@ export const FAQ: FaqItem[] = [
 	{
 		question: 'Is my data private?',
 		answer:
-			'Yes. The file is read and analysed on your device. Nothing is uploaded, and there is no account to create.'
+			'Yes. The file is read and analysed on your device, and there is no account to create. We record a few anonymous counts (like which theme you export and whether uploads work) to improve the app. No cookies, no tracking, and your activity data never leaves your device.'
 	},
 	{
 		question: 'Which file does it need?',
