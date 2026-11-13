@@ -11,6 +11,10 @@
 
 	let uploading = $state(false);
 	const hydrated = createHydrated();
+	const demoDisabled = $derived(uploading || !hydrated.current);
+	function loadDemo() {
+		appStore.loadDemoData();
+	}
 </script>
 
 <main class="min-h-screen">
@@ -34,12 +38,24 @@
 			</noscript>
 
 			<div class="w-full">
+				<div class="mb-4 sm:hidden">
+					<p class="mb-3 text-center text-sm text-[var(--color-text-muted)]">
+						{i18n.m.landing.mobileHint}
+					</p>
+					<button
+						class="btn-secondary min-h-12 w-full justify-center text-balance"
+						disabled={demoDisabled}
+						onclick={loadDemo}
+					>
+						{i18n.m.landing.demo}
+					</button>
+				</div>
 				<FileUpload bind:loading={uploading} />
-				<div class="mt-4 text-center">
+				<div class="mt-4 hidden text-center sm:block">
 					<button
 						class="text-sm text-balance text-[var(--color-text-muted)] underline decoration-[var(--color-border)] underline-offset-4 transition-colors duration-200 hover:text-[var(--color-text-primary)] hover:decoration-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
-						disabled={uploading || !hydrated.current}
-						onclick={() => appStore.loadDemoData()}
+						disabled={demoDisabled}
+						onclick={loadDemo}
 					>
 						{i18n.m.landing.demo}
 					</button>
