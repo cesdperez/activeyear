@@ -305,6 +305,17 @@ test('browser back returns to the start screen in the same language', async ({ p
 	await expect(page).toHaveURL(/\/es\/$/);
 });
 
+test('switching language keeps the dashboard until Back to start', async ({ page }) => {
+	await openDemo(page);
+	await page.getByRole('button', { name: /^Language/ }).click();
+	await page.getByRole('menuitem', { name: 'Español' }).click();
+	await expect(page).toHaveURL(/\/es\/$/);
+	await expect(page.getByRole('button', { name: 'Volver al inicio' })).toBeVisible();
+	await page.getByRole('button', { name: 'Volver al inicio' }).click();
+	await expect(page.locator('#upload-zone')).toBeFocused();
+	await expect(page).toHaveURL(/\/es\/$/);
+});
+
 test('the top bar is a banner landmark', async ({ page }) => {
 	await openDemo(page);
 	const banner = page.getByRole('banner');
