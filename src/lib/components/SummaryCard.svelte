@@ -4,6 +4,7 @@
 	import { showsValue } from '#lib/utils/format.js';
 	import { scaledLength, totalStats, UNIT_SCALE } from '#lib/utils/totals.js';
 	import { recordActivities } from '#lib/utils/yearLane.js';
+	import { CENTERED_AVATAR_THEMES } from '#lib/constants/themes.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { Target } from 'phosphor-svelte';
 	import { sportIcons } from '#lib/constants/sports.js';
@@ -12,6 +13,7 @@
 	import ValueWithUnits from './ValueWithUnits.svelte';
 	import YearLane from './widgets/YearLane.svelte';
 
+	const centeredAvatar = $derived(CENTERED_AVATAR_THEMES.includes(appStore.theme));
 	const topSport = $derived(rankSports(appStore.breakdown, appStore.breakdownMetric)[0]);
 	const TopIcon = $derived(topSport ? (sportIcons[topSport.type] ?? Target) : Target);
 
@@ -25,22 +27,86 @@
 	);
 </script>
 
+{#snippet avatar()}
+	<div class="avatar-container">
+		{#if appStore.userPfp}
+			<img src={appStore.userPfp} alt={i18n.m.export.profile} class="h-full w-full object-cover" />
+		{:else}
+			<div class="flex h-full w-full items-center justify-center text-[var(--color-accent)]">
+				<TopIcon class="h-24 w-24" weight="bold" aria-hidden="true" />
+			</div>
+		{/if}
+	</div>
+{/snippet}
+
 <ExportCardBase variant="summary" title={i18n.m.export.yearInSport}>
 	{#snippet headerAside()}
-		<div class="avatar-container">
-			{#if appStore.userPfp}
-				<img
-					src={appStore.userPfp}
-					alt={i18n.m.export.profile}
-					class="h-full w-full object-cover"
-				/>
-			{:else}
-				<div class="flex h-full w-full items-center justify-center text-[var(--color-accent)]">
-					<TopIcon class="h-24 w-24" weight="bold" aria-hidden="true" />
-				</div>
-			{/if}
-		</div>
+		{#if !centeredAvatar}{@render avatar()}{/if}
 	{/snippet}
+
+	{#if centeredAvatar}
+		<div class="centered-avatar">
+			<svg viewBox="0 0 200 200" class="avatar-decorations" aria-hidden="true" focusable="false">
+				<ellipse
+					cx="100"
+					cy="100"
+					rx="90"
+					ry="30"
+					transform="rotate(-30 100 100)"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-dasharray="200 100"
+					opacity="0.4"
+				/>
+				<ellipse
+					cx="100"
+					cy="100"
+					rx="90"
+					ry="30"
+					transform="rotate(45 100 100)"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1"
+					stroke-dasharray="150 150"
+					opacity="0.25"
+				/>
+				<ellipse
+					cx="100"
+					cy="100"
+					rx="95"
+					ry="40"
+					transform="rotate(120 100 100)"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="0.8"
+					stroke-dasharray="100 200"
+					opacity="0.2"
+				/>
+				<circle
+					cx="100"
+					cy="100"
+					r="78"
+					stroke-dasharray="10 20"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="0.5"
+				/>
+				<circle
+					cx="100"
+					cy="100"
+					r="82"
+					opacity="0.3"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="0.5"
+					stroke-dasharray="5 15"
+				/>
+			</svg>
+			<div class="avatar-glow"></div>
+			{@render avatar()}
+		</div>
+	{/if}
 
 	{#if hero}
 		<section class="@container">
@@ -56,7 +122,7 @@
 		</section>
 	{/if}
 
-	<section class="mt-[60px]">
+	<section class:compact-lane={centeredAvatar} class="mt-[60px]">
 		<p class="card-label mb-3 text-[var(--color-text-muted)]">{i18n.m.common.dayByDay}</p>
 		<YearLane
 			variant="export"
@@ -68,7 +134,7 @@
 		/>
 	</section>
 
-	<dl class="results">
+	<dl class:compact-results={centeredAvatar} class="results">
 		{#each supporting as stat (stat.id)}
 			<div class="result">
 				<div class="min-w-0">
@@ -89,6 +155,58 @@
 </ExportCardBase>
 
 <style>
+	.centered-avatar {
+		position: relative;
+		display: flex;
+		justify-content: center;
+		margin: 0 auto 20px;
+	}
+
+	.avatar-decorations {
+		position: absolute;
+		width: 500px;
+		height: 500px;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%) rotate(-15deg);
+		color: var(--avatar-decoration, var(--color-accent));
+		pointer-events: none;
+	}
+
+	.avatar-glow {
+		position: absolute;
+		width: 370px;
+		height: 370px;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		border-radius: 50%;
+		background: radial-gradient(
+			circle closest-side,
+			var(--color-accent-glow) 82%,
+			transparent 100%
+		);
+	}
+
+	.centered-avatar :global(.avatar-container) {
+		position: relative;
+		width: 320px;
+		height: 320px;
+		border-color: var(--avatar-border, var(--color-accent));
+		border-radius: var(--avatar-radius, 50%);
+		box-shadow: var(--avatar-shadow, none);
+	}
+
+	.compact-lane {
+		margin-top: 30px;
+	}
+	.compact-results {
+		padding-top: 24px;
+	}
+	.compact-results .result {
+		padding: 16px 0;
+	}
+
 	.results {
 		margin-top: auto;
 		padding-top: 48px;

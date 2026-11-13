@@ -9,7 +9,7 @@ import { gotoUpload, uploadSample } from './helpers.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const CARDS = ['summary', 'breakdown', 'highlights'] as const;
-const THEMES = ['neon', 'minimalist', 'retro'] as const;
+const THEMES = ['neon', 'minimalist', 'retro', 'classic', 'synthwave'] as const;
 
 type ThemeName = (typeof THEMES)[number];
 
@@ -30,7 +30,9 @@ async function setTheme(page: Page, theme: ThemeName): Promise<void> {
 	const themeButtonNames: Record<ThemeName, RegExp> = {
 		neon: /Neon/i,
 		minimalist: /Minimal/i,
-		retro: /Retro/i
+		retro: /Retro/i,
+		classic: /Classic/i,
+		synthwave: /Synthwave/i
 	};
 	await page.getByRole('button', { name: themeButtonNames[theme] }).click();
 	await expect(page.locator('#export-card')).toHaveAttribute('data-theme', theme);

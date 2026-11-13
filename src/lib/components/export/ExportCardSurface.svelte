@@ -51,6 +51,18 @@
 		overflow: hidden;
 	}
 
+	.theme-classic,
+	.theme-synthwave {
+		--title-size: 90px;
+	}
+
+	.theme-synthwave {
+		--avatar-border: #ff00cc;
+		--avatar-decoration: #ff00cc;
+		--avatar-radius: 20%;
+		--avatar-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
+	}
+
 	.theme-minimalist {
 		--hero-shadow: none;
 	}

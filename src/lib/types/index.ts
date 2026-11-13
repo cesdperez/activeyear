@@ -74,7 +74,7 @@ export interface GarminRawActivity {
 	[key: string]: string; // Allow other columns
 }
 
-export type Theme = 'neon' | 'minimalist' | 'retro';
+export type Theme = 'neon' | 'minimalist' | 'retro' | 'classic' | 'synthwave';
 
 export type AspectRatio = '9:16';
 

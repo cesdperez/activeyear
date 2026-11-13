@@ -12,8 +12,8 @@ describe('parseEvent', () => {
 			'invalid-saved-year',
 			'read-failed'
 		],
-		theme_selected: ['neon', 'minimalist', 'retro'],
-		export: ['neon', 'minimalist', 'retro'],
+		theme_selected: ['neon', 'minimalist', 'retro', 'classic', 'synthwave'],
+		export: ['neon', 'minimalist', 'retro', 'classic', 'synthwave'],
 		more_stats_opened: [''],
 		sports_count: ['1', '2', '3-5', '6+']
 	};

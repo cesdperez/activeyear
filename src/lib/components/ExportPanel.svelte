@@ -13,7 +13,7 @@
 		ExportError,
 		ExportStatus
 	} from '#lib/types/index.js';
-	import { THEME_OPTIONS, USER_NAME_MAX_LENGTH } from '#lib/constants/export.js';
+	import { THEME_OPTIONS, UPCOMING_THEMES, USER_NAME_MAX_LENGTH } from '#lib/constants/export.js';
 	import { FontsUnavailableError } from '#lib/utils/fonts.js';
 
 	let exportError = $state<ExportError | null>(null);
@@ -28,7 +28,9 @@
 	const descriptions = $derived<Record<Theme, string>>({
 		neon: i18n.m.export.nightRace,
 		minimalist: i18n.m.export.resultSheet,
-		retro: i18n.m.export.arcade
+		retro: i18n.m.export.arcade,
+		classic: i18n.m.export.classic,
+		synthwave: i18n.m.export.synthwave
 	});
 
 	const metrics = $derived<{ value: SummaryMetric; label: string }[]>([
@@ -231,7 +233,11 @@
 			<!-- Theme Selector -->
 			<div>
 				<span id="theme-label" class="field-label">{i18n.m.export.theme}</span>
-				<div role="group" aria-labelledby="theme-label" class="flex gap-2">
+				<div
+					role="group"
+					aria-labelledby="theme-label"
+					class="grid grid-cols-2 gap-2 sm:grid-cols-3"
+				>
 					{#each THEME_OPTIONS as theme (theme.value)}
 						<button
 							onclick={() => setTheme(theme.value)}
@@ -243,6 +249,15 @@
 							<div class="theme-description text-xs">
 								{descriptions[theme.value]}
 							</div>
+						</button>
+					{/each}
+					{#each UPCOMING_THEMES as theme (theme.label)}
+						<button
+							disabled
+							class="toggle px-4 py-3 text-center disabled:cursor-not-allowed disabled:opacity-50"
+						>
+							<div class="text-sm">{theme.label}</div>
+							<div class="theme-description text-xs">{i18n.m.export.comingSoon}</div>
 						</button>
 					{/each}
 				</div>

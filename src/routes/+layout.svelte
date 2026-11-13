@@ -17,6 +17,18 @@
 	import '@fontsource/press-start-2p/latin-ext-400';
 	import '@fontsource/vt323/latin-400';
 	import '@fontsource/vt323/latin-ext-400';
+	import '@fontsource/outfit/latin-400';
+	import '@fontsource/outfit/latin-ext-400';
+	import '@fontsource/outfit/latin-500';
+	import '@fontsource/outfit/latin-ext-500';
+	import '@fontsource/outfit/latin-600';
+	import '@fontsource/outfit/latin-ext-600';
+	import '@fontsource/outfit/latin-700';
+	import '@fontsource/outfit/latin-ext-700';
+	import '@fontsource/outfit/latin-800';
+	import '@fontsource/outfit/latin-ext-800';
+	import '@fontsource/outfit/latin-900';
+	import '@fontsource/outfit/latin-ext-900';
 	import '../app.css';
 
 	import { onMount } from 'svelte';

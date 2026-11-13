@@ -58,6 +58,40 @@
 	--font-stat: 'VT323', monospace;
 }
 
+[data-theme='classic'] {
+	--color-surface: #0a0a0b;
+	--color-surface-elevated: #141416;
+	--color-surface-hover: #1a1a1e;
+	--color-border: #303035;
+	--color-text-primary: #fafafa;
+	--color-text-muted: #d4d4d8;
+	--color-text-dim: #a1a1aa;
+	--color-accent: #22d3ee;
+	--color-accent-glow: rgba(34, 211, 238, 0.4);
+	--color-accent-subtle: rgba(34, 211, 238, 0.1);
+	--color-on-accent: #0a0a0b;
+	--font-display: 'Outfit', system-ui, sans-serif;
+	--font-text: 'Outfit', system-ui, sans-serif;
+	--font-stat: 'Outfit', system-ui, sans-serif;
+}
+
+[data-theme='synthwave'] {
+	--color-surface: #1e1b4b;
+	--color-surface-elevated: #2e2a6b;
+	--color-surface-hover: #3e387b;
+	--color-border: #625b9a;
+	--color-text-primary: #fafafa;
+	--color-text-muted: #c4b8ef;
+	--color-text-dim: #a5a0d8;
+	--color-accent: #facc15;
+	--color-accent-glow: rgba(250, 204, 21, 0.5);
+	--color-accent-subtle: rgba(250, 204, 21, 0.15);
+	--color-on-accent: #1e1b4b;
+	--font-display: 'Outfit', system-ui, sans-serif;
+	--font-text: 'Outfit', system-ui, sans-serif;
+	--font-stat: 'Outfit', system-ui, sans-serif;
+}
+
 html {
 	font-family: var(--font-text);
 	background-color: var(--color-surface);

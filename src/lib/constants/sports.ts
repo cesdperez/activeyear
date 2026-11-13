@@ -79,5 +79,13 @@ export const SPORT_PALETTES: Record<Theme, SportPalette> = {
 	retro: {
 		colors: ['#ffd23a', '#5fe08a', '#ff7a7a', '#6fa8ff', '#ff7ccf', '#ff9f45'],
 		other: '#a9a1dc'
+	},
+	classic: {
+		colors: ['#22d3ee', '#ff7d66', '#d3e85e', '#ffbf47', '#b69cff', '#ff80b5'],
+		other: '#a1a1aa'
+	},
+	synthwave: {
+		colors: ['#facc15', '#5fe08a', '#ff7a7a', '#6fa8ff', '#ff7ccf', '#ff9f45'],
+		other: '#a5a0d8'
 	}
 };
