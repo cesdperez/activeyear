@@ -5,7 +5,7 @@ import { yearData } from './yearData.svelte.js';
 import { highlightsStore } from './highlights.svelte.js';
 import { presetHighlights } from '#lib/utils/highlights.js';
 import { TARGET_YEAR } from '../constants/time.js';
-import { demoActivities } from '../data/demo.js';
+import { demoYear } from '../data/demo.js';
 import {
 	calculatePersonalRecords,
 	calculateSportBreakdown,
@@ -19,7 +19,7 @@ describe('yearData', () => {
 		uploadStore.reset();
 		exportSettings.unit = 'km';
 	});
-	it('captures year progress on CSV and saved year loads, and resets for the demo', async () => {
+	it('captures year progress on CSV and saved year loads, and counts the demo up to today', async () => {
 		vi.useFakeTimers();
 		try {
 			vi.setSystemTime(new Date(TARGET_YEAR, 5, 30));
@@ -33,8 +33,8 @@ describe('yearData', () => {
 			expect(yearData.daysCounted).toBe(365);
 			vi.setSystemTime(new Date(TARGET_YEAR, 5, 30));
 			uploadStore.loadDemoData();
-			expect(yearData.yearSoFar).toBe(false);
-			expect(yearData.daysCounted).toBe(365);
+			expect(yearData.yearSoFar).toBe(true);
+			expect(yearData.daysCounted).toBe(181);
 			uploadStore.reset();
 			expect(yearData.yearSoFar).toBe(false);
 		} finally {
@@ -44,6 +44,7 @@ describe('yearData', () => {
 
 	it('derives stats and highlights from the demo activities', () => {
 		uploadStore.loadDemoData();
+		const demoActivities = demoYear(new Date()).activities;
 
 		expect(uploadStore.status).toBe('ready');
 		expect(yearData.stats).toEqual(calculateYearStats(demoActivities));
@@ -53,6 +54,7 @@ describe('yearData', () => {
 
 	it('derives records, breakdown and weekly pattern from the demo activities', () => {
 		uploadStore.loadDemoData();
+		const demoActivities = demoYear(new Date()).activities;
 
 		expect(yearData.records).toEqual(calculatePersonalRecords(demoActivities));
 		expect(yearData.breakdown).toEqual(calculateSportBreakdown(demoActivities));

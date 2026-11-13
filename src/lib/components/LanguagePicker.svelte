@@ -7,6 +7,7 @@
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { isLocale } from '#lib/i18n/locale.js';
 	import { MESSAGES } from '#lib/i18n/messages/index.js';
+	import { uploadStore } from '#lib/stores/upload.svelte.js';
 	import type { Locale } from '#lib/types/index.js';
 
 	let open = $state(false);
@@ -81,7 +82,7 @@
 	<button
 		bind:this={button}
 		class="flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-[var(--radius-control)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-xs font-semibold text-[var(--color-text-muted)] transition-colors duration-150 hover:border-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"
-		aria-label={`${i18n.m.picker.language} ${LOCALE_NAMES[i18n.locale]}`}
+		aria-label={i18n.m.picker.languageButton(i18n.locale.toUpperCase(), LOCALE_NAMES[i18n.locale])}
 		aria-haspopup="menu"
 		aria-expanded={open}
 		onclick={() => (open ? (open = false) : showMenu())}
@@ -109,6 +110,7 @@
 					href={resolve('/[[lang=locale]]', { lang: locale === 'en' ? undefined : locale })}
 					hreflang={locale}
 					lang={locale}
+					aria-current={locale === i18n.locale || undefined}
 					data-sveltekit-noscroll
 					onclick={() => {
 						save(locale);
@@ -125,9 +127,10 @@
 			{/each}
 		</div>
 	{/if}
-	{#if !open && suggestion && page.url.pathname === '/'}
+	{#if !open && suggestion && page.url.pathname === '/' && uploadStore.status !== 'ready'}
+		<!-- Beside the button, not under it, so it never covers the landing logotype on a phone. -->
 		<div
-			class="panel absolute top-full right-0 mt-2 flex items-center gap-2 pr-1 text-sm whitespace-nowrap text-[var(--color-text-primary)]"
+			class="panel absolute top-0 right-full mr-2 flex w-max max-w-[calc(100vw-7rem)] items-center gap-2 pr-1 text-sm text-balance text-[var(--color-text-primary)]"
 		>
 			<a
 				href={resolve('/[[lang=locale]]', { lang: suggestion })}
@@ -138,14 +141,17 @@
 					if (suggestion) save(suggestion);
 					suggestion = null;
 				}}
-				class="flex min-h-11 items-center pl-4">{MESSAGES[suggestion].picker.prompt}</a
+				class="flex min-h-11 items-center py-1 pl-4 leading-tight"
+				>{MESSAGES[suggestion].picker.prompt}</a
 			>
 			<button
-				class="flex h-11 w-11 items-center justify-center"
+				class="flex h-11 w-11 shrink-0 items-center justify-center"
+				lang={suggestion}
 				aria-label={MESSAGES[suggestion].picker.dismiss}
 				onclick={() => {
 					save('en');
 					suggestion = null;
+					button.focus();
 				}}><X class="h-4 w-4" aria-hidden="true" /></button
 			>
 		</div>

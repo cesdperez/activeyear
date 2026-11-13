@@ -12,7 +12,7 @@ import { isSavedYearFileName, loadYearFile, unsupportedFileError } from '#lib/ut
 import { describeSkippedRows } from '#lib/utils/uploadErrors.js';
 import { decodeText } from '#lib/utils/decodeText.js';
 import { TARGET_YEAR } from '#lib/constants/time.js';
-import { demoActivities } from '#lib/data/demo.js';
+import { demoYear } from '#lib/data/demo.js';
 import { yearData } from './yearData.svelte.js';
 import { highlightsStore } from './highlights.svelte.js';
 import { exportSettings } from './exportSettings.svelte.js';
@@ -90,7 +90,7 @@ class UploadStore {
 
 	loadDemoData() {
 		this.reset();
-		this.#load({ activities: demoActivities, source: null, cutShort: null, loadedAt: null });
+		this.#load(demoYear(new Date()));
 	}
 	#trackUpload() {
 		track('upload_success', activityCountBucket(yearData.activities.length));

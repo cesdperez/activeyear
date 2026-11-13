@@ -85,3 +85,10 @@
 		</div>
 	</section>
 {/if}
+
+<style>
+	/* Forced colors drop the inline fill, which would leave the bar invisible. */
+	.weekly-bar {
+		forced-color-adjust: none;
+	}
+</style>

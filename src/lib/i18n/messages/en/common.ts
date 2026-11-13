@@ -1,5 +1,6 @@
 import { plural } from '#lib/i18n/plural.js';
 export const common = {
+	otherSports: 'Other sports',
 	sports: {
 		running: 'Running',
 		cycling: 'Cycling',

@@ -69,7 +69,7 @@
 				<div class="flex min-w-0 items-center gap-3 text-[var(--color-text-primary)]">
 					<IconComponent class="shrink-0 {style.icon}" weight="bold" aria-hidden="true" />
 					<span class="stat-value truncate leading-none {style.name}">
-						{i18n.m.common.sports[sport.type]}
+						{sport.rollup ? i18n.m.common.otherSports : i18n.m.common.sports[sport.type]}
 					</span>
 				</div>
 				<span
@@ -81,7 +81,7 @@
 
 			<div class="sport-bar-bg w-full bg-[var(--color-surface-hover)] {style.bar}">
 				<div
-					class="h-full transition-all duration-500"
+					class="bar-fill h-full transition-all duration-500"
 					style="width: {(value / maxValue) * 100}%; background: {colors[sport.type]};"
 				></div>
 			</div>
@@ -90,6 +90,11 @@
 </div>
 
 <style>
+	/* Forced colors drop the inline sport colour, which would leave the bar invisible. */
+	.bar-fill {
+		forced-color-adjust: none;
+	}
+
 	/* Global because Svelte renames scoped keyframes, and the inline animation refers to this name. */
 	@keyframes -global-fadeInUp {
 		from {

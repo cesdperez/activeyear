@@ -1,6 +1,7 @@
 import { plural } from '#lib/i18n/plural.js';
 import type { common as en } from '../en/common.js';
 export const common: typeof en = {
+	otherSports: 'Autres sports',
 	sports: {
 		running: 'Course à pied',
 		cycling: 'Cyclisme',

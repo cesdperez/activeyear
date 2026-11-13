@@ -14,6 +14,8 @@ const DAYS_IN_TARGET_YEAR =
 	(Date.UTC(TARGET_YEAR + 1, 0, 1) - Date.UTC(TARGET_YEAR, 0, 1)) / 86_400_000;
 
 async function openDemo(page: Page): Promise<void> {
+	// After the season, so the demo is its whole fixed year.
+	await page.clock.setFixedTime(new Date(TARGET_YEAR + 1, 0, 15));
 	await page.goto('/');
 	await page.getByRole('button', { name: /demo data/i }).click();
 	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
@@ -29,6 +31,8 @@ async function overflowingElements(locator: Locator): Promise<string[]> {
 }
 
 test.describe('dashboard toggles', () => {
+	test.use({ reducedMotion: 'no-preference' });
+
 	test('unit, breakdown metric and confetti toggles expose their pressed state', async ({
 		page
 	}) => {
@@ -97,6 +101,33 @@ test('more stats are hidden until expanded', async ({ page }) => {
 	for (const quarter of ['Q1', 'Q2', 'Q3', 'Q4']) {
 		await expect(section.getByRole('heading', { name: quarter, exact: true })).toBeVisible();
 	}
+});
+
+test('weekday and sport bars keep their fill in forced colors mode', async ({ page }) => {
+	await openDemo(page);
+	const fills = () =>
+		page
+			.locator('[data-testid="weekly-pattern-bar"], [data-testid="sport-breakdown"] .bar-fill')
+			.evaluateAll((bars) => bars.map((bar) => getComputedStyle(bar).backgroundColor));
+	const normal = await fills();
+	expect(normal.length).toBeGreaterThan(7);
+	await page.emulateMedia({ forcedColors: 'active' });
+	expect(await fills()).toEqual(normal);
+});
+
+test('more stats mark every empty value the same way', async ({ page }) => {
+	await uploadCsv(
+		page,
+		garminCsv([{ title: 'Run' }, { title: 'Gym', type: 'Strength Training', distance: '0.0' }])
+	);
+	await page.getByRole('button', { name: 'More stats', exact: true }).click();
+	const section = page.getByTestId('more-stats');
+	const emptyCells = section.locator('td').filter({ hasText: /^(|0\.0km|0m)$/ });
+	await expect(emptyCells).toHaveCount(0);
+	const marked = section.locator('td').filter({ hasText: '–' });
+	await expect(marked.first()).toHaveText('–No data');
+	// Five empty weekdays, plus the gym day and the gym average without distance.
+	await expect(marked).toHaveCount(5 * 2 + 2);
 });
 
 test('Jump to Export moves focus to the export heading', async ({ page }) => {
@@ -292,4 +323,60 @@ test('back to start returns focus to the upload zone', async ({ page }) => {
 	await openDemo(page);
 	await page.getByRole('button', { name: 'Back to start' }).click();
 	await expect(page.locator('#upload-zone')).toBeFocused();
+});
+
+test('browser back returns to the start screen in the same language', async ({ page }) => {
+	await page.goto('/es/');
+	await page.getByTestId('demo-data').filter({ visible: true }).click();
+	await expect(page.locator('h1').filter({ hasText: String(TARGET_YEAR) })).toBeVisible();
+	await page.goBack();
+	await expect(page.locator('#upload-zone')).toBeVisible();
+	await expect(page).toHaveURL(/\/es\/$/);
+});
+
+test('switching language keeps the dashboard until Back to start', async ({ page }) => {
+	await openDemo(page);
+	await page.getByRole('button', { name: 'EN, language: English' }).click();
+	await page.getByRole('menuitem', { name: 'Español' }).click();
+	await expect(page).toHaveURL(/\/es\/$/);
+	await expect(page.getByRole('button', { name: 'Volver al inicio' })).toBeVisible();
+	await page.getByRole('button', { name: 'Volver al inicio' }).click();
+	await expect(page.locator('#upload-zone')).toBeFocused();
+	await expect(page).toHaveURL(/\/es\/$/);
+});
+
+test('the top bar is a banner landmark', async ({ page }) => {
+	await openDemo(page);
+	const banner = page.getByRole('banner');
+	await expect(banner.getByRole('button', { name: 'Back to start' })).toBeVisible();
+	await expect(banner.getByRole('button', { name: 'EN, language: English' })).toBeVisible();
+});
+
+test('jump to export leaves room above the export heading', async ({ page }) => {
+	await openDemo(page);
+	await page.getByRole('button', { name: 'Jump to Export' }).click();
+	const heading = page.locator('#export-panel h2');
+	await expect(heading).toBeFocused();
+	await expect.poll(async () => (await heading.boundingBox())!.y).toBeGreaterThanOrEqual(16);
+});
+
+test('celebration mode is hidden under reduced motion', async ({ page }) => {
+	await openDemo(page);
+	await expect(page.getByRole('button', { name: 'Celebration confetti' })).toHaveCount(0);
+});
+
+test.describe('with motion', () => {
+	test.use({ reducedMotion: 'no-preference' });
+
+	test('back to start ends celebration mode', async ({ page }) => {
+		await openDemo(page);
+		const confetti = page.getByRole('button', { name: 'Celebration confetti' });
+		await expect(confetti).toHaveAttribute('title', 'Celebration confetti');
+		await confetti.click();
+		await expect(page.locator('body > canvas')).toHaveCount(1);
+		await page.getByRole('button', { name: 'Back to start' }).click();
+		await expect(page.locator('body > canvas')).toHaveCount(0);
+		await page.getByTestId('demo-data').filter({ visible: true }).click();
+		await expect(confetti).toHaveAttribute('aria-pressed', 'false');
+	});
 });

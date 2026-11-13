@@ -66,13 +66,15 @@
 
 {#if page.route.id !== '/[[lang=locale]]/404'}
 	<MetaTags />
-	{#if uploadStore.status === 'ready'}
-		<div class="absolute top-4 left-4 z-20 flex h-11 items-center md:left-8"><BackToStart /></div>
-	{/if}
-	<div class="absolute top-4 right-4 z-20 flex items-center gap-2 md:right-8">
-		{#if uploadStore.status === 'ready'}<DashboardToolbar />{/if}
-		<LanguagePicker />
-	</div>
+	<header>
+		{#if uploadStore.status === 'ready'}
+			<div class="absolute top-4 left-4 z-20 flex h-11 items-center md:left-8"><BackToStart /></div>
+		{/if}
+		<div class="absolute top-4 right-4 z-20 flex items-center gap-2 md:right-8">
+			{#if uploadStore.status === 'ready'}<DashboardToolbar />{/if}
+			<LanguagePicker />
+		</div>
+	</header>
 {/if}
 
 {@render children()}

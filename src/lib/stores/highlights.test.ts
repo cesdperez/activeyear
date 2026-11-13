@@ -5,7 +5,7 @@ import { yearData } from './yearData.svelte.js';
 import { highlightsStore } from './highlights.svelte.js';
 import { presetHighlights } from '#lib/utils/highlights.js';
 import { TARGET_YEAR } from '../constants/time.js';
-import { demoActivities } from '../data/demo.js';
+import { demoYear } from '../data/demo.js';
 vi.mock('#lib/analytics/track.js', () => ({ track: vi.fn() }));
 describe('highlights', () => {
 	beforeEach(() => {
@@ -53,10 +53,12 @@ describe('highlights', () => {
 		expect(highlightsStore.highlightPreset).toBe('favorites');
 		expect(highlightsStore.highlights).toEqual(presetHighlights(yearData.activities, 'favorites'));
 		expect(highlightsStore.highlightPresets).toContain('longest');
-		expect(highlightsStore.searchActivities(other.title)).toContain(other);
+		expect(highlightsStore.searchActivities(other.title).matches).toContain(other);
 		uploadStore.loadDemoData();
 		expect(highlightsStore.highlightPreset).toBe('longest');
-		expect(highlightsStore.highlights).toEqual(presetHighlights(demoActivities, 'longest'));
+		expect(highlightsStore.highlights).toEqual(
+			presetHighlights(demoYear(new Date()).activities, 'longest')
+		);
 		uploadStore.reset();
 		expect(highlightsStore.highlights).toEqual([]);
 		expect(highlightsStore.highlightPreset).toBe('longest');

@@ -48,7 +48,7 @@ describe('year file loading', () => {
 	it('loads a saved year', () => {
 		const loaded = loadYearFile('activities.csv', csv('2025-03-01 08:00:00'), year);
 		if (loaded.type !== 'loaded') throw new Error('Expected activities');
-		const json = serializeSavedYear(loaded.activities, loaded.source, year);
+		const json = serializeSavedYear(loaded.activities, loaded.source, year, null);
 		expect(loadYearFile('year.JSON', json, year)).toEqual({
 			type: 'loaded',
 			activities: loaded.activities,
@@ -56,6 +56,14 @@ describe('year file loading', () => {
 			cutShort: null,
 			parseErrors: []
 		});
+	});
+
+	it('keeps the cut-short notice of a saved Garmin year', () => {
+		const loaded = loadYearFile('activities.csv', csv('2025-03-01 08:00:00'), year);
+		if (loaded.type !== 'loaded') throw new Error('Expected activities');
+		const cutShort = new Date(year, 2, 1, 8);
+		const json = serializeSavedYear(loaded.activities, loaded.source, year, cutShort);
+		expect(loadYearFile('year.json', json, year)).toMatchObject({ type: 'loaded', cutShort });
 	});
 
 	it('reports unrecognised CSV with parse errors', () => {

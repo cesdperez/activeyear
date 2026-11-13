@@ -1,4 +1,12 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
+	import { afterNavigate, beforeNavigate } from '$app/navigation';
+	import { page } from '$app/state';
+	import {
+		markDashboardEntry,
+		pushDashboardEntry,
+		startOver
+	} from '#lib/components/dashboard/startOver.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { uploadStore } from '#lib/stores/upload.svelte.js';
@@ -15,6 +23,30 @@
 	function loadDemo() {
 		uploadStore.loadDemoData();
 	}
+
+	// A language switch lands on an entry without dashboard state; that must not end the dashboard.
+	let switchingLanguage = false;
+
+	$effect(() => {
+		if (uploadStore.status === 'ready') untrack(pushDashboardEntry);
+	});
+
+	beforeNavigate(({ type, willUnload }) => {
+		if (type !== 'popstate' && !willUnload) switchingLanguage = true;
+	});
+
+	afterNavigate(({ type }) => {
+		if (type !== 'popstate' && uploadStore.status === 'ready' && !page.state.dashboard)
+			markDashboardEntry();
+		switchingLanguage = false;
+	});
+
+	$effect(() => {
+		if (page.state.dashboard) return;
+		untrack(() => {
+			if (uploadStore.status === 'ready' && !switchingLanguage) void startOver();
+		});
+	});
 </script>
 
 <main class="min-h-screen">

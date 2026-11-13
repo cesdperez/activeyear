@@ -56,6 +56,8 @@ export interface SportBreakdown {
 	distance: number; // in km
 	duration: number; // in seconds
 	count: number;
+	/** An "other" entry that holds named sports folded in, not only Garmin's own Other. */
+	rollup?: true;
 }
 
 export type BreakdownMetric = 'count' | 'duration';

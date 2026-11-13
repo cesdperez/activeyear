@@ -8,6 +8,12 @@
 
 	let { header }: { header: HTMLElement | undefined } = $props();
 	let headerVisible = $state(true);
+	let shown = $derived(
+		!headerVisible &&
+			supportVisibility.count === 0 &&
+			supportVisibility.busyAreas === 0 &&
+			!exportLock.isExporting
+	);
 
 	$effect(() => {
 		if (!header) return;
@@ -17,9 +23,16 @@
 		observer.observe(header);
 		return () => observer.disconnect();
 	});
+
+	$effect(() => {
+		if (!shown) return;
+		// Keyboard focus scrolls controls clear of the pill instead of under it.
+		document.documentElement.style.scrollPaddingBottom = '5rem';
+		return () => document.documentElement.style.removeProperty('scroll-padding-bottom');
+	});
 </script>
 
-{#if !headerVisible && supportVisibility.count === 0 && !supportVisibility.exportActionsVisible && !exportLock.isExporting}
+{#if shown}
 	<div transition:fade={{ duration: 150 }}>
 		<KofiLink
 			placement="floating"

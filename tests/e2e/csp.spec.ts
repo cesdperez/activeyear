@@ -45,6 +45,7 @@ test.describe('Content Security Policy', () => {
 
 	test('upload, confetti and PNG export run without violations', async ({ page }) => {
 		const violations = recordCspViolations(page);
+		await page.emulateMedia({ reducedMotion: 'no-preference' });
 		await uploadSample(page);
 		await page.getByRole('button', { name: 'Celebration confetti' }).click();
 

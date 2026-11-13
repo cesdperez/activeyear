@@ -84,15 +84,15 @@ describe('activity search', () => {
 		const run = activity(7);
 		const texts = [activitySearchText(run)];
 		for (const query of ['morning running', 'january 7', 'jan 2025-01-07', '42 km 26 mi']) {
-			expect(searchActivities([run], texts, query, 8)).toEqual([run]);
+			expect(searchActivities([run], texts, query, 8).matches).toEqual([run]);
 		}
-		expect(searchActivities([run], texts, 'run cycling', 8)).toEqual([]);
-		expect(searchActivities([run], texts, '   ', 8)).toEqual([]);
+		expect(searchActivities([run], texts, 'run cycling', 8).matches).toEqual([]);
+		expect(searchActivities([run], texts, '   ', 8).matches).toEqual([]);
 	});
 	it('matches one-decimal distances in kilometres and miles', () => {
 		const run = activity(1, { distance: 42.63 });
 		for (const query of ['42.6 km', '42.6km', '26.5 mi', '26.5mi'])
-			expect(searchActivities([run], [activitySearchText(run)], query, 8)).toEqual([run]);
+			expect(searchActivities([run], [activitySearchText(run)], query, 8).matches).toEqual([run]);
 	});
 	it('matches localized months, decimal distances and comma titles', () => {
 		const january = activity(1, { title: '5,5km tempo', distance: 12.5 });
@@ -104,10 +104,12 @@ describe('activity search', () => {
 			[january, '12,5'],
 			[january, '5,5km tempo']
 		] as const) {
-			expect(searchActivities([item], [activitySearchText(item)], query, 8)).toEqual([item]);
+			expect(searchActivities([item], [activitySearchText(item)], query, 8).matches).toEqual([
+				item
+			]);
 		}
 	});
-	it('returns newest matches first up to the limit', () => {
+	it('returns newest matches first up to the limit and counts every match', () => {
 		const activities = [activity(1), activity(3), activity(2)];
 		expect(
 			searchActivities(
@@ -116,6 +118,6 @@ describe('activity search', () => {
 				'RUN',
 				2
 			)
-		).toEqual([activities[1], activities[2]]);
+		).toEqual({ matches: [activities[1], activities[2]], total: 3 });
 	});
 });

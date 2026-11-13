@@ -3,7 +3,8 @@ import confetti from 'canvas-confetti';
 import { SPORT_PALETTES } from '#lib/constants/sports.js';
 
 /**
- * Rains confetti while celebration mode is on. Call during component initialisation.
+ * Rains confetti while celebration mode is on, and ends it when the caller unmounts.
+ * Call during component initialisation.
  */
 export function useConfettiRain() {
 	$effect(() => {
@@ -11,6 +12,10 @@ export function useConfettiRain() {
 			const cleanup = startConfetti();
 			return cleanup;
 		}
+	});
+	$effect(() => () => {
+		exportSettings.confettiEnabled = false;
+		confetti.reset();
 	});
 }
 

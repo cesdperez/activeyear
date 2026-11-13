@@ -1,11 +1,25 @@
 import { test, expect } from '@playwright/test';
+import { TARGET_YEAR } from '../../src/lib/constants/time.js';
 import { DASHBOARD_HEADING } from './helpers.js';
 
+test('during the season the demo stops at today', async ({ page }) => {
+	await page.clock.setFixedTime(new Date(TARGET_YEAR, 5, 10, 9));
+	await page.goto('/');
+	await page.getByRole('button', { name: /demo data/i }).click();
+
+	await expect(page.getByRole('heading', { name: `Your ${TARGET_YEAR} so far` })).toBeVisible();
+	await expect(page.getByText('Demo data', { exact: true })).toBeVisible();
+	const dates = await page.getByTestId('highlight-row').locator('.date').allTextContents();
+	for (const date of dates) expect(date).toMatch(/^(Jan|Feb|Mar|Apr|May|Jun) /);
+});
+
 test('demo link fills the dashboard with demo data', async ({ page }) => {
+	await page.clock.setFixedTime(new Date(TARGET_YEAR + 1, 0, 15));
 	await page.goto('/');
 	await page.getByRole('button', { name: /demo data/i }).click();
 
 	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
+	await expect(page.getByText('Demo data', { exact: true })).toBeVisible();
 	await expect(page.getByTestId('activity-summary')).toHaveText(
 		/245\s+activities across\s+180\s+active days/
 	);

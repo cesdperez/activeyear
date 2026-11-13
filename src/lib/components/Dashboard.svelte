@@ -22,6 +22,7 @@
 	import FloatingSupportLink from '#lib/components/dashboard/FloatingSupportLink.svelte';
 	import DashboardFileDrop from '#lib/components/dashboard/DashboardFileDrop.svelte';
 	import { useConfettiRain } from '#lib/components/dashboard/confettiRain.svelte.js';
+	import { observeBusyArea } from '#lib/stores/supportVisibility.svelte.js';
 
 	useConfettiRain();
 	let header: HTMLDivElement;
@@ -35,6 +36,7 @@
 			skippedRowCount={uploadStore.skippedRowCount}
 			cutShort={yearData.cutShort}
 			yearSoFar={yearData.yearSoFar}
+			demo={yearData.source === null}
 		/>
 	</div>
 	<MainStats
@@ -65,7 +67,9 @@
 		breakdown={yearData.breakdown}
 		unit={exportSettings.unit}
 	/>
-	<ExportPanel />
+	<div {@attach observeBusyArea}>
+		<ExportPanel />
+	</div>
 	<div class="mt-24 flex flex-col items-center gap-6">
 		<div class="grid w-full max-w-xl items-start gap-4 sm:grid-cols-2">
 			<SaveYear />

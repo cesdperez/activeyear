@@ -69,7 +69,13 @@ describe('selectTopSports', () => {
 		const top = selectTopSports(fiveSports, 'count');
 
 		expect(top.map((s) => s.type)).toEqual(['cycling', 'hiking', 'running', 'other']);
-		expect(top.at(-1)).toEqual({ type: 'other', distance: 0, duration: 93600, count: 4 });
+		expect(top.at(-1)).toEqual({
+			type: 'other',
+			distance: 0,
+			duration: 93600,
+			count: 4,
+			rollup: true
+		});
 		expect(top.reduce((sum, s) => sum + s.count, 0)).toBe(25);
 	});
 
@@ -84,14 +90,28 @@ describe('selectTopSports', () => {
 
 	it('folds sports under one hour into "other" before ranking', () => {
 		const breakdown = [
-			sport({ type: 'running', count: 2 }),
+			sport({ type: 'running', count: 9 }),
 			sport({ type: 'yoga', count: 4, duration: 1800 }),
 			sport({ type: 'walking', count: 3, duration: 1200 })
 		];
 
 		expect(selectTopSports(breakdown, 'count')).toEqual([
-			{ type: 'other', distance: 0, duration: 3000, count: 7 },
-			sport({ type: 'running', count: 2 })
+			sport({ type: 'running', count: 9 }),
+			{ type: 'other', distance: 0, duration: 3000, count: 7, rollup: true }
+		]);
+	});
+
+	it('keeps short sports named when folding them would outrank the rest', () => {
+		const breakdown = [
+			sport({ type: 'running', count: 2 }),
+			sport({ type: 'yoga', count: 4, duration: 1800 }),
+			sport({ type: 'walking', count: 3, duration: 1200 })
+		];
+
+		expect(selectTopSports(breakdown, 'count').map((s) => s.type)).toEqual([
+			'yoga',
+			'walking',
+			'running'
 		]);
 	});
 

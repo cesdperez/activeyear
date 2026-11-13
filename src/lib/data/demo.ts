@@ -1,6 +1,6 @@
 import { TARGET_YEAR } from '#lib/constants/time.js';
-import { daysInYear } from '#lib/utils/date.js';
-import type { Activity, ActivityType } from '#lib/types/index.js';
+import { daysInYear, isYearRunning } from '#lib/utils/date.js';
+import type { Activity, ActivityType, LoadedYear } from '#lib/types/index.js';
 
 interface SessionPlan {
 	type: ActivityType;
@@ -306,3 +306,17 @@ function buildDemoActivities(): Activity[] {
 
 /** A deterministic sample year: 245 activities over 180 active days of `TARGET_YEAR`. */
 export const demoActivities: Activity[] = buildDemoActivities();
+
+/** The demo as loaded on `today`: during a running season it stops at today, like a real export. */
+export function demoYear(today: Date): LoadedYear {
+	if (!isYearRunning(TARGET_YEAR, today)) {
+		return { activities: demoActivities, source: null, cutShort: null, loadedAt: null };
+	}
+	const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+	return {
+		activities: demoActivities.filter((activity) => activity.date < endOfToday),
+		source: null,
+		cutShort: null,
+		loadedAt: today
+	};
+}
