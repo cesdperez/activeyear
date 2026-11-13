@@ -68,7 +68,7 @@ describe('upload', () => {
 		['a non-error rejection', 'not an Error']
 	])('shows %s when reading the file fails', async (_, failure) => {
 		const file = csvFile('');
-		file.text = () => Promise.reject(failure);
+		file.arrayBuffer = () => Promise.reject(failure);
 
 		await uploadStore.processFile(file);
 
@@ -128,6 +128,16 @@ describe('upload', () => {
 		await uploadStore.processFile(new File([json], 'year.json'));
 
 		expect(exportSettings.unit).toBe('km');
+	});
+
+	it('reads a Windows-1252 export with accented headers', async () => {
+		const csv = `Tipo de actividad,Fecha,Título,Distancia,Calorías,Tiempo\nCarrera,${TARGET_YEAR}-03-01 08:00:00,Run,"10,0",600,00:50:00`;
+		const bytes = Uint8Array.from(csv, (char) => char.charCodeAt(0));
+
+		await uploadStore.processFile(new File([bytes], 'activities.csv'));
+
+		expect(uploadStore.status).toBe('ready');
+		expect(yearData.activities[0]).toMatchObject({ type: 'running', calories: 600 });
 	});
 
 	it('counts the rows left out of a file that loads', async () => {

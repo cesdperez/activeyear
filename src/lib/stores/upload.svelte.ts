@@ -10,6 +10,7 @@ import type {
 import { activityCountBucket, sportsCountBucket } from '#lib/utils/events.js';
 import { hasYearFileExtension, isSavedYearFileName, loadYearFile } from '#lib/utils/yearFile.js';
 import { describeSkippedRows } from '#lib/utils/uploadErrors.js';
+import { decodeText } from '#lib/utils/decodeText.js';
 import { TARGET_YEAR } from '#lib/constants/time.js';
 import { demoActivities } from '#lib/data/demo.js';
 import { yearData } from './yearData.svelte.js';
@@ -62,7 +63,7 @@ class UploadStore {
 		this.#error = null;
 
 		try {
-			const content = await file.text();
+			const content = decodeText(await file.arrayBuffer());
 			const result = loadYearFile(file.name, content, TARGET_YEAR, {
 				garminUnits: this.garminUnits
 			});
