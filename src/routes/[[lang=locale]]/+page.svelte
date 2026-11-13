@@ -46,6 +46,7 @@
 						class="btn-secondary min-h-12 w-full justify-center text-balance"
 						disabled={demoDisabled}
 						onclick={loadDemo}
+						data-testid="demo-data"
 					>
 						{i18n.m.landing.demo}
 					</button>
@@ -56,6 +57,7 @@
 						class="text-sm text-balance text-[var(--color-text-muted)] underline decoration-[var(--color-border)] underline-offset-4 transition-colors duration-200 hover:text-[var(--color-text-primary)] hover:decoration-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
 						disabled={demoDisabled}
 						onclick={loadDemo}
+						data-testid="demo-data"
 					>
 						{i18n.m.landing.demo}
 					</button>

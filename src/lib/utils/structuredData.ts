@@ -1,4 +1,4 @@
-import { OG_IMAGE_URL, REPOSITORY_URL, SITE_NAME, SITE_URL } from '#lib/constants/site.js';
+import { REPOSITORY_URL, SITE_NAME, SITE_URL, ogImageUrl } from '#lib/constants/site.js';
 import { MESSAGES } from '#lib/i18n/messages/index.js';
 import { localePath } from '#lib/i18n/locale.js';
 import type { Locale, FaqItem, JsonLdObject } from '#lib/types/index.js';
@@ -17,7 +17,7 @@ export function webApplicationSchema(locale: Locale): JsonLdObject {
 		url: `${SITE_URL}${localePath(locale)}`,
 		inLanguage: locale,
 		description: MESSAGES[locale].meta.description,
-		image: OG_IMAGE_URL,
+		image: ogImageUrl(locale),
 		applicationCategory: 'HealthApplication',
 		operatingSystem: 'Any (web browser)',
 		browserRequirements: 'Requires JavaScript',

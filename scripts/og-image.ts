@@ -1,14 +1,16 @@
-// Regenerates static/og-image.png from the demo dashboard. Needs `pnpm build && pnpm preview` running in this checkout.
+// Regenerates static/og-image*.png, one per locale, from the demo dashboard. Needs `pnpm build && pnpm preview` running in this checkout.
 // Usage: pnpm og-image [baseUrl]
 import { chromium } from '@playwright/test';
-import { OG_IMAGE_WIDTH, OG_IMAGE_HEIGHT } from '../src/lib/constants/og.ts';
+import { OG_IMAGE_WIDTH, OG_IMAGE_HEIGHT, ogImageFile } from '../src/lib/constants/og.ts';
+import { DEFAULT_LOCALE, LOCALES } from '../src/lib/constants/locales.ts';
 import { PREVIEW_PORT } from './ports.ts';
 
 const baseUrl = process.argv[2] ?? `http://localhost:${PREVIEW_PORT}`;
 
-// Keeps only the header and the totals board, centred in the frame.
+// Keeps only the header and the totals board, centred in the frame, without the layout's top bars.
 const COMPOSITION_CSS = `
-	main > div > :not(header, [data-testid='main-stats']), header > button, [data-testid='main-stats'] dl {
+	main > div > :not(:has(> header), [data-testid='main-stats']), header > button, [data-testid='main-stats'] dl,
+	body .absolute.top-4 {
 		display: none !important;
 	}
 	main > div {
@@ -25,17 +27,20 @@ const COMPOSITION_CSS = `
 `;
 
 const browser = await chromium.launch();
-// Reduced motion skips the headline count-up, so the image always shows the final total.
-const page = await browser.newPage({
-	viewport: { width: OG_IMAGE_WIDTH, height: OG_IMAGE_HEIGHT },
-	reducedMotion: 'reduce'
-});
 
-await page.goto(baseUrl);
-await page.getByRole('button', { name: /demo data/ }).click();
-await page.getByTestId('main-stats').waitFor();
-await page.evaluate(() => document.fonts.ready);
-await page.addStyleTag({ content: COMPOSITION_CSS });
-await page.screenshot({ path: 'static/og-image.png' });
+for (const locale of LOCALES) {
+	// Reduced motion skips the headline count-up, so the image always shows the final total.
+	const page = await browser.newPage({
+		viewport: { width: OG_IMAGE_WIDTH, height: OG_IMAGE_HEIGHT },
+		reducedMotion: 'reduce'
+	});
+	await page.goto(locale === DEFAULT_LOCALE ? baseUrl : `${baseUrl}/${locale}/`);
+	await page.getByTestId('demo-data').filter({ visible: true }).click();
+	await page.getByTestId('main-stats').waitFor();
+	await page.evaluate(() => document.fonts.ready);
+	await page.addStyleTag({ content: COMPOSITION_CSS });
+	await page.screenshot({ path: `static/${ogImageFile(locale)}` });
+	await page.close();
+}
 
 await browser.close();
