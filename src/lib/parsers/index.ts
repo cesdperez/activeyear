@@ -13,6 +13,7 @@ export function parseActivityCsv(csvContent: string, year: number): ParseResult 
 		source: null,
 		activities: [],
 		yearsInFile: [],
+		rowCount: 0,
 		errors: [
 			{
 				type: 'unsupported-format',

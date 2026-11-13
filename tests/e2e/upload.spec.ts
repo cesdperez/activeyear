@@ -334,3 +334,14 @@ test.describe('Upload accessibility', () => {
 		await expect(demoButton(page)).toBeEnabled();
 	});
 });
+
+test('warns when a Garmin export may be cut short', async ({ page }) => {
+	const csv = garminCsv(Array.from({ length: 20 }, (_, i) => ({ title: `Run ${i}` })));
+	await uploadCsv(page, csv);
+	const warning = page.getByText(
+		'Your export starts on March 1. If your year started earlier, scroll to the bottom of All Activities in Garmin Connect and export again.'
+	);
+	await expect(warning).toBeVisible();
+	await uploadCsv(page, csv.replace(`${TARGET_YEAR}-03-20`, `${TARGET_YEAR - 1}-12-31`));
+	await expect(warning).toHaveCount(0);
+});

@@ -3,6 +3,8 @@ import type { dashboard as en } from '../en/dashboard.js';
 
 export const dashboard: typeof en = {
 	supportExport: '¿Te gustó tu resumen? ActiveYear es gratis y lo hace una sola persona.',
+	cutShort: (date: string) =>
+		`Tu exportación empieza el ${date}. Si tu año empezó antes, desplázate hasta el final de Todas las actividades en Garmin Connect y vuelve a exportar.`,
 	supportFooter: '¿Te gusta ActiveYear?',
 	buyMeAGel: 'Invítame a un gel',
 	opensKofi: '(abre Ko-fi en una pestaña nueva)',

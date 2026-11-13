@@ -97,6 +97,7 @@ function nonEnglishExportResult(): ParseResult {
 		source: 'strava',
 		activities: [],
 		yearsInFile: [],
+		rowCount: 0,
 		errors: [
 			{
 				type: 'unsupported-format',
@@ -172,9 +173,16 @@ function parse(csv: string, year: number): ParseResult {
 	if (!hasEnglishHeaders(csv)) return nonEnglishExportResult();
 
 	const columns = columnIndexes(readHeaders(csv));
-	const result: ParseResult = { source: 'strava', activities: [], errors: [], yearsInFile: [] };
+	const result: ParseResult = {
+		source: 'strava',
+		activities: [],
+		errors: [],
+		yearsInFile: [],
+		rowCount: 0
+	};
 	const years = new Set<number>();
 	readRows(csv, (data, rowLine, errors) => {
+		result.rowCount++;
 		// A broken quote reads on to the next quote mark, so swallowed rows count as one skipped row.
 		// Descriptions span lines, so there is no line boundary to resync on.
 		if (errors.some((error) => error.type === 'Quotes')) {

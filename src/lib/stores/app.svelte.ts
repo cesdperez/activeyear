@@ -1,4 +1,5 @@
 import { track } from '#lib/analytics/track.js';
+import { cutShortFrom } from '#lib/utils/cutShort.js';
 import type { EventValue } from '#lib/constants/events.js';
 import { activityCountBucket, sportsCountBucket } from '#lib/utils/events.js';
 import { HIGHLIGHTS_LIMIT } from '#lib/constants/export.js';
@@ -39,6 +40,7 @@ class AppStore {
 	// Raw because the list is only ever replaced whole, and the derived stats read every activity.
 	#activities = $state.raw<Activity[]>([]);
 	#source = $state<ActivitySource | null>(null);
+	#cutShort = $state<Date | null>(null);
 	#highlights = $state.raw<Activity[]>([]);
 	#highlightPreset = $state<HighlightPreset | 'custom'>('longest');
 	#highlightPresets = $derived(availablePresets(this.#activities));
@@ -80,6 +82,10 @@ class AppStore {
 
 	get activities() {
 		return this.#activities;
+	}
+
+	get cutShort() {
+		return this.#cutShort;
 	}
 
 	get source() {
@@ -166,6 +172,7 @@ class AppStore {
 		this.#highlights = [];
 		this.#highlightPreset = 'longest';
 		this.#source = null;
+		this.#cutShort = null;
 		this.#status = 'idle';
 		this.#error = null;
 		this.#parseErrors = [];
@@ -192,6 +199,7 @@ class AppStore {
 				}
 				this.#load(saved.activities);
 				this.#source = saved.source;
+				this.#cutShort = null;
 				this.#parseErrors = [];
 				this.#trackUpload();
 				return;
@@ -215,6 +223,7 @@ class AppStore {
 			}
 
 			this.#source = result.source;
+			this.#cutShort = cutShortFrom(result, TARGET_YEAR);
 			this.#load(result.activities);
 			this.#parseErrors = result.errors;
 			this.#trackUpload();

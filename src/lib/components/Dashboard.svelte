@@ -26,6 +26,7 @@
 		activityCount={appStore.stats?.activityCount ?? 0}
 		activeDays={appStore.stats?.activeDays ?? 0}
 		skippedRowCount={appStore.skippedRowCount}
+		cutShort={appStore.cutShort}
 	/>
 	<MainStats stats={appStore.stats} unit={appStore.unit} focus={appStore.summaryMetric} />
 	<section class="mb-20 md:mb-28">

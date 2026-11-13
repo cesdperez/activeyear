@@ -22,6 +22,7 @@ Returning users must recognise the app at a glance, so the anchors stay: a centr
 
 - **Logotype:** `Logotype.svelte` sets "ActiveYear" in Big Shoulders Display 900 with a dotless i whose dot is a cyan day tick, the same mark the year lane draws. Use it on the landing page, the dashboard header, the 404 page and the export card header. The favicon is the same tick motif.
 - **Signature:** the year lane (`widgets/YearLane.svelte`): one horizontal lane with a tick per day of the year (366 in a leap year). An active day's tick height is the square root of that day's training time, scaled to the busiest day, with a 30% floor. Rest days are short dim ticks. Highlights (ring) and personal records (diamond) sit above the lane like course points on a race profile. Markers closer than a head width merge into one head at their mean day, a record winning, so a busy stretch reads as one point instead of a blob. It appears on the dashboard and on the Summary card in every theme.
+- **Dashboard notices:** the header shows muted warnings for skipped rows and Garmin exports that may stop before the full year.
 - **Totals:** a results board. One huge headline number (the focused stat, glowing), its fun fact, then the other totals, active days and longest streak in one ruled row. On phones the row becomes a results sheet: label left, value right. No boxes, no icons.
 - **Section shapes fit their data:** results board, lane, bar chart, a dense highlights table, bib badges, donut with bars, then quarters board and two tables under More stats. Headings are not numbered.
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
-	import { formatCount } from '#lib/utils/format.js';
+	import { formatCount, formatDayMonth } from '#lib/utils/format.js';
 	import { skippedRowsNotice } from '#lib/utils/uploadErrors.js';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { ArrowDown, Warning } from 'phosphor-svelte';
@@ -10,8 +10,10 @@
 	let {
 		activityCount,
 		activeDays,
-		skippedRowCount
-	}: { activityCount: number; activeDays: number; skippedRowCount: number } = $props();
+		skippedRowCount,
+		cutShort
+	}: { activityCount: number; activeDays: number; skippedRowCount: number; cutShort: Date | null } =
+		$props();
 
 	function jumpToExport() {
 		const heading = document.querySelector<HTMLElement>('#export-panel h2');
@@ -53,6 +55,13 @@
 		<p class="mt-3 flex items-center justify-center gap-1.5 text-sm text-[var(--color-text-muted)]">
 			<Warning class="h-4 w-4 shrink-0" weight="bold" aria-hidden="true" />
 			{skippedRowsNotice(skippedRowCount, i18n.locale)}
+		</p>
+	{/if}
+
+	{#if cutShort}
+		<p class="mt-3 flex items-center justify-center gap-1.5 text-sm text-[var(--color-text-muted)]">
+			<Warning class="h-4 w-4 shrink-0" weight="bold" aria-hidden="true" />
+			{i18n.m.dashboard.cutShort(formatDayMonth(i18n.locale, cutShort))}
 		</p>
 	{/if}
 

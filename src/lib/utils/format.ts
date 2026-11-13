@@ -182,6 +182,10 @@ export function formatLotRMarathons(locale: Locale, seconds: number): string {
 	return `${fixed(locale, marathons, 1)} ${MESSAGES[locale].common.lotr}`;
 }
 
+export function formatDayMonth(locale: Locale, date: Date): string {
+	return date.toLocaleDateString(INTL_LOCALES[locale], { month: 'long', day: 'numeric' });
+}
+
 export function formatShortDate(locale: Locale, date: Date): string {
 	return date.toLocaleDateString(INTL_LOCALES[locale], { month: 'short', day: 'numeric' });
 }
