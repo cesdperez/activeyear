@@ -33,7 +33,7 @@ async function setTheme(page: Page, theme: ThemeName): Promise<void> {
 		retro: /Retro/i,
 		classic: /Classic/i,
 		synthwave: /Synthwave/i,
-		lightmile: /Lightmile/i
+		lightmile: /^Lightmile/i
 	};
 	await page.getByRole('button', { name: themeButtonNames[theme] }).click();
 	await expect(page.locator('#export-card')).toHaveAttribute('data-theme', theme);
@@ -217,6 +217,17 @@ test.describe('Export Visual Fidelity', () => {
 
 			// Save snapshot of downloaded image for regression testing
 			expect(downloadBuffer).toMatchSnapshot(`${cardName}-export.png`);
+		});
+	}
+
+	for (const [cardIndex, cardName] of CARDS.entries()) {
+		test(`Lightmile ${cardName} card snapshot`, async ({ page }) => {
+			await uploadSample(page);
+			await setTheme(page, 'lightmile');
+			await navigateToSlide(page, cardIndex);
+			expect(await captureSpecificCardDownload(page, cardIndex)).toMatchSnapshot(
+				`lightmile-${cardName}-export.png`
+			);
 		});
 	}
 

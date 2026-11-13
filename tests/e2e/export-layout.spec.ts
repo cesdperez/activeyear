@@ -164,7 +164,7 @@ test.describe('Export card layout', () => {
 					);
 					await page.locator('#userName').fill(name);
 					if (theme !== 'neon')
-						await page.getByRole('button', { name: new RegExp(theme, 'i') }).click();
+						await page.getByRole('button', { name: new RegExp(`^${theme}`, 'i') }).click();
 					await showSlide(page, index);
 					await expect(page.locator('#export-card')).toHaveAttribute('data-theme', theme);
 
