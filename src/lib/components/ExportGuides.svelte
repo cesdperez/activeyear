@@ -77,8 +77,10 @@
 
 <style>
 	.steps {
+		width: min(100%, 32rem);
+		margin-inline: auto;
 		display: grid;
-		gap: 0.625rem;
+		gap: 0.75rem;
 		font-size: 0.9375rem;
 		text-wrap: pretty;
 		color: var(--color-text-muted);
@@ -86,15 +88,16 @@
 
 	.steps li {
 		display: grid;
-		grid-template-columns: 1.5rem 1fr;
-		align-items: baseline;
+		grid-template-columns: 2rem minmax(0, 1fr);
+		align-items: start;
 	}
 
 	.step-number {
 		font-family: var(--font-display);
 		font-size: 1.25rem;
 		font-weight: 800;
-		line-height: 1;
+		line-height: 1.4rem;
+		font-variant-numeric: tabular-nums;
 		color: var(--color-accent);
 	}
 
@@ -109,8 +112,9 @@
 	}
 
 	.note {
-		margin-top: 1rem;
-		padding-left: 1.5rem;
+		width: min(100%, 32rem);
+		margin: 1rem auto 0;
+		padding-left: 2rem;
 		font-size: 0.8125rem;
 		color: var(--color-text-dim);
 	}
