@@ -22,7 +22,7 @@ export const dashboard: typeof en = {
 	addedHighlight: (x: string) => `${x} ajouté`,
 	highlightLimit: (n: number) =>
 		`${n} moments forts maximum. Retirez-en un pour en ajouter un autre.`,
-	searchResults: (n: number) => `${n} ${n === 1 ? 'résultat' : 'résultats'}`,
+	searchResults: (n: number) => `${n} ${plural('fr', n, { one: 'résultat', other: 'résultats' })}`,
 	presets: {
 		longest: { label: 'Plus longues', description: 'Vos séances les plus longues de l’année.' },
 		farthest: { label: 'Plus loin', description: 'Les jours où vous êtes allé le plus loin.' },

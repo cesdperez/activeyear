@@ -21,7 +21,8 @@ export const dashboard: typeof en = {
 	addedHighlight: (x: string) => `${x} toegevoegd`,
 	highlightLimit: (n: number) =>
 		`Maximaal ${n} hoogtepunten. Verwijder er één om een andere toe te voegen.`,
-	searchResults: (n: number) => `${n} ${n === 1 ? 'resultaat' : 'resultaten'}`,
+	searchResults: (n: number) =>
+		`${n} ${plural('nl', n, { one: 'resultaat', other: 'resultaten' })}`,
 	presets: {
 		longest: { label: 'Langste', description: 'Je langste sessies van het jaar.' },
 		farthest: { label: 'Verste', description: 'De dagen waarop je het verst ging.' },

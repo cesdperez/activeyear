@@ -1,3 +1,4 @@
+import { plural } from '#lib/i18n/plural.js';
 import type { exportMessages as en } from '../en/export.js';
 export const exportMessages: typeof en = {
 	export: 'Exporter',
@@ -41,7 +42,7 @@ export const exportMessages: typeof en = {
 	owner: (name: string) => `De ${name}`,
 	goToSlide: (n: number) => `Aller à la diapositive ${n}`,
 	moreHighlights: (n: string, count: number) =>
-		`+${n} ${count === 1 ? 'temps fort' : 'temps forts'}`,
+		`+${n} ${plural('fr', count, { one: 'temps fort', other: 'temps forts' })}`,
 	intro:
 		'Trois cartes au format story à partager. Choisissez ce qu’elles affichent, puis téléchargez-les.',
 	nightRace: 'Course de nuit',

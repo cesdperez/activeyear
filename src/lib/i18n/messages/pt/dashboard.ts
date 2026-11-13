@@ -20,7 +20,8 @@ export const dashboard: typeof en = {
 	removedHighlight: (x: string) => `${x} removido`,
 	addedHighlight: (x: string) => `${x} adicionado`,
 	highlightLimit: (n: number) => `Máximo de ${n} destaques. Remova um para adicionar outro.`,
-	searchResults: (n: number) => `${n} ${n === 1 ? 'resultado' : 'resultados'}`,
+	searchResults: (n: number) =>
+		`${n} ${plural('pt', n, { one: 'resultado', other: 'resultados' })}`,
 	presets: {
 		longest: { label: 'Mais longas', description: 'Suas sessões mais longas do ano.' },
 		farthest: { label: 'Mais distantes', description: 'Os dias em que você foi mais longe.' },
