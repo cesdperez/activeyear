@@ -69,15 +69,8 @@ class AppStore {
 	userPfp = $state<string | null>(null);
 	confettiEnabled = $state<boolean>(false);
 	summaryMetric = $state<SummaryMetric>('distance');
+	garminUnits = $state<GarminUnits>('metric');
 	#unit = $state<Unit>('km');
-	#garminUnits = $state<GarminUnits>('metric');
-
-	get garminUnits() {
-		return this.#garminUnits;
-	}
-	set garminUnits(units: GarminUnits) {
-		this.#garminUnits = units;
-	}
 	breakdownMetric = $state<BreakdownMetric>('count');
 	/** Freezes every control that changes the cards, so one export cannot mix settings. */
 	isExporting = $state(false);
@@ -228,7 +221,7 @@ class AppStore {
 				this.#trackUpload();
 				return;
 			}
-			const result = parseActivityCsv(content, TARGET_YEAR, { garminUnits: this.#garminUnits });
+			const result = parseActivityCsv(content, TARGET_YEAR, { garminUnits: this.garminUnits });
 
 			const unreadable = result.errors.find((e) => e.type === 'unsupported-format');
 			if (unreadable) {

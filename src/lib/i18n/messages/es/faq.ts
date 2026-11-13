@@ -59,7 +59,7 @@ export const faq: typeof en = {
 		{ text: 'Sube activities.csv' }
 	],
 	stravaNote:
-		'Sube solo activities.csv. Strava admite inglés, español, alemán, francés, italiano, neerlandés o portugués.',
+		'Sube solo activities.csv. Strava debe estar configurado en inglés, español, alemán, francés, italiano, neerlandés o portugués.',
 	heading: 'Preguntas',
 	guidesAria: 'Elige la fuente de tus datos'
 };

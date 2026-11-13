@@ -55,7 +55,7 @@ export const faq = {
 		{ text: 'Upload activities.csv' }
 	],
 	stravaNote:
-		'Upload only activities.csv. Strava supports English, Spanish, German, French, Italian, Dutch or Portuguese.',
+		'Upload only activities.csv. Strava must be set to English, Spanish, German, French, Italian, Dutch or Portuguese.',
 	heading: 'Questions',
 	guidesAria: 'Choose your data source'
 };

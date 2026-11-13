@@ -56,7 +56,7 @@ export const faq: typeof en = {
 		{ text: 'Envie activities.csv' }
 	],
 	stravaNote:
-		'Envie apenas activities.csv. O Strava aceita inglês, espanhol, alemão, francês, italiano, holandês ou português.',
+		'Envie apenas activities.csv. O Strava deve estar configurado em inglês, espanhol, alemão, francês, italiano, holandês ou português.',
 	heading: 'Perguntas',
 	guidesAria: 'Escolha a origem dos seus dados'
 };

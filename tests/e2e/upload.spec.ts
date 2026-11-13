@@ -185,7 +185,7 @@ test.describe('Upload Flow', () => {
 		await gotoUpload(page);
 		await uploadFile(page, '日付,種目,ファイル\n2026-10-31,ランニング,activities/123.fit.gz');
 		await expect(page.getByRole('alert')).toContainText(
-			'English, Spanish, German, French, Italian, Dutch or Portuguese',
+			"This Strava export is in a language we can't read yet",
 			{ timeout: 10000 }
 		);
 	});
