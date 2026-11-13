@@ -30,7 +30,7 @@ export const faq: typeof en = {
 		{
 			question: 'Werkt het met Strava?',
 			answer:
-				'Ja. Upload activities.csv uit de export van je Strava-account (Settings, My Account, Download or Delete Your Account), met Strava ingesteld op Engels, Spaans, Duits, Frans, Italiaans, Nederlands of Portugees.'
+				'Ja. Upload activities.csv uit de export van je Strava-account. Die vraag je aan via “Settings” (Instellingen) → “My Account” (Mijn account) → “Download or Delete Your Account” (Je account downloaden of verwijderen). Strava moet op Engels, Spaans, Duits, Frans, Italiaans, Nederlands of Portugees staan.'
 		},
 		{
 			question: 'Is het gratis?',
@@ -46,15 +46,17 @@ export const faq: typeof en = {
 			text: 'Log in op',
 			link: { href: 'https://connect.garmin.com', label: 'connect.garmin.com' }
 		},
-		{ text: 'Ga naar Activities → All Activities' },
+		{ text: 'Ga naar Activiteiten → Alle activiteiten' },
 		{ text: `Scroll naar beneden totdat alle activiteiten van ${TARGET_YEAR} zijn geladen` },
-		{ text: 'Klik op Export CSV (pictogram rechtsboven)' }
+		{ text: 'Klik rechtsboven op “Export CSV” (CSV exporteren)' }
 	],
 	garminNote: 'Gebruik de website op een computer. De Garmin Connect-app kan niet exporteren.',
 	stravaSteps: [
 		{ text: 'Log in op', link: { href: 'https://www.strava.com/account', label: 'strava.com' } },
-		{ text: 'Ga naar Settings → My Account → Download or Delete Your Account' },
-		{ text: 'Klik op Request your archive' },
+		{
+			text: 'Ga naar “Settings” (Instellingen) → “My Account” (Mijn account) → “Download or Delete Your Account” (Je account downloaden of verwijderen)'
+		},
+		{ text: 'Klik op “Request your archive” (Je archief aanvragen)' },
 		{ text: 'Open de downloadlink die Strava je mailt en pak het bestand uit' },
 		{ text: 'Upload activities.csv' }
 	],

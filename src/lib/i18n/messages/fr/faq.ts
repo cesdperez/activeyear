@@ -30,7 +30,7 @@ export const faq: typeof en = {
 		{
 			question: 'Est-ce compatible avec Strava ?',
 			answer:
-				'Oui. Importez activities.csv issu de l’export de votre compte Strava (Settings, My Account, Download or Delete Your Account), avec Strava réglé en anglais, espagnol, allemand, français, italien, néerlandais ou portugais.'
+				'Oui. Importez activities.csv issu de l’export de votre compte Strava, à demander dans « Settings » (Paramètres) → « My Account » (Mon compte) → « Download or Delete Your Account » (Télécharger ou supprimer votre compte). Strava doit être réglé en anglais, espagnol, allemand, français, italien, néerlandais ou portugais.'
 		},
 		{
 			question: 'Est-ce gratuit ?',
@@ -46,11 +46,11 @@ export const faq: typeof en = {
 			text: 'Connectez-vous sur',
 			link: { href: 'https://connect.garmin.com', label: 'connect.garmin.com' }
 		},
-		{ text: 'Allez dans Activities → All Activities' },
+		{ text: 'Allez dans Activités → Toutes les activités' },
 		{
 			text: `Faites défiler la page jusqu’au chargement de toutes les activités de ${TARGET_YEAR}`
 		},
-		{ text: 'Cliquez sur Export CSV (icône en haut à droite)' }
+		{ text: 'Cliquez sur « Export CSV » (Exporter en CSV), l’icône en haut à droite' }
 	],
 	garminNote:
 		'Utilisez le site sur un ordinateur. L’application Garmin Connect ne permet pas l’export.',
@@ -59,8 +59,10 @@ export const faq: typeof en = {
 			text: 'Connectez-vous sur',
 			link: { href: 'https://www.strava.com/account', label: 'strava.com' }
 		},
-		{ text: 'Allez dans Settings → My Account → Download or Delete Your Account' },
-		{ text: 'Cliquez sur Request your archive' },
+		{
+			text: 'Allez dans « Settings » (Paramètres) → « My Account » (Mon compte) → « Download or Delete Your Account » (Télécharger ou supprimer votre compte)'
+		},
+		{ text: 'Cliquez sur « Request your archive » (Demander votre archive)' },
 		{
 			text: 'Ouvrez le lien de téléchargement envoyé par Strava par e-mail et décompressez le fichier'
 		},
