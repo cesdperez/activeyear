@@ -1,13 +1,13 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
+	import { plural } from '#lib/i18n/plural.js';
 	import type { Activity, SportBreakdown, Unit } from '#lib/types/index.js';
-	import { sportNames } from '#lib/constants/sports.js';
 	import { WEEKDAY_LABELS } from '#lib/constants/time.js';
 	import {
 		formatCount,
 		formatDistance,
 		formatDuration,
-		formatShortDate,
-		pluralize
+		formatShortDate
 	} from '#lib/utils/format.js';
 	import {
 		calculateLongestBreak,
@@ -57,12 +57,13 @@
 								{#if quarter.count}
 									<p class="mt-2 text-xl font-bold break-words text-[var(--color-accent)]">
 										{quarter.distance > 0
-											? formatDistance(quarter.distance, unit)
-											: formatDuration(quarter.duration)}
+											? formatDistance(i18n.locale, quarter.distance, unit)
+											: formatDuration(i18n.locale, quarter.duration)}
 									</p>
 									<p class="text-sm text-[var(--color-text-muted)]">
-										{formatCount(quarter.count)}
-										{pluralize(quarter.count, 'activity', 'activities')} · {formatDuration(
+										{formatCount(i18n.locale, quarter.count)}
+										{i18n.m.common.nouns.activity(quarter.count)} · {formatDuration(
+											i18n.locale,
 											quarter.duration
 										)}
 									</p>
@@ -78,11 +79,14 @@
 					<h3 class="mb-4 text-xl font-bold">Longest break</h3>
 					{#if longestBreak}
 						<p class="text-2xl font-bold text-[var(--color-accent)]">
-							{formatCount(longestBreak.days)}
-							{pluralize(longestBreak.days, 'day', 'days')}
+							{formatCount(i18n.locale, longestBreak.days)}
+							{plural('en', longestBreak.days, { one: 'day', other: 'days' })}
 						</p>
 						<p class="text-sm text-[var(--color-text-muted)]">
-							{formatShortDate(longestBreak.start)} to {formatShortDate(longestBreak.end)}
+							{formatShortDate(i18n.locale, longestBreak.start)} to {formatShortDate(
+								i18n.locale,
+								longestBreak.end
+							)}
 						</p>
 					{:else}
 						<p class="text-[var(--color-text-muted)]">No rest day between activities.</p>
@@ -100,10 +104,10 @@
 								</span>
 								<span class="text-right">
 									<span class="font-bold text-[var(--color-accent)]">
-										{formatDistance(weekdays.distance[i], unit)}
+										{formatDistance(i18n.locale, weekdays.distance[i], unit)}
 									</span>
 									<span class="ml-2 text-sm text-[var(--color-text-muted)]">
-										{formatDuration(weekdays.duration[i])}
+										{formatDuration(i18n.locale, weekdays.duration[i])}
 									</span>
 								</span>
 							</div>
@@ -118,10 +122,10 @@
 									{day}
 								</h4>
 								<p class="text-base font-bold break-words text-[var(--color-accent)] lg:text-xl">
-									{formatDistance(weekdays.distance[i], unit)}
+									{formatDistance(i18n.locale, weekdays.distance[i], unit)}
 								</p>
 								<p class="text-xs break-words text-[var(--color-text-muted)] lg:text-sm">
-									{formatDuration(weekdays.duration[i])}
+									{formatDuration(i18n.locale, weekdays.duration[i])}
 								</p>
 							</div>
 						{/each}
@@ -135,11 +139,11 @@
 								<h4
 									class="text-xs font-medium tracking-wider text-[var(--color-text-muted)] uppercase"
 								>
-									{sportNames[average.type]}
+									{i18n.m.common.sports[average.type]}
 								</h4>
 								{#if average.averageDistance > 0}
 									<p class="text-xl font-bold break-words text-[var(--color-accent)]">
-										{formatDistance(average.averageDistance, unit)}
+										{formatDistance(i18n.locale, average.averageDistance, unit)}
 									</p>
 								{/if}
 								<p
@@ -147,7 +151,7 @@
 										? 'text-sm break-words text-[var(--color-text-muted)]'
 										: 'text-xl font-bold break-words text-[var(--color-accent)]'}
 								>
-									{formatDuration(average.averageDuration)}
+									{formatDuration(i18n.locale, average.averageDuration)}
 								</p>
 							</div>
 						{/each}

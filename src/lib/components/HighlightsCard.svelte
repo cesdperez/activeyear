@@ -1,11 +1,13 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
+	import { plural } from '#lib/i18n/plural.js';
 	import { tick } from 'svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
-	import { formatCount, formatDistance, formatDuration, pluralize } from '#lib/utils/format.js';
+	import { formatCount, formatDistance, formatDuration } from '#lib/utils/format.js';
 	import { timelineGap } from '#lib/utils/export.js';
 	import { HIGHLIGHTS_LIMIT, TIMELINE_GAP } from '#lib/constants/export.js';
 	import { Star, Target } from 'phosphor-svelte';
-	import { sportNames, sportIcons } from '#lib/constants/sports.js';
+	import { sportIcons } from '#lib/constants/sports.js';
 	import type { Activity } from '#lib/types/index.js';
 	import ExportCardBase from './ExportCardBase.svelte';
 
@@ -36,7 +38,7 @@
 	let fitRun = 0;
 
 	function titleOf(fav: Activity): string {
-		return fav.title || sportNames[fav.type] || 'Activity';
+		return fav.title || i18n.m.common.sports[fav.type] || 'Activity';
 	}
 
 	// How titles wrap depends on the rendered font, so only the DOM knows how many items fit.
@@ -165,16 +167,16 @@
 									>
 										{#if fav.distance > 0}
 											<span class="font-mono">
-												{formatDistance(fav.distance, appStore.unit)}
+												{formatDistance(i18n.locale, fav.distance, appStore.unit)}
 											</span>
 										{/if}
 										<span class="font-mono">
-											{formatDuration(fav.duration)}
+											{formatDuration(i18n.locale, fav.duration)}
 										</span>
 										<span
 											class="rounded-full bg-[var(--color-accent)]/10 px-2 py-0.5 text-[12px] tracking-wider text-[var(--color-accent)] uppercase"
 										>
-											{sportNames[fav.type] ?? fav.type}
+											{i18n.m.common.sports[fav.type] ?? fav.type}
 										</span>
 									</div>
 								</div>
@@ -186,7 +188,10 @@
 
 			{#if hiddenCount > 0}
 				<div class="mt-6 text-center text-[20px] text-[var(--color-text-muted)]">
-					+{formatCount(hiddenCount)} more {pluralize(hiddenCount, 'highlight', 'highlights')}
+					+{formatCount(i18n.locale, hiddenCount)} more {plural('en', hiddenCount, {
+						one: 'highlight',
+						other: 'highlights'
+					})}
 				</div>
 			{/if}
 		{/if}

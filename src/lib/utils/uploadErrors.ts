@@ -1,3 +1,4 @@
+import { plural } from '#lib/i18n/plural.js';
 import type {
 	ParseError,
 	ParseResult,
@@ -6,7 +7,7 @@ import type {
 	UnusableFileError
 } from '#lib/types/index.js';
 import { ROW_ERROR_REASONS } from '#lib/constants/parsing.js';
-import { formatCount, pluralize } from './format.js';
+import { formatCount } from './format.js';
 
 function isRowErrorType(type: ParseError['type']): type is RowErrorType {
 	return type in ROW_ERROR_REASONS;
@@ -38,7 +39,7 @@ export function describeUnusableFile(result: ParseResult, year: number): Unusabl
 
 function skippedRowsMessage({ count, reason, exampleRow }: SkippedRows): string {
 	if (count === 1) return `Row ${exampleRow} could not be read: ${ROW_ERROR_REASONS[reason]}`;
-	return `${formatCount(count)} rows could not be read, e.g. row ${exampleRow}: ${ROW_ERROR_REASONS[reason]}`;
+	return `${formatCount('en', count)} rows could not be read, e.g. row ${exampleRow}: ${ROW_ERROR_REASONS[reason]}`;
 }
 
 function yearsMessage(year: number, yearsInFile: number[]): string {
@@ -56,5 +57,5 @@ export function unusableFileMessage(error: UnusableFileError): string {
 }
 
 export function skippedRowsNotice(count: number): string {
-	return `Skipped ${formatCount(count)} ${pluralize(count, 'row', 'rows')} that could not be read`;
+	return `Skipped ${formatCount('en', count)} ${plural('en', count, { one: 'row', other: 'rows' })} that could not be read`;
 }

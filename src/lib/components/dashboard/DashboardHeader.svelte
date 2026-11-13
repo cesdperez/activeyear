@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { formatCount } from '#lib/utils/format.js';
 	import { skippedRowsNotice } from '#lib/utils/uploadErrors.js';
@@ -34,14 +35,16 @@
 	>
 		<span class="inline-flex items-center gap-2 whitespace-nowrap">
 			<span class="font-mono font-bold text-[var(--color-accent)]"
-				>{formatCount(activityCount)}</span
+				>{formatCount(i18n.locale, activityCount)}</span
 			>
 			<span class="text-[var(--color-text-muted)]"
 				>{activityCount === 1 ? 'activity' : 'activities'} across</span
 			>
 		</span>
 		<span class="inline-flex items-center gap-2 whitespace-nowrap">
-			<span class="font-mono font-bold text-[var(--color-accent)]">{formatCount(activeDays)}</span>
+			<span class="font-mono font-bold text-[var(--color-accent)]"
+				>{formatCount(i18n.locale, activeDays)}</span
+			>
 			<span class="text-[var(--color-text-muted)]"
 				>{activeDays === 1 ? 'active day' : 'active days'}</span
 			>

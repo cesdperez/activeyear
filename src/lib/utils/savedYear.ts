@@ -1,6 +1,6 @@
 import { SITE_NAME } from '#lib/constants/site.js';
 import { SAVED_YEAR_VERSION } from '#lib/constants/savedYear.js';
-import { sportNames } from '#lib/constants/sports.js';
+import { ACTIVITY_TYPES } from '#lib/constants/sports.js';
 import type { Activity, ActivitySource, ActivityType, SavedYearError } from '#lib/types/index.js';
 
 export function savedYearFileName(year: number): string {
@@ -47,7 +47,7 @@ function parseActivity(value: unknown): Activity | null {
 	if (
 		!date ||
 		typeof item.type !== 'string' ||
-		!Object.hasOwn(sportNames, item.type) ||
+		!(ACTIVITY_TYPES as readonly string[]).includes(item.type) ||
 		typeof item.title !== 'string' ||
 		typeof item.favorite !== 'boolean'
 	)

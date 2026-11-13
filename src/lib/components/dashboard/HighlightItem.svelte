@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { sportNames, sportIcons } from '#lib/constants/sports.js';
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
+	import { sportIcons } from '#lib/constants/sports.js';
 	import { formatDistance, formatDuration } from '#lib/utils/format.js';
 	import type { Activity, Unit } from '#lib/types/index.js';
 	import { Star } from 'phosphor-svelte';
@@ -27,18 +28,22 @@
 				<Star class="mt-1 h-4 w-4 shrink-0 text-yellow-500" weight="fill" aria-hidden="true" />
 			{/if}
 			<span class="line-clamp-3 font-bold wrap-anywhere text-white" title={activity.title}>
-				{activity.title || sportNames[activity.type] || 'Activity'}
+				{activity.title || i18n.m.common.sports[activity.type] || 'Activity'}
 			</span>
 		</div>
 		<div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--color-text-muted)]">
 			{#if activity.distance > 0}
-				<span class="font-mono whitespace-nowrap">{formatDistance(activity.distance, unit)}</span>
+				<span class="font-mono whitespace-nowrap"
+					>{formatDistance(i18n.locale, activity.distance, unit)}</span
+				>
 			{/if}
-			<span class="font-mono whitespace-nowrap">{formatDuration(activity.duration)}</span>
+			<span class="font-mono whitespace-nowrap"
+				>{formatDuration(i18n.locale, activity.duration)}</span
+			>
 			<span
 				class="rounded-full bg-[var(--color-surface-elevated)] px-2 py-0.5 text-xs tracking-wider uppercase"
 			>
-				{sportNames[activity.type]}
+				{i18n.m.common.sports[activity.type]}
 			</span>
 		</div>
 	</div>

@@ -1,9 +1,11 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
+	import { plural } from '#lib/i18n/plural.js';
 	import type { Component } from 'svelte';
 	import { CalendarCheck, Lightning, type IconComponentProps } from 'phosphor-svelte';
 	import { activeDaysPercent } from '#lib/utils/breakdown.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
-	import { formatCount, formatPercentOfYear, pluralize } from '#lib/utils/format.js';
+	import { formatCount, formatPercentOfYear } from '#lib/utils/format.js';
 	import type { WidgetVariant } from '#lib/types/index.js';
 
 	interface DashboardStat {
@@ -32,9 +34,14 @@
 	}: { activeDays: number; longestStreak: number; variant: WidgetVariant } = $props();
 
 	const yearPercent = $derived(activeDaysPercent(activeDays, TARGET_YEAR));
-	const activeDaysLabel = $derived(pluralize(activeDays, 'Active Day', 'Active Days'));
+	const activeDaysLabel = $derived(
+		plural('en', activeDays, { one: 'Active Day', other: 'Active Days' })
+	);
 	const streakCaption = $derived(
-		pluralize(longestStreak, 'most consecutive active day', 'most consecutive active days')
+		plural('en', longestStreak, {
+			one: 'most consecutive active day',
+			other: 'most consecutive active days'
+		})
 	);
 </script>
 
@@ -120,13 +127,13 @@
 	>
 		{@render dashboardStat({
 			Icon: CalendarCheck,
-			value: formatCount(activeDays),
+			value: formatCount(i18n.locale, activeDays),
 			label: activeDaysLabel,
 			delay: 350
 		})}
 		{@render dashboardStat({
 			Icon: Lightning,
-			value: formatCount(longestStreak),
+			value: formatCount(i18n.locale, longestStreak),
 			label: streakCaption,
 			delay: 400
 		})}
@@ -135,17 +142,17 @@
 	<div class="mb-16 grid grid-cols-2 gap-8">
 		{@render exportStat({
 			Icon: CalendarCheck,
-			value: formatCount(activeDays),
+			value: formatCount(i18n.locale, activeDays),
 			ringStroke: 'var(--color-accent)',
 			ringDashArray: `${yearPercent * 3.27} 327`,
 			ringClass: 'progress-ring',
 			colorClass: 'text-[var(--color-accent)]',
 			label: activeDaysLabel,
-			caption: `${formatPercentOfYear(yearPercent)} of the year`
+			caption: `${formatPercentOfYear(i18n.locale, yearPercent)} of the year`
 		})}
 		{@render exportStat({
 			Icon: Lightning,
-			value: formatCount(longestStreak),
+			value: formatCount(i18n.locale, longestStreak),
 			ringStroke: '#ff6b6b',
 			ringDashArray: '20 10',
 			ringClass: 'streak-ring',

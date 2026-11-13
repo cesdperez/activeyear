@@ -167,3 +167,5 @@ export interface SportAverage {
 	averageDistance: number; // in km
 	averageDuration: number; // in seconds
 }
+
+export type Locale = (typeof import('#lib/constants/locales.js').LOCALES)[number];

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import {
 		formatDistance,
@@ -32,30 +33,30 @@
 		{
 			id: 'distance',
 			label: 'Total Distance',
-			value: formatDistance(appStore.stats?.totalDistance ?? 0, appStore.unit),
+			value: formatDistance(i18n.locale, appStore.stats?.totalDistance ?? 0, appStore.unit),
 			icon: Ruler,
-			equivalent: `🌍 ${formatEarthLaps(appStore.stats?.totalDistance ?? 0)}`
+			equivalent: `🌍 ${formatEarthLaps(i18n.locale, appStore.stats?.totalDistance ?? 0)}`
 		},
 		{
 			id: 'elevation',
 			label: 'Elevation',
-			value: formatElevation(appStore.stats?.totalElevation ?? 0, appStore.unit),
+			value: formatElevation(i18n.locale, appStore.stats?.totalElevation ?? 0, appStore.unit),
 			icon: Mountains,
-			equivalent: `🏔️ ${formatEverests(appStore.stats?.totalElevation ?? 0)}`
+			equivalent: `🏔️ ${formatEverests(i18n.locale, appStore.stats?.totalElevation ?? 0)}`
 		},
 		{
 			id: 'duration',
 			label: 'Time Active',
-			value: formatDuration(appStore.stats?.totalDuration ?? 0),
+			value: formatDuration(i18n.locale, appStore.stats?.totalDuration ?? 0),
 			icon: Timer,
-			equivalent: `💍 ${formatLotRMarathons(appStore.stats?.totalDuration ?? 0)}`
+			equivalent: `💍 ${formatLotRMarathons(i18n.locale, appStore.stats?.totalDuration ?? 0)}`
 		},
 		{
 			id: 'calories',
 			label: 'Calories',
-			value: formatCalories(appStore.stats?.totalCalories ?? 0),
+			value: formatCalories(i18n.locale, appStore.stats?.totalCalories ?? 0),
 			icon: Fire,
-			equivalent: `🍕 ${formatPizzaSlices(appStore.stats?.totalCalories ?? 0)}`
+			equivalent: `🍕 ${formatPizzaSlices(i18n.locale, appStore.stats?.totalCalories ?? 0)}`
 		}
 	]);
 

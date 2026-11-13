@@ -8,8 +8,8 @@ import {
 	weeklyBars,
 	activeDaysPercent
 } from './breakdown.js';
-import { OTHER_SPORT_COLOR, sportColors, sportNames } from '#lib/constants/sports.js';
-import type { ActivityType, SportBreakdown, WeeklyPattern } from '#lib/types/index.js';
+import { OTHER_SPORT_COLOR, sportColors, ACTIVITY_TYPES } from '#lib/constants/sports.js';
+import type { SportBreakdown, WeeklyPattern } from '#lib/types/index.js';
 
 const sport = (overrides: Partial<SportBreakdown>): SportBreakdown => ({
 	type: 'running',
@@ -160,7 +160,7 @@ describe('sportDonutSegments', () => {
 });
 
 describe('sportColorsFor', () => {
-	const allTypes = Object.keys(sportNames) as ActivityType[];
+	const allTypes = ACTIVITY_TYPES;
 
 	it('gives every sport a distinct colour even when all types are shown', () => {
 		const colors = sportColorsFor(allTypes.map((type) => sport({ type })));
@@ -202,50 +202,50 @@ describe('sportColorsFor', () => {
 
 describe('donutCentre', () => {
 	it('shows the activity count in activity mode', () => {
-		expect(donutCentre([sport({ count: 3 }), sport({ count: 4 })], 'count')).toEqual({
+		expect(donutCentre('en', [sport({ count: 3 }), sport({ count: 4 })], 'count')).toEqual({
 			value: '7',
 			label: 'Activities'
 		});
-		expect(donutCentre([sport({ count: 1 })], 'count')).toEqual({
+		expect(donutCentre('en', [sport({ count: 1 })], 'count')).toEqual({
 			value: '1',
 			label: 'Activity'
 		});
 	});
 
 	it('shows the total whole hours in time mode, like Time Active', () => {
-		expect(donutCentre([sport({ duration: 7200 }), sport({ duration: 5400 })], 'duration')).toEqual(
-			{ value: '3', label: 'Hours' }
-		);
-		expect(donutCentre([sport({ duration: 1194 * 3600 + 33 * 60 })], 'duration')).toEqual({
+		expect(
+			donutCentre('en', [sport({ duration: 7200 }), sport({ duration: 5400 })], 'duration')
+		).toEqual({ value: '3', label: 'Hours' });
+		expect(donutCentre('en', [sport({ duration: 1194 * 3600 + 33 * 60 })], 'duration')).toEqual({
 			value: '1,194',
 			label: 'Hours'
 		});
-		expect(donutCentre([sport({ duration: 3600 })], 'duration')).toEqual({
+		expect(donutCentre('en', [sport({ duration: 3600 })], 'duration')).toEqual({
 			value: '1',
 			label: 'Hour'
 		});
 	});
 
 	it('shows minutes when the total is under an hour', () => {
-		expect(donutCentre([sport({ duration: 1200 })], 'duration')).toEqual({
+		expect(donutCentre('en', [sport({ duration: 1200 })], 'duration')).toEqual({
 			value: '20',
 			label: 'Minutes'
 		});
-		expect(donutCentre([sport({ duration: 60 })], 'duration')).toEqual({
+		expect(donutCentre('en', [sport({ duration: 60 })], 'duration')).toEqual({
 			value: '1',
 			label: 'Minute'
 		});
 	});
 
 	it('shows seconds when the total is under a minute', () => {
-		expect(donutCentre([sport({ duration: 45 })], 'duration')).toEqual({
+		expect(donutCentre('en', [sport({ duration: 45 })], 'duration')).toEqual({
 			value: '45',
 			label: 'Seconds'
 		});
 	});
 
 	it('groups thousands', () => {
-		expect(donutCentre([sport({ count: 1200 })], 'count').value).toBe('1,200');
+		expect(donutCentre('en', [sport({ count: 1200 })], 'count').value).toBe('1,200');
 	});
 });
 
@@ -277,4 +277,12 @@ describe('activeDaysPercent', () => {
 		expect(activeDaysPercent(183, 2028)).toBe(50);
 		expect(activeDaysPercent(366, 2028)).toBe(100);
 	});
+});
+
+it('localizes the donut centre', () => {
+	expect(donutCentre('de', [sport({ count: 1200 })], 'count')).toEqual({
+		value: '1.200',
+		label: 'Aktivitäten'
+	});
+	expect(donutCentre('es', [sport({ duration: 60 })], 'duration').label).toBe('Minuto');
 });

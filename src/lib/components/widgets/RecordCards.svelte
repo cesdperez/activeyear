@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { Trophy, Hourglass, Fire } from 'phosphor-svelte';
 	import { formatDistance, formatDuration, formatCalories } from '#lib/utils/format.js';
 	import type { PersonalRecords, Unit, WidgetVariant } from '#lib/types/index.js';
@@ -19,15 +20,20 @@
 			icon: Trophy,
 			label: 'Longest Distance',
 			record: records.longestDistance,
-			format: (value: number) => formatDistance(value, unit)
+			format: (value: number) => formatDistance(i18n.locale, value, unit)
 		},
 		{
 			icon: Hourglass,
 			label: 'Longest Duration',
 			record: records.longestDuration,
-			format: formatDuration
+			format: (value: number) => formatDuration(i18n.locale, value)
 		},
-		{ icon: Fire, label: 'Biggest Burn', record: records.biggestBurn, format: formatCalories }
+		{
+			icon: Fire,
+			label: 'Biggest Burn',
+			record: records.biggestBurn,
+			format: (value: number) => formatCalories(i18n.locale, value)
+		}
 	]);
 </script>
 

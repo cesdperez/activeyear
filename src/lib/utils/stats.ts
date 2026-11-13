@@ -180,10 +180,10 @@ export function calculateWeeklyPattern(activities: Activity[]): WeeklyPattern {
 }
 
 const SUMMARY_METRIC_DISPLAY: [SummaryMetric, (stats: YearStats, unit: Unit) => string][] = [
-	['distance', (stats, unit) => formatDistance(stats.totalDistance, unit)],
-	['elevation', (stats, unit) => formatElevation(stats.totalElevation, unit)],
-	['duration', (stats) => formatDuration(stats.totalDuration)],
-	['calories', (stats) => formatCalories(stats.totalCalories)]
+	['distance', (stats, unit) => formatDistance('en', stats.totalDistance, unit)],
+	['elevation', (stats, unit) => formatElevation('en', stats.totalElevation, unit)],
+	['duration', (stats) => formatDuration('en', stats.totalDuration)],
+	['calories', (stats) => formatCalories('en', stats.totalCalories)]
 ];
 
 /**
