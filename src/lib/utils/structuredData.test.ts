@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { serializeJsonLd } from './structuredData.js';
+import { serializeJsonLd, webApplicationSchema } from './structuredData.js';
 
 describe('serializeJsonLd', () => {
 	it('wraps the data in a JSON-LD script tag', () => {
@@ -12,5 +12,15 @@ describe('serializeJsonLd', () => {
 		expect(html.match(/<\/script>/g)).toHaveLength(1);
 		const json = html.slice(html.indexOf('>') + 1, html.lastIndexOf('<'));
 		expect(JSON.parse(json).text).toBe('</script><script>alert(1)</script>');
+	});
+});
+
+describe('webApplicationSchema', () => {
+	it('uses the locale URL, language and description', () => {
+		expect(webApplicationSchema('de')).toMatchObject({
+			url: 'https://activeyear.app/de/',
+			inLanguage: 'de',
+			description: expect.stringContaining('Jahresrückblick')
+		});
 	});
 });

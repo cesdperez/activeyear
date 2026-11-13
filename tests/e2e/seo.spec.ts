@@ -30,6 +30,20 @@ test.describe('Search and AI discovery', () => {
 		);
 	});
 
+	test('German page has localized metadata and language alternates', async ({ page }) => {
+		await page.goto('/de/');
+		await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+		await expect(page).toHaveTitle(/Jahresrückblick/);
+		await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${SITE_URL}/de/`);
+		for (const locale of ['en', 'es', 'pt', 'fr', 'de', 'nl', 'x-default']) {
+			const path = locale === 'en' || locale === 'x-default' ? '/' : `/${locale}/`;
+			await expect(page.locator(`link[rel="alternate"][hreflang="${locale}"]`)).toHaveAttribute(
+				'href',
+				`${SITE_URL}${path}`
+			);
+		}
+	});
+
 	test('apple touch icon is available as a PNG', async ({ page, request }) => {
 		await page.goto('/');
 
@@ -71,7 +85,11 @@ test.describe('Search and AI discovery', () => {
 		const response = await request.get('/sitemap.xml');
 
 		expect(response.headers()['content-type']).toContain('xml');
-		expect(await response.text()).toContain(`<loc>${SITE_URL}/</loc>`);
+		const body = await response.text();
+		for (const locale of ['en', 'es', 'pt', 'fr', 'de', 'nl']) {
+			const path = locale === 'en' ? '/' : `/${locale}/`;
+			expect(body).toContain(`<loc>${SITE_URL}${path}</loc>`);
+		}
 	});
 
 	test('llms.txt describes the app for language models', async ({ request }) => {

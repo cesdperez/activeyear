@@ -1,11 +1,7 @@
-import {
-	OG_IMAGE_URL,
-	REPOSITORY_URL,
-	SITE_DESCRIPTION,
-	SITE_NAME,
-	SITE_URL
-} from '#lib/constants/site.js';
-import type { FaqItem, JsonLdObject } from '#lib/types/index.js';
+import { OG_IMAGE_URL, REPOSITORY_URL, SITE_NAME, SITE_URL } from '#lib/constants/site.js';
+import { MESSAGES } from '#lib/i18n/messages/index.js';
+import { localePath } from '#lib/i18n/locale.js';
+import type { Locale, FaqItem, JsonLdObject } from '#lib/types/index.js';
 
 /** Renders JSON-LD as a script tag that is safe to insert with `{@html}`. */
 export function serializeJsonLd(data: JsonLdObject): string {
@@ -13,13 +9,14 @@ export function serializeJsonLd(data: JsonLdObject): string {
 	return `<script type="application/ld+json">${json}</script>`;
 }
 
-export function webApplicationSchema(): JsonLdObject {
+export function webApplicationSchema(locale: Locale): JsonLdObject {
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'WebApplication',
 		name: SITE_NAME,
-		url: SITE_URL,
-		description: SITE_DESCRIPTION,
+		url: `${SITE_URL}${localePath(locale)}`,
+		inLanguage: locale,
+		description: MESSAGES[locale].meta.description,
 		image: OG_IMAGE_URL,
 		applicationCategory: 'HealthApplication',
 		operatingSystem: 'Any (web browser)',
