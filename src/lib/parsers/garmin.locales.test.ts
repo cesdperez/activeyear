@@ -143,6 +143,27 @@ describe('localized Garmin exports', () => {
 		);
 		expect(ambiguous.activities[0].date).toEqual(new Date(2026, 10, 5, 10, 22));
 	});
+	it.each([
+		['Tipo de actividad,Fecha,Distancia', 'Ciclismo en carretera', 'cycling'],
+		['Tipo de actividad,Fecha,Distancia', 'Ciclismo de montaña', 'cycling'],
+		['Tipo de actividad,Fecha,Distancia', 'Esquí de fondo', 'winter'],
+		['Aktivitätstyp,Datum,Distanz', 'Rennradfahren', 'cycling'],
+		['Aktivitätstyp,Datum,Distanz', 'Mountainbiken', 'cycling'],
+		["Type d'activité,Date,Distance", 'Vélo de route', 'cycling'],
+		["Type d'activité,Date,Distance", 'VTT', 'cycling'],
+		["Type d'activité,Date,Distance", 'Ski de fond', 'winter'],
+		['Tipo di attività,Data,Distanza', 'Mountain bike', 'cycling'],
+		['Tipo di attività,Data,Distanza', 'Ciclismo indoor', 'cycling'],
+		['Tipo di attività,Data,Distanza', 'Sci di fondo', 'winter'],
+		['Activiteittype,Datum,Afstand', 'Mountainbiken', 'cycling'],
+		['Activiteittype,Datum,Afstand', 'Langlaufen', 'winter'],
+		['Tipo de atividade,Data,Distância', 'Ciclismo de estrada', 'cycling'],
+		['Tipo de atividade,Data,Distância', 'Mountain bike', 'cycling'],
+		['Tipo de atividade,Data,Distância', 'Corrida em trilha', 'running']
+	])('maps %s type %s', (header, type, expected) => {
+		const result = parseGarminCsv(`${header}\n${type},2025-01-01 12:00:00,10`, 2025);
+		expect(result.activities[0].type).toBe(expected);
+	});
 	it('does not detect localized Strava headers', () => {
 		expect(
 			garminParser.detect(

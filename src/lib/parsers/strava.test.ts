@@ -235,6 +235,27 @@ describe('localized Strava exports', () => {
 			['other', 12.75, 400, 0, 0]
 		]);
 	});
+	it.each([
+		[
+			'Aktivitätsdatum,Name der Aktivität,Aktivitätsart,Bewegungszeit,Distanz',
+			'"02.03.2026, 06:34:08"',
+			'Krafttraining'
+		],
+		[
+			'Datum van activiteit,Naam activiteit,Activiteitstype,Beweegtijd,Afstand',
+			'"2 mrt 2026, 06:34:08"',
+			'Krachttraining'
+		],
+		[
+			'Data da atividade,Nome da atividade,Tipo de atividade,Tempo em movimento,Distância',
+			'"2 de mar. de 2026, 06:34:08"',
+			'Musculação'
+		]
+	])('maps localized weight training under %s', (header, date, type) => {
+		const result = stravaParser.parse(`${header}\n${date},Lift,${type},100,0`, 2026);
+		expect(result.errors).toEqual([]);
+		expect(result.activities[0].type).toBe('strength');
+	});
 	it('parses Portuguese dates and unknown activity types', () => {
 		const csv =
 			'Data da atividade,Nome da atividade,Tipo de atividade,Tempo em movimento,Distância\n"2 de mar. de 2026, 06:34:08",Activity,Unknown,100,1450';
