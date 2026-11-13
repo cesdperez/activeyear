@@ -13,6 +13,8 @@ export default defineConfig({
 	use: {
 		baseURL,
 		reducedMotion: 'reduce',
+		// A US browser starts on miles and Imperial, so specs pin a metric region and opt into US.
+		locale: 'en-GB',
 		trace: 'on-first-retry'
 	},
 	projects: [

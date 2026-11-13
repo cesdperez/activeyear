@@ -20,6 +20,7 @@
 	import SupportLink from '#lib/components/dashboard/SupportLink.svelte';
 	import SaveYear from '#lib/components/dashboard/SaveYear.svelte';
 	import FloatingSupportLink from '#lib/components/dashboard/FloatingSupportLink.svelte';
+	import DashboardFileDrop from '#lib/components/dashboard/DashboardFileDrop.svelte';
 	import { useConfettiRain } from '#lib/components/dashboard/confettiRain.svelte.js';
 
 	useConfettiRain();
@@ -75,3 +76,4 @@
 </div>
 
 <FloatingSupportLink {header} />
+<DashboardFileDrop />
