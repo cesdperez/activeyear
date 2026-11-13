@@ -85,6 +85,7 @@ export const dashboard: typeof en = {
 	moreStats: 'Mehr Statistiken',
 	quarters: 'Quartale',
 	rest: 'Pause',
+	demoData: 'Beispieldaten',
 	noData: 'Keine Daten',
 	noActivities: 'Keine Aktivitäten',
 	longestBreak: 'Längste Pause',

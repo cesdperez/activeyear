@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { demoActivities } from './demo.js';
+import { demoActivities, demoYear } from './demo.js';
 import {
 	calculatePersonalRecords,
 	calculateWeeklyPattern,
@@ -35,6 +35,28 @@ describe('demoActivities', () => {
 		expect(records.longestDistance?.activity.title).toBe('Century Ride Achievement');
 		expect(records.longestDuration?.activity.title).toBe('Summit Sunrise Hike');
 		expect(records.biggestBurn?.activity.title).toBe('Century Ride Achievement');
+	});
+
+	describe('demoYear', () => {
+		it('is the whole year once the season is over', () => {
+			expect(demoYear(new Date(TARGET_YEAR + 1, 0, 15))).toEqual({
+				activities: demoActivities,
+				source: null,
+				cutShort: null,
+				loadedAt: null
+			});
+		});
+
+		it('stops at today while the season runs', () => {
+			const today = new Date(TARGET_YEAR, 5, 10, 9);
+			const year = demoYear(today);
+			const endOfToday = new Date(TARGET_YEAR, 5, 11);
+
+			expect(year.loadedAt).toEqual(today);
+			expect(year.activities.length).toBeGreaterThan(0);
+			expect(year.activities.every((a) => a.date < endOfToday)).toBe(true);
+			expect(year.activities).toEqual(demoActivities.filter((a) => a.date < endOfToday));
+		});
 	});
 
 	describe('in other timezones', () => {

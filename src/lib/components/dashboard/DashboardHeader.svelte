@@ -12,13 +12,15 @@
 		activeDays,
 		skippedRowCount,
 		cutShort,
-		yearSoFar
+		yearSoFar,
+		demo
 	}: {
 		activityCount: number;
 		activeDays: number;
 		skippedRowCount: number;
 		cutShort: Date | null;
 		yearSoFar: boolean;
+		demo: boolean;
 	} = $props();
 
 	const JUMP_GAP_PX = 32;
@@ -53,6 +55,14 @@
 
 <header class="mt-12 mb-12 text-center md:mt-8 md:mb-14">
 	<Logotype class="mb-8 text-[1.75rem]" />
+	{#if demo}
+		<p class="mb-4">
+			<span
+				class="inline-block rounded-[var(--radius-control)] border border-[var(--color-border)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-muted)]"
+				>{i18n.m.dashboard.demoData}</span
+			>
+		</p>
+	{/if}
 	<h1
 		class="display-heading mb-5 text-[clamp(3.5rem,13vw,7rem)] font-black"
 		tabindex="-1"

@@ -35,6 +35,7 @@
 			skippedRowCount={uploadStore.skippedRowCount}
 			cutShort={yearData.cutShort}
 			yearSoFar={yearData.yearSoFar}
+			demo={yearData.source === null}
 		/>
 	</div>
 	<MainStats

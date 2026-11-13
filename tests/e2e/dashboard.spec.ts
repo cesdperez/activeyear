@@ -14,6 +14,8 @@ const DAYS_IN_TARGET_YEAR =
 	(Date.UTC(TARGET_YEAR + 1, 0, 1) - Date.UTC(TARGET_YEAR, 0, 1)) / 86_400_000;
 
 async function openDemo(page: Page): Promise<void> {
+	// After the season, so the demo is its whole fixed year.
+	await page.clock.setFixedTime(new Date(TARGET_YEAR + 1, 0, 15));
 	await page.goto('/');
 	await page.getByRole('button', { name: /demo data/i }).click();
 	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
