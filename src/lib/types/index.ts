@@ -1,3 +1,6 @@
+export type HighlightPreset =
+	'longest' | 'farthest' | 'climbs' | 'per-sport' | 'best-month' | 'favorites';
+
 export type ActivityType =
 	| 'running'
 	| 'cycling'

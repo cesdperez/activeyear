@@ -1,3 +1,4 @@
+import { presetHighlights } from '#lib/utils/highlights.js';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { appStore } from './app.svelte.js';
 import { TARGET_YEAR } from '../constants/time.js';
@@ -119,8 +120,39 @@ describe('appStore', () => {
 
 		expect(appStore.status).toBe('ready');
 		expect(appStore.stats).toEqual(calculateYearStats(demoActivities));
-		expect(appStore.highlights).toEqual(demoActivities.filter((a) => a.favorite));
+		expect(appStore.highlights).toEqual(presetHighlights(demoActivities, 'longest'));
 		expect(appStore.highlights.length).toBeGreaterThan(0);
+	});
+
+	it('edits highlights, enforces the cap and resets on load', () => {
+		appStore.loadDemoData();
+		expect(appStore.highlightPreset).toBe('longest');
+		expect(appStore.canAddHighlight).toBe(false);
+		const original = appStore.highlights[0];
+		const other = appStore.activities.find((activity) => !appStore.isHighlight(activity))!;
+		appStore.addHighlight(other);
+		expect(appStore.isHighlight(other)).toBe(false);
+		appStore.removeHighlight(original);
+		expect(appStore.highlightPreset).toBe('custom');
+		expect(appStore.canAddHighlight).toBe(true);
+		appStore.addHighlight(other);
+		appStore.addHighlight(other);
+		expect(appStore.highlights).toHaveLength(10);
+		expect(appStore.isHighlight(other)).toBe(true);
+		expect(appStore.highlights).toEqual(
+			[...appStore.highlights].sort((a, b) => a.date.getTime() - b.date.getTime())
+		);
+		appStore.applyHighlightPreset('favorites');
+		expect(appStore.highlightPreset).toBe('favorites');
+		expect(appStore.highlights).toEqual(presetHighlights(appStore.activities, 'favorites'));
+		expect(appStore.highlightPresets).toContain('longest');
+		expect(appStore.searchActivities(other.title)).toContain(other);
+		appStore.loadDemoData();
+		expect(appStore.highlightPreset).toBe('longest');
+		expect(appStore.highlights).toEqual(presetHighlights(demoActivities, 'longest'));
+		appStore.reset();
+		expect(appStore.highlights).toEqual([]);
+		expect(appStore.highlightPreset).toBe('longest');
 	});
 
 	it('derives records, breakdown and weekly pattern from the demo activities', () => {
