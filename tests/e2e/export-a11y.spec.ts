@@ -1,6 +1,7 @@
 import { test, expect, type Download, type Page } from '@playwright/test';
 import { readFileSync } from 'fs';
-import { showSlide, uploadSample } from './helpers.js';
+import { TARGET_YEAR } from '../../src/lib/constants/time.js';
+import { garminCsv, showSlide, uploadCsv, uploadSample } from './helpers.js';
 
 const VALID_PNG = {
 	name: 'avatar.png',
@@ -311,5 +312,103 @@ test.describe('Export carousel', () => {
 
 		await drag(120, 0);
 		await expect(page.getByText('Summary (1/3)')).toBeVisible();
+	});
+});
+
+test.describe('Export progress and results', () => {
+	test('the visible preview stays on its slide while every card exports', async ({ page }) => {
+		await uploadSample(page);
+		await page.evaluate(() => {
+			const label = document.querySelector('.slide-label')!;
+			const seen = new Set([label.textContent]);
+			new MutationObserver(() => seen.add(label.textContent)).observe(label, {
+				subtree: true,
+				characterData: true,
+				childList: true
+			});
+			Object.assign(window, { seenSlides: seen });
+		});
+		const downloads = collectDownloads(page, 3);
+
+		await page.locator('#export-download').click();
+		await downloads;
+
+		const seen = await page.evaluate(() => [
+			...(window as unknown as { seenSlides: Set<string> }).seenSlides
+		]);
+		expect(seen).toEqual(['Summary (1/3)']);
+		await expect(page.locator('[id="export-card"]')).toHaveCount(1);
+	});
+
+	test('a finished export shows a visible confirmation next to the button', async ({ page }) => {
+		await uploadSample(page);
+		const downloads = collectDownloads(page, 3);
+
+		await page.locator('#export-download').click();
+		await downloads;
+
+		const confirmation = page.getByText('Downloaded three images', { exact: true }).last();
+		await expect(confirmation).toBeVisible();
+		const button = await page.locator('#export-download').boundingBox();
+		const note = await confirmation.boundingBox();
+		expect(note!.height).toBeGreaterThan(12);
+		expect(note!.y - (button!.y + button!.height)).toBeLessThan(24);
+	});
+
+	test('an avatar error clears when the theme changes', async ({ page }) => {
+		await uploadSample(page);
+		await page.locator('#userAvatar').setInputFiles(TEXT_FILE);
+		await expect(page.locator('#userAvatar-error')).toBeVisible();
+
+		await page.getByRole('button', { name: /Retro/ }).click();
+
+		await expect(page.locator('#userAvatar-error')).toHaveCount(0);
+	});
+
+	test('a large photo is stored at the size the cards draw', async ({ page }) => {
+		await uploadSample(page);
+		const photo = await page.evaluate(async () => {
+			const canvas = document.createElement('canvas');
+			canvas.width = 4000;
+			canvas.height = 3000;
+			const context = canvas.getContext('2d')!;
+			for (let i = 0; i < 2000; i++) {
+				context.fillStyle = `hsl(${i % 360} 80% 50%)`;
+				context.fillRect(Math.random() * 4000, Math.random() * 3000, 200, 200);
+			}
+			return canvas.toDataURL('image/jpeg', 0.95).split(',')[1];
+		});
+		await page.locator('#userAvatar').setInputFiles({
+			name: 'photo.jpg',
+			mimeType: 'image/jpeg',
+			buffer: Buffer.from(photo, 'base64')
+		});
+
+		const preview = page.locator('#export-panel img').first();
+		await expect(preview).toBeVisible();
+		const stored = await preview.evaluate(async (img: HTMLImageElement) => {
+			await img.decode();
+			return { width: img.naturalWidth, height: img.naturalHeight, length: img.src.length };
+		});
+		expect(Math.min(stored.width, stored.height)).toBe(640);
+		expect(stored.width).toBe(853);
+		expect(stored.length).toBeLessThan(500_000);
+	});
+
+	test('without highlights the export promises and downloads two images', async ({ page }) => {
+		await uploadCsv(page, garminCsv([{ title: 'Long run' }, { title: 'Easy run' }]));
+		for (const title of ['Long run', 'Easy run'])
+			await page.getByRole('button', { name: `Remove ${title} from highlights` }).click();
+
+		await expect(page.getByText('Downloads two images: Summary and Breakdown')).toBeVisible();
+		const downloads: Download[] = [];
+		page.on('download', (download) => downloads.push(download));
+		await page.locator('#export-download').click();
+		await expect(page.locator('#export-status')).toHaveText('Downloaded two images');
+		await expect.poll(() => downloads.length).toBe(2);
+		expect(downloads.map((download) => download.suggestedFilename())).toEqual([
+			`activeyear-${TARGET_YEAR}-summary.png`,
+			`activeyear-${TARGET_YEAR}-breakdown.png`
+		]);
 	});
 });
