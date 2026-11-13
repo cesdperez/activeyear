@@ -12,7 +12,7 @@ export default defineConfig({
 		sveltekit({
 			preprocess: vitePreprocess(),
 			paths: { relative: false },
-			adapter: adapter({ routes: { include: ['/*'], exclude: ['/*'] } })
+			adapter: adapter({ routes: { include: ['/api/*'], exclude: [] } })
 		}),
 		cspScriptHashes('.svelte-kit/cloudflare')
 	],

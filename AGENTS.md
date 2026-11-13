@@ -44,7 +44,7 @@ Cloudflare Pages auto-deploys on push to `main` (Git integration, no CI pipeline
 
 Security headers:
 
-- The app is fully prerendered and the worker is routed no paths, so `_headers` is the only source of security headers.
+- Every page is prerendered and the worker is routed only `/api/*` (the event endpoint), so `_headers` is the only source of security headers for pages.
 - `csp-script-hashes.ts` adds the hash of SvelteKit's inline bootstrap script to the CSP at build time. Any other inline script is blocked.
 
 Solo project, kept simple: there is no CI. Local git hooks run the checks instead, set up by `simple-git-hooks` in `package.json` and installed by `pnpm install` through `prepare`:

@@ -6,7 +6,14 @@ declare global {
 		// interface Locals {}
 		// interface PageData {}
 		// interface PageState {}
-		// interface Platform {}
+		interface Platform {
+			env?: {
+				EVENTS?: {
+					writeDataPoint(data: { blobs: string[]; doubles: number[]; indexes: string[] }): void;
+				};
+			};
+			cf?: { country?: string };
+		}
 	}
 }
 
