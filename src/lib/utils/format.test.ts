@@ -9,6 +9,7 @@ import {
 	formatEarthLaps,
 	formatEverests,
 	formatPizzaSlices,
+	formatLotRMarathons,
 	calculateEarthLaps,
 	calculateEverests,
 	calculatePizzaSlices,
@@ -131,9 +132,9 @@ describe('formatEarthLaps', () => {
 		expect(formatEarthLaps('en', 400)).toBe('1.0% of a lap around the globe');
 	});
 
-	it('formats larger values as multiplier', () => {
-		expect(formatEarthLaps('en', 80150)).toBe('2.00x laps around the globe');
-		expect(formatEarthLaps('en', 400750)).toBe('10.00x laps around the globe');
+	it('formats larger values as a count of laps', () => {
+		expect(formatEarthLaps('en', 80150)).toBe('2.00 laps around the globe');
+		expect(formatEarthLaps('en', 400750)).toBe('10.00 laps around the globe');
 	});
 
 	it('formats values between 0.1 and 1.0 as percentage', () => {
@@ -142,6 +143,15 @@ describe('formatEarthLaps', () => {
 
 	it('never rounds a partial lap up to 100%', () => {
 		expect(formatEarthLaps('en', 40070)).toBe('99.9% of a lap around the globe');
+	});
+
+	it('shows a share that would round to 0.0% as <0.1%', () => {
+		expect(formatEarthLaps('en', 10)).toBe('<0.1% of a lap around the globe');
+	});
+
+	it('uses the locale percent format and word order', () => {
+		expect(formatEarthLaps('de', 2032)).toBe('5,1\u00a0% einer Erdumrundung');
+		expect(formatEarthLaps('de', 50093.75)).toBe('1,25 Erdumrundungen');
 	});
 });
 
@@ -155,20 +165,40 @@ describe('calculateEverests', () => {
 describe('formatEverests', () => {
 	it('formats small values as percentage', () => {
 		// (884 / 8848) * 100 = 9.99...% -> 10%
-		expect(formatEverests('en', 884)).toBe('10% the height of Mt. Everest');
+		expect(formatEverests('en', 884)).toBe('10% of the height of Mt. Everest');
 	});
 
 	it('formats larger values as multiplier', () => {
-		expect(formatEverests('en', 8848)).toBe('1.0x the height of Mt. Everest');
-		expect(formatEverests('en', 20000)).toBe('2.3x the height of Mt. Everest');
+		expect(formatEverests('en', 8848)).toBe('1.0x Mt. Everest');
+		expect(formatEverests('en', 20000)).toBe('2.3x Mt. Everest');
 	});
 
 	it('formats values between 0.1 and 1.0 as percentage', () => {
-		expect(formatEverests('en', 4424)).toBe('50% the height of Mt. Everest');
+		expect(formatEverests('en', 4424)).toBe('50% of the height of Mt. Everest');
 	});
 
 	it('never rounds a partial Everest up to 100%', () => {
-		expect(formatEverests('en', 8840)).toBe('99% the height of Mt. Everest');
+		expect(formatEverests('en', 8840)).toBe('99% of the height of Mt. Everest');
+	});
+
+	it('shows a share that would round to 0% as <1%', () => {
+		expect(formatEverests('en', 20)).toBe('<1% of the height of Mt. Everest');
+	});
+
+	it('words the share and the multiple separately in each locale', () => {
+		expect(formatEverests('de', 1062)).toBe('12\u00a0% der Höhe des Mount Everest');
+		expect(formatEverests('de', 15042)).toBe('1,7-mal so hoch wie der Mount Everest');
+		expect(formatEverests('es', 15042)).toBe('1,7 veces la altura del Everest');
+	});
+});
+
+describe('formatLotRMarathons', () => {
+	it('shows one decimal of a marathon', () => {
+		expect(formatLotRMarathons('en', 42960 * 2.5)).toBe('2.5 LotR marathons');
+	});
+
+	it('shows a total that would round to 0.0 as <0.1', () => {
+		expect(formatLotRMarathons('en', 600)).toBe('<0.1 LotR marathons');
 	});
 });
 
@@ -225,6 +255,11 @@ describe('formatPercentOfYear', () => {
 
 	it('shows a non-zero share under one percent as <1%', () => {
 		expect(formatPercentOfYear('en', 0.27)).toBe('<1%');
+	});
+
+	it('uses the locale percent format', () => {
+		expect(formatPercentOfYear('fr', 20.4)).toBe('20\u00a0%');
+		expect(formatPercentOfYear('de', 0.27)).toBe('<1\u00a0%');
 	});
 
 	it('never rounds a partial year up to 100%', () => {

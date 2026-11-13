@@ -34,9 +34,10 @@ export const common: typeof en = {
 	pizza: (count: number) =>
 		plural('de', count, { one: 'verbranntes Stück Pizza', other: 'verbrannte Stücke Pizza' }),
 	lessPizza: 'Weniger als ein Stück Pizza verbrannt',
-	earthLaps: 'Erdumrundungen',
-	earthPartial: 'einer Erdumrundung',
-	everest: 'der Höhe des Mount Everest',
+	earthPartial: (share) => `${share} einer Erdumrundung`,
+	earthLaps: (laps) => `${laps} Erdumrundungen`,
+	everestPartial: (share) => `${share} der Höhe des Mount Everest`,
+	everestMultiple: (times) => `${times}-mal so hoch wie der Mount Everest`,
 	lotr: 'Herr-der-Ringe-Marathons',
 	dayByDay: 'Tag für Tag',
 	yearLane: {
