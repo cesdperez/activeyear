@@ -563,8 +563,10 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 		? repairMalformedQuotes(content)
 		: { content, errors: [] };
 	errors.push(...repaired.errors);
+	let rowCount = repaired.errors.length;
 
 	readRows(deduplicateHeaders(repaired.content), (row, line, rowErrors) => {
+		rowCount++;
 		errors.push(...papaRowErrors(rowErrors, line));
 
 		if (!row['Activity Type'] || !row['Date']) {
@@ -586,7 +588,7 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 		if (isInYear(date, targetYear)) activities.push(readActivity(row, date));
 	});
 
-	return { source: 'garmin', activities, errors, yearsInFile: sortedYears(years) };
+	return { source: 'garmin', activities, errors, yearsInFile: sortedYears(years), rowCount };
 }
 
 // Quotes are dropped before splitting so a header row wrapped whole in quotes still matches.

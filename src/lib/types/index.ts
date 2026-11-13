@@ -112,6 +112,7 @@ export interface ParseResult {
 	errors: ParseError[];
 	/** Every year with a readable activity in the file, ascending, whatever the target year. */
 	yearsInFile: number[];
+	rowCount: number;
 }
 
 /** Reads one export format; `detect` decides whether `parse` should handle the file. */

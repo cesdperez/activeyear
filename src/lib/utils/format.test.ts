@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
 	formatShortDate,
+	formatDayMonth,
 	formatDistance,
 	formatDuration,
 	formatCalories,
@@ -16,6 +17,14 @@ import {
 	formatPercentOfYear,
 	secondsUnderAMinute
 } from './format.js';
+
+describe('formatDayMonth', () => {
+	it('formats the day and month in locale order', () => {
+		const date = new Date(2026, 2, 14);
+		expect(formatDayMonth('en', date)).toBe('March 14');
+		expect(formatDayMonth('fr', date)).toBe('14 mars');
+	});
+});
 
 describe('formatDistance', () => {
 	it('formats distances with appropriate precision', () => {
