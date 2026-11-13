@@ -1,7 +1,8 @@
 import { HIGHLIGHTS_LIMIT } from '#lib/constants/export.js';
 import { HIGHLIGHT_PRESETS } from '#lib/constants/highlights.js';
+import { INTL_LOCALES } from '#lib/constants/locales.js';
 import { MESSAGES } from '#lib/i18n/messages/index.js';
-import type { Activity, ActivityType, HighlightPreset } from '#lib/types/index.js';
+import type { Activity, ActivityType, HighlightPreset, Locale } from '#lib/types/index.js';
 
 const byDate = (a: Activity, b: Activity) => a.date.getTime() - b.date.getTime();
 const byDuration = (a: Activity, b: Activity) => b.duration - a.duration || byDate(a, b);
@@ -45,24 +46,28 @@ export function presetHighlights(activities: Activity[], preset: HighlightPreset
 }
 
 export function availablePresets(activities: Activity[]): HighlightPreset[] {
-	return (Object.keys(HIGHLIGHT_PRESETS) as HighlightPreset[]).filter(
-		(preset) => presetHighlights(activities, preset).length > 0
-	);
+	return HIGHLIGHT_PRESETS.filter((preset) => presetHighlights(activities, preset).length > 0);
 }
 
-export function activitySearchText(activity: Activity): string {
+const normalizeSearch = (text: string) => text.toLowerCase().replace(/(?<=\d),(?=\d)/g, '.');
+
+export function activitySearchText(activity: Activity, locale: Locale): string {
 	const date = activity.date;
-	const month = date.toLocaleString('en-US', { month: 'long' });
+	const months = [INTL_LOCALES[locale], INTL_LOCALES.en].flatMap((name) =>
+		(['long', 'short'] as const).map((month) =>
+			new Intl.DateTimeFormat(name, { month }).format(date)
+		)
+	);
 	const isoDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 	const distance =
 		activity.distance > 0
 			? `${Math.round(activity.distance)} km ${Math.round(activity.distance / 1.609344)} mi ${activity.distance.toFixed(1)} km ${activity.distance.toFixed(1)}km ${(activity.distance / 1.609344).toFixed(1)} mi ${(activity.distance / 1.609344).toFixed(1)}mi`
 			: '';
-	return `${activity.title} ${Object.values(MESSAGES)
-		.map((messages) => messages.common.sports[activity.type])
-		.join(
-			' '
-		)} ${month} ${month.slice(0, 3)} ${date.getDate()} ${isoDate} ${distance}`.toLowerCase();
+	return normalizeSearch(
+		`${activity.title} ${Object.values(MESSAGES)
+			.map((messages) => messages.common.sports[activity.type])
+			.join(' ')} ${months.join(' ')} ${date.getDate()} ${isoDate} ${distance}`
+	);
 }
 
 export function searchActivities(
@@ -71,10 +76,7 @@ export function searchActivities(
 	query: string,
 	limit: number
 ): Activity[] {
-	const trimmed = query
-		.trim()
-		.toLowerCase()
-		.replace(/(?<=\d),(?=\d)/g, '.');
+	const trimmed = normalizeSearch(query.trim());
 	if (!trimmed || limit <= 0) return [];
 	const tokens = trimmed.split(/\s+/);
 	const matches: Activity[] = [];
