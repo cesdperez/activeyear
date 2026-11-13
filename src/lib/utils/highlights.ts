@@ -72,18 +72,25 @@ export function activitySearchText(activity: Activity): string {
 	);
 }
 
+export interface SearchResults {
+	matches: Activity[];
+	total: number;
+}
+
 export function searchActivities(
 	activities: Activity[],
 	searchTexts: string[],
 	query: string,
 	limit: number
-): Activity[] {
+): SearchResults {
 	const trimmed = normalizeSearch(query.trim());
-	if (!trimmed || limit <= 0) return [];
+	if (!trimmed || limit <= 0) return { matches: [], total: 0 };
 	const tokens = trimmed.split(/\s+/);
 	const matches: Activity[] = [];
+	let total = 0;
 	for (let i = 0; i < activities.length; i++) {
 		if (!tokens.every((token) => searchTexts[i].includes(token))) continue;
+		total++;
 		const activity = activities[i];
 		let position = 0;
 		while (position < matches.length && byDate(matches[position], activity) >= 0) position++;
@@ -92,5 +99,5 @@ export function searchActivities(
 			if (matches.length > limit) matches.pop();
 		}
 	}
-	return matches;
+	return { matches, total };
 }

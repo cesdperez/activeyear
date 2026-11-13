@@ -53,7 +53,7 @@ describe('highlights', () => {
 		expect(highlightsStore.highlightPreset).toBe('favorites');
 		expect(highlightsStore.highlights).toEqual(presetHighlights(yearData.activities, 'favorites'));
 		expect(highlightsStore.highlightPresets).toContain('longest');
-		expect(highlightsStore.searchActivities(other.title)).toContain(other);
+		expect(highlightsStore.searchActivities(other.title).matches).toContain(other);
 		uploadStore.loadDemoData();
 		expect(highlightsStore.highlightPreset).toBe('longest');
 		expect(highlightsStore.highlights).toEqual(presetHighlights(demoActivities, 'longest'));

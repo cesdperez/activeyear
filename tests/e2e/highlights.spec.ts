@@ -1,10 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 import {
 	DASHBOARD_HEADING,
+	garminCsv,
 	gotoUpload,
-	SAMPLE_CSV,
 	showSlide,
 	STRAVA_CSV,
+	uploadCsv,
 	uploadSample
 } from './helpers.js';
 
@@ -27,7 +28,7 @@ for (const source of ['Garmin', 'Strava'] as const) {
 			'true'
 		);
 		await expect(section.getByTestId('highlight-row').first()).toBeVisible();
-		const search = section.getByRole('searchbox', { name: 'Search your activities' });
+		const search = section.getByRole('searchbox', { name: 'Add an activity' });
 		await chips.getByRole('button', { name: 'Biggest climbs' }).click();
 		const title = source === 'Garmin' ? 'Indoor Cycling' : 'Evening Yoga';
 		const nonMatch = source === 'Garmin' ? 'Sample Running' : 'Morning Swim';
@@ -81,25 +82,54 @@ test('presets and search work with a keyboard on mobile', async ({ page }) => {
 	await expect(section.getByText('Your own picks.')).toBeVisible();
 });
 
-test.describe('on a phone', () => {
-	test.use({ viewport: { width: 390, height: 844 } });
+const twelveTempos = () =>
+	garminCsv(Array.from({ length: 12 }, (_, i) => ({ title: `Tempo ${i + 1}` })));
 
-	for (const lang of ['en', 'es', 'pt', 'fr', 'de', 'nl']) {
-		test(`the ${lang} search placeholder fits the input`, async ({ page }) => {
-			await gotoUpload(page, lang === 'en' ? '/' : `/${lang}/`);
-			await page.locator('input[type="file"]').setInputFiles(SAMPLE_CSV);
-			const search = page.locator('#highlight-search');
-			await expect(search).toBeVisible({ timeout: 10000 });
+function highlightsSection(page: Page) {
+	return page
+		.locator('section')
+		.filter({ has: page.getByRole('heading', { name: 'Highlights', exact: true }) });
+}
 
-			const overflow = await search.evaluate((input: HTMLInputElement) => {
-				const style = getComputedStyle(input);
-				const context = document.createElement('canvas').getContext('2d')!;
-				context.font = style.font;
-				const room =
-					input.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
-				return context.measureText(input.placeholder).width - room;
-			});
-			expect(overflow).toBeLessThanOrEqual(0);
-		});
-	}
+test('search shows how many activities matched and separates each figure', async ({ page }) => {
+	await uploadCsv(page, twelveTempos());
+	const section = highlightsSection(page);
+	await expect(section.getByText('Add an activity', { exact: true })).toBeVisible();
+	const search = section.getByRole('searchbox', { name: 'Add an activity' });
+	await search.fill('tempo');
+	await expect(
+		section.getByText('Showing 8 of 12. Add words to narrow it down.', { exact: true })
+	).toBeVisible();
+	await expect(section.locator('li button').first()).toContainText('10.0km, 50m, Running');
+});
+
+test('at the highlight limit the search says so and results stay reachable', async ({ page }) => {
+	await uploadCsv(page, twelveTempos());
+	const section = highlightsSection(page);
+	const search = section.getByRole('searchbox', { name: 'Add an activity' });
+	await expect(search).toHaveAccessibleDescription(/10 highlights max/);
+	await search.fill('tempo 12');
+	const result = section.locator('li button').filter({ hasText: 'Tempo 12' });
+	await expect(result).toHaveAttribute('aria-disabled', 'true');
+	await search.press('Tab');
+	await expect(result).toBeFocused();
+});
+
+test('removing a highlight announces it and keeps focus in the list', async ({ page }) => {
+	await uploadCsv(page, twelveTempos());
+	const section = highlightsSection(page);
+	await section.getByRole('button', { name: 'Remove Tempo 1 from highlights' }).click();
+	await expect(
+		section.getByRole('button', { name: 'Remove Tempo 2 from highlights' })
+	).toBeFocused();
+	await expect(section.locator('[aria-live]')).toHaveText('Removed Tempo 1');
+	await section.getByRole('button', { name: 'Remove Tempo 10 from highlights' }).click();
+	await expect(section.getByRole('searchbox', { name: 'Add an activity' })).toBeFocused();
+});
+
+test('biggest climbs shows each climb', async ({ page }) => {
+	await uploadCsv(page, twelveTempos());
+	const section = highlightsSection(page);
+	await section.getByRole('button', { name: 'Biggest climbs' }).click();
+	await expect(section.getByTestId('highlight-row').first()).toContainText('100m');
 });

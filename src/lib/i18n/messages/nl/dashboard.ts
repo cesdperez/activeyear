@@ -11,9 +11,10 @@ export const dashboard: typeof en = {
 	opensKofi: '(opent Ko-fi in een nieuw tabblad)',
 	customPicks: 'Je eigen selectie.',
 	highlightPresets: 'Hoogtepuntselecties',
-	searchActivities: 'Zoek je activiteiten',
-	searchPlaceholder: 'Voeg een activiteit toe',
+	addActivity: 'Voeg een activiteit toe',
 	searchHint: 'Zoek op titel, sport, maand of afstand',
+	searchResultsCapped: (shown: string, total: string) =>
+		`${shown} van ${total} getoond. Voeg woorden toe om je zoekopdracht te verfijnen.`,
 	noSearchMatches: 'Geen activiteiten gevonden',
 	noPicks: 'Geen hoogtepunten gekozen. Kies een selectie of zoek je activiteiten.',
 	removeHighlight: (x: string) => `${x} uit hoogtepunten verwijderen`,

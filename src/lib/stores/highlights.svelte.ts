@@ -5,7 +5,8 @@ import {
 	activitySearchText,
 	availablePresets,
 	presetHighlights,
-	searchActivities
+	searchActivities,
+	type SearchResults
 } from '#lib/utils/highlights.js';
 import { yearData } from './yearData.svelte.js';
 
@@ -53,7 +54,7 @@ class HighlightsStore {
 		return this.#highlights.includes(activity);
 	}
 
-	searchActivities(query: string): Activity[] {
+	searchActivities(query: string): SearchResults {
 		return searchActivities(yearData.activities, this.#searchTexts, query, HIGHLIGHT_SEARCH_LIMIT);
 	}
 

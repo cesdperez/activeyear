@@ -11,9 +11,10 @@ export const dashboard: typeof en = {
 	opensKofi: '(abre Ko-fi en una pestaña nueva)',
 	customPicks: 'Tu propia selección.',
 	highlightPresets: 'Selecciones de destacados',
-	searchActivities: 'Buscar actividades',
-	searchPlaceholder: 'Añade una actividad',
+	addActivity: 'Añade una actividad',
 	searchHint: 'Busca por título, deporte, mes o distancia',
+	searchResultsCapped: (shown: string, total: string) =>
+		`Se muestran ${shown} de ${total}. Añade palabras para afinar la búsqueda.`,
 	noSearchMatches: 'No hay actividades coincidentes',
 	noPicks: 'No has elegido destacados. Elige una selección o busca tus actividades.',
 	removeHighlight: (x: string) => `Quitar ${x} de destacados`,

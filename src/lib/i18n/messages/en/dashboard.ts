@@ -10,9 +10,10 @@ export const dashboard = {
 	opensKofi: '(opens Ko-fi in a new tab)',
 	customPicks: 'Your own picks.',
 	highlightPresets: 'Highlight presets',
-	searchActivities: 'Search your activities',
-	searchPlaceholder: 'Add an activity',
+	addActivity: 'Add an activity',
 	searchHint: 'Search by title, sport, month or distance',
+	searchResultsCapped: (shown: string, total: string) =>
+		`Showing ${shown} of ${total}. Add words to narrow it down.`,
 	noSearchMatches: 'No activities match',
 	noPicks: 'No highlights picked. Pick a preset or search your activities.',
 	removeHighlight: (x: string) => `Remove ${x} from highlights`,
