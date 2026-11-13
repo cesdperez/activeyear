@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import { selectTopSports, sportColorsFor } from '#lib/utils/breakdown.js';
 	import ExportCardBase from './ExportCardBase.svelte';
@@ -11,7 +12,7 @@
 	let colors = $derived(sportColorsFor(appStore.breakdown || []));
 </script>
 
-<ExportCardBase variant="breakdown" title="BREAKDOWN">
+<ExportCardBase variant="breakdown" title={i18n.m.export.breakdown}>
 	{#if topSports.length > 0}
 		<SportDistribution sports={topSports} {colors} metric={appStore.breakdownMetric} />
 	{/if}

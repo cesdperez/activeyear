@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
-	import { plural } from '#lib/i18n/plural.js';
 	import { tick } from 'svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import { formatCount, formatDistance, formatDuration } from '#lib/utils/format.js';
@@ -10,21 +9,6 @@
 	import { sportIcons } from '#lib/constants/sports.js';
 	import type { Activity } from '#lib/types/index.js';
 	import ExportCardBase from './ExportCardBase.svelte';
-
-	const monthNames = [
-		'JAN',
-		'FEB',
-		'MAR',
-		'APR',
-		'MAY',
-		'JUN',
-		'JUL',
-		'AUG',
-		'SEP',
-		'OCT',
-		'NOV',
-		'DEC'
-	];
 
 	let limit = $state(HIGHLIGHTS_LIMIT);
 	let gap = $state(TIMELINE_GAP.min);
@@ -38,7 +22,7 @@
 	let fitRun = 0;
 
 	function titleOf(fav: Activity): string {
-		return fav.title || i18n.m.common.sports[fav.type] || 'Activity';
+		return fav.title || i18n.m.common.sports[fav.type] || i18n.m.export.activity;
 	}
 
 	// How titles wrap depends on the rendered font, so only the DOM knows how many items fit.
@@ -85,12 +69,12 @@
 	});
 </script>
 
-<ExportCardBase variant="highlights" title="HIGHLIGHTS">
+<ExportCardBase variant="highlights" title={i18n.m.export.highlights}>
 	<div class="-mt-[52px] flex min-h-0 flex-1 flex-col px-6">
 		{#if highlights.length === 0}
 			<div class="flex flex-1 items-center justify-center">
 				<div class="text-center text-[28px] text-[var(--color-text-muted)]">
-					No highlight activities yet
+					{i18n.m.export.noHighlights}
 				</div>
 			</div>
 		{:else}
@@ -103,7 +87,9 @@
 					{#each highlights as fav, i (i)}
 						{@const IconComponent = sportIcons[fav.type] ?? Target}
 						{@const date = new Date(fav.date)}
-						{@const month = monthNames[date.getMonth()]}
+						{@const month = new Intl.DateTimeFormat(i18n.locale, { month: 'short' })
+							.format(date)
+							.toLocaleUpperCase(i18n.locale)}
 						{@const day = date.getDate()}
 
 						<div class="timeline-item relative flex shrink-0 items-center gap-6">
@@ -188,10 +174,7 @@
 
 			{#if hiddenCount > 0}
 				<div class="mt-6 text-center text-[20px] text-[var(--color-text-muted)]">
-					+{formatCount(i18n.locale, hiddenCount)} more {plural('en', hiddenCount, {
-						one: 'highlight',
-						other: 'highlights'
-					})}
+					{i18n.m.export.moreHighlights(formatCount(i18n.locale, hiddenCount), hiddenCount)}
 				</div>
 			{/if}
 		{/if}

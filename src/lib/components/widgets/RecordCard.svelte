@@ -94,9 +94,7 @@
 		>
 			{value}
 		</div>
-		<div
-			class="text-[18px] tracking-widest whitespace-nowrap text-[var(--color-text-muted)] uppercase"
-		>
+		<div class="text-[18px] tracking-widest text-[var(--color-text-muted)] uppercase">
 			{label}
 		</div>
 		<div class="mt-2 line-clamp-2 w-full text-[16px] font-medium text-[var(--color-accent)]">
