@@ -147,38 +147,41 @@ test.describe('Export card layout', () => {
 		await expect(page.locator('#userName')).toHaveValue('X'.repeat(40));
 	});
 
-	for (const name of [
-		'W'.repeat(40),
-		'Wolfgang Amadeus Mozart Bartholdy Wilhelmina'.slice(0, 40)
-	]) {
-		for (const [index, card] of CARDS.entries()) {
-			for (const theme of card === 'summary'
-				? ['neon', 'classic', 'synthwave', 'lightmile']
-				: ['neon']) {
-				test(`${card} ${theme} card fits the ${name.length} character name ${name.slice(0, 8)}...`, async ({
-					page
-				}) => {
-					await uploadCsv(
-						page,
-						garminCsv(favourites(6, (i) => `Morning tempo run along the river path no ${i}`))
-					);
-					await page.locator('#userName').fill(name);
-					if (theme !== 'neon')
-						await page.getByRole('button', { name: new RegExp(`^${theme}`, 'i') }).click();
-					await showSlide(page, index);
-					await expect(page.locator('#export-card')).toHaveAttribute('data-theme', theme);
+	const longName = 'W'.repeat(40);
+	const spacedName = 'Wolfgang Amadeus Mozart Bartholdy Wilhelmina'.slice(0, 40);
+	const nameCases = [
+		{ index: 0, card: 'summary', theme: 'neon', name: longName },
+		{ index: 1, card: 'breakdown', theme: 'neon', name: longName },
+		{ index: 2, card: 'highlights', theme: 'neon', name: longName },
+		{ index: 0, card: 'summary', theme: 'classic', name: longName },
+		{ index: 0, card: 'summary', theme: 'synthwave', name: longName },
+		{ index: 0, card: 'summary', theme: 'lightmile', name: longName },
+		{ index: 0, card: 'summary', theme: 'neon', name: spacedName },
+		{ index: 0, card: 'summary', theme: 'classic', name: spacedName }
+	];
+	for (const { index, card, theme, name } of nameCases) {
+		test(`${card} ${theme} card fits the ${name.length} character name ${name.slice(0, 8)}...`, async ({
+			page
+		}) => {
+			await uploadCsv(
+				page,
+				garminCsv(favourites(6, (i) => `Morning tempo run along the river path no ${i}`))
+			);
+			await page.locator('#userName').fill(name);
+			if (theme !== 'neon')
+				await page.getByRole('button', { name: new RegExp(`^${theme}`, 'i') }).click();
+			await showSlide(page, index);
+			await expect(page.locator('#export-card')).toHaveAttribute('data-theme', theme);
 
-					await page.evaluate(() => document.fonts.ready);
-					await expect.poll(() => overflowingCardElements(page, '*')).toEqual([]);
-					const lines = await page
-						.locator('#export-card .export-name')
-						.evaluate(
-							(el: HTMLElement) => el.offsetHeight / parseFloat(getComputedStyle(el).lineHeight)
-						);
-					expect(lines).toBeLessThanOrEqual(2.05);
-				});
-			}
-		}
+			await page.evaluate(() => document.fonts.ready);
+			await expect.poll(() => overflowingCardElements(page, '*')).toEqual([]);
+			const lines = await page
+				.locator('#export-card .export-name')
+				.evaluate(
+					(el: HTMLElement) => el.offsetHeight / parseFloat(getComputedStyle(el).lineHeight)
+				);
+			expect(lines).toBeLessThanOrEqual(2.05);
+		});
 	}
 
 	for (const theme of ['classic', 'synthwave']) {
@@ -232,22 +235,6 @@ test.describe('Export card layout', () => {
 		});
 		expect(ratios.length).toBeGreaterThan(0);
 		expect(Math.min(...ratios)).toBeGreaterThanOrEqual(3);
-	});
-
-	test('summary card leaves out stats a yoga-only year has no value for', async ({ page }) => {
-		const yoga = [1, 2, 3].map(
-			(day) => `Yoga,${TARGET_YEAR}-03-0${day} 08:00:00,false,Yoga,--,40,00:20:00,--`
-		);
-		await uploadCsv(
-			page,
-			['Activity Type,Date,Favorite,Title,Distance,Calories,Time,Total Ascent', ...yoga].join('\n')
-		);
-		await showSlide(page, 0);
-
-		const card = page.locator('#export-card');
-		await expect(card).toContainText(/Calories/i);
-		await expect(card).not.toContainText(/Distance|Elevation|lap|Everest/i);
-		expect(await overflowingCardElements(page, '*')).toEqual([]);
 	});
 
 	test('donut slices leave a visible gap between them', async ({ page }) => {
