@@ -43,7 +43,7 @@
 			funFact: ''
 		}
 	]);
-	// Below 1024px a row of five is too narrow for prominent values, so the board wraps.
+	// Below 1280px a row of five is too narrow for prominent values, so the board wraps.
 	const wrapColumns = $derived(cells.length === 4 ? 2 : Math.min(cells.length, 3));
 	const fitChars = $derived(
 		Math.max(...cells.map((cell) => scaledLength(cell.value, UNIT_SCALE.board)))
@@ -168,7 +168,7 @@
 		}
 	}
 
-	@media (min-width: 768px) and (max-width: 1023.98px) {
+	@media (min-width: 768px) and (max-width: 1279.98px) {
 		.cell.wrap-row-start {
 			border-left-color: transparent;
 		}
@@ -178,7 +178,7 @@
 		}
 	}
 
-	@media (min-width: 1024px) {
+	@media (min-width: 1280px) {
 		.board {
 			grid-template-columns: repeat(var(--cells), minmax(0, 1fr));
 		}
