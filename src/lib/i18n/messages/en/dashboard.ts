@@ -50,8 +50,6 @@ export const dashboard = {
 	saveMyYear: 'Save my year',
 	reopenRecap: 'Reopen this recap later without exporting again',
 	distanceUnit: 'Distance unit',
-	disableCelebration: 'Disable celebration mode',
-	enableCelebration: 'Enable celebration mode',
 	celebrationConfetti: 'Celebration confetti',
 	yourYearSoFar: (year: number) => `Your ${year} so far`,
 	yourYear: (year: number) => `Your ${year}`,

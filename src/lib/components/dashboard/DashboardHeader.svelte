@@ -21,11 +21,16 @@
 		yearSoFar: boolean;
 	} = $props();
 
+	const JUMP_GAP_PX = 32;
+
 	function jumpToExport() {
 		const heading = document.querySelector<HTMLElement>('#export-panel h2');
 		if (!heading) return;
 		heading.tabIndex = -1;
-		heading.scrollIntoView({ behavior: prefersReducedMotion.current ? 'auto' : 'smooth' });
+		window.scrollTo({
+			top: heading.getBoundingClientRect().top + window.scrollY - JUMP_GAP_PX,
+			behavior: prefersReducedMotion.current ? 'auto' : 'smooth'
+		});
 		heading.focus({ preventScroll: true });
 	}
 </script>
@@ -33,6 +38,17 @@
 {#snippet summaryPhrase(phrase: string, count: string)}
 	{@const [before, after] = phrase.split(count)}
 	<span class="whitespace-nowrap">{before}<span class="count">{count}</span>{after}</span>
+{/snippet}
+
+<!-- The icon is inline so it stays at the start of the first line of a centred, wrapping notice. -->
+{#snippet notice(text: string)}
+	<p class="mx-auto mt-3 max-w-[60ch] text-sm text-balance text-[var(--color-text-muted)]">
+		<Warning
+			class="mr-1 inline-block h-4 w-4 align-[-0.2em]"
+			weight="bold"
+			aria-hidden="true"
+		/>{text}
+	</p>
 {/snippet}
 
 <header class="mt-12 mb-12 text-center md:mt-8 md:mb-14">
@@ -58,17 +74,11 @@
 		)}
 	</p>
 	{#if skippedRowCount > 0}
-		<p class="mt-3 flex items-center justify-center gap-1.5 text-sm text-[var(--color-text-muted)]">
-			<Warning class="h-4 w-4 shrink-0" weight="bold" aria-hidden="true" />
-			{skippedRowsNotice(skippedRowCount, i18n.locale)}
-		</p>
+		{@render notice(skippedRowsNotice(skippedRowCount, i18n.locale))}
 	{/if}
 
 	{#if cutShort}
-		<p class="mt-3 flex items-center justify-center gap-1.5 text-sm text-[var(--color-text-muted)]">
-			<Warning class="h-4 w-4 shrink-0" weight="bold" aria-hidden="true" />
-			{i18n.m.dashboard.cutShort(formatDayMonth(i18n.locale, cutShort))}
-		</p>
+		{@render notice(i18n.m.dashboard.cutShort(formatDayMonth(i18n.locale, cutShort)))}
 	{/if}
 
 	<button

@@ -29,6 +29,8 @@ async function overflowingElements(locator: Locator): Promise<string[]> {
 }
 
 test.describe('dashboard toggles', () => {
+	test.use({ reducedMotion: 'no-preference' });
+
 	test('unit, breakdown metric and confetti toggles expose their pressed state', async ({
 		page
 	}) => {
@@ -292,4 +294,49 @@ test('back to start returns focus to the upload zone', async ({ page }) => {
 	await openDemo(page);
 	await page.getByRole('button', { name: 'Back to start' }).click();
 	await expect(page.locator('#upload-zone')).toBeFocused();
+});
+
+test('browser back returns to the start screen in the same language', async ({ page }) => {
+	await page.goto('/es/');
+	await page.getByTestId('demo-data').filter({ visible: true }).click();
+	await expect(page.locator('h1').filter({ hasText: String(TARGET_YEAR) })).toBeVisible();
+	await page.goBack();
+	await expect(page.locator('#upload-zone')).toBeVisible();
+	await expect(page).toHaveURL(/\/es\/$/);
+});
+
+test('the top bar is a banner landmark', async ({ page }) => {
+	await openDemo(page);
+	const banner = page.getByRole('banner');
+	await expect(banner.getByRole('button', { name: 'Back to start' })).toBeVisible();
+	await expect(banner.getByRole('button', { name: /^Language/ })).toBeVisible();
+});
+
+test('jump to export leaves room above the export heading', async ({ page }) => {
+	await openDemo(page);
+	await page.getByRole('button', { name: 'Jump to Export' }).click();
+	const heading = page.locator('#export-panel h2');
+	await expect(heading).toBeFocused();
+	await expect.poll(async () => (await heading.boundingBox())!.y).toBeGreaterThanOrEqual(16);
+});
+
+test('celebration mode is hidden under reduced motion', async ({ page }) => {
+	await openDemo(page);
+	await expect(page.getByRole('button', { name: 'Celebration confetti' })).toHaveCount(0);
+});
+
+test.describe('with motion', () => {
+	test.use({ reducedMotion: 'no-preference' });
+
+	test('back to start ends celebration mode', async ({ page }) => {
+		await openDemo(page);
+		const confetti = page.getByRole('button', { name: 'Celebration confetti' });
+		await expect(confetti).toHaveAttribute('title', 'Celebration confetti');
+		await confetti.click();
+		await expect(page.locator('body > canvas')).toHaveCount(1);
+		await page.getByRole('button', { name: 'Back to start' }).click();
+		await expect(page.locator('body > canvas')).toHaveCount(0);
+		await page.getByTestId('demo-data').filter({ visible: true }).click();
+		await expect(confetti).toHaveAttribute('aria-pressed', 'false');
+	});
 });

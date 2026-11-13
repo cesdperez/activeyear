@@ -5,3 +5,9 @@ declare module 'cloudflare:workers' {
 		};
 	};
 }
+
+declare namespace App {
+	interface PageState {
+		dashboard?: boolean;
+	}
+}

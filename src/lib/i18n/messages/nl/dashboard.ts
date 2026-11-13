@@ -50,8 +50,6 @@ export const dashboard: typeof en = {
 	saveMyYear: 'Mijn jaar opslaan',
 	reopenRecap: 'Open dit overzicht later zonder opnieuw te exporteren',
 	distanceUnit: 'Afstandseenheid',
-	disableCelebration: 'Feestmodus uitschakelen',
-	enableCelebration: 'Feestmodus inschakelen',
 	celebrationConfetti: 'Feestelijke confetti',
 	yourYearSoFar: (year) => `Jouw jaar ${year} tot nu toe`,
 	yourYear: (year) => `Jouw jaar ${year}`,

@@ -102,7 +102,7 @@ Badge-like treatment. These are achievements, not data points.
 
 **Mobile-first.** The card is the product; it must be perfect at 375px.
 
-The language picker and, on the dashboard, the toolbar (km/mi toggle and celebration button) share one bar in the root layout, so they cannot drift apart or overlap at any width. The 404 page has no picker. A back-to-start control sits at the top-left on the dashboard, mirroring the right bar.
+The language picker and, on the dashboard, the toolbar (km/mi toggle and celebration button) share one bar in the root layout's banner landmark, so they cannot drift apart or overlap at any width. The celebration button is hidden under reduced motion, where no confetti falls. The 404 page has no picker. A back-to-start control sits at the top-left on the dashboard, mirroring the right bar. The dashboard has its own history entry, so browser Back returns to the start screen like Back to start.
 
 ### Export Canvas
 

@@ -49,8 +49,6 @@ export const dashboard: typeof en = {
 	saveMyYear: 'Guardar mi año',
 	reopenRecap: 'Abre este resumen más tarde sin volver a exportar',
 	distanceUnit: 'Unidad de distancia',
-	disableCelebration: 'Desactivar el modo celebración',
-	enableCelebration: 'Activar el modo celebración',
 	celebrationConfetti: 'Confeti de celebración',
 	yourYearSoFar: (year) => `Tu ${year} hasta ahora`,
 	yourYear: (year) => `Tu ${year}`,
