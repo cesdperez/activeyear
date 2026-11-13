@@ -1,5 +1,5 @@
 import type { Activity, PersonalRecords } from '#lib/types/index.js';
-import { daysInYear, localDayNumber } from './date.js';
+import { dayOfYear, daysInYear } from './date.js';
 
 export interface LaneMarker {
 	day: number;
@@ -8,11 +8,6 @@ export interface LaneMarker {
 
 // Shortest active tick, as a share of the busiest day, so a short session still reads as a day out.
 const MIN_ACTIVE_HEIGHT = 0.3;
-
-/** Day of its year, from 0, on the local calendar date. */
-export function dayOfYear(date: Date): number {
-	return localDayNumber(date) - localDayNumber(new Date(date.getFullYear(), 0, 1));
-}
 
 /**
  * One height per day of `year`: 0 for a rest day, otherwise the day's training time scaled so the

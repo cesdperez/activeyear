@@ -333,6 +333,10 @@ describe('activeDaysPercent', () => {
 		expect(activeDaysPercent(400, 365)).toBe(100);
 	});
 
+	it('uses elapsed days for a partial year', () => {
+		expect(activeDaysPercent(40, 227)).toBeCloseTo(17.621145);
+	});
+
 	it('counts 366 days in a leap year', () => {
 		expect(activeDaysPercent(183, 366)).toBe(50);
 		expect(activeDaysPercent(366, 366)).toBe(100);

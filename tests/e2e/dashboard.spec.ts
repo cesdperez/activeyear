@@ -270,7 +270,7 @@ test('uploaded year shows progress so far', async ({ page }) => {
 	});
 	await expect(page.getByRole('heading', { name: `Your ${TARGET_YEAR} so far` })).toBeVisible();
 	await expect(page.locator('#export-card')).toContainText(`Season ${TARGET_YEAR} so far`);
-	await expect(page.getByTestId('main-stats')).toContainText('of the year so far');
+	await expect(page.getByTestId('main-stats')).toContainText('18% of the year so far');
 	await expect(page.getByTestId('year-lane').first().getByRole('img')).toHaveAttribute(
 		'aria-label',
 		/out of 227 in .* so far/
@@ -280,6 +280,7 @@ test('uploaded year shows progress so far', async ({ page }) => {
 test('uploaded finished year has no so far labels', async ({ page }) => {
 	await page.clock.setFixedTime(new Date(TARGET_YEAR + 1, 0, 15));
 	await page.goto('/');
+	await expect(page.locator('#upload-zone')).not.toHaveAttribute('aria-disabled', 'true');
 	await page.locator('input[type="file"]').setInputFiles(SAMPLE_CSV);
 	await expect(
 		page.getByRole('heading', { name: `Your ${TARGET_YEAR}`, exact: true })
