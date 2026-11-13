@@ -38,7 +38,7 @@ export const common: typeof en = {
 	earthLaps: (laps) => `${laps} voltas ao mundo`,
 	everestPartial: (share) => `${share} da altura do Everest`,
 	everestMultiple: (times) => `${times} vezes a altura do Everest`,
-	lotr: 'maratonas de O Senhor dos Anéis',
+	lotr: 'maratonas de SdA',
 	dayByDay: 'Dia a dia',
 	yearLane: {
 		summary: (n, count, days, year) =>

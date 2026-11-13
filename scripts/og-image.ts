@@ -3,6 +3,7 @@
 import { chromium } from '@playwright/test';
 import { OG_IMAGE_WIDTH, OG_IMAGE_HEIGHT, ogImageFile } from '../src/lib/constants/og.ts';
 import { DEFAULT_LOCALE, LOCALES } from '../src/lib/constants/locales.ts';
+import { TARGET_YEAR } from '../src/lib/constants/time.ts';
 import { PREVIEW_PORT } from './ports.ts';
 
 const baseUrl = process.argv[2] ?? `http://localhost:${PREVIEW_PORT}`;
@@ -30,10 +31,13 @@ const browser = await chromium.launch();
 
 for (const locale of LOCALES) {
 	// Reduced motion skips the headline count-up, so the image always shows the final total.
+	// A metric region and a finished season, so the image shows the full year in km whenever it is made.
 	const page = await browser.newPage({
 		viewport: { width: OG_IMAGE_WIDTH, height: OG_IMAGE_HEIGHT },
-		reducedMotion: 'reduce'
+		reducedMotion: 'reduce',
+		locale: 'en-GB'
 	});
+	await page.clock.setFixedTime(new Date(TARGET_YEAR + 1, 0, 15));
 	await page.goto(locale === DEFAULT_LOCALE ? baseUrl : `${baseUrl}/${locale}/`);
 	await page.getByTestId('demo-data').filter({ visible: true }).click();
 	await page.getByTestId('main-stats').waitFor();

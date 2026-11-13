@@ -36,15 +36,15 @@ export const common: typeof en = {
 	},
 	pizza: (count: number) =>
 		plural('es', count, {
-			one: 'porción de pizza compensada',
-			other: 'porciones de pizza compensadas'
+			one: 'porción de pizza quemada',
+			other: 'porciones de pizza quemadas'
 		}),
-	lessPizza: 'Menos de una porción de pizza compensada',
+	lessPizza: 'Menos de una porción de pizza quemada',
 	earthPartial: (share) => `${share} de una vuelta al mundo`,
 	earthLaps: (laps) => `${laps} vueltas al mundo`,
 	everestPartial: (share) => `${share} de la altura del Everest`,
 	everestMultiple: (times) => `${times} veces la altura del Everest`,
-	lotr: 'maratones de El Señor de los Anillos',
+	lotr: 'maratones de ESDLA',
 	dayByDay: 'Día a día',
 	yearLane: {
 		summary: (n, count, days, year) =>
