@@ -2,7 +2,8 @@
 	import { sportNames, sportIcons } from '#lib/constants/sports.js';
 	import { formatDistance, formatDuration } from '#lib/utils/format.js';
 	import type { Activity, Unit } from '#lib/types/index.js';
-	import { Star } from 'phosphor-svelte';
+	import { X } from 'phosphor-svelte';
+	import { appStore } from '#lib/stores/app.svelte.js';
 
 	interface Props {
 		activity: Activity;
@@ -15,7 +16,17 @@
 	const IconComponent = $derived(sportIcons[activity.type]);
 </script>
 
-<div class="stat-card group flex items-center gap-4 p-4" style="animation-delay: {delay}ms">
+<div
+	class="stat-card group relative flex items-center gap-4 p-4 pt-10"
+	style="animation-delay: {delay}ms"
+>
+	<button
+		class="absolute top-2 right-2 rounded p-1 text-[var(--color-text-muted)] hover:text-[var(--color-accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)] disabled:opacity-50"
+		aria-label="Remove {activity.title || sportNames[activity.type] || 'Activity'} from highlights"
+		disabled={appStore.isExporting}
+		onclick={() => appStore.removeHighlight(activity)}
+		><X class="h-5 w-5" aria-hidden="true" /></button
+	>
 	<div
 		class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[var(--color-accent)]/10 text-[var(--color-accent)]"
 	>
@@ -23,9 +34,6 @@
 	</div>
 	<div class="min-w-0 flex-1">
 		<div class="mb-1 flex items-start gap-2">
-			{#if activity.favorite}
-				<Star class="mt-1 h-4 w-4 shrink-0 text-yellow-500" weight="fill" aria-hidden="true" />
-			{/if}
 			<span class="line-clamp-3 font-bold wrap-anywhere text-white" title={activity.title}>
 				{activity.title || sportNames[activity.type] || 'Activity'}
 			</span>

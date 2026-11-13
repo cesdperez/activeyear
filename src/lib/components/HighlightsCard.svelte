@@ -4,7 +4,7 @@
 	import { formatCount, formatDistance, formatDuration, pluralize } from '#lib/utils/format.js';
 	import { timelineGap } from '#lib/utils/export.js';
 	import { HIGHLIGHTS_LIMIT, TIMELINE_GAP } from '#lib/constants/export.js';
-	import { Star, Target } from 'phosphor-svelte';
+	import { Target } from 'phosphor-svelte';
 	import { sportNames, sportIcons } from '#lib/constants/sports.js';
 	import type { Activity } from '#lib/types/index.js';
 	import ExportCardBase from './ExportCardBase.svelte';
@@ -141,15 +141,6 @@
 								</div>
 								<div class="min-w-0 flex-1">
 									<div class="mb-1 flex items-center gap-2">
-										{#if fav.favorite}
-											<Star
-												class="{compact
-													? 'h-4 w-4'
-													: 'h-6 w-6'} highlight-star shrink-0 text-yellow-500"
-												weight="fill"
-												aria-hidden="true"
-											/>
-										{/if}
 										<div
 											class="{compact
 												? 'text-[22px]'
