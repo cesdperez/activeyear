@@ -1,4 +1,4 @@
-# ActiveYear — Design Guidelines
+# ActiveYear: Design Guidelines
 
 ## Design Philosophy
 
@@ -16,6 +16,15 @@ ActiveYear celebrates athletic accomplishment. Every design decision should make
 
 ## Visual Identity
 
+### 2026 direction: familiar anchors, authored execution
+
+Returning users must recognise the app at a glance, so the anchors stay: a centred landing page with the ActiveYear wordmark as the hero, "Your <TARGET_YEAR> in Sport" under it and the upload zone centred below; a centred dashboard header; cyan as the brand colour. Everything else is drawn for this product rather than taken from a kit.
+
+- **Logotype:** `Logotype.svelte` sets "ActiveYear" in Big Shoulders Display 900 with a dotless i whose dot is a cyan day tick, the same mark the year lane draws. Use it on the landing page, the dashboard header, the 404 page and the export card header. The favicon is the same tick motif.
+- **Signature:** the year lane (`widgets/YearLane.svelte`): one horizontal lane with a tick per day of the year (366 in a leap year). An active day's tick height is the square root of that day's training time, scaled to the busiest day, with a 30% floor. Rest days are short dim ticks. Highlights (ring) and personal records (diamond) sit above the lane like course points on a race profile. It appears on the dashboard and on the Summary card in every theme.
+- **Totals:** a results board. One huge headline number (the focused stat, glowing), its fun fact, then the other totals, active days and longest streak in one ruled row. On phones the row becomes a results sheet: label left, value right. No boxes, no icons.
+- **Section shapes fit their data:** results board, lane, bar chart, a dense highlights table, bib badges, donut with bars, then quarters board and two tables under More stats. Headings are not numbered.
+
 ### Tone
 
 **Bold. Celebratory. Earned.**
@@ -27,90 +36,84 @@ ActiveYear celebrates athletic accomplishment. Every design decision should make
 
 ### Color Principles
 
-Use CSS variables for all colors. Define in `:root` with theme-specific overrides.
+Use CSS variables for all colors. Define in `:root` with theme-specific overrides. None of the values come from the Tailwind palette.
 
 ```css
 :root {
-	--color-surface: #0a0a0b;
-	--color-text-primary: #fafafa;
-	--color-text-muted: #71717a;
-	--color-accent: #22d3ee;
-	--color-accent-glow: rgba(34, 211, 238, 0.4);
+	--color-surface: #0c1013;
+	--color-surface-elevated: #131a1e;
+	--color-surface-hover: #1b242a;
+	--color-border: #26323a;
+	--color-text-primary: #edf3f5; /* 17.1:1 on surface */
+	--color-text-muted: #b6c4ca; /* 10.7:1 */
+	--color-text-dim: #8a9aa2; /* 6.6:1 */
+	--color-accent: #48d8e4; /* brand cyan, 11.1:1 */
+	--color-accent-glow: rgba(72, 216, 228, 0.35);
+	--color-accent-subtle: rgba(72, 216, 228, 0.12);
+	--color-on-accent: #0c1013;
 }
 ```
 
 **Rules:**
 
-- One dominant accent per theme. Never split attention.
-- Text contrast minimum: 7:1 for stats, 4.5:1 for labels
-- Glow/gradient effects use accent color at 20-40% opacity
-- Dark themes: pure black (#000) feels dead. Use near-black (#0a0a0b)
+- One dominant accent per theme. Sport colours are the one exception, because they encode data.
+- Text contrast minimum: 7:1 for stats, 4.5:1 for labels.
+- Glow only on the headline number (dashboard and Summary card). No gradient text anywhere.
+- Fun facts ("438 pizza slices burnt") always use the `.fun-fact` footnote style: small italic dim text after a 3px accent tick.
 
 ### Typography
 
-**Display Font:** Use a distinctive, characterful typeface for headlines and stats. Avoid generic sans-serifs (Inter, Roboto, Arial). Consider:
+**Neon and Minimalist:** Big Shoulders Display (700, 800, 900) for the logotype, stat values, numerals and display headings, in sentence case. Archivo (400 to 700) for body, labels and buttons. Labels are sentence case, weight 500, never tracked uppercase.
 
-- Geometric: Clash Display, Satoshi, General Sans
-- Technical: JetBrains Mono, Space Mono (for data)
-- Expressive: Cabinet Grotesk, Switzer, Outfit
+**Retro:** Press Start 2P (400) for card titles, section headings and short labels. VT323 (400) for stats, sport names and body. Never use Press Start 2P for a value whose length varies. The logotype stays in Big Shoulders in every theme.
 
-**Body Font:** Pair with a readable sans-serif that shares DNA with the display choice.
+Fonts are self-hosted with Fontsource and included in dependencies. Never use more than two typefaces per theme, the logotype aside.
 
-**Hierarchy:**
+| Element          | Size                    | Weight                 |
+| ---------------- | ----------------------- | ---------------------- |
+| Headline number  | up to 11rem, fit to fit | 900, display font      |
+| Section heading  | 1.875rem to 2.25rem     | 800, display font      |
+| Board stat value | up to 3.25rem           | 800, display font      |
+| Stat label       | 0.875rem                | 500, Archivo, sentence |
+| Body text        | 1rem                    | 400                    |
 
-| Element        | Size     | Weight  | Tracking           |
-| -------------- | -------- | ------- | ------------------ |
-| Hero stat      | 4rem+    | 700-900 | -0.02em            |
-| Section header | 1.5rem   | 600     | 0                  |
-| Stat value     | 2.5rem   | 700     | -0.01em            |
-| Stat label     | 0.875rem | 500     | 0.05em (uppercase) |
-| Body text      | 1rem     | 400     | 0                  |
-
-**Rules:**
-
-- Stats are the headline. Make them unmissable.
-- Labels in uppercase with letter-spacing feel more "badge-like"
-- Never use more than 2 typefaces per theme
+Units in a stat value ("km", "h") are set smaller than the digits; size such a value with `scaledLength` so the digits, not the units, fill the space.
 
 ---
 
 ## Theme Specifications
 
-Each theme is a complete visual system. Users switch themes, not individual colors.
+The app, including landing page and dashboard, always uses Neon tokens. Themes apply to export cards. Volt was dropped: one brand cyan keeps every shared card recognisable.
 
 ### Neon
 
-**Aesthetic:** Cyberpunk trophy case. Night race energy.
+**Aesthetic:** Night race in brand cyan.
 
-- **Background:** Near-black (#0a0a0b) with subtle noise texture (2-3% opacity)
-- **Accent:** Electric cyan (#22d3ee) or hot magenta (#f472b6)
-- **Effects:**
-  - Glow on stats: `text-shadow: 0 0 30px var(--color-accent-glow)`
-  - Gradient borders: `linear-gradient(135deg, accent 0%, transparent 60%)`
-  - Scanline overlay (optional): repeating horizontal lines at 5% opacity
-- **Typography:** Geometric sans or monospace for data
+- **Surface:** #0c1013, elevated #131a1e, hover #1b242a, border #26323a
+- **Text:** Primary #edf3f5, muted #b6c4ca, dim #8a9aa2
+- **Accent:** #48d8e4. Text on accent buttons is #0c1013.
+- **Export background:** a cyan radial glow from the top-left, drawn from a 135x240 PNG, and a 64x64 noise tile at 3%. CSS gradients dither per pixel and push the PNG past 2 MB.
+- **Sport palette:** #48d8e4, #ff7d66, #d3e85e, #ffbf47, #b69cff, #ff80b5, #6d8dff, #5be3a6, #ff9d52, #e6d7a8, #9fd0ff, #e66b8f, #a8e0c6; other #7f8f97.
 
 ### Minimalist
 
-**Aesthetic:** Swiss precision. The stat speaks.
+**Aesthetic:** Swiss result sheet.
 
-- **Background:** Off-white (#fafaf9) or warm gray (#f5f5f4)
-- **Accent:** Single bold color (signal red #ef4444 or deep black #0a0a0b)
-- **Effects:** None. Whitespace is the effect.
-- **Layout:** Rigid grid. Generous padding (2rem+). Asymmetric balance.
-- **Typography:** Tight tracking on large numbers. Uppercase labels.
+- **Surface:** #f6f7f7, elevated #eceeef, hover #e2e5e6, border #cdd2d4
+- **Text:** Primary #0f1417 (17.3:1), muted #3b4449 (9.3:1), dim #525c61 (6.4:1)
+- **Accent:** Signal red #c4281c (5.3:1 on the surface, 4.9:1 on elevated).
+- **Effects:** No glow, gradients or noise.
+- **Sport palette:** #c4281c, #0f1417, #525c61, #8b9499; other #c3c9cc. Each slice or bar sits next to its label, so colour is not the only cue.
 
 ### Retro
 
-**Aesthetic:** 8-bit achievement unlocked. Arcade high score.
+**Aesthetic:** Arcade high score.
 
-- **Background:** Deep purple (#1e1b4b) or CRT black with slight blue cast
-- **Accent:** Pixel-perfect primaries (yellow #facc15, green #4ade80)
-- **Effects:**
-  - Pixelated edges (use `image-rendering: pixelated` on decorative elements)
-  - Chunky borders (4px solid)
-  - CRT glow: subtle bloom on text
-- **Typography:** Press Start 2P, VT323, or similar pixel font
+- **Surface:** #1c1650, elevated #2b2470, hover #3a3283, border #ffd23a
+- **Text:** Primary #fbf8ff (15.6:1), muted #cbc0f2 (9.7:1), dim #a9a1dc (6.9:1)
+- **Accent:** #ffd23a (11.4:1) only.
+- **Effects:** 4px solid borders, radius 0, hard offset shadow `8px 8px 0 #000` instead of glow.
+- **Sport palette:** #ffd23a, #5fe08a, #ff7a7a, #6fa8ff, #ff7ccf, #ff9f45; other #a9a1dc.
 
 ---
 
@@ -142,9 +145,8 @@ Badge-like treatment. These are achievements, not data points.
 
 **Visual Cues:**
 
-- Icon or trophy symbol
-- Distinct background (slight elevation or border)
-- Date/activity context as secondary info
+- A race bib: flat elevated panel, 4px accent band across the top, two safety-pin holes.
+- Label, value, then the activity title under a rule. No icon.
 
 ### Progress Indicators
 
@@ -161,13 +163,12 @@ For upload/processing states:
 - Full accent color background
 - High contrast text
 - Generous padding (1rem 2rem minimum)
-- Hover: slight lift (translateY -2px) + shadow increase
+- Hover: background turns text-primary. Nothing moves.
 
 **Secondary (Theme/Ratio toggles):**
 
-- Ghost style or subtle background
-- Border for definition
-- Active state clearly distinguished
+- One `.segmented` control everywhere: a bordered row of buttons, the pressed one filled with the accent.
+- Secondary actions use `.btn-secondary`: 1px border, no fill.
 
 ---
 
@@ -190,46 +191,33 @@ The shareable image. This is what users actually care about.
 **Layout Principles:**
 
 - Visual hierarchy: Name/year → Hero stat → Supporting stats → Watermark
-- Safe zones: 5% padding from edges for platform cropping
-- Watermark: Bottom-right, subtle but legible. `activeyear.app` in muted text.
+- Safe zone: 54px (5%) on every edge.
+- Watermark: Bottom-right, `activeyear.app`, text-dim, Archivo 600, or VT323 in Retro.
+- Canvas: 9:16 only, 1080×1920. Each PNG must be under 2 MB.
+- Hero numbers use the display font and fit with the existing `.fit-value` rule.
+
+Card header: logotype and "Season <TARGET_YEAR>" on one row, then the name and the card title. The Summary card shows the headline number, the year lane and a ruled list of the other totals.
 
 **Aspect Ratios:**
 
-- 9:16 (1080×1920): Vertical stack, maximum stat size
-- 1:1 (1080×1080): Compact grid, balanced composition
-- 4:5 (1080×1350): Hybrid, slight vertical emphasis
+- 9:16 (1080×1920) only. Add 4:5 later only if users ask to post to their feed.
+
+### Landing page
+
+- Centred: the logotype at `clamp(4.25rem, 19vw, 7.5rem)`, "Your <TARGET_YEAR> in Sport" under it, the upload zone centred below, then the demo link, the export guides and the questions.
+- The upload zone is a flat elevated surface with a 1px dashed border in text-dim; on hover or dragover the border turns solid accent and the surface lifts one step in colour.
 
 ---
 
 ## Motion
 
-Use Svelte's built-in `svelte/motion` (spring, tweened).
+Use Svelte's built-in `svelte/motion` (`Tween`).
 
-### Entry Animations
+### The one motion moment
 
-Stats should feel revealed, not rendered.
+The dashboard headline number counts up once on load (`CountUp.svelte`, 1.4s, cubic out). It renders the formatted total itself once the tween ends, never a re-format of a fraction, so it cannot settle on a wrong value. Under reduced motion it starts at the total. Export cards never animate.
 
-```svelte
-<script>
-	import { spring } from 'svelte/motion';
-	const value = spring(0, { stiffness: 0.1, damping: 0.4 });
-	onMount(() => value.set(targetValue));
-</script>
-```
-
-**Stagger Pattern:**
-
-- Hero stat: 0ms delay
-- Primary stats: 100ms delay each
-- Secondary stats: 200ms delay each
-- Total reveal under 800ms
-
-### Micro-interactions
-
-- **Theme switch:** Crossfade (150ms ease-out)
-- **Button hover:** Scale 1.02 + shadow lift
-- **Toggle active:** Spring with slight overshoot
-- **Download complete:** Brief pulse + checkmark morph
+Nothing else moves on its own: no staggered entrances, no hover lift or scale. Motion that answers an action (the More stats caret, a pressed toggle) is fine.
 
 ### Performance Rules
 
@@ -287,8 +275,8 @@ Use a consistent icon set. Recommendations:
 
 ### Decorative Elements
 
-- Noise textures: PNG overlay at 2-5% opacity
-- Gradients: Use `radial-gradient` for spotlight effects
+- Noise: the Neon export card only, a PNG tile at 3% opacity
+- Gradients: the Neon export glow only, drawn from a small PNG
 - Grid/lines: Subtle, never compete with data
 
 ---
@@ -349,7 +337,7 @@ German, Dutch, and French can run 20 to 35% longer than English. Every card and 
 
 ### Before Shipping a Feature
 
-- [ ] Works at all 3 export ratios
+- [ ] Fits the 9:16 card with 5-digit totals and long sport names
 - [ ] Renders correctly in all 3 themes
 - [ ] Keyboard accessible
 - [ ] Motion respects reduced-motion preference
@@ -361,14 +349,14 @@ German, Dutch, and French can run 20 to 35% longer than English. Every card and 
 
 Avoid these common pitfalls:
 
-| Anti-Pattern            | Why It Fails                     | Do Instead                                       |
-| ----------------------- | -------------------------------- | ------------------------------------------------ |
-| Gradient soup           | Feels AI-generated, no hierarchy | One accent, applied consistently                 |
-| Stat overload           | Dilutes impact, decision fatigue | Curate ruthlessly. 6-8 stats max per card.       |
-| Generic icons           | Feels like a template            | Custom or none. Icons should earn their place.   |
-| Centered everything     | Passive, lifeless                | Intentional alignment. Asymmetry creates energy. |
-| Thin fonts for stats    | Hard to read, feels weak         | Bold weights for numbers. Stats are headlines.   |
-| Drop shadows everywhere | Dated, noisy                     | Reserve for intentional elevation.               |
+| Anti-Pattern             | Why It Fails                     | Do Instead                                     |
+| ------------------------ | -------------------------------- | ---------------------------------------------- |
+| Gradient soup            | Feels AI-generated, no hierarchy | One accent, applied consistently               |
+| Stat overload            | Dilutes impact, decision fatigue | Curate ruthlessly. 6-8 stats max per card.     |
+| Generic icons            | Feels like a template            | Sport icons only; no icon in every card corner |
+| Same shape every section | Reads as a template              | Fit the shape to the data: board, lane, table  |
+| Thin fonts for stats     | Hard to read, feels weak         | Bold weights for numbers. Stats are headlines. |
+| Drop shadows everywhere  | Dated, noisy                     | Reserve for intentional elevation.             |
 
 ---
 
@@ -382,24 +370,13 @@ Quick-reference values for common needs:
 
 ### Border Radius
 
-- Cards: `0.75rem` (Neon/Minimalist), `0` (Retro)
-- Buttons: `0.5rem`
-- Pills/tags: `9999px`
-
-### Shadows
-
-```css
---shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
---shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
---shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
---shadow-glow: 0 0 30px var(--color-accent-glow);
-```
+- Panels: `6px` (`--radius-panel`), `0` in Retro
+- Controls: `4px` (`--radius-control`)
+- No pills. Circles only for the avatar and lane markers.
 
 ### Transitions
 
 ```css
 --transition-fast: 150ms ease-out;
 --transition-base: 200ms ease-out;
---transition-slow: 300ms ease-out;
---transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 ```
