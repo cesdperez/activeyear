@@ -240,6 +240,7 @@ Card header: logotype and "Season <TARGET_YEAR>" on one row, then the name and t
 ### Landing page
 
 - Centred: the logotype at `clamp(4.25rem, 19vw, 7.5rem)`, "Your <TARGET_YEAR> in Sport" under it, the upload zone centred below, then the demo link, the export guides and the questions.
+- On phones, show a short export hint and a full-width demo button before the upload zone.
 - The upload zone is a flat elevated surface with a 1px dashed border in text-dim; on hover or dragover the border turns solid accent and the surface lifts one step in colour.
 
 ### Support link

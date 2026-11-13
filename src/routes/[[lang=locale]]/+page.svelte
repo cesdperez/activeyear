@@ -33,11 +33,16 @@
 				</p>
 			</noscript>
 
-			<div class="w-full">
-				<FileUpload bind:loading={uploading} />
-				<div class="mt-4 text-center">
+			<div class="flex w-full flex-col">
+				<p class="order-1 mb-3 text-center text-sm text-[var(--color-text-muted)] sm:hidden">
+					{i18n.m.landing.mobileHint}
+				</p>
+				<div class="order-3 sm:order-1">
+					<FileUpload bind:loading={uploading} />
+				</div>
+				<div class="order-2 mb-4 text-center sm:order-2 sm:mt-4 sm:mb-0">
 					<button
-						class="text-sm text-balance text-[var(--color-text-muted)] underline decoration-[var(--color-border)] underline-offset-4 transition-colors duration-200 hover:text-[var(--color-text-primary)] hover:decoration-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
+						class="btn-secondary min-h-12 w-full justify-center text-balance sm:min-h-0 sm:w-auto sm:border-0 sm:p-0 sm:font-normal sm:underline sm:decoration-[var(--color-border)] sm:underline-offset-4 sm:hover:decoration-[var(--color-accent)]"
 						disabled={uploading || !hydrated.current}
 						onclick={() => appStore.loadDemoData()}
 					>
