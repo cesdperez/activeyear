@@ -82,7 +82,7 @@ describe('highlight presets', () => {
 describe('activity search', () => {
 	it('matches all tokens across sport, title, date, month and distance', () => {
 		const run = activity(7);
-		const texts = [activitySearchText(run, 'en')];
+		const texts = [activitySearchText(run)];
 		for (const query of ['morning running', 'january 7', 'jan 2025-01-07', '42 km 26 mi']) {
 			expect(searchActivities([run], texts, query, 8)).toEqual([run]);
 		}
@@ -92,21 +92,19 @@ describe('activity search', () => {
 	it('matches one-decimal distances in kilometres and miles', () => {
 		const run = activity(1, { distance: 42.63 });
 		for (const query of ['42.6 km', '42.6km', '26.5 mi', '26.5mi'])
-			expect(searchActivities([run], [activitySearchText(run, 'en')], query, 8)).toEqual([run]);
+			expect(searchActivities([run], [activitySearchText(run)], query, 8)).toEqual([run]);
 	});
 	it('matches localized months, decimal distances and comma titles', () => {
 		const january = activity(1, { title: '5,5km tempo', distance: 12.5 });
 		const march = activity(1, { date: new Date(2025, 2, 1) });
-		for (const [item, locale, query] of [
-			[january, 'es', 'enero'],
-			[january, 'es', 'january'],
-			[march, 'de', 'März'],
-			[january, 'de', '12,5'],
-			[january, 'de', '5,5km tempo']
+		for (const [item, query] of [
+			[january, 'enero'],
+			[january, 'january'],
+			[march, 'März'],
+			[january, '12,5'],
+			[january, '5,5km tempo']
 		] as const) {
-			expect(searchActivities([item], [activitySearchText(item, locale)], query, 8)).toEqual([
-				item
-			]);
+			expect(searchActivities([item], [activitySearchText(item)], query, 8)).toEqual([item]);
 		}
 	});
 	it('returns newest matches first up to the limit', () => {
@@ -114,7 +112,7 @@ describe('activity search', () => {
 		expect(
 			searchActivities(
 				activities,
-				activities.map((a) => activitySearchText(a, 'en')),
+				activities.map((a) => activitySearchText(a)),
 				'RUN',
 				2
 			)

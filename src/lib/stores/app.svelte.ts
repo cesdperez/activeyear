@@ -1,6 +1,5 @@
 import { HIGHLIGHTS_LIMIT } from '#lib/constants/export.js';
 import { HIGHLIGHT_SEARCH_LIMIT } from '#lib/constants/highlights.js';
-import { i18n } from '#lib/i18n/i18n.svelte.js';
 import {
 	activitySearchText,
 	availablePresets,
@@ -40,9 +39,7 @@ class AppStore {
 	#highlights = $state.raw<Activity[]>([]);
 	#highlightPreset = $state<HighlightPreset | 'custom'>('longest');
 	#highlightPresets = $derived(availablePresets(this.#activities));
-	#searchTexts = $derived(
-		this.#activities.map((activity) => activitySearchText(activity, i18n.locale))
-	);
+	#searchTexts = $derived(this.#activities.map((activity) => activitySearchText(activity)));
 	#stats = $derived(this.#activities.length > 0 ? calculateYearStats(this.#activities) : null);
 	#records = $derived(
 		this.#activities.length > 0 ? calculatePersonalRecords(this.#activities) : null

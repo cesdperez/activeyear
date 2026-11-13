@@ -1,8 +1,8 @@
 import { HIGHLIGHTS_LIMIT } from '#lib/constants/export.js';
 import { HIGHLIGHT_PRESETS } from '#lib/constants/highlights.js';
-import { INTL_LOCALES } from '#lib/constants/locales.js';
+import { INTL_LOCALES, LOCALES } from '#lib/constants/locales.js';
 import { MESSAGES } from '#lib/i18n/messages/index.js';
-import type { Activity, ActivityType, HighlightPreset, Locale } from '#lib/types/index.js';
+import type { Activity, ActivityType, HighlightPreset } from '#lib/types/index.js';
 
 const byDate = (a: Activity, b: Activity) => a.date.getTime() - b.date.getTime();
 const byDuration = (a: Activity, b: Activity) => b.duration - a.duration || byDate(a, b);
@@ -51,13 +51,15 @@ export function availablePresets(activities: Activity[]): HighlightPreset[] {
 
 const normalizeSearch = (text: string) => text.toLowerCase().replace(/(?<=\d),(?=\d)/g, '.');
 
-export function activitySearchText(activity: Activity, locale: Locale): string {
+const MONTH_FORMATTERS = LOCALES.flatMap((locale) =>
+	(['long', 'short'] as const).map(
+		(month) => new Intl.DateTimeFormat(INTL_LOCALES[locale], { month })
+	)
+);
+
+export function activitySearchText(activity: Activity): string {
 	const date = activity.date;
-	const months = [INTL_LOCALES[locale], INTL_LOCALES.en].flatMap((name) =>
-		(['long', 'short'] as const).map((month) =>
-			new Intl.DateTimeFormat(name, { month }).format(date)
-		)
-	);
+	const months = MONTH_FORMATTERS.map((formatter) => formatter.format(date));
 	const isoDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 	const distance =
 		activity.distance > 0
