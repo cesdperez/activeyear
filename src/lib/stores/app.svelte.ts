@@ -1,5 +1,4 @@
 import { track } from '#lib/analytics/track.js';
-import { cutShortFrom } from '#lib/utils/cutShort.js';
 import type { EventValue } from '#lib/constants/events.js';
 import { activityCountBucket, sportsCountBucket } from '#lib/utils/events.js';
 import { HIGHLIGHTS_LIMIT } from '#lib/constants/export.js';
@@ -10,7 +9,6 @@ import {
 	presetHighlights,
 	searchActivities
 } from '#lib/utils/highlights.js';
-import { parseActivityCsv } from '../parsers/index.js';
 import {
 	calculateYearStats,
 	calculatePersonalRecords,
@@ -18,11 +16,12 @@ import {
 	calculateWeeklyPattern,
 	summaryMetricWithValue
 } from '../utils/stats.js';
-import { parseSavedYear, serializeSavedYear } from '#lib/utils/savedYear.js';
+import { serializeSavedYear } from '#lib/utils/savedYear.js';
+import { hasYearFileExtension, loadYearFile } from '#lib/utils/yearFile.js';
 import { TARGET_YEAR } from '../constants/time.js';
 import { daysElapsed, daysInYear, isYearRunning } from '#lib/utils/date.js';
 import { demoActivities } from '../data/demo.js';
-import { describeSkippedRows, describeUnusableFile } from '#lib/utils/uploadErrors.js';
+import { describeSkippedRows } from '#lib/utils/uploadErrors.js';
 import type {
 	Activity,
 	UploadError,
@@ -194,8 +193,7 @@ class AppStore {
 	}
 
 	async processFile(file: File) {
-		const name = file.name.toLowerCase();
-		if (!name.endsWith('.csv') && !name.endsWith('.json')) {
+		if (!hasYearFileExtension(file.name)) {
 			this.#fail('unsupported-file-type', { type: 'invalid-extension' });
 			return;
 		}
@@ -205,43 +203,16 @@ class AppStore {
 
 		try {
 			const content = await file.text();
-			if (name.endsWith('.json')) {
-				const saved = parseSavedYear(content, TARGET_YEAR);
-				if (!saved.ok) {
-					this.#fail('invalid-saved-year', saved.error);
-					return;
-				}
-				this.#loadedAt = new Date();
-				this.#load(saved.activities);
-				this.#source = saved.source;
-				this.#cutShort = null;
-				this.#parseErrors = [];
-				this.#trackUpload();
+			const result = loadYearFile(file.name, content, TARGET_YEAR);
+			if (result.type === 'failed') {
+				this.#fail(result.event, result.error, result.parseErrors);
 				return;
 			}
-			const result = parseActivityCsv(content, TARGET_YEAR);
-
-			const unreadable = result.errors.find((e) => e.type === 'unsupported-format');
-			if (unreadable) {
-				this.#fail(
-					'unsupported-format',
-					{ type: unreadable.reason ?? 'unrecognised' },
-					result.errors
-				);
-				return;
-			}
-
-			if (result.activities.length === 0) {
-				const error = describeUnusableFile(result, TARGET_YEAR);
-				this.#fail(error.type, error, result.errors);
-				return;
-			}
-
 			this.#source = result.source;
-			this.#cutShort = cutShortFrom(result, TARGET_YEAR);
+			this.#cutShort = result.cutShort;
 			this.#loadedAt = new Date();
 			this.#load(result.activities);
-			this.#parseErrors = result.errors;
+			this.#parseErrors = result.parseErrors;
 			this.#trackUpload();
 		} catch {
 			this.#fail('read-failed', { type: 'unknown-failure' });

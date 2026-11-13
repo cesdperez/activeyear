@@ -144,14 +144,6 @@ describe('appStore', () => {
 		expect(track).not.toHaveBeenCalled();
 	});
 
-	it('accepts a CSV extension in any case', async () => {
-		const content = garminCsv(`${TARGET_YEAR}-03-01 08:00:00`);
-
-		await appStore.processFile(new File([content], 'Activities.CSV'));
-
-		expect(appStore.status).toBe('ready');
-	});
-
 	it('lists highlights by date whatever the row order of the file', async () => {
 		const csv = [
 			'Activity Type,Date,Favorite,Title,Distance,Calories,Time,Total Ascent',

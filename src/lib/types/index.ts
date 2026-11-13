@@ -1,3 +1,5 @@
+import type { EventValue } from '#lib/constants/events.js';
+
 export type HighlightPreset =
 	'longest' | 'farthest' | 'climbs' | 'per-sport' | 'best-month' | 'favorites';
 
@@ -103,6 +105,21 @@ export type UploadError =
 	| SavedYearError
 	| UnusableFileError
 	| { type: 'invalid-extension' | 'unrecognised' | 'strava-not-english' | 'unknown-failure' };
+
+export type YearFileResult =
+	| {
+			type: 'loaded';
+			activities: Activity[];
+			source: ActivitySource | null;
+			cutShort: Date | null;
+			parseErrors: ParseError[];
+	  }
+	| {
+			type: 'failed';
+			event: EventValue<'upload_error'>;
+			error: UploadError;
+			parseErrors?: ParseError[];
+	  };
 
 export type ActivitySource = 'garmin' | 'strava';
 
