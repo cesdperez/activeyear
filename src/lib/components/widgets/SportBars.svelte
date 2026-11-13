@@ -69,7 +69,7 @@
 				<div class="flex min-w-0 items-center gap-3 text-[var(--color-text-primary)]">
 					<IconComponent class="shrink-0 {style.icon}" weight="bold" aria-hidden="true" />
 					<span class="stat-value truncate leading-none {style.name}">
-						{i18n.m.common.sports[sport.type]}
+						{sport.rollup ? i18n.m.common.otherSports : i18n.m.common.sports[sport.type]}
 					</span>
 				</div>
 				<span
