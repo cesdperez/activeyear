@@ -1,3 +1,6 @@
+import { track } from '#lib/analytics/track.js';
+import type { EventValue } from '#lib/constants/events.js';
+import { activityCountBucket, sportsCountBucket } from '#lib/utils/events.js';
 import { HIGHLIGHTS_LIMIT } from '#lib/constants/export.js';
 import { HIGHLIGHT_SEARCH_LIMIT } from '#lib/constants/highlights.js';
 import {
@@ -175,7 +178,7 @@ class AppStore {
 	async processFile(file: File) {
 		const name = file.name.toLowerCase();
 		if (!name.endsWith('.csv') && !name.endsWith('.json')) {
-			this.#fail('Please upload a CSV or saved .json file');
+			this.#fail('unsupported-file-type', 'Please upload a CSV or saved .json file');
 			return;
 		}
 
@@ -187,32 +190,35 @@ class AppStore {
 			if (name.endsWith('.json')) {
 				const saved = parseSavedYear(content, TARGET_YEAR);
 				if (!saved.ok) {
-					this.#fail(savedYearErrorMessage(saved.error));
+					this.#fail('invalid-saved-year', savedYearErrorMessage(saved.error));
 					return;
 				}
 				this.#load(saved.activities);
 				this.#source = saved.source;
 				this.#parseErrors = [];
+				this.#trackUpload();
 				return;
 			}
 			const result = parseActivityCsv(content, TARGET_YEAR);
 
 			const unreadable = result.errors.find((e) => e.type === 'unsupported-format');
 			if (unreadable) {
-				this.#fail(unreadable.message, result.errors);
+				this.#fail('unsupported-format', unreadable.message, result.errors);
 				return;
 			}
 
 			if (result.activities.length === 0) {
-				this.#fail(unusableFileMessage(describeUnusableFile(result, TARGET_YEAR)), result.errors);
+				const error = describeUnusableFile(result, TARGET_YEAR);
+				this.#fail(error.type, unusableFileMessage(error), result.errors);
 				return;
 			}
 
 			this.#source = result.source;
 			this.#load(result.activities);
 			this.#parseErrors = result.errors;
+			this.#trackUpload();
 		} catch (err) {
-			this.#fail(err instanceof Error ? err.message : 'Failed to parse file');
+			this.#fail('read-failed', err instanceof Error ? err.message : 'Failed to parse file');
 		}
 	}
 
@@ -223,6 +229,11 @@ class AppStore {
 	loadDemoData() {
 		this.reset();
 		this.#load(demoActivities);
+	}
+
+	#trackUpload() {
+		track('upload_success', activityCountBucket(this.#activities.length));
+		track('sports_count', sportsCountBucket(this.#breakdown.length));
 	}
 
 	#load(activities: Activity[]) {
@@ -238,7 +249,8 @@ class AppStore {
 	}
 
 	// Leaves parseErrors untouched when none are given, matching the CSV-extension and thrown-error paths.
-	#fail(message: string, parseErrors?: ParseError[]) {
+	#fail(type: EventValue<'upload_error'>, message: string, parseErrors?: ParseError[]) {
+		track('upload_error', type);
 		this.#status = 'error';
 		this.#error = message;
 		if (parseErrors) this.#parseErrors = parseErrors;

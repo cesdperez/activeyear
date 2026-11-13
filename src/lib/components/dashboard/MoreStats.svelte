@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { track } from '#lib/analytics/track.js';
 	import type { Activity, SportBreakdown, Unit } from '#lib/types/index.js';
 	import { sportNames } from '#lib/constants/sports.js';
 	import { WEEKDAY_LABELS } from '#lib/constants/time.js';
@@ -27,6 +28,11 @@
 	const longestBreak = $derived(calculateLongestBreak(activities));
 	const weekdays = $derived(calculateWeekdayTotals(activities));
 	const averages = $derived(calculateSportAverages(breakdown));
+
+	function toggle() {
+		open = !open;
+		if (open) track('more_stats_opened', '');
+	}
 </script>
 
 <div class="my-12">
@@ -35,7 +41,7 @@
 		class="rounded-lg border border-[var(--color-text-muted)] bg-[var(--color-surface-elevated)] px-4 py-2 text-xs font-bold tracking-wider uppercase transition-colors hover:text-[var(--color-accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
 		aria-expanded={open}
 		aria-controls="more-stats"
-		onclick={() => (open = !open)}
+		onclick={toggle}
 	>
 		{open ? 'Fewer stats' : 'More stats'}
 	</button>

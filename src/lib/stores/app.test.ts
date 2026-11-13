@@ -1,5 +1,8 @@
 import { presetHighlights } from '#lib/utils/highlights.js';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { track } from '#lib/analytics/track.js';
+
+vi.mock('#lib/analytics/track.js', () => ({ track: vi.fn() }));
 import { appStore } from './app.svelte.js';
 import { TARGET_YEAR } from '../constants/time.js';
 import { demoActivities } from '../data/demo.js';
@@ -12,6 +15,7 @@ import {
 
 describe('appStore', () => {
 	beforeEach(() => {
+		vi.clearAllMocks();
 		appStore.reset();
 		appStore.unit = 'km';
 	});
@@ -28,6 +32,7 @@ describe('appStore', () => {
 
 		expect(appStore.status).toBe('error');
 		expect(appStore.error).toBe('Please upload a CSV or saved .json file');
+		expect(track).toHaveBeenCalledExactlyOnceWith('upload_error', 'unsupported-file-type');
 	});
 
 	it('loads a saved JSON year', async () => {
@@ -46,6 +51,7 @@ describe('appStore', () => {
 		await appStore.processFile(new File(['{'], 'year.json'));
 		expect(appStore.status).toBe('error');
 		expect(appStore.error).toBe('This file is not a saved ActiveYear year');
+		expect(track).toHaveBeenCalledExactlyOnceWith('upload_error', 'invalid-saved-year');
 	});
 
 	it('rejects a CSV in a format no parser recognises', async () => {
@@ -53,6 +59,7 @@ describe('appStore', () => {
 
 		expect(appStore.status).toBe('error');
 		expect(appStore.error).toContain("couldn't recognise this file");
+		expect(track).toHaveBeenCalledExactlyOnceWith('upload_error', 'unsupported-format');
 	});
 
 	it.each([
@@ -66,6 +73,15 @@ describe('appStore', () => {
 
 		expect(appStore.status).toBe('error');
 		expect(appStore.error).toBe(message);
+		expect(track).toHaveBeenCalledExactlyOnceWith('upload_error', 'read-failed');
+	});
+
+	it.each([
+		[garminCsv('bad'), 'rows-rejected'],
+		[garminCsv(`${TARGET_YEAR - 1}-03-01 08:00:00`), 'no-activities-in-year']
+	])('tracks unusable CSV files', async (csv, type) => {
+		await appStore.processFile(csvFile(csv));
+		expect(track).toHaveBeenCalledExactlyOnceWith('upload_error', type);
 	});
 
 	it('loads the target year activities from a Garmin export', async () => {
@@ -77,6 +93,9 @@ describe('appStore', () => {
 			expect.objectContaining({ type: 'running', title: 'Run', distance: 10 })
 		]);
 		expect(appStore.stats?.activityCount).toBe(1);
+		expect(track).toHaveBeenCalledTimes(2);
+		expect(track).toHaveBeenCalledWith('upload_success', '1-10');
+		expect(track).toHaveBeenCalledWith('sports_count', '1');
 	});
 
 	it('counts the rows left out of a file that loads', async () => {
@@ -92,6 +111,7 @@ describe('appStore', () => {
 		appStore.loadDemoData();
 
 		expect(appStore.skippedRowCount).toBe(0);
+		expect(track).not.toHaveBeenCalled();
 	});
 
 	it('accepts a CSV extension in any case', async () => {

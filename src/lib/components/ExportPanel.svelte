@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { tick } from 'svelte';
+	import { track } from '#lib/analytics/track.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import ExportCarousel from './ExportCarousel.svelte';
 	import {
@@ -47,6 +48,7 @@
 
 		try {
 			await carouselRef.exportAllCards({ allowFallbackFonts });
+			track('export', appStore.theme);
 			exportStatus = 'Downloaded three images';
 		} catch (error) {
 			exportStatus = '';
@@ -60,6 +62,7 @@
 	}
 
 	function setTheme(theme: Theme) {
+		if (appStore.theme !== theme) track('theme_selected', theme);
 		appStore.theme = theme;
 	}
 

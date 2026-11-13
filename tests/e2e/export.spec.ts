@@ -31,7 +31,13 @@ test.describe('Export Flow', () => {
 	});
 
 	test('download button triggers export', async ({ page }) => {
+		const events: string[] = [];
+		page.on('request', (request) => {
+			if (new URL(request.url()).pathname === '/api/event') events.push(request.url());
+		});
 		await uploadSample(page);
+		await page.getByRole('button', { name: /Minimal/i }).click();
+		await page.getByRole('button', { name: 'More stats' }).click();
 
 		const downloadButton = page.getByRole('button', { name: /Download All Images/i });
 		await expect(downloadButton).toBeEnabled();
@@ -42,6 +48,8 @@ test.describe('Export Flow', () => {
 		await downloadButton.click();
 
 		expect((await downloadPromise).suggestedFilename()).toBe('activeyear-2026-summary.png');
+		await expect(page.locator('#export-status')).toHaveText('Downloaded three images');
+		expect(events).toEqual([]);
 	});
 
 	test('downloads every card as a 1080x1920 PNG under 2 MB', async ({ page }) => {
