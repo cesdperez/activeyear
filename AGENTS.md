@@ -32,7 +32,7 @@ pnpm ports                                 # This checkout's preview and dev URL
 - **Imports**: `#lib/...` for `src/lib` (the `package.json` imports alias), and a `.js` extension on local imports (`from './format.js'`). Files node runs directly (`scripts/*.ts`, `src/params.ts`) import with `.ts`.
 - **Types**: shared types go in `src/lib/types/index.ts`.
 - **Constants**: UPPER_SNAKE_CASE in `src/lib/constants/`. The season year is `TARGET_YEAR` in `src/lib/constants/time.ts`; derive year copy from it, never a literal year.
-  When `TARGET_YEAR` changes, regenerate `static/og-image.png` with `pnpm og-image` while `pnpm preview` runs, and refresh the visual export baselines, because the cards print the year.
+  When `TARGET_YEAR` changes, regenerate the social preview images (`static/og-image.png` and one `static/og-image-<locale>.png` per other locale) with `pnpm og-image` while `pnpm preview` runs, and refresh the visual export baselines, because the cards print the year.
 - **Functions**: single level of abstraction. Keep `src/lib/utils` pure; the download and font helpers in `utils/export.ts` and `utils/fonts.ts` are the DOM exceptions.
 - **Error types**: discriminated unions (`type: 'error-code'`).
 - **Comments**: only the non-obvious why.

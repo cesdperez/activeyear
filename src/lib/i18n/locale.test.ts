@@ -8,6 +8,8 @@ describe('locale', () => {
 		expect(localeFromParam(undefined)).toBe('en');
 		expect(localeFromPath('/404')).toBe('en');
 		expect(localeFromPath('/de/')).toBe('de');
+		expect(localeFromPath('/de/404')).toBe('de');
+		expect(localeFromPath('/deutsch/404')).toBe('en');
 		expect(localePath('en')).toBe('/');
 		expect(localePath('es')).toBe('/es/');
 	});

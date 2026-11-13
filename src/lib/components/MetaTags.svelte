@@ -2,7 +2,7 @@
 	import { OG_IMAGE_WIDTH, OG_IMAGE_HEIGHT } from '#lib/constants/og.js';
 	import { LOCALES, OG_LOCALES } from '#lib/constants/locales.js';
 	import { THEME_SURFACES } from '#lib/constants/themes.js';
-	import { OG_IMAGE_URL, SITE_NAME, SITE_URL } from '#lib/constants/site.js';
+	import { SITE_NAME, SITE_URL, ogImageUrl } from '#lib/constants/site.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { localePath } from '#lib/i18n/locale.js';
 	import { webApplicationSchema } from '#lib/utils/structuredData.js';
@@ -33,7 +33,7 @@
 	<meta property="og:url" content={canonicalUrl} />
 	<meta property="og:title" content={i18n.m.meta.title} />
 	<meta property="og:description" content={i18n.m.meta.description} />
-	<meta property="og:image" content={OG_IMAGE_URL} />
+	<meta property="og:image" content={ogImageUrl(i18n.locale)} />
 	<meta property="og:image:type" content="image/png" />
 	<meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
 	<meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
@@ -42,7 +42,7 @@
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={i18n.m.meta.title} />
 	<meta name="twitter:description" content={i18n.m.meta.description} />
-	<meta name="twitter:image" content={OG_IMAGE_URL} />
+	<meta name="twitter:image" content={ogImageUrl(i18n.locale)} />
 	<meta name="twitter:image:alt" content={i18n.m.meta.imageAlt} />
 </svelte:head>
 

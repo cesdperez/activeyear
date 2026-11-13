@@ -8,7 +8,7 @@ export function localeFromParam(param: string | undefined): Locale {
 	return param && isLocale(param) ? param : DEFAULT_LOCALE;
 }
 export function localeFromPath(pathname: string): Locale {
-	const match = /^\/([^/]+)\/?$/.exec(pathname);
+	const match = /^\/([^/]+)(?:\/|$)/.exec(pathname);
 	const locale = match?.[1];
 	return locale && (ROUTED_LOCALES as readonly string[]).includes(locale)
 		? localeFromParam(locale)
