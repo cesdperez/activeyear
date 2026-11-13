@@ -119,7 +119,7 @@
 					}
 				}}
 				disabled={exportLock.isExporting}
-				class="min-h-11 w-full rounded-[var(--radius-control)] border border-[var(--color-input-border)] bg-[var(--color-surface-elevated)] px-4 py-2.5 text-base text-[var(--color-text-primary)] focus-visible:border-[var(--color-accent)] disabled:opacity-50 pointer-coarse:min-h-[3.125rem]"
+				class="h-11 w-full rounded-[var(--radius-control)] border border-[var(--color-input-border)] bg-[var(--color-surface-elevated)] px-4 py-2 text-base text-[var(--color-text-primary)] focus-visible:border-[var(--color-accent)] disabled:opacity-50 pointer-coarse:h-[3.125rem]"
 			/>
 			<p
 				id="highlight-search-hint"
