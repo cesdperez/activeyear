@@ -1,4 +1,6 @@
 import { TARGET_YEAR } from '#lib/constants/time.js';
+import { dashboard } from './dashboard.js';
+import { upload } from './upload.js';
 import type { faq as en } from '../en/faq.js';
 
 export const faq: typeof en = {
@@ -14,8 +16,7 @@ export const faq: typeof en = {
 		},
 		{
 			question: 'Welk bestand heb ik nodig?',
-			answer:
-				'De Activities-CSV van Garmin Connect of activities.csv uit de export van je Strava-account, in het Engels, Spaans, Duits, Frans, Italiaans, Nederlands of Portugees. Gebruikt je Garmin-account imperiale eenheden, kies dan Imperial op het uploadscherm. Het omvat hardlopen, fietsen, zwemmen, wandelen, hiken, krachttraining, yoga, peddelen, roeien, cardio, wintersport, racketsport en klimmen.'
+			answer: `De Activities-CSV van Garmin Connect of activities.csv uit de export van je Strava-account, in het Engels, Spaans, Duits, Frans, Italiaans, Nederlands of Portugees. Gebruikt je Garmin-account imperiale eenheden, kies dan ${upload.imperial} op het uploadscherm. Het omvat hardlopen, fietsen, zwemmen, wandelen, hiken, krachttraining, yoga, peddelen, roeien, cardio, wintersport, racketsport en klimmen.`
 		},
 		{
 			question: 'Wat kan ik delen?',
@@ -24,8 +25,7 @@ export const faq: typeof en = {
 		},
 		{
 			question: 'Kan ik mijn overzicht later opnieuw openen?',
-			answer:
-				'Ja. Gebruik Mijn jaar opslaan op je dashboard om een klein .json-bestand te downloaden. Sleep het later naar het uploadvak om je overzicht opnieuw te openen. Het blijft op je apparaat.'
+			answer: `Ja. Gebruik ${dashboard.saveMyYear} op je dashboard om een klein .json-bestand te downloaden. Sleep het later naar het uploadvak om je overzicht opnieuw te openen. Het blijft op je apparaat.`
 		},
 		{
 			question: 'Werkt het met Strava?',

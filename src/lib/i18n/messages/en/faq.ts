@@ -1,4 +1,6 @@
 import { TARGET_YEAR } from '#lib/constants/time.js';
+import { dashboard } from './dashboard.js';
+import { upload } from './upload.js';
 
 export const faq = {
 	items: [
@@ -13,8 +15,7 @@ export const faq = {
 		},
 		{
 			question: 'Which file does it need?',
-			answer:
-				'The Activities CSV from Garmin Connect or activities.csv from your Strava account export, in English, Spanish, German, French, Italian, Dutch or Portuguese. If your Garmin account uses imperial units, choose Imperial on the upload screen. It covers running, cycling, swimming, walking, hiking, strength, yoga, paddling, rowing, cardio, winter sports, racket sports and climbing.'
+			answer: `The Activities CSV from Garmin Connect or activities.csv from your Strava account export, in English, Spanish, German, French, Italian, Dutch or Portuguese. If your Garmin account uses imperial units, choose ${upload.imperial} on the upload screen. It covers running, cycling, swimming, walking, hiking, strength, yoga, paddling, rowing, cardio, winter sports, racket sports and climbing.`
 		},
 		{
 			question: 'What can I share?',
@@ -23,8 +24,7 @@ export const faq = {
 		},
 		{
 			question: 'Can I reopen my recap later?',
-			answer:
-				'Yes. Use Save my year on your dashboard to download a small .json file, then drop it on the upload area any time to reopen the recap. It stays on your device.'
+			answer: `Yes. Use ${dashboard.saveMyYear} on your dashboard to download a small .json file, then drop it on the upload area any time to reopen the recap. It stays on your device.`
 		},
 		{
 			question: 'Does it work with Strava?',

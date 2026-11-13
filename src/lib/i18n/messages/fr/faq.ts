@@ -1,4 +1,6 @@
 import { TARGET_YEAR } from '#lib/constants/time.js';
+import { dashboard } from './dashboard.js';
+import { upload } from './upload.js';
 import type { faq as en } from '../en/faq.js';
 
 export const faq: typeof en = {
@@ -14,8 +16,7 @@ export const faq: typeof en = {
 		},
 		{
 			question: 'Quel fichier faut-il utiliser ?',
-			answer:
-				'Le CSV Activities de Garmin Connect ou activities.csv issu de l’export de votre compte Strava, en anglais, espagnol, allemand, français, italien, néerlandais ou portugais. Si votre compte Garmin utilise les unités impériales, choisissez Imperial sur la page d’import. Les activités comprennent la course, le vélo, la natation, la marche, la randonnée, la musculation, le yoga, les sports de pagaie, l’aviron, le cardio, les sports d’hiver, de raquette et l’escalade.'
+			answer: `Le CSV Activities de Garmin Connect ou activities.csv issu de l’export de votre compte Strava, en anglais, espagnol, allemand, français, italien, néerlandais ou portugais. Si votre compte Garmin utilise les unités impériales, choisissez ${upload.imperial} sur la page d’import. Les activités comprennent la course, le vélo, la natation, la marche, la randonnée, la musculation, le yoga, les sports de pagaie, l’aviron, le cardio, les sports d’hiver, de raquette et l’escalade.`
 		},
 		{
 			question: 'Que puis-je partager ?',
@@ -24,8 +25,7 @@ export const faq: typeof en = {
 		},
 		{
 			question: 'Puis-je rouvrir mon bilan plus tard ?',
-			answer:
-				'Oui. Utilisez Enregistrer mon année sur le tableau de bord pour télécharger un petit fichier .json, puis déposez-le dans la zone d’import pour rouvrir le bilan à tout moment. Il reste sur votre appareil.'
+			answer: `Oui. Utilisez ${dashboard.saveMyYear} sur le tableau de bord pour télécharger un petit fichier .json, puis déposez-le dans la zone d’import pour rouvrir le bilan à tout moment. Il reste sur votre appareil.`
 		},
 		{
 			question: 'Est-ce compatible avec Strava ?',

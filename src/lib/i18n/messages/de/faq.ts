@@ -1,4 +1,6 @@
 import { TARGET_YEAR } from '#lib/constants/time.js';
+import { dashboard } from './dashboard.js';
+import { upload } from './upload.js';
 import type { faq as en } from '../en/faq.js';
 
 export const faq: typeof en = {
@@ -14,8 +16,7 @@ export const faq: typeof en = {
 		},
 		{
 			question: 'Welche Datei brauche ich?',
-			answer:
-				'Die Activities-CSV aus Garmin Connect oder activities.csv aus dem Export deines Strava-Kontos, auf Englisch, Spanisch, Deutsch, Französisch, Italienisch, Niederländisch oder Portugiesisch. Wenn dein Garmin-Konto imperiale Einheiten verwendet, wähle Imperial auf der Upload-Seite. Unterstützt werden Laufen, Radfahren, Schwimmen, Gehen, Wandern, Krafttraining, Yoga, Paddeln, Rudern, Cardio, Wintersport, Schlägersport und Klettern.'
+			answer: `Die Activities-CSV aus Garmin Connect oder activities.csv aus dem Export deines Strava-Kontos, auf Englisch, Spanisch, Deutsch, Französisch, Italienisch, Niederländisch oder Portugiesisch. Wenn dein Garmin-Konto imperiale Einheiten verwendet, wähle ${upload.imperial} auf der Upload-Seite. Unterstützt werden Laufen, Radfahren, Schwimmen, Gehen, Wandern, Krafttraining, Yoga, Paddeln, Rudern, Cardio, Wintersport, Schlägersport und Klettern.`
 		},
 		{
 			question: 'Was kann ich teilen?',
@@ -24,8 +25,7 @@ export const faq: typeof en = {
 		},
 		{
 			question: 'Kann ich meinen Rückblick später wieder öffnen?',
-			answer:
-				'Ja. Lade über Jahr speichern auf deinem Dashboard eine kleine .json-Datei herunter und ziehe sie jederzeit in den Upload-Bereich, um den Rückblick wieder zu öffnen. Sie bleibt auf deinem Gerät.'
+			answer: `Ja. Lade über „${dashboard.saveMyYear}“ auf deinem Dashboard eine kleine .json-Datei herunter und ziehe sie jederzeit in den Upload-Bereich, um den Rückblick wieder zu öffnen. Sie bleibt auf deinem Gerät.`
 		},
 		{
 			question: 'Funktioniert es mit Strava?',

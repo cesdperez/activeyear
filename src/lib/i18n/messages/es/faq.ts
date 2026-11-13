@@ -1,4 +1,6 @@
 import { TARGET_YEAR } from '#lib/constants/time.js';
+import { dashboard } from './dashboard.js';
+import { upload } from './upload.js';
 import type { faq as en } from '../en/faq.js';
 
 export const faq: typeof en = {
@@ -14,8 +16,7 @@ export const faq: typeof en = {
 		},
 		{
 			question: '¿Qué archivo necesito?',
-			answer:
-				'El CSV de Activities de Garmin Connect o activities.csv de la exportación de tu cuenta de Strava, en inglés, español, alemán, francés, italiano, neerlandés o portugués. Si tu cuenta de Garmin usa unidades imperiales, elige Imperial en la pantalla de carga. Incluye carrera, ciclismo, natación, caminata, senderismo, fuerza, yoga, deportes de remo, cardio, deportes de invierno, deportes de raqueta y escalada.'
+			answer: `El CSV de Activities de Garmin Connect o activities.csv de la exportación de tu cuenta de Strava, en inglés, español, alemán, francés, italiano, neerlandés o portugués. Si tu cuenta de Garmin usa unidades imperiales, elige ${upload.imperial} en la pantalla de carga. Incluye carrera, ciclismo, natación, caminata, senderismo, fuerza, yoga, deportes de remo, cardio, deportes de invierno, deportes de raqueta y escalada.`
 		},
 		{
 			question: '¿Qué puedo compartir?',
@@ -24,8 +25,7 @@ export const faq: typeof en = {
 		},
 		{
 			question: '¿Puedo volver a abrir mi resumen más tarde?',
-			answer:
-				'Sí. Usa Guardar mi año en tu panel para descargar un pequeño archivo .json y arrástralo al área de carga cuando quieras volver a abrir el resumen. Permanece en tu dispositivo.'
+			answer: `Sí. Usa ${dashboard.saveMyYear} en tu panel para descargar un pequeño archivo .json y arrástralo al área de carga cuando quieras volver a abrir el resumen. Permanece en tu dispositivo.`
 		},
 		{
 			question: '¿Funciona con Strava?',
