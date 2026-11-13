@@ -1,5 +1,3 @@
-import { formatDistance, formatElevation, formatDuration, showsValue } from './format.js';
-
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import {
 	calculateQuarterTotals,
@@ -466,34 +464,40 @@ describe('more stats', () => {
 });
 
 describe('summary metric display boundaries', () => {
-	it('matches formatted values around their display thresholds', () => {
-		const base = {
-			totalDistance: 0,
-			totalElevation: 0,
-			totalDuration: 0,
-			totalCalories: 1,
-			activeDays: 0,
-			longestStreak: 0,
-			activityCount: 0
-		};
-		for (const [metric, field, values, unit] of [
-			['distance', 'totalDistance', [0.04, 0.05], 'km'],
-			['elevation', 'totalElevation', [4.99, 5], 'km'],
-			['elevation', 'totalElevation', [7.62, 7.63], 'miles'],
-			['duration', 'totalDuration', [0, 0.01, 59.9], 'km']
-		] as const) {
-			for (const value of values) {
-				const current = { ...base, [field]: value };
-				const formatted =
-					metric === 'distance'
-						? formatDistance('en', value, unit)
-						: metric === 'elevation'
-							? formatElevation('en', value, unit)
-							: formatDuration('en', value);
-				expect(summaryMetricWithValue(current, metric, unit)).toBe(
-					showsValue(formatted) ? metric : 'calories'
-				);
-			}
-		}
+	const base = {
+		totalDistance: 0,
+		totalElevation: 0,
+		totalDuration: 0,
+		totalCalories: 1,
+		activeDays: 0,
+		longestStreak: 0,
+		activityCount: 0
+	};
+
+	it.each([
+		{ metric: 'distance', value: 0.04, unit: 'km', expected: 'calories' },
+		{ metric: 'distance', value: 0.05, unit: 'km', expected: 'distance' },
+		{ metric: 'elevation', value: 4.99, unit: 'km', expected: 'calories' },
+		{ metric: 'elevation', value: 5, unit: 'km', expected: 'elevation' },
+		{ metric: 'elevation', value: 7.6, unit: 'miles', expected: 'calories' },
+		{ metric: 'elevation', value: 7.63, unit: 'miles', expected: 'elevation' },
+		{ metric: 'duration', value: 0, unit: 'km', expected: 'calories' },
+		{ metric: 'duration', value: 0.01, unit: 'km', expected: 'duration' },
+		{ metric: 'duration', value: 59.9, unit: 'km', expected: 'duration' },
+		{ metric: 'distance', value: Infinity, unit: 'km', expected: 'calories' },
+		{ metric: 'duration', value: Infinity, unit: 'km', expected: 'calories' }
+	] as const)('$metric $value $unit shows $expected', ({ metric, value, unit, expected }) => {
+		const field =
+			metric === 'distance'
+				? 'totalDistance'
+				: metric === 'elevation'
+					? 'totalElevation'
+					: 'totalDuration';
+		expect(summaryMetricWithValue({ ...base, [field]: value }, metric, unit)).toBe(expected);
+	});
+
+	it('keeps the current metric when its total calories are non-finite', () => {
+		const stats = { ...base, totalDistance: 1, totalCalories: NaN };
+		expect(summaryMetricWithValue(stats, 'distance', 'km')).toBe('distance');
 	});
 });

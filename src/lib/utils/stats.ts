@@ -165,11 +165,15 @@ export function calculateWeeklyPattern(activities: Activity[]): WeeklyPattern {
 }
 
 const SUMMARY_METRIC_DISPLAY: [SummaryMetric, (stats: YearStats, unit: Unit) => boolean][] = [
-	['distance', (stats, unit) => roundedDistance(stats.totalDistance, unit) !== 0],
-	['elevation', (stats, unit) => roundedElevation(stats.totalElevation, unit) !== 0],
-	['duration', (stats) => stats.totalDuration > 0],
-	['calories', (stats) => Math.round(stats.totalCalories) !== 0]
+	['distance', (stats, unit) => shows(roundedDistance(stats.totalDistance, unit))],
+	['elevation', (stats, unit) => shows(roundedElevation(stats.totalElevation, unit))],
+	['duration', (stats) => Number.isFinite(stats.totalDuration) && stats.totalDuration > 0],
+	['calories', (stats) => shows(Math.round(stats.totalCalories))]
 ];
+
+function shows(rounded: number): boolean {
+	return Number.isFinite(rounded) && rounded !== 0;
+}
 
 /**
  * Keeps `current` when it displays a non-zero value, otherwise the first summary stat, in panel
