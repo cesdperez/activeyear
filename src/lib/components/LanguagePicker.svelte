@@ -3,13 +3,12 @@
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 	import { Globe, Check, X } from 'phosphor-svelte';
-	import { LOCALES, LOCALE_NAMES } from '#lib/constants/locales.js';
+	import { LOCALES, LOCALE_NAMES, LOCALE_STORAGE_KEY } from '#lib/constants/locales.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { isLocale } from '#lib/i18n/locale.js';
 	import { MESSAGES } from '#lib/i18n/messages/index.js';
 	import type { Locale } from '#lib/types/index.js';
 
-	const STORAGE_KEY = 'activeyear.locale';
 	let open = $state(false);
 	let suggestion = $state<Locale | null>(null);
 	let button: HTMLButtonElement;
@@ -18,7 +17,7 @@
 
 	function save(locale: Locale) {
 		try {
-			localStorage.setItem(STORAGE_KEY, locale);
+			localStorage.setItem(LOCALE_STORAGE_KEY, locale);
 		} catch {
 			/* Storage can be unavailable in private browsing. */
 		}
@@ -27,7 +26,7 @@
 	onMount(() => {
 		let stored: string | null = null;
 		try {
-			stored = localStorage.getItem(STORAGE_KEY);
+			stored = localStorage.getItem(LOCALE_STORAGE_KEY);
 		} catch {
 			/* Browser language remains available without storage. */
 		}
@@ -126,7 +125,7 @@
 			{/each}
 		</div>
 	{/if}
-	{#if suggestion && page.url.pathname === '/'}
+	{#if !open && suggestion && page.url.pathname === '/'}
 		<div
 			class="absolute top-full right-0 mt-2 flex items-center rounded-full border border-[rgba(255,255,255,0.05)] bg-[var(--color-surface-elevated)] text-sm whitespace-nowrap text-white"
 		>

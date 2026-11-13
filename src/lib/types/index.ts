@@ -87,6 +87,10 @@ export type SummaryMetric = 'distance' | 'elevation' | 'duration' | 'calories';
 
 export type Unit = 'km' | 'miles';
 
+export type AvatarError = { type: 'invalid' | 'unreadable' };
+export type ExportError = { type: 'ready' | 'fontsUnavailable' | 'failed' };
+export type ExportStatus = { type: 'generating' | 'done' };
+
 export type SavedYearError =
 	| { type: 'invalid-file' }
 	| { type: 'unsupported-version'; version: unknown }

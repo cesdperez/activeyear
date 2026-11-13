@@ -12,13 +12,19 @@
 		Timer,
 		Fire
 	} from 'phosphor-svelte';
-	import type { Theme, SummaryMetric } from '#lib/types/index.js';
+	import type {
+		Theme,
+		SummaryMetric,
+		AvatarError,
+		ExportError,
+		ExportStatus
+	} from '#lib/types/index.js';
 	import { USER_NAME_MAX_LENGTH } from '#lib/constants/export.js';
 	import { FontsUnavailableError } from '#lib/utils/fonts.js';
 
-	let exportError = $state<{ message: string; fontsUnavailable: boolean } | null>(null);
-	let exportStatus = $state('');
-	let avatarError = $state<string | null>(null);
+	let exportError = $state<ExportError | null>(null);
+	let exportStatus = $state<ExportStatus | null>(null);
+	let avatarError = $state<AvatarError | null>(null);
 	let avatarInput = $state<HTMLInputElement | null>(null);
 	let removeImageButton = $state<HTMLButtonElement | null>(null);
 	let carouselRef = $state<{
@@ -40,27 +46,21 @@
 	async function handleExport(allowFallbackFonts = false) {
 		if (appStore.isExporting) return;
 		if (!carouselRef) {
-			exportError = { message: i18n.m.export.ready, fontsUnavailable: false };
+			exportError = { type: 'ready' };
 			return;
 		}
 
 		appStore.isExporting = true;
 		exportError = null;
-		exportStatus = i18n.m.export.generating;
+		exportStatus = { type: 'generating' };
 
 		try {
 			await carouselRef.exportAllCards({ allowFallbackFonts });
-			exportStatus = i18n.m.export.done;
+			exportStatus = { type: 'done' };
 		} catch (error) {
-			exportStatus = '';
+			exportStatus = null;
 			exportError = {
-				message:
-					error instanceof FontsUnavailableError
-						? i18n.m.export.fontsUnavailable
-						: error instanceof Error
-							? error.message
-							: i18n.m.export.failed,
-				fontsUnavailable: error instanceof FontsUnavailableError
+				type: error instanceof FontsUnavailableError ? 'fontsUnavailable' : 'failed'
 			};
 		} finally {
 			appStore.isExporting = false;
@@ -101,13 +101,13 @@
 		if (!file) return;
 
 		if (!file.type.startsWith('image/')) {
-			await showAvatarError(i18n.m.export.invalid);
+			await showAvatarError({ type: 'invalid' });
 			return;
 		}
 
 		const dataUrl = await loadImageDataUrl(file);
 		if (!dataUrl) {
-			await showAvatarError(i18n.m.export.unreadable);
+			await showAvatarError({ type: 'unreadable' });
 			return;
 		}
 
@@ -118,11 +118,11 @@
 		removeImageButton?.focus();
 	}
 
-	async function showAvatarError(message: string) {
+	async function showAvatarError(error: AvatarError) {
 		// Re-inserting the alert makes screen readers announce a repeated message again.
 		avatarError = null;
 		await tick();
-		avatarError = message;
+		avatarError = error;
 	}
 
 	async function removeImage() {
@@ -210,7 +210,9 @@
 					</div>
 				{/if}
 				{#if avatarError}
-					<p id="userAvatar-error" role="alert" class="mt-2 text-sm text-red-400">{avatarError}</p>
+					<p id="userAvatar-error" role="alert" class="mt-2 text-sm text-red-400">
+						{i18n.m.export[avatarError.type]}
+					</p>
 				{/if}
 			</div>
 
@@ -278,11 +280,13 @@
 				{/if}
 			</button>
 
-			<p id="export-status" role="status" class="sr-only">{exportStatus}</p>
+			<p id="export-status" role="status" class="sr-only">
+				{exportStatus ? i18n.m.export[exportStatus.type] : ''}
+			</p>
 			<div id="export-error" role="alert" class="empty:hidden">
 				{#if exportError}
-					<p class="text-sm text-red-400">{exportError.message}</p>
-					{#if exportError.fontsUnavailable}
+					<p class="text-sm text-red-400">{i18n.m.export[exportError.type]}</p>
+					{#if exportError.type === 'fontsUnavailable'}
 						<button
 							onclick={() => handleExport(true)}
 							class="mt-2 text-sm font-semibold text-[var(--color-accent)] underline underline-offset-4 hover:text-white"

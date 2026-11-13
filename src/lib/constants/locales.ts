@@ -2,6 +2,7 @@ import type { Locale } from '#lib/types/index.js';
 
 export const LOCALES = ['en', 'es', 'pt', 'fr', 'de', 'nl'] as const;
 export const DEFAULT_LOCALE: Locale = 'en';
+export const LOCALE_STORAGE_KEY = 'activeyear.locale';
 export const LOCALE_NAMES: Record<Locale, string> = {
 	en: 'English',
 	es: 'Español',
