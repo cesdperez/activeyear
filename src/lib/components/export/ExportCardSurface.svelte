@@ -56,6 +56,16 @@
 		--title-size: 90px;
 	}
 
+	.theme-classic[data-variant='summary'],
+	.theme-synthwave[data-variant='summary'] {
+		--stat-scale: 0.75;
+		--summary-avatar-size: 280px;
+		--summary-avatar-margin: 8px;
+		--summary-lane-margin: 18px;
+		--summary-results-padding: 12px;
+		--summary-result-padding: 10px;
+	}
+
 	.theme-synthwave {
 		--avatar-border: #ff00cc;
 		--avatar-decoration: #ff00cc;

@@ -152,25 +152,43 @@ test.describe('Export card layout', () => {
 		'Wolfgang Amadeus Mozart Bartholdy Wilhelmina'.slice(0, 40)
 	]) {
 		for (const [index, card] of CARDS.entries()) {
-			test(`${card} card fits the ${name.length} character name ${name.slice(0, 8)}...`, async ({
-				page
-			}) => {
-				await uploadCsv(
-					page,
-					garminCsv(favourites(6, (i) => `Morning tempo run along the river path no ${i}`))
-				);
-				await page.locator('#userName').fill(name);
-				await showSlide(page, index);
-
-				expect(await overflowingCardElements(page, '*')).toEqual([]);
-				const lines = await page
-					.locator('#export-card .export-name')
-					.evaluate(
-						(el: HTMLElement) => el.offsetHeight / parseFloat(getComputedStyle(el).lineHeight)
+			for (const theme of card === 'summary' ? ['neon', 'classic', 'synthwave'] : ['neon']) {
+				test(`${card} ${theme} card fits the ${name.length} character name ${name.slice(0, 8)}...`, async ({
+					page
+				}) => {
+					await uploadCsv(
+						page,
+						garminCsv(favourites(6, (i) => `Morning tempo run along the river path no ${i}`))
 					);
-				expect(lines).toBeLessThanOrEqual(2.05);
-			});
+					await page.locator('#userName').fill(name);
+					if (theme !== 'neon')
+						await page.getByRole('button', { name: new RegExp(theme, 'i') }).click();
+					await showSlide(page, index);
+					await expect(page.locator('#export-card')).toHaveAttribute('data-theme', theme);
+
+					await page.evaluate(() => document.fonts.ready);
+					await expect.poll(() => overflowingCardElements(page, '*')).toEqual([]);
+					const lines = await page
+						.locator('#export-card .export-name')
+						.evaluate(
+							(el: HTMLElement) => el.offsetHeight / parseFloat(getComputedStyle(el).lineHeight)
+						);
+					expect(lines).toBeLessThanOrEqual(2.05);
+				});
+			}
 		}
+	}
+
+	for (const theme of ['classic', 'synthwave']) {
+		test(`summary ${theme} card fits a short name`, async ({ page }) => {
+			await uploadCsv(page, garminCsv([{ title: 'Run', distance: '10' }]));
+			await page.locator('#userName').fill('Ana');
+			await page.getByRole('button', { name: new RegExp(theme, 'i') }).click();
+			await showSlide(page, 0);
+			await expect(page.locator('#export-card')).toHaveAttribute('data-theme', theme);
+			await page.evaluate(() => document.fonts.ready);
+			await expect.poll(() => overflowingCardElements(page, '*')).toEqual([]);
+		});
 	}
 
 	for (const [index, card] of CARDS.entries()) {

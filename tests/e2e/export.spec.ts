@@ -68,6 +68,24 @@ test.describe('Export Flow', () => {
 		await expect(page.getByRole('button', { name: /Neon/i })).toBeVisible();
 		await expect(page.getByRole('button', { name: /Minimal/i })).toBeVisible();
 		await expect(page.getByRole('button', { name: /Retro/i })).toBeVisible();
+		const lightmile = page.getByRole('button', { name: /Lightmile.*Coming soon/i });
+		await expect(lightmile).toBeVisible();
+		await expect(lightmile).toBeDisabled();
+	});
+
+	test('classic centers the summary avatar and neon restores it to the header', async ({
+		page
+	}) => {
+		await uploadSample(page);
+		const card = page.locator('#export-card');
+		await page.getByRole('button', { name: /Classic/i }).click();
+		await expect(card).toHaveAttribute('data-theme', 'classic');
+		await expect(card.locator('.centered-avatar .avatar-container')).toHaveCount(1);
+		await expect(card.locator('header .avatar-container')).toHaveCount(0);
+		await page.getByRole('button', { name: /Neon/i }).click();
+		await expect(card).toHaveAttribute('data-theme', 'neon');
+		await expect(card.locator('.centered-avatar .avatar-container')).toHaveCount(0);
+		await expect(card.locator('header .avatar-container')).toHaveCount(1);
 	});
 
 	test('theme switching works', async ({ page }) => {

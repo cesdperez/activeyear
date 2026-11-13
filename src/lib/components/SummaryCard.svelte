@@ -159,7 +159,7 @@
 		position: relative;
 		display: flex;
 		justify-content: center;
-		margin: 0 auto 20px;
+		margin: 0 auto var(--summary-avatar-margin, 20px);
 	}
 
 	.avatar-decorations {
@@ -190,21 +190,21 @@
 
 	.centered-avatar :global(.avatar-container) {
 		position: relative;
-		width: 320px;
-		height: 320px;
+		width: var(--summary-avatar-size, 320px);
+		height: var(--summary-avatar-size, 320px);
 		border-color: var(--avatar-border, var(--color-accent));
 		border-radius: var(--avatar-radius, 50%);
 		box-shadow: var(--avatar-shadow, none);
 	}
 
 	.compact-lane {
-		margin-top: 30px;
+		margin-top: var(--summary-lane-margin, 30px);
 	}
 	.compact-results {
-		padding-top: 24px;
+		padding-top: var(--summary-results-padding, 24px);
 	}
 	.compact-results .result {
-		padding: 16px 0;
+		padding: var(--summary-result-padding, 16px) 0;
 	}
 
 	.results {
