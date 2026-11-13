@@ -17,7 +17,7 @@ export const dashboard: typeof en = {
 		`Se muestran ${shown} de ${total}. Añade palabras para afinar la búsqueda.`,
 	noSearchMatches: 'No hay actividades coincidentes',
 	noPicks: 'No has elegido destacados. Elige una selección o busca tus actividades.',
-	removeHighlight: (x: string) => `Quitar ${x} de destacados`,
+	removeHighlight: (title: string, date: string) => `Quitar ${title}, ${date}, de destacados`,
 	removedHighlight: (x: string) => `Se quitó ${x}`,
 	addedHighlight: (x: string) => `Se añadió ${x}`,
 	highlightLimit: (n: number) => `Máximo ${n} destacados. Quita uno para añadir otro.`,

@@ -20,10 +20,11 @@
 	}: { activity: Activity; unit: Unit; showElevation: boolean; onremove: () => void } = $props();
 
 	const IconComponent = $derived(sportIcons[activity.type]);
+	const date = $derived(formatShortDate(i18n.locale, new Date(activity.date)));
 </script>
 
 <li class="highlight-row" class:with-elevation={showElevation} data-testid="highlight-row">
-	<span class="date stat-value">{formatShortDate(i18n.locale, new Date(activity.date))}</span>
+	<span class="date stat-value">{date}</span>
 	<span class="sport" title={i18n.m.common.sports[activity.type]}>
 		<IconComponent class="h-5 w-5" weight="bold" aria-hidden="true" />
 		<span class="sr-only">{i18n.m.common.sports[activity.type]}</span>
@@ -46,7 +47,7 @@
 	</span>
 	<button
 		class="remove"
-		aria-label={i18n.m.dashboard.removeHighlight(activityTitle(i18n.locale, activity))}
+		aria-label={i18n.m.dashboard.removeHighlight(activityTitle(i18n.locale, activity), date)}
 		disabled={exportLock.isExporting}
 		onclick={onremove}><X class="h-4 w-4" weight="bold" aria-hidden="true" /></button
 	>

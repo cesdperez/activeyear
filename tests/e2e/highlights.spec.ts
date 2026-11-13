@@ -45,7 +45,9 @@ for (const source of ['Garmin', 'Strava'] as const) {
 		);
 		await showSlide(page, 2);
 		await expect(page.locator('#export-card .highlight-title')).toHaveText(titles);
-		await section.getByRole('button', { name: `Remove ${title} from highlights` }).click();
+		await section
+			.getByRole('button', { name: new RegExp(`^Remove ${title}, .+, from highlights$`) })
+			.click();
 		await expect(section.getByTestId('highlight-title').filter({ hasText: title })).toHaveCount(0);
 		await expect(
 			page.locator('#export-card .highlight-title').filter({ hasText: title })
@@ -118,13 +120,29 @@ test('at the highlight limit the search says so and results stay reachable', asy
 test('removing a highlight announces it and keeps focus in the list', async ({ page }) => {
 	await uploadCsv(page, twelveTempos());
 	const section = highlightsSection(page);
-	await section.getByRole('button', { name: 'Remove Tempo 1 from highlights' }).click();
+	await section.getByRole('button', { name: 'Remove Tempo 1, Mar 1, from highlights' }).click();
 	await expect(
-		section.getByRole('button', { name: 'Remove Tempo 2 from highlights' })
+		section.getByRole('button', { name: 'Remove Tempo 2, Mar 2, from highlights' })
 	).toBeFocused();
 	await expect(section.locator('[aria-live]')).toHaveText('Removed Tempo 1');
-	await section.getByRole('button', { name: 'Remove Tempo 10 from highlights' }).click();
+	await section.getByRole('button', { name: 'Remove Tempo 10, Mar 10, from highlights' }).click();
 	await expect(section.getByRole('searchbox', { name: 'Add an activity' })).toBeFocused();
+});
+
+test('remove buttons tell highlights with the same title apart by date', async ({ page }) => {
+	await uploadCsv(
+		page,
+		garminCsv(Array.from({ length: 3 }, () => ({ title: 'Eindhoven Road Cycling' })))
+	);
+	const names = await highlightsSection(page)
+		.getByRole('button', { name: /^Remove Eindhoven Road Cycling/ })
+		.evaluateAll((buttons) => buttons.map((button) => button.getAttribute('aria-label')));
+
+	expect(names).toEqual([
+		'Remove Eindhoven Road Cycling, Mar 1, from highlights',
+		'Remove Eindhoven Road Cycling, Mar 2, from highlights',
+		'Remove Eindhoven Road Cycling, Mar 3, from highlights'
+	]);
 });
 
 test('biggest climbs shows each climb', async ({ page }) => {

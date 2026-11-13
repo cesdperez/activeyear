@@ -18,7 +18,7 @@ export const dashboard: typeof en = {
 		`${shown} sur ${total} affichés. Ajoutez des mots pour affiner la recherche.`,
 	noSearchMatches: 'Aucune activité correspondante',
 	noPicks: 'Aucun temps fort sélectionné. Choisissez une sélection ou recherchez vos activités.',
-	removeHighlight: (x: string) => `Retirer ${x} des temps forts`,
+	removeHighlight: (title: string, date: string) => `Retirer ${title}, ${date}, des temps forts`,
 	removedHighlight: (x: string) => `${x} retiré`,
 	addedHighlight: (x: string) => `${x} ajouté`,
 	highlightLimit: (n: number) =>

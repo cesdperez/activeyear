@@ -17,7 +17,8 @@ export const dashboard: typeof en = {
 		`${shown} van ${total} getoond. Voeg woorden toe om je zoekopdracht te verfijnen.`,
 	noSearchMatches: 'Geen activiteiten gevonden',
 	noPicks: 'Geen hoogtepunten gekozen. Kies een selectie of zoek je activiteiten.',
-	removeHighlight: (x: string) => `${x} uit hoogtepunten verwijderen`,
+	removeHighlight: (title: string, date: string) =>
+		`${title}, ${date}, uit hoogtepunten verwijderen`,
 	removedHighlight: (x: string) => `${x} verwijderd`,
 	addedHighlight: (x: string) => `${x} toegevoegd`,
 	highlightLimit: (n: number) =>
