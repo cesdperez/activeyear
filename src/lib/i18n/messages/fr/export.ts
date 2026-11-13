@@ -31,7 +31,7 @@ export const exportMessages: typeof en = {
 	highlights: 'Temps forts',
 	yearInSport: 'Année sportive',
 	profile: 'Profil',
-	noHighlights: 'Aucune activité à la une pour le moment',
+	noHighlights: 'Pas encore de temps forts',
 	activity: 'Activité',
 	previous: 'Diapositive précédente',
 	next: 'Diapositive suivante',

@@ -20,7 +20,7 @@ export const dashboard: typeof en = {
 	removedHighlight: (x: string) => `${x} verwijderd`,
 	addedHighlight: (x: string) => `${x} toegevoegd`,
 	highlightLimit: (n: number) =>
-		`Maximaal ${n} hoogtepunten. Verwijder er één om een andere toe te voegen.`,
+		`Maximaal ${n} hoogtepunten. Verwijder er één om een ander toe te voegen.`,
 	searchResults: (n: number) =>
 		`${n} ${plural('nl', n, { one: 'resultaat', other: 'resultaten' })}`,
 	presets: {

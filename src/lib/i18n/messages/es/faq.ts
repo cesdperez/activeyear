@@ -5,7 +5,7 @@ export const faq: typeof en = {
 	items: [
 		{
 			question: '¿Qué es esto?',
-			answer: `Un resumen gratuito de ${TARGET_YEAR} para deportistas de Garmin y Strava. Sube tu archivo de actividades y descubre tu año deportivo: distancia, desnivel, tiempo y calorías totales, desglose por deporte, récords personales, momentos destacados y tu racha más larga.`
+			answer: `Un resumen gratuito de ${TARGET_YEAR} para deportistas de Garmin y Strava. Sube tu archivo de actividades y descubre tu año deportivo: distancia, desnivel, tiempo y calorías totales, desglose por deporte, récords personales, destacados y tu racha más larga.`
 		},
 		{
 			question: '¿Mis datos son privados?',
@@ -20,7 +20,7 @@ export const faq: typeof en = {
 		{
 			question: '¿Qué puedo compartir?',
 			answer:
-				'Tres tarjetas para stories (PNG de 1080 × 1920): un resumen, un desglose por deporte y tus momentos destacados, en estilo Neon, Minimal o Retro.'
+				'Tres tarjetas para stories (PNG de 1080 × 1920): un resumen, un desglose por deporte y tus destacados, en estilo Neon, Minimal o Retro.'
 		},
 		{
 			question: '¿Puedo volver a abrir mi resumen más tarde?',

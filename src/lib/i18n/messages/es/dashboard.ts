@@ -67,10 +67,10 @@ export const dashboard: typeof en = {
 	breakdownMetric: 'Métrica del desglose',
 	activities: 'Actividades',
 	time: 'Tiempo',
-	highlights: 'Momentos destacados',
+	highlights: 'Destacados',
 	stravaHighlights:
 		'Tus sesiones más largas del año. Las exportaciones de Strava no incluyen favoritos.',
-	noHighlights: 'Aún no hay momentos destacados',
+	noHighlights: 'Aún no hay destacados',
 	garminFavoritesHint:
 		'Marca actividades como favoritas en Garmin Connect tocando la estrella de cualquier actividad y vuelve a exportar tus datos para verlas aquí.',
 	quarter: (quarter) => `T${quarter}`,

@@ -74,10 +74,10 @@ export const dashboard: typeof en = {
 	breakdownMetric: 'Kennzahl der Verteilung',
 	activities: 'Aktivitäten',
 	time: 'Zeit',
-	highlights: 'Höhepunkte',
+	highlights: 'Highlights',
 	stravaHighlights:
 		'Deine längsten Einheiten des Jahres. Strava-Exporte enthalten keine Favoriten.',
-	noHighlights: 'Noch keine Höhepunkte',
+	noHighlights: 'Noch keine Highlights',
 	garminFavoritesHint:
 		'Markiere Aktivitäten in Garmin Connect über das Sternsymbol als Favoriten und exportiere deine Daten erneut, um sie hier zu sehen.',
 	quarter: (quarter) => `Q${quarter}`,
