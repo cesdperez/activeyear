@@ -1,5 +1,5 @@
 import { test, expect, devices, type Locator, type Page } from '@playwright/test';
-import { uploadSample } from './helpers.js';
+import { gotoUpload, uploadSample } from './helpers.js';
 
 const ACCENT = 'rgb(72, 216, 228)';
 
@@ -89,6 +89,20 @@ test.describe('on a touch screen', () => {
 
 	test.describe('on a tablet in landscape', () => {
 		test.use({ viewport: { width: 1280, height: 800 } });
+
+		test('the landing page shows the phone export hint and a full-width demo button', async ({
+			page
+		}) => {
+			await gotoUpload(page);
+			await expect(page.getByText('Export on a computer, or try the demo.')).toBeVisible();
+			const demo = page.getByRole('button', {
+				name: 'No CSV file? See how it works with demo data'
+			});
+			await expect(demo).toHaveCount(1);
+			const box = await demo.boundingBox();
+			expect(box!.height).toBeGreaterThanOrEqual(44);
+			expect(box!.width).toBeGreaterThan(500);
+		});
 
 		test('preset buttons and the highlight search share one height', async ({ page }) => {
 			const [presets, search] = await presetAndSearchHeights(page);
