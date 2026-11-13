@@ -11,7 +11,7 @@ export const meta: typeof en = {
 		bullets: [
 			'Werkt in elke moderne browser op een computer. Geen installatie, account of login nodig.',
 			'De CSV wordt in de browser verwerkt en geanalyseerd. De activiteitsgegevens worden nooit naar een server geüpload.',
-			'Invoer: de activiteiten-CSV van Garmin Connect of activities.csv uit een Strava-accountexport, beide in het Engels.',
+			'Invoer: de activiteiten-CSV van Garmin Connect of activities.csv uit een Strava-accountexport, in het Engels, Spaans, Duits, Frans, Italiaans, Nederlands of Portugees.',
 			'Uitvoer: een dashboard en drie deelbare PNG-kaarten van 1080 × 1920 in de stijl Neon, Minimal of Retro.',
 			'Opslaan: het dashboard kan het verwerkte jaar als .json-bestand downloaden. Sleep dit naar het uploadvak om het overzicht opnieuw te openen.',
 			'Op de startpagina staat een demo met voorbeeldgegevens.'

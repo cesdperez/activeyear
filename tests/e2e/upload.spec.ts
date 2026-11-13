@@ -147,6 +147,25 @@ test.describe('Upload Flow', () => {
 		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
 	});
 
+	test('imports a Spanish Garmin export', async ({ page }) => {
+		await gotoUpload(page);
+		await uploadFile(
+			page,
+			`Tipo de actividad,Fecha,Título,Distancia,Calorías,Tiempo,Ascenso total\nCarrera,${TARGET_YEAR}-03-01 08:00:00,Carrera,10,500,01:00:00,100\nEntrenamiento en cinta,${TARGET_YEAR}-03-02 08:00:00,Cinta,5,250,00:30:00,0`
+		);
+		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
+		await expect(page.getByTestId('main-stats').getByText('15.0km')).toBeVisible();
+	});
+
+	test('imports a French Strava export', async ({ page }) => {
+		await gotoUpload(page);
+		await uploadFile(
+			page,
+			`Date de l'activité,Nom de l'activité,Type d'activité,Distance,Durée de déplacement\n1 mars ${TARGET_YEAR} 08:00:00,Course,Course à pied,10,3600`
+		);
+		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
+	});
+
 	test('shows Strava highlights on the export card', async ({ page }) => {
 		await gotoUpload(page);
 		await page.locator('input[type="file"]').setInputFiles(STRAVA_CSV);
@@ -162,13 +181,13 @@ test.describe('Upload Flow', () => {
 		await expect(page.locator('body')).not.toContainText(/Garmin/i);
 	});
 
-	test('rejects a localized Strava export', async ({ page }) => {
+	test('rejects an unsupported Strava language', async ({ page }) => {
 		await gotoUpload(page);
-		await uploadFile(
-			page,
-			'Fecha de la actividad,Tipo de actividad,Nombre de archivo\n"31 oct 2026, 9:49:58",Carrera,activities/123.fit.gz'
+		await uploadFile(page, '日付,種目,ファイル\n2026-10-31,ランニング,activities/123.fit.gz');
+		await expect(page.getByRole('alert')).toContainText(
+			'English, Spanish, German, French, Italian, Dutch or Portuguese',
+			{ timeout: 10000 }
 		);
-		await expect(page.getByRole('alert')).toContainText('English', { timeout: 10000 });
 	});
 
 	test('allows uploading a different file', async ({ page }) => {

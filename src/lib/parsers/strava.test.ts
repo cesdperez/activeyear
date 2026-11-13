@@ -151,7 +151,7 @@ describe('Strava parser', () => {
 		expect(result.errors).toEqual([
 			expect.objectContaining({
 				type: 'unsupported-format',
-				reason: 'strava-not-english',
+				reason: 'strava-unsupported-language',
 				message: expect.stringContaining('English')
 			})
 		]);

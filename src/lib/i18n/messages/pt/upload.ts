@@ -11,9 +11,9 @@ export const upload: typeof en = {
 	analyzing: 'Analisando atividades...',
 	invalidExtension: 'Envie um arquivo CSV ou .json salvo',
 	unrecognised:
-		'Não foi possível reconhecer este arquivo. Envie o CSV de atividades do Garmin Connect ou activities.csv da exportação do Strava em inglês.',
-	stravaNotEnglish:
-		'Esta exportação do Strava não está em inglês. Altere o idioma do Strava para inglês, solicite um novo arquivo e envie activities.csv.',
+		'Não foi possível reconhecer este arquivo. Envie o CSV de atividades do Garmin Connect ou activities.csv da exportação do Strava em inglês, espanhol, alemão, francês, italiano, holandês ou português.',
+	stravaUnsupportedLanguage:
+		'Esta exportação do Strava está em um idioma que ainda não conseguimos ler. Configure o Strava em inglês, espanhol, alemão, francês, italiano, holandês ou português, solicite um novo arquivo e envie o activities.csv dele.',
 	unknown: 'Não foi possível processar o arquivo',
 	'invalid-date': 'a data é inválida',
 	'malformed-quotes': 'as aspas não correspondem',

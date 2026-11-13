@@ -132,7 +132,7 @@ function parseNumber(value: string | undefined): number {
 	return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function nonEnglishExportResult(): ParseResult {
+function unsupportedLanguageExportResult(): ParseResult {
 	return {
 		source: 'strava',
 		activities: [],
@@ -141,10 +141,10 @@ function nonEnglishExportResult(): ParseResult {
 		errors: [
 			{
 				type: 'unsupported-format',
-				reason: 'strava-not-english',
+				reason: 'strava-unsupported-language',
 				row: 0,
 				message:
-					"This Strava export isn't in English. Set your Strava language to English, request a new archive, and upload its activities.csv."
+					"This Strava export is in a language we can't read yet. Set Strava to English, Spanish, German, French, Italian, Dutch or Portuguese, request a new archive, and upload its activities.csv."
 			}
 		]
 	};
@@ -215,7 +215,8 @@ function parse(csv: string, year: number): ParseResult {
 	const headers = readHeaders(csv);
 	const locale = hasEnglishHeaders(headers) ? undefined : findLocale(headers);
 	const translated = locale ? headers.map((header) => locale.headers[header] ?? header) : headers;
-	if (!KEY_HEADERS.every((header) => translated.includes(header))) return nonEnglishExportResult();
+	if (!KEY_HEADERS.every((header) => translated.includes(header)))
+		return unsupportedLanguageExportResult();
 
 	const columns = columnIndexes(translated);
 	const result: ParseResult = {

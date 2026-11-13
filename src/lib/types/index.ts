@@ -106,7 +106,10 @@ export type SavedYearError =
 export type UploadError =
 	| SavedYearError
 	| UnusableFileError
-	| { type: 'invalid-extension' | 'unrecognised' | 'strava-not-english' | 'unknown-failure' };
+	| {
+			type:
+				'invalid-extension' | 'unrecognised' | 'strava-unsupported-language' | 'unknown-failure';
+	  };
 
 export type ActivitySource = 'garmin' | 'strava';
 
@@ -131,7 +134,7 @@ export type RowErrorType = 'invalid-date' | 'malformed-quotes' | 'missing-column
 export interface ParseError {
 	type: RowErrorType | 'invalid-number' | 'unsupported-format' | 'unknown';
 	row: number;
-	reason?: 'unrecognised' | 'strava-not-english';
+	reason?: 'unrecognised' | 'strava-unsupported-language';
 	message: string;
 }
 

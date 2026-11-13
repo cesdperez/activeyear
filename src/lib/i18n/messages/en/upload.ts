@@ -10,9 +10,9 @@ export const upload = {
 	analyzing: 'Analyzing activities...',
 	invalidExtension: 'Please upload a CSV or saved .json file',
 	unrecognised:
-		"We couldn't recognise this file. Upload the Activities CSV from Garmin Connect or activities.csv from your Strava account export, with the language set to English.",
-	stravaNotEnglish:
-		"This Strava export isn't in English. Set your Strava language to English, request a new archive, and upload its activities.csv.",
+		"We couldn't recognise this file. Upload the Activities CSV from Garmin Connect or activities.csv from your Strava account export in English, Spanish, German, French, Italian, Dutch or Portuguese.",
+	stravaUnsupportedLanguage:
+		"This Strava export is in a language we can't read yet. Set Strava to English, Spanish, German, French, Italian, Dutch or Portuguese, request a new archive, and upload its activities.csv.",
 	unknown: 'Failed to parse file',
 	'invalid-date': 'the date is not valid',
 	'malformed-quotes': 'the quote marks do not match',

@@ -368,6 +368,8 @@ Strings live in typed catalogs at `src/lib/i18n/messages/<locale>/<namespace>.ts
 
 Number and date formatting takes a `locale` and uses `INTL_LOCALES`. Unit suffixes (`km`, `mi`, `m`, `ft`, `kcal`, `h`, `m`, `s`) stay the same in every language. Parsing stays independent of the UI language: parsers keep English messages for logs, and the UI maps error types to translated text.
 
+Export parsing accepts Garmin and Strava files in English, Spanish, German, French, Italian, Dutch and Portuguese using header and activity-type tables in `src/lib/parsers/garminLocales.ts` and `stravaLocales.ts`. Garmin files carry no unit marker, so imperial accounts rely on the Metric/Imperial choice on the upload screen.
+
 German, Dutch, and French can run 20 to 35% longer than English. Every card and widget must fit the longest translation. The German card snapshots in `tests/e2e/visual-export.spec.ts` guard this.
 
 ### Add a Language
