@@ -37,13 +37,16 @@ export interface WeeklyBar {
 	isTopDay: boolean;
 }
 
+/** Consolidated sports by `metric`, ties broken by time and then count. */
 export function rankSports(breakdown: SportBreakdown[], metric: BreakdownMetric): SportBreakdown[] {
-	return consolidateBreakdown(breakdown).sort((a, b) => b[metric] - a[metric]);
+	return consolidateBreakdown(breakdown).sort(
+		(a, b) => b[metric] - a[metric] || b.duration - a.duration || b.count - a.count
+	);
 }
 
 /**
  * The top sports by `metric`, at most `TOP_SPORTS_LIMIT` entries. Past the limit the rest are
- * folded into "other", so the entries still add up to the whole year.
+ * folded into "other", listed last whatever its size, so the entries still add up to the whole year.
  */
 export function selectTopSports(
 	breakdown: SportBreakdown[],
@@ -56,7 +59,7 @@ export function selectTopSports(
 	const kept = named.slice(0, TOP_SPORTS_LIMIT - 1);
 	const other = mergeIntoOther(ranked.filter((s) => !kept.includes(s)));
 
-	return [...kept, other].sort((a, b) => b[metric] - a[metric]);
+	return [...kept, other];
 }
 
 export type SportColors = Record<ActivityType, string>;
