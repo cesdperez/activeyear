@@ -1,6 +1,8 @@
 import type { Theme, SummaryMetric, Unit, BreakdownMetric } from '#lib/types/index.js';
 import { summaryMetricWithValue } from '#lib/utils/stats.js';
 import { yearData } from './yearData.svelte.js';
+import { browser } from '$app/env';
+import { unitsForLanguages } from '#lib/utils/regionUnits.js';
 
 class ExportSettings {
 	userName = $state<string>('');
@@ -9,7 +11,9 @@ class ExportSettings {
 	userPfp = $state<string | null>(null);
 	confettiEnabled = $state<boolean>(false);
 	summaryMetric = $state<SummaryMetric>('distance');
-	#unit = $state<Unit>('km');
+	#unit = $state<Unit>(
+		browser && unitsForLanguages(navigator.languages) === 'imperial' ? 'miles' : 'km'
+	);
 	breakdownMetric = $state<BreakdownMetric>('count');
 
 	get unit() {

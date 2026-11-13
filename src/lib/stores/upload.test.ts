@@ -107,6 +107,29 @@ describe('upload', () => {
 		expect(uploadStore.garminUnits).toBe('imperial');
 	});
 
+	it('shows miles after an imperial Garmin upload and km after a metric one', async () => {
+		uploadStore.garminUnits = 'imperial';
+		await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
+		expect(exportSettings.unit).toBe('miles');
+
+		uploadStore.reset();
+		uploadStore.garminUnits = 'metric';
+		await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
+		expect(exportSettings.unit).toBe('km');
+	});
+
+	it('keeps the chosen display unit after a saved year loads', async () => {
+		uploadStore.garminUnits = 'imperial';
+		await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
+		const json = yearData.savedYearJson();
+		uploadStore.reset();
+		exportSettings.unit = 'km';
+
+		await uploadStore.processFile(new File([json], 'year.json'));
+
+		expect(exportSettings.unit).toBe('km');
+	});
+
 	it('counts the rows left out of a file that loads', async () => {
 		const content = `${garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)}\nRunning,bad,Run,10.0,600,00:50:00,100`;
 

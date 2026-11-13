@@ -8,6 +8,10 @@ export function hasYearFileExtension(name: string): boolean {
 	return /\.(csv|json)$/i.test(name);
 }
 
+export function isSavedYearFileName(name: string): boolean {
+	return name.toLowerCase().endsWith('.json');
+}
+
 export function loadYearFile(
 	name: string,
 	content: string,
@@ -17,7 +21,7 @@ export function loadYearFile(
 	if (!hasYearFileExtension(name)) {
 		return { type: 'failed', event: 'unsupported-file-type', error: { type: 'invalid-extension' } };
 	}
-	if (name.toLowerCase().endsWith('.json')) {
+	if (isSavedYearFileName(name)) {
 		const saved = parseSavedYear(content, year);
 		if (!saved.ok) return { type: 'failed', event: 'invalid-saved-year', error: saved.error };
 		return {
