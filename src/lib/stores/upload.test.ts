@@ -10,6 +10,7 @@ describe('upload', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		uploadStore.reset();
+		uploadStore.garminUnits = 'metric';
 		exportSettings.unit = 'km';
 	});
 
@@ -96,6 +97,14 @@ describe('upload', () => {
 		expect(track).toHaveBeenCalledTimes(2);
 		expect(track).toHaveBeenCalledWith('upload_success', '1-10');
 		expect(track).toHaveBeenCalledWith('sports_count', '1');
+	});
+
+	it('uses Garmin units and keeps them on reset', async () => {
+		uploadStore.garminUnits = 'imperial';
+		await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
+		expect(yearData.activities[0].distance).toBeCloseTo(16.09344);
+		uploadStore.reset();
+		expect(uploadStore.garminUnits).toBe('imperial');
 	});
 
 	it('counts the rows left out of a file that loads', async () => {

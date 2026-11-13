@@ -1,5 +1,5 @@
 import { parseActivityCsv } from '#lib/parsers/index.js';
-import type { YearFileResult } from '#lib/types/index.js';
+import type { GarminUnits, YearFileResult } from '#lib/types/index.js';
 import { cutShortFrom } from './cutShort.js';
 import { parseSavedYear } from './savedYear.js';
 import { describeUnusableFile } from './uploadErrors.js';
@@ -8,7 +8,12 @@ export function hasYearFileExtension(name: string): boolean {
 	return /\.(csv|json)$/i.test(name);
 }
 
-export function loadYearFile(name: string, content: string, year: number): YearFileResult {
+export function loadYearFile(
+	name: string,
+	content: string,
+	year: number,
+	options?: { garminUnits?: GarminUnits }
+): YearFileResult {
 	if (!hasYearFileExtension(name)) {
 		return { type: 'failed', event: 'unsupported-file-type', error: { type: 'invalid-extension' } };
 	}
@@ -23,7 +28,7 @@ export function loadYearFile(name: string, content: string, year: number): YearF
 			parseErrors: []
 		};
 	}
-	const result = parseActivityCsv(content, year);
+	const result = parseActivityCsv(content, year, options);
 	const unreadable = result.errors.find((error) => error.type === 'unsupported-format');
 	if (unreadable) {
 		return {

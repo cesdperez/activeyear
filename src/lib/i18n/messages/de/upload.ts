@@ -1,5 +1,8 @@
 import type { upload as en } from '../en/upload.js';
 export const upload: typeof en = {
+	garminUnits: 'Einheiten in deinem Garmin-Konto',
+	metric: 'Metrisch',
+	imperial: 'Imperial',
 	drop: 'Ziehe deine Garmin- oder Strava-CSV hierher',
 	browse: 'oder klicke zum Auswählen',
 	saved: 'Dein Jahr schon gespeichert? Ziehe die .json-Datei hierher',
@@ -8,9 +11,9 @@ export const upload: typeof en = {
 	analyzing: 'Aktivitäten werden analysiert...',
 	invalidExtension: 'Bitte lade eine CSV- oder gespeicherte .json-Datei hoch',
 	unrecognised:
-		'Diese Datei wurde nicht erkannt. Lade die Aktivitäten-CSV von Garmin Connect oder activities.csv aus deinem Strava-Export auf Englisch hoch.',
-	stravaNotEnglish:
-		'Dieser Strava-Export ist nicht auf Englisch. Stelle Strava auf Englisch, fordere ein neues Archiv an und lade activities.csv hoch.',
+		'Diese Datei wurde nicht erkannt. Lade die Aktivitäten-CSV von Garmin Connect oder activities.csv aus deinem Strava-Export hoch auf Englisch, Spanisch, Deutsch, Französisch, Italienisch, Niederländisch oder Portugiesisch.',
+	stravaUnsupportedLanguage:
+		'Dieser Strava-Export ist in einer Sprache, die wir noch nicht lesen können. Stelle Strava ein auf Englisch, Spanisch, Deutsch, Französisch, Italienisch, Niederländisch oder Portugiesisch, fordere ein neues Archiv an und lade dessen activities.csv hoch.',
 	unknown: 'Datei konnte nicht verarbeitet werden',
 	'invalid-date': 'das Datum ist ungültig',
 	'malformed-quotes': 'die Anführungszeichen stimmen nicht überein',

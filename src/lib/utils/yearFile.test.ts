@@ -69,6 +69,14 @@ describe('year file loading', () => {
 		});
 	});
 
+	it('uses Garmin account units when loading a CSV', () => {
+		const result = loadYearFile('activities.csv', csv('2025-03-01 08:00:00'), year, {
+			garminUnits: 'imperial'
+		});
+		if (result.type !== 'loaded') throw new Error('Expected activities');
+		expect(result.activities[0].distance).toBeCloseTo(16.09344);
+	});
+
 	it('loads activities and preserves row errors', () => {
 		const result = loadYearFile(
 			'activities.CSV',

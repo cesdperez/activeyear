@@ -1,6 +1,12 @@
 import { track } from '#lib/analytics/track.js';
 import type { EventValue } from '#lib/constants/events.js';
-import type { LoadedYear, UploadError, ParseError, AppStatus } from '#lib/types/index.js';
+import type {
+	LoadedYear,
+	UploadError,
+	ParseError,
+	AppStatus,
+	GarminUnits
+} from '#lib/types/index.js';
 import { activityCountBucket, sportsCountBucket } from '#lib/utils/events.js';
 import { hasYearFileExtension, loadYearFile } from '#lib/utils/yearFile.js';
 import { describeSkippedRows } from '#lib/utils/uploadErrors.js';
@@ -11,6 +17,7 @@ import { highlightsStore } from './highlights.svelte.js';
 import { exportSettings } from './exportSettings.svelte.js';
 
 class UploadStore {
+	garminUnits = $state<GarminUnits>('metric');
 	#status = $state<AppStatus>('idle');
 	#error = $state<UploadError | null>(null);
 	#parseErrors = $state<ParseError[]>([]);
@@ -54,7 +61,9 @@ class UploadStore {
 
 		try {
 			const content = await file.text();
-			const result = loadYearFile(file.name, content, TARGET_YEAR);
+			const result = loadYearFile(file.name, content, TARGET_YEAR, {
+				garminUnits: this.garminUnits
+			});
 			if (result.type === 'failed') {
 				this.#fail(result.event, result.error, result.parseErrors);
 				return;

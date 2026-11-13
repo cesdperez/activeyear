@@ -90,6 +90,10 @@ export type WidgetVariantProps =
 export type SummaryMetric = 'distance' | 'elevation' | 'duration' | 'calories';
 
 export type Unit = 'km' | 'miles';
+export type GarminUnits = 'metric' | 'imperial';
+export interface ParseOptions {
+	garminUnits?: GarminUnits;
+}
 
 export type AvatarError = { type: 'invalid' | 'unreadable' };
 export type ExportError = { type: 'ready' | 'fontsUnavailable' | 'failed' };
@@ -104,7 +108,10 @@ export type SavedYearError =
 export type UploadError =
 	| SavedYearError
 	| UnusableFileError
-	| { type: 'invalid-extension' | 'unrecognised' | 'strava-not-english' | 'unknown-failure' };
+	| {
+			type:
+				'invalid-extension' | 'unrecognised' | 'strava-unsupported-language' | 'unknown-failure';
+	  };
 
 export type YearFileResult =
 	| {
@@ -142,7 +149,7 @@ export interface ParseResult {
 /** Reads one export format; `detect` decides whether `parse` should handle the file. */
 export interface ActivityParser {
 	detect(csvContent: string): boolean;
-	parse(csvContent: string, year: number): ParseResult;
+	parse(csvContent: string, year: number, options?: ParseOptions): ParseResult;
 }
 
 /** Row errors that keep the row out of the totals. */
@@ -151,7 +158,7 @@ export type RowErrorType = 'invalid-date' | 'malformed-quotes' | 'missing-column
 export interface ParseError {
 	type: RowErrorType | 'invalid-number' | 'unsupported-format' | 'unknown';
 	row: number;
-	reason?: 'unrecognised' | 'strava-not-english';
+	reason?: 'unrecognised' | 'strava-unsupported-language';
 	message: string;
 }
 
@@ -254,3 +261,13 @@ export interface BreakdownCardModel {
 }
 
 export type AppStatus = 'idle' | 'parsing' | 'ready' | 'error';
+export interface GarminLocale {
+	headers: Record<string, string>;
+	types: Record<string, string>;
+}
+
+export type StravaLocale = {
+	headers: Record<string, string>;
+	types: Record<string, string>;
+	months: string[];
+};

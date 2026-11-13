@@ -79,8 +79,8 @@ export function uploadErrorMessage(error: UploadError, locale: Locale): string {
 			return m.invalidExtension;
 		case 'unrecognised':
 			return m.unrecognised;
-		case 'strava-not-english':
-			return m.stravaNotEnglish;
+		case 'strava-unsupported-language':
+			return m.stravaUnsupportedLanguage;
 		case 'unknown-failure':
 			return m.unknown;
 		case 'rows-rejected':
