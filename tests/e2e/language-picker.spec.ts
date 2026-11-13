@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { uploadSample } from './helpers.js';
+import { gotoUpload, uploadSample } from './helpers.js';
 
 const names = ['English', 'Español', 'Português', 'Français', 'Deutsch', 'Nederlands'];
 const codes = ['en', 'es', 'pt', 'fr', 'de', 'nl'];
 
 test('switches language with links', async ({ page }) => {
-	await page.goto('/');
+	await gotoUpload(page);
 	const button = page.getByRole('button', { name: 'Language: English' });
 	await expect(button).toContainText('EN');
 	await button.click();
@@ -20,7 +20,7 @@ test('switches language with links', async ({ page }) => {
 });
 
 test('supports menu keyboard navigation', async ({ page }) => {
-	await page.goto('/');
+	await gotoUpload(page);
 	const button = page.getByRole('button', { name: 'Language: English' });
 	await button.focus();
 	await page.keyboard.press('Enter');
