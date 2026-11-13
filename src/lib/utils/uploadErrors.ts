@@ -1,6 +1,5 @@
 import { MESSAGES } from '#lib/i18n/messages/index.js';
 import { savedYearErrorMessage } from './savedYear.js';
-import { plural } from '#lib/i18n/plural.js';
 import type {
 	Locale,
 	UploadError,
@@ -65,11 +64,7 @@ export function unusableFileMessage(error: UnusableFileError, locale: Locale = '
 }
 
 export function skippedRowsNotice(count: number, locale: Locale = 'en'): string {
-	const m = MESSAGES[locale].upload;
-	return m.skipped(
-		formatCount(locale, count),
-		plural(locale, count, { one: m.one, other: m.other })
-	);
+	return MESSAGES[locale].upload.skipped(count, formatCount(locale, count));
 }
 
 export function uploadErrorMessage(error: UploadError, locale: Locale): string {

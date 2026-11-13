@@ -144,6 +144,19 @@ describe('skippedRowsNotice', () => {
 	])('reports %i skipped rows', (count, notice) => {
 		expect(skippedRowsNotice(count)).toBe(notice);
 	});
+
+	it.each([
+		['es', 1, 'Se omitió 1 fila que no se pudo leer'],
+		['es', 3, 'Se omitieron 3 filas que no se pudieron leer'],
+		['pt', 1, '1 linha não pôde ser lida e foi ignorada'],
+		['pt', 3, '3 linhas não puderam ser lidas e foram ignoradas'],
+		['fr', 1, '1 ligne illisible ignorée'],
+		['fr', 3, '3 lignes illisibles ignorées'],
+		['de', 1, '1 nicht lesbare Zeile übersprungen'],
+		['nl', 3, '3 onleesbare rijen overgeslagen']
+	] as const)('agrees the whole %s notice with %i rows', (locale, count, notice) => {
+		expect(skippedRowsNotice(count, locale)).toBe(notice);
+	});
 });
 
 describe('localized upload errors', () => {

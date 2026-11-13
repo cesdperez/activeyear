@@ -1,3 +1,4 @@
+import { plural } from '#lib/i18n/plural.js';
 import type { upload as en } from '../en/upload.js';
 export const upload: typeof en = {
 	garminUnits: 'Unidades de tu cuenta de Garmin',
@@ -25,9 +26,11 @@ export const upload: typeof en = {
 	years: (range: string, year: number) =>
 		`Este archivo contiene actividades de ${range}, ninguna de ${year}`,
 	range: (first: number, last: number) => `${first} a ${last}`,
-	skipped: (count: string, noun: string) => `Se omitieron ${count} ${noun} que no se pudieron leer`,
-	one: 'fila',
-	other: 'filas',
+	skipped: (count: number, formatted: string) =>
+		plural('es', count, {
+			one: `Se omitió ${formatted} fila que no se pudo leer`,
+			other: `Se omitieron ${formatted} filas que no se pudieron leer`
+		}),
 	unsupportedVersion: 'Este año guardado es de otra versión de ActiveYear',
 	wrongYear: (year: number, expected: number) =>
 		`Este archivo contiene tu año ${year}, no ${expected}`,

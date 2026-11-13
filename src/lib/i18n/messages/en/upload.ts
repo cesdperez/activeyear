@@ -1,3 +1,4 @@
+import { plural } from '#lib/i18n/plural.js';
 export const upload = {
 	garminUnits: 'Units in your Garmin account',
 	metric: 'Metric',
@@ -24,9 +25,11 @@ export const upload = {
 	years: (range: string, year: number) =>
 		`This file has activities from ${range}, none from ${year}`,
 	range: (first: number, last: number) => `${first} to ${last}`,
-	skipped: (count: string, noun: string) => `Skipped ${count} ${noun} that could not be read`,
-	one: 'row',
-	other: 'rows',
+	skipped: (count: number, formatted: string) =>
+		plural('en', count, {
+			one: `Skipped ${formatted} row that could not be read`,
+			other: `Skipped ${formatted} rows that could not be read`
+		}),
 	unsupportedVersion: 'This saved year is from an older or newer version of ActiveYear',
 	wrongYear: (year: number, expected: number) =>
 		`This file holds your ${year} year, not ${expected}`,
