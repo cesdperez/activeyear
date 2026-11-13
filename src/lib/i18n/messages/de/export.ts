@@ -47,9 +47,5 @@ export const exportMessages: typeof en = {
 	consistency: 'Beständigkeit',
 	withoutRestDay: 'Ohne Ruhetag',
 	sports: 'Sportarten',
-	season: (year) => `Saison ${year}`,
-	totalDistance: 'Gesamtdistanz',
-	timeActive: 'Aktive Zeit',
-	cyberpunk: 'Cyberpunk',
-	swiss: 'Schweizer Stil'
+	season: (year) => `Saison ${year}`
 };

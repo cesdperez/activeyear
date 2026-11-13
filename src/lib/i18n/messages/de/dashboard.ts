@@ -88,8 +88,5 @@ export const dashboard: typeof en = {
 	totals: 'Gesamtwerte',
 	weekday: 'Tag',
 	sport: 'Sportart',
-	distance: 'Distanz',
-	streakCaption: (count) =>
-		plural('de', count, { one: 'aktiver Tag in Folge', other: 'meiste aktive Tage in Folge' }),
-	moreStatsTitle: 'Mehr Statistiken'
+	distance: 'Distanz'
 };

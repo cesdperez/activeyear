@@ -46,9 +46,5 @@ export const exportMessages: typeof en = {
 	consistency: 'Constancia',
 	withoutRestDay: 'Sin un día de descanso',
 	sports: 'Deportes',
-	season: (year) => `Temporada ${year}`,
-	totalDistance: 'Distancia total',
-	timeActive: 'Tiempo activo',
-	cyberpunk: 'Ciberpunk',
-	swiss: 'Suizo'
+	season: (year) => `Temporada ${year}`
 };

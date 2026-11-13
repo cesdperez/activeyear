@@ -83,11 +83,5 @@ export const dashboard = {
 	totals: 'Totals',
 	weekday: 'Day',
 	sport: 'Sport',
-	distance: 'Distance',
-	streakCaption: (count: number) =>
-		plural('en', count, {
-			one: 'most consecutive active day',
-			other: 'most consecutive active days'
-		}),
-	moreStatsTitle: 'More Stats'
+	distance: 'Distance'
 };

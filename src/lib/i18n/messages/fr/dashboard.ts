@@ -82,11 +82,5 @@ export const dashboard: typeof en = {
 	totals: 'Totaux',
 	weekday: 'Jour',
 	sport: 'Sport',
-	distance: 'Distance',
-	streakCaption: (count) =>
-		plural('fr', count, {
-			one: 'jour actif consécutif',
-			other: 'plus longue série de jours actifs'
-		}),
-	moreStatsTitle: 'Plus de statistiques'
+	distance: 'Distance'
 };

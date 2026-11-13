@@ -11,10 +11,12 @@
 	let {
 		variant,
 		title,
+		headerAside,
 		children
 	}: {
 		variant: CardVariant;
 		title: string;
+		headerAside?: Snippet;
 		children: Snippet;
 	} = $props();
 </script>
@@ -23,8 +25,8 @@
 	<ExportCardSurface {variant} theme={appStore.theme}>
 		<ExportCardBackground theme={appStore.theme} />
 
-		<div class="relative z-10 flex h-full flex-col p-14">
-			<ExportCardHeader {title} userName={appStore.displayName} />
+		<div class="relative z-10 flex h-full flex-col p-[54px]">
+			<ExportCardHeader {title} userName={appStore.displayName} aside={headerAside} />
 			{@render children()}
 			<ExportCardWatermark />
 		</div>

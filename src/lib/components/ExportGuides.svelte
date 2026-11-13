@@ -22,62 +22,51 @@
 </script>
 
 {#snippet exportGuide(steps: ExportStep[], note: string)}
-	<ol class="space-y-2 text-left text-sm text-pretty text-zinc-400">
+	<ol class="steps">
 		{#each steps as { text, link }, i (text)}
-			<li class="flex gap-2">
-				<span class="font-mono text-cyan-400">{i + 1}.</span>
-				{text}
-				{#if link}
-					<!-- eslint-disable svelte/no-navigation-without-resolve -- external site, not an app route -->
-					<a
-						href={link.href}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="text-cyan-400 hover:underline">{link.label}</a
-					>
-					<!-- eslint-enable svelte/no-navigation-without-resolve -->
-				{/if}
+			<li>
+				<span class="step-number">{i + 1}</span>
+				<span>
+					{text}
+					{#if link}
+						<!-- eslint-disable svelte/no-navigation-without-resolve -- external site, not an app route -->
+						<a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
+						<!-- eslint-enable svelte/no-navigation-without-resolve -->
+					{/if}
+				</span>
 			</li>
 		{/each}
 	</ol>
-	<p class="mt-4 text-xs text-balance text-zinc-400">{note}</p>
+	<p class="note">{note}</p>
 {/snippet}
 
-<div
-	role="tablist"
-	aria-label={i18n.m.faq.guidesAria}
-	class="mb-4 inline-flex items-center rounded-full border border-zinc-700 bg-zinc-900 p-1"
->
-	<button
-		onkeydown={handleKeydown}
-		bind:this={garminTab}
-		id="garmin-tab"
-		role="tab"
-		type="button"
-		aria-selected={selected === 'garmin'}
-		aria-controls="garmin-panel"
-		tabindex={selected === 'garmin' ? 0 : -1}
-		onclick={() => (selected = 'garmin')}
-		class="min-h-11 rounded-full px-4 text-xs font-medium tracking-wide uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 {selected ===
-		'garmin'
-			? 'bg-cyan-400/10 text-cyan-400'
-			: 'text-zinc-400 hover:text-zinc-200'}">Garmin Connect</button
-	>
-	<button
-		onkeydown={handleKeydown}
-		bind:this={stravaTab}
-		id="strava-tab"
-		role="tab"
-		type="button"
-		aria-selected={selected === 'strava'}
-		aria-controls="strava-panel"
-		tabindex={selected === 'strava' ? 0 : -1}
-		onclick={() => (selected = 'strava')}
-		class="min-h-11 rounded-full px-4 text-xs font-medium tracking-wide uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 {selected ===
-		'strava'
-			? 'bg-cyan-400/10 text-cyan-400'
-			: 'text-zinc-400 hover:text-zinc-200'}">Strava</button
-	>
+<div class="flex justify-center">
+	<div role="tablist" aria-label={i18n.m.faq.guidesAria} class="segmented mb-5">
+		<button
+			onkeydown={handleKeydown}
+			bind:this={garminTab}
+			id="garmin-tab"
+			role="tab"
+			type="button"
+			aria-selected={selected === 'garmin'}
+			aria-controls="garmin-panel"
+			tabindex={selected === 'garmin' ? 0 : -1}
+			onclick={() => (selected = 'garmin')}
+			class="min-h-11 px-5">Garmin Connect</button
+		>
+		<button
+			onkeydown={handleKeydown}
+			bind:this={stravaTab}
+			id="strava-tab"
+			role="tab"
+			type="button"
+			aria-selected={selected === 'strava'}
+			aria-controls="strava-panel"
+			tabindex={selected === 'strava' ? 0 : -1}
+			onclick={() => (selected = 'strava')}
+			class="min-h-11 px-5">Strava</button
+		>
+	</div>
 </div>
 <div id="garmin-panel" role="tabpanel" aria-labelledby="garmin-tab" hidden={selected !== 'garmin'}>
 	{@render exportGuide(garminExportSteps(i18n.locale), garminExportNote(i18n.locale))}
@@ -85,3 +74,44 @@
 <div id="strava-panel" role="tabpanel" aria-labelledby="strava-tab" hidden={selected !== 'strava'}>
 	{@render exportGuide(stravaExportSteps(i18n.locale), stravaExportNote(i18n.locale))}
 </div>
+
+<style>
+	.steps {
+		display: grid;
+		gap: 0.625rem;
+		font-size: 0.9375rem;
+		text-wrap: pretty;
+		color: var(--color-text-muted);
+	}
+
+	.steps li {
+		display: grid;
+		grid-template-columns: 1.5rem 1fr;
+		align-items: baseline;
+	}
+
+	.step-number {
+		font-family: var(--font-display);
+		font-size: 1.25rem;
+		font-weight: 800;
+		line-height: 1;
+		color: var(--color-accent);
+	}
+
+	a {
+		color: var(--color-accent);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	a:hover {
+		color: var(--color-text-primary);
+	}
+
+	.note {
+		margin-top: 1rem;
+		padding-left: 1.5rem;
+		font-size: 0.8125rem;
+		color: var(--color-text-dim);
+	}
+</style>

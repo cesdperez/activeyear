@@ -81,8 +81,5 @@ export const dashboard: typeof en = {
 	totals: 'Totalen',
 	weekday: 'Dag',
 	sport: 'Sport',
-	distance: 'Afstand',
-	streakCaption: (count) =>
-		plural('nl', count, { one: 'actieve dag op rij', other: 'meeste actieve dagen op rij' }),
-	moreStatsTitle: 'Meer statistieken'
+	distance: 'Afstand'
 };

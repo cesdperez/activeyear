@@ -1,161 +1,55 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
-	import type { Component } from 'svelte';
-	import { CalendarCheck, Lightning, type IconComponentProps } from 'phosphor-svelte';
 	import { activeDaysPercent } from '#lib/utils/breakdown.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { formatCount, formatPercentOfYear } from '#lib/utils/format.js';
-	import type { WidgetVariantProps } from '#lib/types/index.js';
+	import SectionHeading from '#lib/components/dashboard/SectionHeading.svelte';
 
-	interface DashboardStat {
-		Icon: Component<IconComponentProps>;
-		value: string;
-		label: string;
-		delay: number;
-	}
+	let { activeDays, longestStreak }: { activeDays: number; longestStreak: number } = $props();
 
-	interface ExportStat {
-		Icon: Component<IconComponentProps>;
-		value: string;
-		ringStroke: string;
-		ringDashArray: string;
-		ringClass: string;
-		/** Tailwind text colour for the icon and label row. */
-		colorClass: string;
-		label: string;
-		caption: string;
-	}
-
-	let {
-		activeDays,
-		longestStreak,
-		variant
-	}: { activeDays: number; longestStreak: number } & WidgetVariantProps = $props();
-
-	const yearPercent = $derived(activeDaysPercent(activeDays, TARGET_YEAR));
-	const activeDaysLabel = $derived(i18n.m.dashboard.activeDaysLabel(activeDays));
-	const streakCaption = $derived(i18n.m.dashboard.streakCaption(longestStreak));
+	const cells = $derived([
+		{
+			value: formatCount(i18n.locale, activeDays),
+			label: i18n.m.dashboard.activeDaysLabel(activeDays),
+			fact: i18n.m.dashboard.percentOfYear(
+				formatPercentOfYear(i18n.locale, activeDaysPercent(activeDays, TARGET_YEAR))
+			)
+		},
+		{
+			value: formatCount(i18n.locale, longestStreak),
+			label: i18n.m.dashboard.dayStreak,
+			fact: i18n.m.export.withoutRestDay
+		}
+	]);
 </script>
 
-{#snippet dashboardStat({ Icon, value, label, delay }: DashboardStat)}
-	<div
-		class="stat-card group flex items-center gap-4 p-4 md:p-6"
-		style="animation-delay: {delay}ms"
-	>
-		<div class="shrink-0 text-[var(--color-accent)]">
-			<Icon class="h-6 w-6 md:h-8 md:w-8" weight="bold" aria-hidden="true" />
-		</div>
-		<div class="min-w-0">
-			<div class="text-2xl leading-none font-bold text-white md:text-3xl">
-				{value}
-			</div>
-			<div
-				class="text-xs font-medium tracking-wider text-balance text-[var(--color-text-muted)] uppercase md:text-sm"
-			>
-				{label}
-			</div>
-		</div>
-	</div>
-{/snippet}
-
-{#snippet exportStat({
-	Icon,
-	value,
-	ringStroke,
-	ringDashArray,
-	ringClass,
-	colorClass,
-	label,
-	caption
-}: ExportStat)}
-	<div class="consistency-card flex min-w-0 flex-col items-center rounded-2xl p-8 text-center">
-		<div class="mb-4 h-44 w-44">
-			<svg viewBox="0 0 120 120" class="h-full w-full">
-				<circle
-					cx="60"
-					cy="60"
-					r="52"
-					fill="none"
-					stroke="rgba(0,0,0,0.05)"
-					class="progress-ring-bg"
-					stroke-width="10"
-				/>
-				<circle
-					cx="60"
-					cy="60"
-					r="52"
-					fill="none"
-					stroke={ringStroke}
-					stroke-width="10"
-					stroke-dasharray={ringDashArray}
-					stroke-linecap="round"
-					transform="rotate(-90 60 60)"
-					class={ringClass}
-				/>
-				<text
-					x="60"
-					y="60"
-					text-anchor="middle"
-					dominant-baseline="central"
-					fill="var(--color-text-primary)"
-					style="font-size: 38px; font-weight: 900; font-family: inherit;">{value}</text
+<section class="mb-[36px]">
+	<SectionHeading title={i18n.m.export.consistency} variant="export" />
+	<div class="grid grid-cols-2">
+		{#each cells as { value, label, fact }, i (label)}
+			<div class="cell" class:ruled={i > 0}>
+				<p
+					class="stat-value leading-none text-[var(--color-text-primary)]"
+					style:font-size="calc(96px * var(--stat-scale))"
 				>
-			</svg>
-		</div>
-		<div class="flex max-w-full items-center gap-3 {colorClass}">
-			<Icon class="h-8 w-8 shrink-0" weight="bold" aria-hidden="true" />
-			<span
-				class="min-w-0 text-[28px] font-bold tracking-wider text-balance wrap-anywhere uppercase"
-				>{label}</span
-			>
-		</div>
-		<div
-			class="mt-2 max-w-full text-[20px] text-balance wrap-anywhere text-[var(--color-text-muted)]"
-		>
-			{caption}
-		</div>
+					{value}
+				</p>
+				<p class="card-label mt-3 text-[var(--color-text-muted)]">{label}</p>
+				<p class="fun-fact mt-1">{fact}</p>
+			</div>
+		{/each}
 	</div>
-{/snippet}
+</section>
 
-{#if variant === 'dashboard'}
-	<div
-		data-testid="consistency-stats"
-		class="mx-auto mb-16 grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6"
-	>
-		{@render dashboardStat({
-			Icon: CalendarCheck,
-			value: formatCount(i18n.locale, activeDays),
-			label: activeDaysLabel,
-			delay: 350
-		})}
-		{@render dashboardStat({
-			Icon: Lightning,
-			value: formatCount(i18n.locale, longestStreak),
-			label: streakCaption,
-			delay: 400
-		})}
-	</div>
-{:else}
-	<div class="mb-16 grid grid-cols-2 gap-8">
-		{@render exportStat({
-			Icon: CalendarCheck,
-			value: formatCount(i18n.locale, activeDays),
-			ringStroke: 'var(--color-accent)',
-			ringDashArray: `${yearPercent * 3.27} 327`,
-			ringClass: 'progress-ring',
-			colorClass: 'text-[var(--color-accent)]',
-			label: activeDaysLabel,
-			caption: i18n.m.dashboard.percentOfYear(formatPercentOfYear(i18n.locale, yearPercent))
-		})}
-		{@render exportStat({
-			Icon: Lightning,
-			value: formatCount(i18n.locale, longestStreak),
-			ringStroke: '#ff6b6b',
-			ringDashArray: '20 10',
-			ringClass: 'streak-ring',
-			colorClass: 'streak-label text-[#ff6b6b]',
-			label: i18n.m.dashboard.dayStreak,
-			caption: streakCaption
-		})}
-	</div>
-{/if}
+<style>
+	.cell {
+		padding: 20px 0 24px;
+		border-top: var(--panel-border-width) solid var(--color-border);
+		border-bottom: var(--panel-border-width) solid var(--color-border);
+	}
+
+	.ruled {
+		padding-left: 32px;
+		border-left: var(--panel-border-width) solid var(--color-border);
+	}
+</style>

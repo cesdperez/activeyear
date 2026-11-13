@@ -9,7 +9,7 @@
 	import PersonalRecordsSection from './breakdown/PersonalRecordsSection.svelte';
 
 	let topSports = $derived(selectTopSports(appStore.breakdown || [], appStore.breakdownMetric));
-	let colors = $derived(sportColorsFor(appStore.breakdown || []));
+	let colors = $derived(sportColorsFor(topSports, appStore.theme));
 </script>
 
 <ExportCardBase variant="breakdown" title={i18n.m.export.breakdown}>
@@ -20,8 +20,6 @@
 	<WeeklyPattern variant="export" pattern={appStore.weeklyPattern} theme={appStore.theme} />
 
 	<ConsistencyStats
-		variant="export"
-		theme={appStore.theme}
 		activeDays={appStore.stats?.activeDays ?? 0}
 		longestStreak={appStore.stats?.longestStreak ?? 0}
 	/>

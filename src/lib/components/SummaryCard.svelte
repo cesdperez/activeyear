@@ -1,219 +1,109 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
-	import {
-		formatDistance,
-		formatDuration,
-		formatCalories,
-		formatElevation,
-		formatEarthLaps,
-		formatEverests,
-		formatPizzaSlices,
-		formatLotRMarathons,
-		showsValue
-	} from '#lib/utils/format.js';
-	import { Ruler, Timer, Mountains, Fire, Target } from 'phosphor-svelte';
+	import { showsValue } from '#lib/utils/format.js';
+	import { scaledLength, totalStats, UNIT_SCALE } from '#lib/utils/totals.js';
+	import { recordActivities } from '#lib/utils/yearLane.js';
+	import { TARGET_YEAR } from '#lib/constants/time.js';
+	import { Target } from 'phosphor-svelte';
 	import { sportIcons } from '#lib/constants/sports.js';
-	import { consolidateBreakdown } from '#lib/utils/activity.js';
+	import { rankSports } from '#lib/utils/breakdown.js';
 	import ExportCardBase from './ExportCardBase.svelte';
+	import ValueWithUnits from './ValueWithUnits.svelte';
+	import YearLane from './widgets/YearLane.svelte';
 
-	let consolidatedBreakdownData = $derived(consolidateBreakdown(appStore.breakdown || []));
+	const topSport = $derived(rankSports(appStore.breakdown, appStore.breakdownMetric)[0]);
+	const TopIcon = $derived(topSport ? (sportIcons[topSport.type] ?? Target) : Target);
 
-	let topSports = $derived(
-		[...consolidatedBreakdownData]
-			.sort((a, b) => b[appStore.breakdownMetric] - a[appStore.breakdownMetric])
-			.slice(0, 4)
+	const totals = $derived(
+		appStore.stats ? totalStats(i18n.locale, appStore.stats, appStore.unit) : []
 	);
-
-	let topSportIcon = $derived(
-		topSports.length === 0 ? Target : (sportIcons[topSports[0].type] ?? Target)
+	const hero = $derived(totals.find((s) => s.id === appStore.summaryMetric) ?? totals[0]);
+	const supporting = $derived(totals.filter((s) => s !== hero && showsValue(s.value)));
+	const fitChars = $derived(
+		Math.max(...supporting.map((s) => scaledLength(s.value, UNIT_SCALE.board)))
 	);
-
-	const allStats = $derived([
-		{
-			id: 'distance',
-			label: i18n.m.export.totalDistance,
-			value: formatDistance(i18n.locale, appStore.stats?.totalDistance ?? 0, appStore.unit),
-			icon: Ruler,
-			equivalent: `🌍 ${formatEarthLaps(i18n.locale, appStore.stats?.totalDistance ?? 0)}`
-		},
-		{
-			id: 'elevation',
-			label: i18n.m.export.elevation,
-			value: formatElevation(i18n.locale, appStore.stats?.totalElevation ?? 0, appStore.unit),
-			icon: Mountains,
-			equivalent: `🏔️ ${formatEverests(i18n.locale, appStore.stats?.totalElevation ?? 0)}`
-		},
-		{
-			id: 'duration',
-			label: i18n.m.export.timeActive,
-			value: formatDuration(i18n.locale, appStore.stats?.totalDuration ?? 0),
-			icon: Timer,
-			equivalent: `💍 ${formatLotRMarathons(i18n.locale, appStore.stats?.totalDuration ?? 0)}`
-		},
-		{
-			id: 'calories',
-			label: i18n.m.export.calories,
-			value: formatCalories(i18n.locale, appStore.stats?.totalCalories ?? 0),
-			icon: Fire,
-			equivalent: `🍕 ${formatPizzaSlices(i18n.locale, appStore.stats?.totalCalories ?? 0)}`
-		}
-	]);
-
-	let heroStat = $derived(allStats.find((s) => s.id === appStore.summaryMetric) || allStats[0]);
-
-	let supportingStats = $derived(
-		allStats.filter((s) => s.id !== heroStat.id && showsValue(s.value))
-	);
-
-	// Middle cells draw both dividers so they sit right against the middle stat.
-	function dividerClass(index: number, count: number): string {
-		if (count === 2 && index === 1) return 'border-l';
-		return index > 0 && index < count - 1 ? 'border-r border-l' : '';
-	}
 </script>
 
 <ExportCardBase variant="summary" title={i18n.m.export.yearInSport}>
-	<!-- User Avatar / Sport Icon -->
-	<div class="relative -mt-[30px] mb-[140px] flex justify-center">
-		<!-- Decorative Spiral Effects -->
-		<div class="avatar-decorations">
-			<svg viewBox="0 0 200 200" class="spiral-svg" aria-hidden="true" focusable="false">
-				<ellipse
-					cx="100"
-					cy="100"
-					rx="90"
-					ry="30"
-					transform="rotate(-30 100 100)"
-					fill="none"
-					stroke="var(--color-accent)"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-dasharray="200 100"
-					opacity="0.4"
-				/>
-				<ellipse
-					cx="100"
-					cy="100"
-					rx="90"
-					ry="30"
-					transform="rotate(45 100 100)"
-					fill="none"
-					stroke="var(--color-accent)"
-					stroke-width="1"
-					stroke-linecap="round"
-					stroke-dasharray="150 150"
-					opacity="0.25"
-				/>
-				<ellipse
-					cx="100"
-					cy="100"
-					rx="95"
-					ry="40"
-					transform="rotate(120 100 100)"
-					fill="none"
-					stroke="var(--color-accent)"
-					stroke-width="0.8"
-					stroke-linecap="round"
-					stroke-dasharray="100 200"
-					opacity="0.2"
-				/>
-				<circle
-					cx="100"
-					cy="100"
-					r="78"
-					stroke-dasharray="10 20"
-					fill="none"
-					stroke="var(--color-accent)"
-					stroke-width="0.5"
-					stroke-linecap="round"
-				/>
-				<circle
-					cx="100"
-					cy="100"
-					r="82"
-					opacity="0.3"
-					fill="none"
-					stroke="var(--color-accent)"
-					stroke-width="0.5"
-					stroke-linecap="round"
-					stroke-dasharray="5 15"
-				/>
-			</svg>
-		</div>
-
-		<div class="avatar-glow"></div>
+	{#snippet headerAside()}
 		<div class="avatar-container">
 			{#if appStore.userPfp}
 				<img
 					src={appStore.userPfp}
 					alt={i18n.m.export.profile}
-					class="h-full w-full rounded-full object-cover"
+					class="h-full w-full object-cover"
 				/>
 			{:else}
-				{@const TopIcon = topSportIcon}
 				<div class="flex h-full w-full items-center justify-center text-[var(--color-accent)]">
-					<TopIcon class="h-56 w-56" weight="bold" aria-hidden="true" />
+					<TopIcon class="h-24 w-24" weight="bold" aria-hidden="true" />
 				</div>
 			{/if}
 		</div>
-	</div>
+	{/snippet}
 
-	<!-- Hero Stat -->
-	<div class="flex flex-1 flex-col items-center justify-start gap-4 text-center">
-		<div class="mb-[60px]">
-			<div class="mb-4 flex items-center justify-center gap-4 text-[var(--color-accent)]">
-				<heroStat.icon class="h-16 w-16" weight="bold" aria-hidden="true" />
-			</div>
-			<div
-				style:--chars={i18n.locale === 'en' ? 1 : heroStat.value.length}
-				class="stat-value text-[min(140px,calc(1350px/var(--chars)))] leading-none font-bold -tracking-[0.04em] text-[var(--color-text-primary)]"
+	{#if hero}
+		<section class="@container">
+			<p class="card-label text-[var(--color-text-muted)]">{hero.label}</p>
+			<p
+				class="stat-value hero-value fit-value mt-2 leading-[0.95] text-[var(--color-text-primary)]"
+				style:--fit-chars={scaledLength(hero.value, UNIT_SCALE.cardHeadline)}
+				style:--fit-max="calc(360px * var(--stat-scale))"
 			>
-				{heroStat.value}
-			</div>
-			<div
-				class="mt-4 text-[32px] font-medium tracking-[0.2em] text-[var(--color-text-dim)] uppercase"
-			>
-				{heroStat.label}
-			</div>
-			<div class="mt-8 text-[44px] font-bold text-[var(--color-accent)]">
-				{heroStat.equivalent}
-			</div>
-		</div>
+				<ValueWithUnits value={hero.value} unitScale={UNIT_SCALE.cardHeadline} tone="accent" />
+			</p>
+			<p class="fun-fact mt-4">{hero.funFact}</p>
+		</section>
+	{/if}
 
-		<!-- Separator -->
-		<div class="mb-[72px] h-2 w-64 rounded-full bg-[var(--color-accent)] opacity-40"></div>
+	<section class="mt-[60px]">
+		<p class="card-label mb-3 text-[var(--color-text-muted)]">{i18n.m.common.dayByDay}</p>
+		<YearLane
+			variant="export"
+			theme={appStore.theme}
+			activities={appStore.activities}
+			highlights={appStore.highlights}
+			records={recordActivities(appStore.records)}
+			year={TARGET_YEAR}
+		/>
+	</section>
 
-		<!-- Supporting Stats Row -->
-		<div
-			class="grid w-full gap-4"
-			style="grid-template-columns: repeat({supportingStats.length}, minmax(0, 1fr));"
-		>
-			{#each supportingStats as stat, i (stat.id)}
-				<div
-					class="overflow-visible border-white/10 text-center {dividerClass(
-						i,
-						supportingStats.length
-					)}"
-				>
-					<stat.icon
-						class="mx-auto mb-3 h-12 w-12 text-[var(--color-text-dim)]"
-						weight="bold"
-						aria-hidden="true"
-					/>
-					<div
-						class="stat-value text-[48px] leading-none font-bold text-[var(--color-text-primary)]"
-					>
-						{stat.value}
-					</div>
-					<div class="mt-2 text-[18px] tracking-widest text-[var(--color-text-muted)] uppercase">
-						{stat.label}
-					</div>
-					<div class="mt-2 text-[22px] font-medium text-[var(--color-accent)]">
-						{stat.equivalent}
-					</div>
+	<dl class="results">
+		{#each supporting as stat (stat.id)}
+			<div class="result">
+				<div class="min-w-0">
+					<dt class="card-label text-[var(--color-text-muted)]">{stat.label}</dt>
+					<dd class="fun-fact mt-1">{stat.funFact}</dd>
 				</div>
-			{/each}
-		</div>
-	</div>
+				<dd class="@container w-[44%] shrink-0 text-right">
+					<span
+						class="stat-value fit-value block leading-none text-[var(--color-text-primary)]"
+						style:--fit-chars={fitChars}
+						style:--fit-max="calc(84px * var(--stat-scale))"
+						><ValueWithUnits value={stat.value} unitScale={UNIT_SCALE.board} /></span
+					>
+				</dd>
+			</div>
+		{/each}
+	</dl>
 </ExportCardBase>
+
+<style>
+	.results {
+		margin-top: auto;
+		padding-top: 48px;
+	}
+
+	.result {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 32px;
+		padding: 26px 0;
+		border-top: var(--panel-border-width) solid var(--color-border);
+	}
+
+	.result:last-child {
+		border-bottom: var(--panel-border-width) solid var(--color-border);
+	}
+</style>

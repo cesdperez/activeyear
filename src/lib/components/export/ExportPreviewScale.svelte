@@ -4,6 +4,10 @@
 	import { getPreviewScale } from '#lib/utils/preview.js';
 	import { PREVIEW_MAX_SCALE } from '#lib/constants/preview.js';
 
+	// Vertical space the carousel nav, slide label and panel padding take around the card.
+	const PREVIEW_CHROME_HEIGHT = 200;
+	const PREVIEW_MIN_SCALE = 0.08;
+
 	let { children }: { children: Snippet } = $props();
 
 	let dimensions = $derived(getExportDimensions());
@@ -13,8 +17,11 @@
 	$effect(() => {
 		if (typeof window === 'undefined') return;
 
+		// Sized from the viewport only, so the controls beside it never move with the card.
 		function updateScale() {
-			scale = getPreviewScale(window.innerWidth, dimensions.width);
+			const fitToWidth = getPreviewScale(window.innerWidth, dimensions.width);
+			const fitToHeight = (window.innerHeight - PREVIEW_CHROME_HEIGHT) / dimensions.height;
+			scale = Math.max(PREVIEW_MIN_SCALE, Math.min(fitToWidth, fitToHeight));
 		}
 
 		updateScale();

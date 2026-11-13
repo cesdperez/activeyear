@@ -3,11 +3,41 @@
 	import { tick } from 'svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import { activityTitle, formatCount, formatDistance, formatDuration } from '#lib/utils/format.js';
+	import { monthLabels } from '#lib/utils/date.js';
 	import { timelineGap } from '#lib/utils/export.js';
 	import { HIGHLIGHTS_LIMIT, TIMELINE_GAP } from '#lib/constants/export.js';
 	import { Target } from 'phosphor-svelte';
 	import { sportIcons } from '#lib/constants/sports.js';
 	import ExportCardBase from './ExportCardBase.svelte';
+
+	const monthNames = $derived(monthLabels(i18n.locale));
+
+	const SIZES = {
+		full: {
+			card: 'gap-8 p-8',
+			icon: 'h-16 w-16',
+			glyph: 'h-8 w-8',
+			title: 'calc(40px * var(--stat-scale))',
+			day: 'calc(56px * var(--stat-scale))',
+			meta: 'calc(28px * var(--stat-scale))'
+		},
+		compact: {
+			card: 'gap-4 p-4',
+			icon: 'h-12 w-12',
+			glyph: 'h-6 w-6',
+			title: 'calc(28px * var(--stat-scale))',
+			day: 'calc(40px * var(--stat-scale))',
+			meta: 'calc(20px * var(--stat-scale))'
+		},
+		dense: {
+			card: 'gap-3 p-2',
+			icon: 'h-10 w-10',
+			glyph: 'h-5 w-5',
+			title: 'calc(22px * var(--stat-scale))',
+			day: 'calc(32px * var(--stat-scale))',
+			meta: 'calc(16px * var(--stat-scale))'
+		}
+	};
 
 	let limit = $state(HIGHLIGHTS_LIMIT);
 	let gap = $state(TIMELINE_GAP.min);
@@ -19,6 +49,7 @@
 	let hiddenCount = $derived(appStore.highlights.length - highlights.length);
 	let compact = $state(false);
 	let dense = $state(false);
+	let size = $derived(dense ? SIZES.dense : compact ? SIZES.compact : SIZES.full);
 	let fitRun = 0;
 
 	// How titles wrap depends on the rendered font, so only the DOM knows how many items fit.
@@ -78,10 +109,10 @@
 </script>
 
 <ExportCardBase variant="highlights" title={i18n.m.export.highlights}>
-	<div class="-mt-[52px] flex min-h-0 flex-1 flex-col px-6">
+	<div class="flex min-h-0 flex-1 flex-col">
 		{#if highlights.length === 0}
-			<div class="flex flex-1 items-center justify-center">
-				<div class="text-center text-[28px] text-[var(--color-text-muted)]">
+			<div class="flex flex-1 items-center">
+				<div class="card-text-md text-[var(--color-text-muted)]">
 					{i18n.m.export.noHighlights}
 				</div>
 			</div>
@@ -89,88 +120,61 @@
 			<div bind:this={area} class="fit-area relative flex min-h-0 flex-1 flex-col justify-center">
 				<div bind:this={list} class="relative flex w-full flex-col" style="gap: {gap}px;">
 					<div
-						class="timeline-line absolute left-[60px] w-[4px]"
+						class="timeline-line absolute left-[133px] w-[2px]"
 						style="top: {lineInset.top}px; bottom: {lineInset.bottom}px;"
 					></div>
 					{#each highlights as fav, i (i)}
 						{@const IconComponent = sportIcons[fav.type] ?? Target}
 						{@const date = new Date(fav.date)}
-						{@const month = new Intl.DateTimeFormat(i18n.locale, { month: 'short' })
-							.format(date)
-							.toLocaleUpperCase(i18n.locale)}
-						{@const day = date.getDate()}
 
 						<div class="timeline-item relative flex shrink-0 items-center gap-6">
-							<!-- Date Column -->
-							<div class="w-[48px] shrink-0 text-center">
-								<div class="text-[14px] font-bold tracking-widest text-[var(--color-accent)]">
-									{month}
+							<div class="w-[96px] shrink-0">
+								<div class="card-label text-[var(--color-accent)]">
+									{monthNames[date.getMonth()]}
 								</div>
-								<div class="text-[32px] leading-none font-black text-[var(--color-text-primary)]">
-									{day}
-								</div>
-							</div>
-
-							<!-- Timeline Node -->
-							<div
-								class="timeline-node relative z-10 flex h-[28px] w-[28px] shrink-0 items-center justify-center rounded-full"
-							>
-								<div class="h-[14px] w-[14px] rounded-full bg-[var(--color-accent)]"></div>
-							</div>
-
-							<!-- Activity Card -->
-							<div
-								class="flex min-w-0 flex-1 items-center {dense
-									? 'gap-3 p-2'
-									: compact
-										? 'gap-4 p-4'
-										: 'gap-8 p-8'} timeline-card rounded-2xl"
-							>
 								<div
-									class="{dense
-										? 'h-10 w-10 rounded-lg'
-										: compact
-											? 'h-12 w-12 rounded-xl'
-											: 'h-16 w-16 rounded-2xl'} flex shrink-0 items-center justify-center bg-[var(--color-accent)]/20 text-[var(--color-accent)]"
+									class="stat-value leading-none text-[var(--color-text-primary)]"
+									style:font-size={size.day}
 								>
-									<IconComponent
-										class={dense ? 'h-5 w-5' : compact ? 'h-6 w-6' : 'h-8 w-8'}
-										weight="bold"
-										aria-hidden="true"
-									/>
+									{date.getDate()}
+								</div>
+							</div>
+
+							<div
+								class="timeline-node relative z-10 flex h-[28px] w-[28px] shrink-0 items-center justify-center"
+							>
+								<div class="h-[10px] w-[10px] bg-[var(--color-accent)]"></div>
+							</div>
+
+							<div class="timeline-card panel flex min-w-0 flex-1 items-center {size.card}">
+								<div
+									class="{size.icon} flex shrink-0 items-center justify-center text-[var(--color-text-muted)]"
+								>
+									<IconComponent class={size.glyph} weight="bold" aria-hidden="true" />
 								</div>
 								<div class="min-w-0 flex-1">
 									<div class="mb-1 flex items-center gap-2">
 										<div
-											class="{dense
-												? 'line-clamp-1 text-[20px]'
-												: compact
-													? 'line-clamp-2 text-[22px]'
-													: 'line-clamp-2 text-[32px]'} highlight-title min-w-0 flex-1 font-bold [overflow-wrap:anywhere] text-[var(--color-text-primary)]"
+											class="highlight-title {dense
+												? 'line-clamp-1'
+												: 'line-clamp-2'} min-w-0 flex-1 leading-[1.1] font-bold [overflow-wrap:anywhere] text-[var(--color-text-primary)]"
+											style:font-family="var(--font-stat)"
+											style:font-size={size.title}
 										>
 											{activityTitle(i18n.locale, fav)}
 										</div>
 									</div>
 									<div
-										class="flex flex-wrap items-center gap-x-3 gap-y-1 {dense
-											? 'text-[14px]'
-											: compact
-												? 'text-[16px]'
-												: 'text-[22px]'} text-[var(--color-text-muted)]"
+										class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[var(--color-text-muted)]"
+										style:font-size={size.meta}
 									>
 										{#if fav.distance > 0}
-											<span class="font-mono">
-												{formatDistance(i18n.locale, fav.distance, appStore.unit)}
-											</span>
+											<span class="stat-value"
+												>{formatDistance(i18n.locale, fav.distance, appStore.unit)}</span
+											>
 										{/if}
-										<span class="font-mono">
-											{formatDuration(i18n.locale, fav.duration)}
-										</span>
-										<span
-											class="rounded-full bg-[var(--color-accent)]/10 px-2 py-0.5 text-[12px] tracking-wider text-[var(--color-accent)] uppercase"
-										>
-											{i18n.m.common.sports[fav.type] ?? fav.type}
-										</span>
+										<span class="stat-value">{formatDuration(i18n.locale, fav.duration)}</span>
+										<span class="sport-name">{i18n.m.common.sports[fav.type] ?? fav.type}</span>
 									</div>
 								</div>
 							</div>
@@ -180,7 +184,7 @@
 			</div>
 
 			{#if hiddenCount > 0}
-				<div class="mt-6 text-center text-[20px] text-[var(--color-text-muted)]">
+				<div class="card-text-sm mt-6 text-[var(--color-text-muted)]">
 					{i18n.m.export.moreHighlights(formatCount(i18n.locale, hiddenCount), hiddenCount)}
 				</div>
 			{/if}
@@ -193,5 +197,9 @@
 	.fit-area,
 	.fit-area :global(*) {
 		transition: none !important;
+	}
+
+	.sport-name {
+		color: var(--color-accent);
 	}
 </style>

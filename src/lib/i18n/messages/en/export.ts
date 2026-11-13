@@ -45,9 +45,5 @@ export const exportMessages = {
 	consistency: 'Consistency',
 	withoutRestDay: 'Without a rest day',
 	sports: 'Sports',
-	season: (year: number) => `Season ${year}`,
-	totalDistance: 'Total Distance',
-	timeActive: 'Time Active',
-	cyberpunk: 'Cyberpunk',
-	swiss: 'Swiss'
+	season: (year: number) => `Season ${year}`
 };

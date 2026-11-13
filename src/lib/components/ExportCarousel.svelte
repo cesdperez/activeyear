@@ -158,11 +158,8 @@
 	.carousel-card {
 		position: relative;
 		overflow: hidden;
-		border-radius: 0.5rem;
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		box-shadow:
-			0 10px 15px -3px rgba(0, 0, 0, 0.1),
-			0 4px 6px -2px rgba(0, 0, 0, 0.05);
+		border-radius: var(--radius-panel);
+		border: 1px solid var(--color-border);
 		max-width: 100%;
 		touch-action: pan-y;
 	}
@@ -177,19 +174,20 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: 2.5rem;
-		height: 2.5rem;
-		border-radius: 9999px;
-		background: var(--color-surface-elevated);
-		border: 1px solid rgba(255, 255, 255, 0.1);
+		width: 2.75rem;
+		height: 2.75rem;
+		border-radius: var(--radius-control);
+		background: transparent;
+		border: 1px solid var(--color-border);
 		color: var(--color-text-muted);
-		transition: all 0.2s ease-out;
+		transition:
+			border-color 0.2s ease-out,
+			color 0.2s ease-out;
 		cursor: pointer;
 	}
 
 	.nav-button:hover:enabled {
-		background: var(--color-surface-hover);
-		color: var(--color-text-primary);
+		color: var(--color-accent);
 		border-color: var(--color-accent);
 	}
 
@@ -254,8 +252,11 @@
 		}
 	}
 
+	/* Fixed height so a longer label never moves the controls below the preview. */
 	.slide-label {
+		min-height: 1.25rem;
 		font-size: 0.875rem;
-		color: var(--color-text-dim);
+		font-weight: 600;
+		color: var(--color-text-muted);
 	}
 </style>

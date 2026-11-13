@@ -81,11 +81,5 @@ export const dashboard: typeof en = {
 	totals: 'Totales',
 	weekday: 'Día',
 	sport: 'Deporte',
-	distance: 'Distancia',
-	streakCaption: (count) =>
-		plural('es', count, {
-			one: 'día activo consecutivo',
-			other: 'máximo de días activos consecutivos'
-		}),
-	moreStatsTitle: 'Más estadísticas'
+	distance: 'Distancia'
 };
