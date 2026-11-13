@@ -31,7 +31,7 @@
 		export: {
 			size: 'h-[280px] w-[280px]',
 			value: 'calc(64px * var(--stat-scale, 1))',
-			label: 'card-label'
+			label: 'card-label donut-label'
 		}
 	};
 
@@ -85,7 +85,10 @@
 			>
 				{centre.value}
 			</div>
-			<div class="mt-1 text-[var(--color-text-muted)] {style.label}">
+			<div
+				class="mt-1 whitespace-nowrap text-[var(--color-text-muted)] {style.label}"
+				style:--label-chars={centre.label.length}
+			>
 				{centre.label}
 			</div>
 		</div>
@@ -93,6 +96,18 @@
 </div>
 
 <style>
+	/* The label is a translated word, so it shrinks to the hole, with 5% to spare. */
+	:global(.export-card) .donut-label {
+		font-size: min(var(--label-size), 100cqi / (var(--label-chars) * var(--label-char-em) * 1.05));
+	}
+
+	/* Press Start 2P is too wide for a word whose length varies by language.
+	   0.44 is VT323's advance per character with a little air. */
+	:global(.theme-retro) .donut-label {
+		font-family: var(--font-text);
+		font-size: min(calc(24px * var(--text-scale)), 100cqi / (var(--label-chars) * 0.44));
+	}
+
 	.donut-segment {
 		transition: stroke-dasharray 0.3s ease;
 	}
