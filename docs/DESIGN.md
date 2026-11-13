@@ -254,7 +254,7 @@ Card header: logotype and "Season <TARGET_YEAR>" on one row, then the name and t
 
 - Show "Buy me a gel" under the Download button after a successful export, and at the bottom of the dashboard after "Upload another file".
 - The export prompt is "Enjoyed your recap? ActiveYear is free and made by one person." The dashboard prompt is "Enjoying ActiveYear?".
-- Use an accent-coloured link with a lightning icon. A compact fixed link appears after the header scrolls away, except when another support link is visible or an export is running.
+- Use an accent-coloured link with a lightning icon. A compact fixed link appears after the header scrolls away, except when another support link or the export actions are visible, or an export is running.
 - Keep it a plain link so the CSP does not need to allow third-party scripts.
 
 ---

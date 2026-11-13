@@ -44,6 +44,18 @@ test('floating support link tracks its placement', async ({ page }) => {
 	await expect(link).toBeVisible();
 });
 
+test('floating support link hides when export actions are visible on mobile', async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/');
+	await page.getByRole('button', { name: /demo data/i }).click();
+	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
+	const link = page.locator('a.fixed').filter({ hasText: 'Buy me a gel' });
+	await page.evaluate(() => window.scrollTo(0, 1000));
+	await expect(link).toBeVisible();
+	await page.locator('#export-download').scrollIntoViewIfNeeded();
+	await expect(link).toBeHidden();
+});
+
 test('FAQ support link tracks its placement', async ({ page }) => {
 	await page.addInitScript(() =>
 		Object.defineProperty(navigator, 'webdriver', { get: () => false })

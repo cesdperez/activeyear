@@ -3,6 +3,7 @@
 	import { tick } from 'svelte';
 	import { track } from '#lib/analytics/track.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
+	import { observeExportActions } from '#lib/stores/supportVisibility.svelte.js';
 	import ExportCarousel from './ExportCarousel.svelte';
 	import SupportLink from './dashboard/SupportLink.svelte';
 	import LightmileDisclosure from './LightmileDisclosure.svelte';
@@ -262,6 +263,7 @@
 
 			<!-- aria-disabled instead of disabled keeps focus on the button while exporting. -->
 			<button
+				{@attach observeExportActions}
 				id="export-download"
 				onclick={() => handleExport()}
 				aria-disabled={appStore.isExporting}

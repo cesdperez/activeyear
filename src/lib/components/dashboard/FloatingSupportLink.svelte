@@ -19,7 +19,7 @@
 	});
 </script>
 
-{#if !headerVisible && supportVisibility.count === 0 && !appStore.isExporting}
+{#if !headerVisible && supportVisibility.count === 0 && !supportVisibility.exportActionsVisible && !appStore.isExporting}
 	<div transition:fade={{ duration: 150 }}>
 		<KofiLink
 			placement="floating"
