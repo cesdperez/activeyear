@@ -69,6 +69,8 @@ Where CSS cannot reach (the PNG background fill and the `theme-color` meta tag),
 
 **Retro:** Press Start 2P (400) for card titles, section headings and short labels. VT323 (400) for stats, sport names and body. Never use Press Start 2P for a value whose length varies. The logotype stays in Big Shoulders in every theme.
 
+**Classic and Synthwave:** Outfit for display, text and stats. The logotype stays in Big Shoulders.
+
 Fonts are self-hosted with Fontsource and included in dependencies. Never use more than two typefaces per theme, the logotype aside.
 
 | Element          | Size                    | Weight                 |
@@ -118,6 +120,32 @@ The app, including landing page and dashboard, always uses Neon tokens. Themes a
 - **Accent:** #ffd23a (11.4:1) only.
 - **Effects:** 4px solid borders, radius 0, hard offset shadow `8px 8px 0 #000` instead of glow.
 - **Sport palette:** #ffd23a, #5fe08a, #ff7a7a, #6fa8ff, #ff7ccf, #ff9f45; other #a9a1dc.
+
+### Classic
+
+**Aesthetic:** Classic Neon, with the earlier look in the current card layout.
+
+- **Surface:** #0a0a0b, elevated #141416, hover #1a1a1e, border #303035
+- **Text:** Primary #fafafa, muted #d4d4d8, dim #a1a1aa
+- **Accent:** #22d3ee.
+- **Export background:** `classic-gradient.png` with a 64x64 noise tile at 3%.
+- **Sport palette:** #22d3ee, #ff7d66, #d3e85e, #ffbf47, #b69cff, #ff80b5; other #a1a1aa.
+
+### Synthwave
+
+**Aesthetic:** Retro arcade, with the earlier look in the current card layout.
+
+- **Surface:** #1e1b4b, elevated #2e2a6b, hover #3e387b, border #625b9a
+- **Text:** Primary #fafafa, muted #c4b8ef, dim #a5a0d8
+- **Accent:** #facc15.
+- **Effects:** Avatar border and decoration #ff00cc, 20% radius and hard shadow `8px 8px 0 rgba(0, 0, 0, 0.3)`.
+- **Sport palette:** #facc15, #5fe08a, #ff7a7a, #6fa8ff, #ff7ccf, #ff9f45; other #a5a0d8.
+
+Classic and Synthwave use the centered 320px Summary-card avatar with glow and spiral decoration. `CENTERED_AVATAR_THEMES` in `src/lib/constants/themes.ts` identifies them.
+
+### Lightmile
+
+Reserved and disabled in the theme picker until designed. Add it to `Theme` when it ships.
 
 ---
 
@@ -345,7 +373,7 @@ German, Dutch, and French can run 20 to 35% longer than English. Every card and 
 ### Before Shipping a Feature
 
 - [ ] Fits the 9:16 card with 5-digit totals and long sport names
-- [ ] Renders correctly in all 3 themes
+- [ ] Renders correctly in every theme
 - [ ] Keyboard accessible
 - [ ] Motion respects reduced-motion preference
 - [ ] Screenshot test: would you share this?
