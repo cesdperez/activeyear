@@ -1,14 +1,22 @@
 <script lang="ts">
-	import '@fontsource/outfit/400.css';
-	import '@fontsource/outfit/500.css';
-	import '@fontsource/outfit/600.css';
-	import '@fontsource/outfit/700.css';
-	import '@fontsource/outfit/800.css';
-	import '@fontsource/outfit/900.css';
-	import '@fontsource/jetbrains-mono/latin-500.css';
-	import '@fontsource/jetbrains-mono/latin-ext-500.css';
-	import '@fontsource/jetbrains-mono/latin-700.css';
-	import '@fontsource/jetbrains-mono/latin-ext-700.css';
+	import '@fontsource/big-shoulders-display/latin-700';
+	import '@fontsource/big-shoulders-display/latin-ext-700';
+	import '@fontsource/big-shoulders-display/latin-800';
+	import '@fontsource/big-shoulders-display/latin-ext-800';
+	import '@fontsource/big-shoulders-display/latin-900';
+	import '@fontsource/big-shoulders-display/latin-ext-900';
+	import '@fontsource/archivo/latin-400';
+	import '@fontsource/archivo/latin-ext-400';
+	import '@fontsource/archivo/latin-500';
+	import '@fontsource/archivo/latin-ext-500';
+	import '@fontsource/archivo/latin-600';
+	import '@fontsource/archivo/latin-ext-600';
+	import '@fontsource/archivo/latin-700';
+	import '@fontsource/archivo/latin-ext-700';
+	import '@fontsource/press-start-2p/latin-400';
+	import '@fontsource/press-start-2p/latin-ext-400';
+	import '@fontsource/vt323/latin-400';
+	import '@fontsource/vt323/latin-ext-400';
 	import '../app.css';
 
 	import { onMount } from 'svelte';

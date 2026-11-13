@@ -4,6 +4,7 @@ import type {
 	ActivityType,
 	BreakdownMetric,
 	SportBreakdown,
+	Theme,
 	WeeklyPattern,
 	WidgetVariant
 } from '#lib/types/index.js';
@@ -13,7 +14,7 @@ import {
 	TOP_DAYS_COUNT,
 	TOP_SPORTS_LIMIT
 } from '#lib/constants/breakdown.js';
-import { OTHER_SPORT_COLOR, sportColors, ACTIVITY_TYPES } from '#lib/constants/sports.js';
+import { ACTIVITY_TYPES, SPORT_PALETTES } from '#lib/constants/sports.js';
 import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '#lib/constants/time.js';
 import { consolidateBreakdown, mergeIntoOther } from './activity.js';
 import { donutSegments, scaledBarHeight, topIndices } from './charts.js';
@@ -62,20 +63,18 @@ export function selectTopSports(
 export type SportColors = Record<ActivityType, string>;
 
 /**
- * One colour per sport for the whole year, ranked by activity count with ties by name, so a sport
- * keeps its colour in both metrics and on every view. "Other" and sports not in `breakdown` are
- * neutral.
+ * Ranks the given sports by activity count so each keeps its colour across metrics.
+ * Pass only the sports a view shows when its palette is smaller than the sports in the year.
  */
-export function sportColorsFor(breakdown: SportBreakdown[]): SportColors {
-	const colors = Object.fromEntries(
-		ACTIVITY_TYPES.map((type) => [type, OTHER_SPORT_COLOR])
-	) as SportColors;
+export function sportColorsFor(breakdown: SportBreakdown[], theme: Theme = 'neon'): SportColors {
+	const { colors: palette, other } = SPORT_PALETTES[theme];
+	const colors = Object.fromEntries(ACTIVITY_TYPES.map((type) => [type, other])) as SportColors;
 
 	consolidateBreakdown(breakdown)
 		.filter((s) => s.type !== 'other')
 		.sort((a, b) => b.count - a.count || a.type.localeCompare(b.type))
 		.forEach((s, i) => {
-			colors[s.type] = sportColors[i % sportColors.length];
+			colors[s.type] = palette[i % palette.length];
 		});
 
 	return colors;

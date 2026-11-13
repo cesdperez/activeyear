@@ -94,7 +94,7 @@
 <button
 	type="button"
 	id={UPLOAD_ZONE_ID}
-	class="upload-zone group flex min-h-[300px] w-full cursor-pointer flex-col items-center justify-center p-8 text-center aria-disabled:cursor-not-allowed md:p-12"
+	class="upload-zone group flex min-h-[280px] w-full cursor-pointer flex-col items-center justify-center p-8 text-center aria-disabled:cursor-not-allowed md:p-12"
 	class:dragover={isDragOver}
 	aria-disabled={loading || !hydrated.current}
 	ondragover={handleDragOver}
@@ -105,7 +105,7 @@
 	{#if loading}
 		<span class="mb-4 block">
 			<SpinnerGap
-				class="mx-auto h-12 w-12 animate-spin text-[var(--color-accent)]"
+				class="h-12 w-12 animate-spin text-[var(--color-accent)]"
 				weight="bold"
 				aria-hidden="true"
 			/>
@@ -115,26 +115,30 @@
 		</span>
 	{:else if appStore.status === 'error'}
 		<span class="mb-4 block">
-			<Warning class="mx-auto h-12 w-12 text-red-500" weight="bold" aria-hidden="true" />
+			<Warning
+				class="h-12 w-12 text-[var(--color-text-primary)]"
+				weight="bold"
+				aria-hidden="true"
+			/>
 		</span>
-		<span class="mb-2 block text-lg text-red-500"
+		<span class="mb-2 block text-lg text-[var(--color-text-primary)]"
 			>{appStore.error ? uploadErrorMessage(appStore.error, i18n.locale) : ''}</span
 		>
 		<span class="block text-sm text-[var(--color-text-dim)]">{i18n.m.upload.retry}</span>
 	{:else}
 		<span class="mb-4 block">
 			<UploadSimple
-				class="mx-auto h-12 w-12 text-[var(--color-text-dim)] transition-colors duration-300 group-hover:text-[var(--color-accent)]"
+				class="h-10 w-10 text-[var(--color-text-dim)] transition-colors duration-200 group-hover:text-[var(--color-accent)]"
 				weight="bold"
 				aria-hidden="true"
 			/>
 		</span>
-		<span class="mb-1 block text-lg text-balance text-[var(--color-text-primary)]"
+		<span class="mb-1 block text-xl font-semibold text-balance text-[var(--color-text-primary)]"
 			>{i18n.m.upload.drop}</span
 		>
 		<span class="mb-4 block text-sm text-[var(--color-text-muted)]">{i18n.m.upload.browse}</span>
 		<span class="mb-4 block text-xs text-[var(--color-text-dim)]">{i18n.m.upload.saved}</span>
-		<span class="flex items-center justify-center gap-1.5 text-xs text-[var(--color-text-dim)]">
+		<span class="flex items-center gap-1.5 text-xs text-[var(--color-text-muted)]">
 			<ShieldCheck class="h-3.5 w-3.5" weight="bold" aria-hidden="true" />
 			{i18n.m.upload.privacy}
 		</span>

@@ -1,6 +1,7 @@
 import { i18n } from '#lib/i18n/i18n.svelte.js';
 import { domToPng } from 'modern-screenshot';
 import type { Theme } from '#lib/types/index.js';
+import { THEME_SURFACES } from '#lib/constants/themes.js';
 import { NAME_FONT_SIZE, NAME_LONG_AFTER_CHARS, TIMELINE_GAP } from '#lib/constants/export.js';
 import { inlinedFontFaceCss } from './fonts.js';
 
@@ -11,21 +12,11 @@ export interface ExportOptions {
 	allowFallbackFonts?: boolean;
 }
 
-const THEME_BACKGROUNDS: Record<Theme, string> = {
-	neon: '#0a0a0b',
-	minimalist: '#fdfdfd',
-	retro: '#1e1b4b'
-};
-
 /**
  * Export an HTML element to PNG and trigger download
  */
 export async function exportToPng(element: HTMLElement, options: ExportOptions): Promise<void> {
-	const {
-		filename,
-		backgroundColor = THEME_BACKGROUNDS.neon,
-		allowFallbackFonts = false
-	} = options;
+	const { filename, backgroundColor = THEME_SURFACES.neon, allowFallbackFonts = false } = options;
 
 	// Left to itself, modern-screenshot refetches every font file and silently skips failures.
 	const fontCss = await inlinedFontFaceCss().catch((error) => {
@@ -100,5 +91,5 @@ export function timelineGap(available: number, itemsHeight: number, count: numbe
 }
 
 export function getThemeBackgroundColor(theme: Theme): string {
-	return THEME_BACKGROUNDS[theme];
+	return THEME_SURFACES[theme];
 }

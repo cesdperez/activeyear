@@ -7,15 +7,17 @@
 
 <JsonLd data={faqPageSchema(faqItems(i18n.locale))} />
 
-<section aria-labelledby="faq-heading" class="mt-12 w-full max-w-md">
-	<h2 id="faq-heading" class="mb-4 text-center text-sm font-medium text-zinc-300">
+<section aria-labelledby="faq-heading" class="mt-16 w-full">
+	<h2 id="faq-heading" class="display-heading mb-6 text-center text-3xl">
 		{i18n.m.faq.heading}
 	</h2>
-	<dl class="space-y-4 text-left text-sm text-pretty">
+	<dl
+		class="divide-y divide-[var(--color-border)] border-y border-[var(--color-border)] text-sm text-pretty"
+	>
 		{#each faqItems(i18n.locale) as { question, answer } (question)}
-			<div>
-				<dt class="font-medium text-zinc-300">{question}</dt>
-				<dd class="mt-1 text-zinc-400">{answer}</dd>
+			<div class="py-4">
+				<dt class="font-semibold text-[var(--color-text-primary)]">{question}</dt>
+				<dd class="mt-1 leading-relaxed text-[var(--color-text-muted)]">{answer}</dd>
 			</div>
 		{/each}
 	</dl>

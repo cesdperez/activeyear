@@ -14,7 +14,7 @@ import {
 	Racquet,
 	HandGrabbing
 } from 'phosphor-svelte';
-import type { ActivityType } from '#lib/types/index.js';
+import type { ActivityType, Theme } from '#lib/types/index.js';
 
 export const ACTIVITY_TYPES: ActivityType[] = [
 	'running',
@@ -50,21 +50,34 @@ export const sportIcons: Record<ActivityType, typeof PersonSimpleRun> = {
 	climbing: HandGrabbing,
 	other: Target
 };
-// One colour per sport type except "other", so no two slices share a colour.
-export const sportColors = [
-	'#00d4ff',
-	'#00ff88',
-	'#ff6b6b',
-	'#ffd93d',
-	'#c084fc',
-	'#fb923c',
-	'#f472b6',
-	'#4d7cff',
-	'#a3e635',
-	'#2dd4bf',
-	'#ef4444',
-	'#facc15',
-	'#4ade80'
-];
+export interface SportPalette {
+	/** Ranked colours, wrapping when a year has more sports than colours. */
+	colors: string[];
+	other: string;
+}
 
-export const OTHER_SPORT_COLOR = '#94a3b8';
+export const SPORT_PALETTES: Record<Theme, SportPalette> = {
+	neon: {
+		colors: [
+			'#48d8e4',
+			'#ff7d66',
+			'#d3e85e',
+			'#ffbf47',
+			'#b69cff',
+			'#ff80b5',
+			'#6d8dff',
+			'#5be3a6',
+			'#ff9d52',
+			'#e6d7a8',
+			'#9fd0ff',
+			'#e66b8f',
+			'#a8e0c6'
+		],
+		other: '#7f8f97'
+	},
+	minimalist: { colors: ['#c4281c', '#0f1417', '#525c61', '#8b9499'], other: '#c3c9cc' },
+	retro: {
+		colors: ['#ffd23a', '#5fe08a', '#ff7a7a', '#6fa8ff', '#ff7ccf', '#ff9f45'],
+		other: '#a9a1dc'
+	}
+};

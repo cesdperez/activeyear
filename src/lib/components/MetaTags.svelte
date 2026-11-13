@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { OG_IMAGE_WIDTH, OG_IMAGE_HEIGHT } from '#lib/constants/og.js';
 	import { LOCALES, OG_LOCALES } from '#lib/constants/locales.js';
+	import { THEME_SURFACES } from '#lib/constants/themes.js';
 	import { OG_IMAGE_URL, SITE_NAME, SITE_URL } from '#lib/constants/site.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { localePath } from '#lib/i18n/locale.js';
@@ -19,8 +20,8 @@
 		<link rel="alternate" hreflang={locale} href={`${SITE_URL}${localePath(locale)}`} />
 	{/each}
 	<link rel="alternate" hreflang="x-default" href={`${SITE_URL}/`} />
-	<meta name="theme-color" content="#0a0a0b" />
-	<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
+	<meta name="theme-color" content={THEME_SURFACES.neon} />
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4" />
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
 
 	<meta property="og:type" content="website" />

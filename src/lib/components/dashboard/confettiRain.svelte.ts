@@ -1,5 +1,6 @@
 import { appStore } from '#lib/stores/app.svelte.js';
 import confetti from 'canvas-confetti';
+import { SPORT_PALETTES } from '#lib/constants/sports.js';
 
 /**
  * Rains confetti while celebration mode is on. Call during component initialisation.
@@ -31,7 +32,7 @@ function startConfetti() {
 				// since they fall down, start a bit above the screen
 				y: -0.1
 			},
-			colors: ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'],
+			colors: SPORT_PALETTES.neon.colors.slice(0, 5),
 			shapes: ['circle', 'square'],
 			disableForReducedMotion: true
 		});

@@ -6,9 +6,9 @@ import { PREVIEW_PORT } from './ports.ts';
 
 const baseUrl = process.argv[2] ?? `http://localhost:${PREVIEW_PORT}`;
 
-// Keeps only the heading and the four main stats, centred in the frame.
+// Keeps only the header and the totals board, centred in the frame.
 const COMPOSITION_CSS = `
-	.noise-overlay, main > div > :not(header, [data-testid='main-stats']), header .mt-8 {
+	main > div > :not(header, [data-testid='main-stats']), header > button, [data-testid='main-stats'] dl {
 		display: none !important;
 	}
 	main > div {
@@ -16,30 +16,25 @@ const COMPOSITION_CSS = `
 		display: flex !important;
 		flex-direction: column;
 		justify-content: center;
-		gap: 56px;
+		gap: 24px;
 		padding-top: 0 !important;
 		padding-bottom: 0 !important;
 	}
 	header, [data-testid='main-stats'] { margin: 0 !important; }
-	[data-testid='main-stats'] { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
 	* { transition: none !important; }
-	.stat-card { padding: 24px !important; justify-content: flex-start !important; }
-	.stat-value { font-size: 2rem !important; }
 `;
 
 const browser = await chromium.launch();
+// Reduced motion skips the headline count-up, so the image always shows the final total.
 const page = await browser.newPage({
-	viewport: { width: OG_IMAGE_WIDTH, height: OG_IMAGE_HEIGHT }
+	viewport: { width: OG_IMAGE_WIDTH, height: OG_IMAGE_HEIGHT },
+	reducedMotion: 'reduce'
 });
 
 await page.goto(baseUrl);
 await page.getByRole('button', { name: /demo data/ }).click();
-// Stat cards fade in on a JS spring, so a fixed wait can catch them half transparent.
-await page.waitForFunction(() =>
-	[...document.querySelectorAll<HTMLElement>('[data-testid="main-stats"] .stat-card')].every(
-		(card) => Number(card.style.opacity) > 0.99
-	)
-);
+await page.getByTestId('main-stats').waitFor();
+await page.evaluate(() => document.fonts.ready);
 await page.addStyleTag({ content: COMPOSITION_CSS });
 await page.screenshot({ path: 'static/og-image.png' });
 

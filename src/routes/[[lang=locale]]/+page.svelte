@@ -7,33 +7,37 @@
 	import Dashboard from '#lib/components/Dashboard.svelte';
 	import HomeFaq from '#lib/components/HomeFaq.svelte';
 	import ExportGuides from '#lib/components/ExportGuides.svelte';
+	import Logotype from '#lib/components/Logotype.svelte';
 
 	let uploading = $state(false);
 	const hydrated = createHydrated();
 </script>
 
-<main class="min-h-screen bg-[var(--color-surface)]">
+<main class="min-h-screen">
 	{#if appStore.status === 'ready'}
 		<Dashboard />
 	{:else}
-		<!-- Upload State -->
-		<div class="flex min-h-screen flex-col items-center justify-center px-4 py-12">
-			<div class="mb-8 text-center">
-				<h1 class="glow-text mb-3 text-4xl font-bold md:text-5xl">ActiveYear</h1>
-				<p class="text-lg text-zinc-400">{i18n.m.landing.tagline(TARGET_YEAR)}</p>
-			</div>
+		<div
+			class="mx-auto flex min-h-screen w-full max-w-xl flex-col items-center px-4 pt-16 pb-16 md:pt-24"
+		>
+			<header class="mb-10 text-center">
+				<h1><Logotype class="text-[clamp(4.25rem,19vw,7.5rem)]" /></h1>
+				<p class="mt-3 text-xl text-[var(--color-text-muted)]">
+					{i18n.m.landing.tagline(TARGET_YEAR)}
+				</p>
+			</header>
 
 			<noscript>
-				<p class="mb-6 max-w-md text-center text-sm text-pretty text-zinc-300">
+				<p class="mb-6 max-w-md text-center text-sm text-pretty text-[var(--color-text-muted)]">
 					{i18n.m.landing.noscript}
 				</p>
 			</noscript>
 
-			<div class="w-full max-w-lg">
+			<div class="w-full">
 				<FileUpload bind:loading={uploading} />
 				<div class="mt-4 text-center">
 					<button
-						class="text-sm text-balance text-zinc-400 transition-colors duration-200 hover:text-cyan-400 disabled:cursor-not-allowed disabled:opacity-50"
+						class="text-sm text-balance text-[var(--color-text-muted)] underline decoration-[var(--color-border)] underline-offset-4 transition-colors duration-200 hover:text-[var(--color-text-primary)] hover:decoration-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
 						disabled={uploading || !hydrated.current}
 						onclick={() => appStore.loadDemoData()}
 					>
@@ -42,15 +46,14 @@
 				</div>
 			</div>
 
-			<div class="mt-12 w-full max-w-md text-center">
-				<h2 class="mb-4 text-sm font-medium text-zinc-300">{i18n.m.landing.how}</h2>
+			<section aria-labelledby="guides-heading" class="mt-16 w-full">
+				<h2 id="guides-heading" class="display-heading mb-5 text-center text-3xl">
+					{i18n.m.landing.how}
+				</h2>
 				<ExportGuides />
-			</div>
+			</section>
 
 			<HomeFaq />
 		</div>
 	{/if}
 </main>
-
-<!-- Noise overlay for texture -->
-<div class="noise-overlay"></div>

@@ -8,7 +8,7 @@ import {
 	weeklyBars,
 	activeDaysPercent
 } from './breakdown.js';
-import { OTHER_SPORT_COLOR, sportColors, ACTIVITY_TYPES } from '#lib/constants/sports.js';
+import { ACTIVITY_TYPES, SPORT_PALETTES } from '#lib/constants/sports.js';
 import type { SportBreakdown, WeeklyPattern } from '#lib/types/index.js';
 
 const sport = (overrides: Partial<SportBreakdown>): SportBreakdown => ({
@@ -160,6 +160,7 @@ describe('sportDonutSegments', () => {
 });
 
 describe('sportColorsFor', () => {
+	const { colors: sportColors, other: OTHER_SPORT_COLOR } = SPORT_PALETTES.neon;
 	const allTypes = ACTIVITY_TYPES;
 
 	it('gives every sport a distinct colour even when all types are shown', () => {
@@ -168,7 +169,7 @@ describe('sportColorsFor', () => {
 		expect(new Set(Object.values(colors)).size).toBe(allTypes.length);
 	});
 
-	it('assigns colours by activity count, ties by name, whatever the metric ranks first', () => {
+	it('assigns colours by activity count, with ties by name', () => {
 		const colors = sportColorsFor([
 			sport({ type: 'running', count: 5, duration: 90000 }),
 			sport({ type: 'hiking', count: 9, duration: 7200 }),
@@ -178,6 +179,18 @@ describe('sportColorsFor', () => {
 		expect(colors.cycling).toBe(sportColors[0]);
 		expect(colors.hiking).toBe(sportColors[1]);
 		expect(colors.running).toBe(sportColors[2]);
+	});
+
+	it('keeps colours across count and duration orderings', () => {
+		const breakdown = [
+			sport({ type: 'running', count: 5, duration: 90000 }),
+			sport({ type: 'cycling', count: 9, duration: 7200 }),
+			sport({ type: 'hiking', count: 3, duration: 10800 })
+		];
+
+		expect(sportColorsFor(rankSports(breakdown, 'count'))).toEqual(
+			sportColorsFor(rankSports(breakdown, 'duration'))
+		);
 	});
 
 	it('gives "other" its own neutral colour wherever it ranks', () => {
@@ -197,6 +210,53 @@ describe('sportColorsFor', () => {
 
 	it('gives "other" the neutral colour when it only appears after folding', () => {
 		expect(sportColorsFor([sport({})]).other).toBe(OTHER_SPORT_COLOR);
+	});
+
+	it('uses the palette of the theme and starts with its accent', () => {
+		const breakdown = [sport({ type: 'cycling', count: 9 }), sport({ type: 'running', count: 5 })];
+
+		expect(sportColorsFor(breakdown, 'minimalist')).toMatchObject({
+			cycling: '#c4281c',
+			running: '#0f1417',
+			other: SPORT_PALETTES.minimalist.other
+		});
+		expect(sportColorsFor(breakdown, 'retro')).toMatchObject({
+			cycling: '#ffd23a',
+			running: '#5fe08a',
+			other: SPORT_PALETTES.retro.other
+		});
+	});
+
+	it('wraps a short palette instead of running out of colours', () => {
+		const four = ['cycling', 'hiking', 'running', 'swimming', 'yoga'] as const;
+		const colors = sportColorsFor(
+			four.map((type, i) => sport({ type, count: 10 - i })),
+			'minimalist'
+		);
+
+		expect(colors.yoga).toBe(colors.cycling);
+	});
+
+	it('keeps duration-selected sports distinct in the Minimal palette', () => {
+		const breakdown = [
+			sport({ type: 'running', count: 5, duration: 50000 }),
+			sport({ type: 'cycling', count: 4, duration: 10000 }),
+			sport({ type: 'swimming', count: 3, duration: 9000 }),
+			sport({ type: 'hiking', count: 2, duration: 8000 }),
+			sport({ type: 'yoga', count: 1, duration: 40000 })
+		];
+		const shown = selectTopSports(breakdown, 'duration');
+		const colors = sportColorsFor(shown, 'minimalist');
+
+		expect(shown.map((s) => s.type)).toContain('yoga');
+		expect(colors.other).toBe(SPORT_PALETTES.minimalist.other);
+		expect(new Set(shown.map((s) => colors[s.type])).size).toBe(shown.length);
+	});
+
+	it('defaults to the Neon palette', () => {
+		const breakdown = [sport({})];
+
+		expect(sportColorsFor(breakdown)).toEqual(sportColorsFor(breakdown, 'neon'));
 	});
 });
 
