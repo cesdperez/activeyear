@@ -21,9 +21,15 @@
 
 	let {
 		activities,
+		activeDays,
 		breakdown,
 		unit
-	}: { activities: Activity[]; breakdown: SportBreakdown[]; unit: Unit } = $props();
+	}: {
+		activities: Activity[];
+		activeDays: number;
+		breakdown: SportBreakdown[];
+		unit: Unit;
+	} = $props();
 	let open = $state(false);
 	const weekdaysLabels = $derived(weekdayLabels(i18n.locale));
 	const quarters = $derived(calculateQuarterTotals(activities));
@@ -94,29 +100,31 @@
 					</div>
 				</div>
 
-				<div>
-					<h3 class="sub-heading">{i18n.m.dashboard.longestBreak}</h3>
-					{#if longestBreak}
-						<p class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-							<span class="stat-value text-5xl leading-none">
-								{formatCount(i18n.locale, longestBreak.days)}
-								<span class="text-2xl text-[var(--color-text-muted)]"
-									>{plural(i18n.locale, longestBreak.days, {
-										one: i18n.m.dashboard.day,
-										other: i18n.m.dashboard.days
-									})}</span
-								>
-							</span>
-							<span class="text-[var(--color-text-muted)]">
-								{formatShortDate(i18n.locale, longestBreak.start)}
-								{i18n.m.dashboard.to}
-								{formatShortDate(i18n.locale, longestBreak.end)}
-							</span>
-						</p>
-					{:else}
-						<p class="text-[var(--color-text-muted)]">{i18n.m.dashboard.noRestDay}</p>
-					{/if}
-				</div>
+				{#if activeDays > 1}
+					<div>
+						<h3 class="sub-heading">{i18n.m.dashboard.longestBreak}</h3>
+						{#if longestBreak}
+							<p class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+								<span class="stat-value text-5xl leading-none">
+									{formatCount(i18n.locale, longestBreak.days)}
+									<span class="text-2xl text-[var(--color-text-muted)]"
+										>{plural(i18n.locale, longestBreak.days, {
+											one: i18n.m.dashboard.day,
+											other: i18n.m.dashboard.days
+										})}</span
+									>
+								</span>
+								<span class="text-[var(--color-text-muted)]">
+									{formatShortDate(i18n.locale, longestBreak.start)}
+									{i18n.m.dashboard.to}
+									{formatShortDate(i18n.locale, longestBreak.end)}
+								</span>
+							</p>
+						{:else}
+							<p class="text-[var(--color-text-muted)]">{i18n.m.dashboard.noRestDay}</p>
+						{/if}
+					</div>
+				{/if}
 
 				<div class="grid gap-14 lg:grid-cols-2 lg:gap-16">
 					<div>

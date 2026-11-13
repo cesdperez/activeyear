@@ -130,6 +130,14 @@ test('more stats mark every empty value the same way', async ({ page }) => {
 	await expect(marked).toHaveCount(5 * 2 + 2);
 });
 
+test('more stats leave out the longest break with a single active day', async ({ page }) => {
+	await uploadCsv(page, garminCsv([{ title: 'Morning run' }]));
+	await page.getByRole('button', { name: 'More stats', exact: true }).click();
+	const section = page.getByTestId('more-stats');
+	await expect(section.getByRole('heading', { name: 'Quarters' })).toBeVisible();
+	await expect(section.getByRole('heading', { name: 'Longest break' })).toHaveCount(0);
+});
+
 test('Jump to Export moves focus to the export heading', async ({ page }) => {
 	await openDemo(page);
 	await page.getByRole('button', { name: 'Jump to Export' }).click();
