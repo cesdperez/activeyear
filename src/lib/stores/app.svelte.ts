@@ -19,6 +19,7 @@ import {
 } from '../utils/stats.js';
 import { parseSavedYear, serializeSavedYear } from '#lib/utils/savedYear.js';
 import { TARGET_YEAR } from '../constants/time.js';
+import { daysElapsed, daysInYear, isYearRunning } from '#lib/utils/date.js';
 import { demoActivities } from '../data/demo.js';
 import { describeSkippedRows, describeUnusableFile } from '#lib/utils/uploadErrors.js';
 import type {
@@ -39,6 +40,11 @@ class AppStore {
 	// Raw because the list is only ever replaced whole, and the derived stats read every activity.
 	#activities = $state.raw<Activity[]>([]);
 	#source = $state<ActivitySource | null>(null);
+	#loadedAt = $state<Date | null>(null);
+	#yearSoFar = $derived(this.#loadedAt !== null && isYearRunning(TARGET_YEAR, this.#loadedAt));
+	#daysCounted = $derived(
+		this.#yearSoFar ? daysElapsed(TARGET_YEAR, this.#loadedAt!) : daysInYear(TARGET_YEAR)
+	);
 	#highlights = $state.raw<Activity[]>([]);
 	#highlightPreset = $state<HighlightPreset | 'custom'>('longest');
 	#highlightPresets = $derived(availablePresets(this.#activities));
@@ -64,6 +70,13 @@ class AppStore {
 	breakdownMetric = $state<BreakdownMetric>('count');
 	/** Freezes every control that changes the cards, so one export cannot mix settings. */
 	isExporting = $state(false);
+
+	get yearSoFar() {
+		return this.#yearSoFar;
+	}
+	get daysCounted() {
+		return this.#daysCounted;
+	}
 
 	get unit() {
 		return this.#unit;
@@ -166,6 +179,7 @@ class AppStore {
 		this.#highlights = [];
 		this.#highlightPreset = 'longest';
 		this.#source = null;
+		this.#loadedAt = null;
 		this.#status = 'idle';
 		this.#error = null;
 		this.#parseErrors = [];
@@ -190,6 +204,7 @@ class AppStore {
 					this.#fail('invalid-saved-year', saved.error);
 					return;
 				}
+				this.#loadedAt = new Date();
 				this.#load(saved.activities);
 				this.#source = saved.source;
 				this.#parseErrors = [];
@@ -215,6 +230,7 @@ class AppStore {
 			}
 
 			this.#source = result.source;
+			this.#loadedAt = new Date();
 			this.#load(result.activities);
 			this.#parseErrors = result.errors;
 			this.#trackUpload();

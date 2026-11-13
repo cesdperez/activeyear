@@ -48,5 +48,6 @@ export const exportMessages: typeof en = {
 	consistency: 'Constância',
 	withoutRestDay: 'Sem dia de descanso',
 	sports: 'Esportes',
+	seasonSoFar: (year) => `Temporada ${year} até agora`,
 	season: (year) => `Temporada ${year}`
 };

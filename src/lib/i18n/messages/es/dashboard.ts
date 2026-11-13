@@ -47,6 +47,7 @@ export const dashboard: typeof en = {
 	disableCelebration: 'Desactivar el modo celebración',
 	enableCelebration: 'Activar el modo celebración',
 	celebrationConfetti: 'Confeti de celebración',
+	yourYearSoFar: (year) => `Tu ${year} hasta ahora`,
 	yourYear: (year) => `Tu ${year}`,
 	activitySummaryActivities: (n, count) =>
 		`${n} ${plural('es', count, { one: 'actividad', other: 'actividades' })}`,
@@ -54,6 +55,7 @@ export const dashboard: typeof en = {
 		`en ${n} ${plural('es', count, { one: 'día activo', other: 'días activos' })}`,
 	activeDaysLabel: (count) => plural('es', count, { one: 'Día activo', other: 'Días activos' }),
 	dayStreak: 'Racha de días',
+	percentOfYearSoFar: (percent) => `${percent} del año hasta ahora`,
 	percentOfYear: (percent) => `${percent} del año`,
 	longestDistance: 'Mayor distancia',
 	longestDuration: 'Mayor duración',

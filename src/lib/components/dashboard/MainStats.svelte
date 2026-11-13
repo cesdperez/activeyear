@@ -1,15 +1,25 @@
 <script lang="ts">
 	import type { SummaryMetric, Unit, YearStats } from '#lib/types/index.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
-	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { activeDaysPercent } from '#lib/utils/breakdown.js';
 	import { formatCount, formatPercentOfYear, showsValue } from '#lib/utils/format.js';
 	import { scaledLength, totalStats, UNIT_SCALE } from '#lib/utils/totals.js';
 	import ValueWithUnits from '../ValueWithUnits.svelte';
 	import CountUp from './CountUp.svelte';
 
-	let { stats, unit, focus }: { stats: YearStats | null; unit: Unit; focus: SummaryMetric } =
-		$props();
+	let {
+		stats,
+		unit,
+		focus,
+		yearSoFar,
+		daysCounted
+	}: {
+		stats: YearStats | null;
+		unit: Unit;
+		focus: SummaryMetric;
+		yearSoFar: boolean;
+		daysCounted: number;
+	} = $props();
 
 	const totals = $derived(stats ? totalStats(i18n.locale, stats, unit) : []);
 	const headline = $derived(totals.find((stat) => stat.id === focus) ?? totals[0]);
@@ -23,8 +33,8 @@
 		{
 			label: i18n.m.dashboard.activeDays,
 			value: formatCount(i18n.locale, activeDays),
-			funFact: i18n.m.dashboard.percentOfYear(
-				formatPercentOfYear(i18n.locale, activeDaysPercent(activeDays, TARGET_YEAR))
+			funFact: (yearSoFar ? i18n.m.dashboard.percentOfYearSoFar : i18n.m.dashboard.percentOfYear)(
+				formatPercentOfYear(i18n.locale, activeDaysPercent(activeDays, daysCounted))
 			)
 		},
 		{

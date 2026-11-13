@@ -48,5 +48,6 @@ export const exportMessages = {
 	consistency: 'Consistency',
 	withoutRestDay: 'Without a rest day',
 	sports: 'Sports',
+	seasonSoFar: (year: number) => `Season ${year} so far`,
 	season: (year: number) => `Season ${year}`
 };

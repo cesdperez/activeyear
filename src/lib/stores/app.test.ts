@@ -20,6 +20,29 @@ describe('appStore', () => {
 		appStore.unit = 'km';
 	});
 
+	it('captures year progress on CSV and saved year loads, and resets for the demo', async () => {
+		vi.useFakeTimers();
+		try {
+			vi.setSystemTime(new Date(TARGET_YEAR, 5, 30));
+			await appStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
+			expect(appStore.yearSoFar).toBe(true);
+			expect(appStore.daysCounted).toBe(181);
+			const json = appStore.savedYearJson();
+			vi.setSystemTime(new Date(TARGET_YEAR + 1, 0, 15));
+			await appStore.processFile(new File([json], 'year.json'));
+			expect(appStore.yearSoFar).toBe(false);
+			expect(appStore.daysCounted).toBe(365);
+			vi.setSystemTime(new Date(TARGET_YEAR, 5, 30));
+			appStore.loadDemoData();
+			expect(appStore.yearSoFar).toBe(false);
+			expect(appStore.daysCounted).toBe(365);
+			appStore.reset();
+			expect(appStore.yearSoFar).toBe(false);
+		} finally {
+			vi.useRealTimers();
+		}
+	});
+
 	it('starts idle with empty results', () => {
 		expect(appStore.status).toBe('idle');
 		expect(appStore.activities).toEqual([]);

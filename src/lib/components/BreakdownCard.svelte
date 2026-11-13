@@ -22,6 +22,8 @@
 	<ConsistencyStats
 		activeDays={appStore.stats?.activeDays ?? 0}
 		longestStreak={appStore.stats?.longestStreak ?? 0}
+		yearSoFar={appStore.yearSoFar}
+		daysCounted={appStore.daysCounted}
 	/>
 
 	{#if appStore.records}

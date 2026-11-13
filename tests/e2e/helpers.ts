@@ -23,6 +23,7 @@ export const STRAVA_CSV = fixturePath('strava-activities.csv');
 export const DASHBOARD_HEADING = `Your ${TARGET_YEAR}`;
 
 export async function gotoUpload(page: Page, path = '/'): Promise<void> {
+	await page.clock.setFixedTime(new Date(TARGET_YEAR + 1, 0, 15));
 	await page.goto(path);
 	await expect(page.locator(`#${UPLOAD_ZONE_ID}`)).not.toHaveAttribute('aria-disabled', 'true');
 }
@@ -47,6 +48,18 @@ export function garminCsv(activities: CsvActivity[]): string {
 		({ title, favorite = false, type = 'Running', distance = '10.0' }, i) =>
 			`${type},${TARGET_YEAR}-03-${String(i + 1).padStart(2, '0')} 08:00:00,${favorite},"${title}",${distance},600,00:50:00,100`
 	);
+	return ['Activity Type,Date,Favorite,Title,Distance,Calories,Time,Total Ascent', ...rows].join(
+		'\n'
+	);
+}
+
+export function soFarCsv(): string {
+	const rows = Array.from({ length: 40 }, (_, i) => {
+		const date = new Date(TARGET_YEAR, 0, 2 + Math.floor(i * 5.5));
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
+		return `Running,${TARGET_YEAR}-${month}-${day} 08:00:00,false,Run ${i + 1},10.0,600,00:50:00,100`;
+	});
 	return ['Activity Type,Date,Favorite,Title,Distance,Calories,Time,Total Ascent', ...rows].join(
 		'\n'
 	);

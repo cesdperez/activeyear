@@ -4,7 +4,8 @@ import { fileURLToPath } from 'url';
 import { PNG } from 'pngjs';
 import pixelmatch from 'pixelmatch';
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
-import { gotoUpload, uploadSample } from './helpers.js';
+import { TARGET_YEAR } from '../../src/lib/constants/time.js';
+import { gotoUpload, soFarCsv, uploadSample } from './helpers.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -233,6 +234,18 @@ test.describe('Export Visual Fidelity', () => {
 			);
 		});
 	}
+
+	test('so far summary card snapshot', async ({ page }) => {
+		await page.clock.setFixedTime(new Date(TARGET_YEAR, 7, 15));
+		await page.goto('/');
+		await page.locator('input[type="file"]').setInputFiles({
+			name: 'activities.csv',
+			mimeType: 'text/csv',
+			buffer: Buffer.from(soFarCsv())
+		});
+		await expect(page.locator('#export-card')).toBeVisible();
+		expect(await captureSpecificCardDownload(page, 0)).toMatchSnapshot('summary-so-far.png');
+	});
 
 	test.describe('Theme variations', () => {
 		// Test summary card with all themes.

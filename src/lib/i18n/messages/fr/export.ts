@@ -50,5 +50,6 @@ export const exportMessages: typeof en = {
 	consistency: 'Régularité',
 	withoutRestDay: 'Sans jour de repos',
 	sports: 'Sports',
+	seasonSoFar: (year) => `Saison ${year} jusqu’ici`,
 	season: (year) => `Saison ${year}`
 };

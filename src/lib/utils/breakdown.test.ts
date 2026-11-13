@@ -329,13 +329,13 @@ describe('weeklyBars', () => {
 
 describe('activeDaysPercent', () => {
 	it('is the share of the year with activity, capped at 100', () => {
-		expect(activeDaysPercent(73, 2026)).toBe(20);
-		expect(activeDaysPercent(400, 2026)).toBe(100);
+		expect(activeDaysPercent(73, 365)).toBe(20);
+		expect(activeDaysPercent(400, 365)).toBe(100);
 	});
 
 	it('counts 366 days in a leap year', () => {
-		expect(activeDaysPercent(183, 2028)).toBe(50);
-		expect(activeDaysPercent(366, 2028)).toBe(100);
+		expect(activeDaysPercent(183, 366)).toBe(50);
+		expect(activeDaysPercent(366, 366)).toBe(100);
 	});
 });
 

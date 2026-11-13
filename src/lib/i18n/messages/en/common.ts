@@ -39,6 +39,8 @@ export const common = {
 	yearLane: {
 		summary: (n: string, count: number, days: string, year: number) =>
 			`${n} active ${plural('en', count, { one: 'day', other: 'days' })} out of ${days} in ${year}`,
+		summarySoFar: (n: string, count: number, days: string, year: number) =>
+			`${n} active ${plural('en', count, { one: 'day', other: 'days' })} out of ${days} in ${year} so far`,
 		highlightsMarked: 'highlights marked',
 		recordsMarked: 'personal records marked',
 		highlight: 'Highlight',

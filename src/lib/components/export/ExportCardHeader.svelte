@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { appStore } from '#lib/stores/app.svelte.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { nameFontSize } from '#lib/utils/export.js';
@@ -11,7 +12,9 @@
 <header class="mb-[56px]">
 	<div class="flex items-center justify-between gap-10">
 		<Logotype class="text-[64px]" />
-		<p class="season card-label">{i18n.m.export.season(TARGET_YEAR)}</p>
+		<p class="season card-label">
+			{(appStore.yearSoFar ? i18n.m.export.seasonSoFar : i18n.m.export.season)(TARGET_YEAR)}
+		</p>
 	</div>
 	<div class="mt-12 flex items-end justify-between gap-10">
 		<div class="min-w-0 flex-1">

@@ -48,6 +48,7 @@ export const dashboard: typeof en = {
 	disableCelebration: 'Feestmodus uitschakelen',
 	enableCelebration: 'Feestmodus inschakelen',
 	celebrationConfetti: 'Feestelijke confetti',
+	yourYearSoFar: (year) => `Jouw jaar ${year} tot nu toe`,
 	yourYear: (year) => `Jouw jaar ${year}`,
 	activitySummaryActivities: (n, count) =>
 		`${n} ${plural('nl', count, { one: 'activiteit', other: 'activiteiten' })}`,
@@ -55,6 +56,7 @@ export const dashboard: typeof en = {
 		`op ${n} ${plural('nl', count, { one: 'actieve dag', other: 'actieve dagen' })}`,
 	activeDaysLabel: (count) => plural('nl', count, { one: 'Actieve dag', other: 'Actieve dagen' }),
 	dayStreak: 'Dagen op rij',
+	percentOfYearSoFar: (percent) => `${percent} van het jaar tot nu toe`,
 	percentOfYear: (percent) => `${percent} van het jaar`,
 	longestDistance: 'Langste afstand',
 	longestDuration: 'Langste duur',

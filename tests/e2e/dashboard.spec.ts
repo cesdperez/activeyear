@@ -1,7 +1,14 @@
 import { readFileSync } from 'fs';
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { TARGET_YEAR } from '../../src/lib/constants/time.js';
-import { DASHBOARD_HEADING, SAMPLE_CSV, garminCsv, gotoUpload, uploadCsv } from './helpers.js';
+import {
+	DASHBOARD_HEADING,
+	SAMPLE_CSV,
+	garminCsv,
+	gotoUpload,
+	soFarCsv,
+	uploadCsv
+} from './helpers.js';
 
 const DAYS_IN_TARGET_YEAR =
 	(Date.UTC(TARGET_YEAR + 1, 0, 1) - Date.UTC(TARGET_YEAR, 0, 1)) / 86_400_000;
@@ -251,4 +258,31 @@ test('Upload different file button is named without its decorative glyph', async
 	await expect(
 		page.getByRole('button', { name: 'Upload different file', exact: true })
 	).toBeVisible();
+});
+
+test('uploaded year shows progress so far', async ({ page }) => {
+	await page.clock.setFixedTime(new Date(TARGET_YEAR, 7, 15));
+	await page.goto('/');
+	await page.locator('input[type="file"]').setInputFiles({
+		name: 'activities.csv',
+		mimeType: 'text/csv',
+		buffer: Buffer.from(soFarCsv())
+	});
+	await expect(page.getByRole('heading', { name: `Your ${TARGET_YEAR} so far` })).toBeVisible();
+	await expect(page.locator('#export-card')).toContainText(`Season ${TARGET_YEAR} so far`);
+	await expect(page.getByTestId('main-stats')).toContainText('of the year so far');
+	await expect(page.getByTestId('year-lane').first().getByRole('img')).toHaveAttribute(
+		'aria-label',
+		/out of 227 in .* so far/
+	);
+});
+
+test('uploaded finished year has no so far labels', async ({ page }) => {
+	await page.clock.setFixedTime(new Date(TARGET_YEAR + 1, 0, 15));
+	await page.goto('/');
+	await page.locator('input[type="file"]').setInputFiles(SAMPLE_CSV);
+	await expect(
+		page.getByRole('heading', { name: `Your ${TARGET_YEAR}`, exact: true })
+	).toBeVisible();
+	await expect(page.locator('body')).not.toContainText('so far');
 });
