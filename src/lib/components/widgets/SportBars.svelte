@@ -36,12 +36,12 @@
 				? `animation: fadeInUp 0.4s ease-out both; animation-delay: ${600 + i * 50}ms`
 				: undefined}
 		>
-			<div class="flex items-center justify-between">
-				<div class="flex items-center gap-3">
+			<div class="flex items-center justify-between gap-3">
+				<div class="flex min-w-0 items-center gap-3">
 					<div
 						class={isDashboard
-							? 'flex h-8 w-8 items-center justify-center rounded-lg transition-transform group-hover:scale-110'
-							: 'flex h-8 w-8 items-center justify-center rounded-lg'}
+							? 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-transform group-hover:scale-110'
+							: 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg'}
 						style="background: {color}20; color: {color};"
 					>
 						<IconComponent class="h-5 w-5" weight="bold" aria-hidden="true" />

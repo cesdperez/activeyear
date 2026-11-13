@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import type { BreakdownMetric, SportBreakdown } from '#lib/types/index.js';
 	import { rankSports, sportColorsFor } from '#lib/utils/breakdown.js';
 	import SectionHeading from './SectionHeading.svelte';
@@ -15,7 +16,7 @@
 {#if breakdown.length > 0}
 	<section data-testid="sport-breakdown">
 		<div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
-			<SectionHeading title="By Sport" class="flex-1" />
+			<SectionHeading title={i18n.m.dashboard.bySport} class="flex-1" />
 			<BreakdownMetricToggle />
 		</div>
 

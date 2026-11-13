@@ -1,2 +1,36 @@
 import type { dashboard as en } from '../en/dashboard.js';
-export const dashboard: typeof en = {};
+
+export const dashboard: typeof en = {
+	totalDistance: 'Distância total',
+	elevationGained: 'Elevação acumulada',
+	timeActive: 'Tempo ativo',
+	caloriesBurned: 'Calorias queimadas',
+	personalRecords: 'Recordes pessoais',
+	bySport: 'Por esporte',
+	whenYouTrain: 'Quando você treina',
+	uploadDifferentFile: 'Enviar outro arquivo',
+	saveMyYear: 'Salvar meu ano',
+	reopenRecap: 'Abra este resumo depois sem exportar novamente',
+	distanceUnit: 'Unidade de distância',
+	disableCelebration: 'Desativar modo de celebração',
+	enableCelebration: 'Ativar modo de celebração',
+	celebrationConfetti: 'Confete de celebração',
+	yourYear: 'Seu',
+	across: 'em',
+	activeDay: 'dia ativo',
+	activeDays: 'dias ativos',
+	jumpExport: 'Ir para exportação',
+	fewerStats: 'Menos estatísticas',
+	moreStats: 'Mais estatísticas',
+	moreStatsTitle: 'Mais estatísticas',
+	quarters: 'Trimestres',
+	rest: 'Descanso',
+	noActivities: 'Sem atividades',
+	longestBreak: 'Maior pausa',
+	day: 'dia',
+	days: 'dias',
+	to: 'a',
+	noRestDay: 'Nenhum dia de descanso entre atividades.',
+	byWeekday: 'Por dia da semana',
+	averageActivity: 'Média por atividade'
+};

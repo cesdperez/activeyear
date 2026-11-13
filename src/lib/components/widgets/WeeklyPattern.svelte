@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { WEEKDAY_LABELS } from '#lib/constants/time.js';
+	import { INTL_LOCALES } from '#lib/constants/locales.js';
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { weeklyBars } from '#lib/utils/breakdown.js';
 	import type {
 		Theme,
@@ -31,12 +32,21 @@
 
 	const hasActivity = $derived(pattern.some((v) => v > 0));
 	const bars = $derived(weeklyBars(pattern, barContainerHeight));
+	const weekdays = $derived.by(() => {
+		const formatter = new Intl.DateTimeFormat(INTL_LOCALES[i18n.locale], {
+			weekday: 'short',
+			timeZone: 'UTC'
+		});
+		return Array.from({ length: 7 }, (_, i) =>
+			formatter.format(new Date(Date.UTC(2024, 0, i + 1)))
+		);
+	});
 </script>
 
 {#if hasActivity}
 	{#if variant === 'dashboard'}
 		<section class="mb-16">
-			<SectionHeading title="When You Train" />
+			<SectionHeading title={i18n.m.dashboard.whenYouTrain} />
 
 			<div
 				data-testid="weekly-pattern-row"
@@ -58,7 +68,7 @@
 						<span
 							class="text-xs font-bold tracking-wide text-[var(--color-text-muted)] uppercase sm:text-sm sm:tracking-wider"
 						>
-							{WEEKDAY_LABELS[i]}
+							{weekdays[i]}
 						</span>
 					</div>
 				{/each}
@@ -86,7 +96,7 @@
 								: 0.4 + (heightPercent / 100) * 0.6};"
 						></div>
 						<span class="text-[16px] font-bold text-[var(--color-text-muted)]">
-							{WEEKDAY_LABELS[i][0]}
+							{weekdays[i][0]}
 						</span>
 					</div>
 				{/each}

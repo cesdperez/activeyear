@@ -20,28 +20,28 @@
 		{
 			Icon: Ruler,
 			value: formatDistance(i18n.locale, stats?.totalDistance ?? 0, unit),
-			label: 'Total Distance',
+			label: i18n.m.dashboard.totalDistance,
 			delay: 0,
 			equivalent: `🌍 ${formatEarthLaps(i18n.locale, stats?.totalDistance ?? 0)}`
 		},
 		{
 			Icon: Mountains,
 			value: formatElevation(i18n.locale, stats?.totalElevation ?? 0, unit),
-			label: 'Elevation Gained',
+			label: i18n.m.dashboard.elevationGained,
 			delay: 150,
 			equivalent: `🏔️ ${formatEverests(i18n.locale, stats?.totalElevation ?? 0)}`
 		},
 		{
 			Icon: Timer,
 			value: formatDuration(i18n.locale, stats?.totalDuration ?? 0),
-			label: 'Time Active',
+			label: i18n.m.dashboard.timeActive,
 			delay: 50,
 			equivalent: `💍 ${formatLotRMarathons(i18n.locale, stats?.totalDuration ?? 0)}`
 		},
 		{
 			Icon: Fire,
 			value: formatCalories(i18n.locale, stats?.totalCalories ?? 0),
-			label: 'Calories Burned',
+			label: i18n.m.dashboard.caloriesBurned,
 			delay: 100,
 			equivalent: `🍕 ${formatPizzaSlices(i18n.locale, stats?.totalCalories ?? 0)}`
 		}

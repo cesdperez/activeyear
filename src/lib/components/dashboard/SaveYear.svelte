@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { DownloadSimple } from 'phosphor-svelte';
 	import { SAVED_YEAR_URL_REVOKE_DELAY_MS } from '#lib/constants/savedYear.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
@@ -26,9 +27,9 @@
 		onclick={saveYear}
 	>
 		<DownloadSimple class="h-4 w-4" weight="bold" aria-hidden="true" />
-		Save my year
+		{i18n.m.dashboard.saveMyYear}
 	</button>
 	<p class="mt-2 text-xs text-[var(--color-text-dim)]">
-		Reopen this recap later without exporting again
+		{i18n.m.dashboard.reopenRecap}
 	</p>
 </div>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { tick } from 'svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import { UPLOAD_ZONE_ID } from '#lib/constants/dom.js';
@@ -22,6 +23,6 @@
 			weight="bold"
 			aria-hidden="true"
 		/>
-		Upload different file
+		{i18n.m.dashboard.uploadDifferentFile}
 	</button>
 </div>

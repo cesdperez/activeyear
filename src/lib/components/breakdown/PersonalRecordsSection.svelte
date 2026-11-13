@@ -11,7 +11,7 @@
 			class="h-1 flex-1 bg-gradient-to-l from-[var(--color-accent)] to-transparent opacity-30"
 		></div>
 		<p
-			class="text-[44px] font-bold tracking-widest whitespace-nowrap text-[var(--color-text-primary)] uppercase"
+			class="min-w-0 text-center text-[44px] font-bold tracking-widest text-[var(--color-text-primary)] uppercase"
 		>
 			Personal Records
 		</p>

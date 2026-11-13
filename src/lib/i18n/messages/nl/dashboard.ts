@@ -1,2 +1,36 @@
 import type { dashboard as en } from '../en/dashboard.js';
-export const dashboard: typeof en = {};
+
+export const dashboard: typeof en = {
+	totalDistance: 'Totale afstand',
+	elevationGained: 'Hoogtemeters',
+	timeActive: 'Actieve tijd',
+	caloriesBurned: 'Verbrande calorieën',
+	personalRecords: 'Persoonlijke records',
+	bySport: 'Per sport',
+	whenYouTrain: 'Wanneer je traint',
+	uploadDifferentFile: 'Ander bestand uploaden',
+	saveMyYear: 'Mijn jaar opslaan',
+	reopenRecap: 'Open dit overzicht later zonder opnieuw te exporteren',
+	distanceUnit: 'Afstandseenheid',
+	disableCelebration: 'Feestmodus uitschakelen',
+	enableCelebration: 'Feestmodus inschakelen',
+	celebrationConfetti: 'Feestelijke confetti',
+	yourYear: 'Jouw',
+	across: 'op',
+	activeDay: 'actieve dag',
+	activeDays: 'actieve dagen',
+	jumpExport: 'Naar exporteren',
+	fewerStats: 'Minder statistieken',
+	moreStats: 'Meer statistieken',
+	moreStatsTitle: 'Meer statistieken',
+	quarters: 'Kwartalen',
+	rest: 'Rust',
+	noActivities: 'Geen activiteiten',
+	longestBreak: 'Langste pauze',
+	day: 'dag',
+	days: 'dagen',
+	to: 'tot',
+	noRestDay: 'Geen rustdag tussen activiteiten.',
+	byWeekday: 'Per weekdag',
+	averageActivity: 'Gemiddelde per activiteit'
+};

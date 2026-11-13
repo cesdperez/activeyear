@@ -27,7 +27,8 @@
 		tabindex="-1"
 		{@attach (heading) => heading.focus()}
 	>
-		Your {TARGET_YEAR}
+		{i18n.m.dashboard.yourYear}
+		{TARGET_YEAR}
 	</h1>
 	<div
 		data-testid="activity-summary"
@@ -38,7 +39,7 @@
 				>{formatCount(i18n.locale, activityCount)}</span
 			>
 			<span class="text-[var(--color-text-muted)]"
-				>{activityCount === 1 ? 'activity' : 'activities'} across</span
+				>{i18n.m.common.nouns.activity(activityCount)} {i18n.m.dashboard.across}</span
 			>
 		</span>
 		<span class="inline-flex items-center gap-2 whitespace-nowrap">
@@ -46,14 +47,14 @@
 				>{formatCount(i18n.locale, activeDays)}</span
 			>
 			<span class="text-[var(--color-text-muted)]"
-				>{activeDays === 1 ? 'active day' : 'active days'}</span
+				>{activeDays === 1 ? i18n.m.dashboard.activeDay : i18n.m.dashboard.activeDays}</span
 			>
 		</span>
 	</div>
 	{#if skippedRowCount > 0}
 		<p class="mt-3 flex items-center justify-center gap-1.5 text-sm text-[var(--color-text-muted)]">
 			<Warning class="h-4 w-4 shrink-0" weight="bold" aria-hidden="true" />
-			{skippedRowsNotice(skippedRowCount)}
+			{skippedRowsNotice(skippedRowCount, i18n.locale)}
 		</p>
 	{/if}
 
@@ -62,7 +63,7 @@
 			class="group inline-flex items-center gap-2 text-sm font-medium text-[var(--color-accent)] transition-colors duration-200 hover:text-white"
 			onclick={jumpToExport}
 		>
-			<span>Jump to Export</span>
+			<span>{i18n.m.dashboard.jumpExport}</span>
 			<ArrowDown
 				class="h-4 w-4 transition-transform group-hover:translate-y-1"
 				aria-hidden="true"
