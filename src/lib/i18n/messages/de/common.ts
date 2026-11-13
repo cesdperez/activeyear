@@ -44,7 +44,7 @@ export const common: typeof en = {
 		summary: (n, count, days, year) =>
 			`${n} ${plural('de', count, { one: 'aktiver Tag', other: 'aktive Tage' })} von ${days} im Jahr ${year}`,
 		summarySoFar: (n, count, days, year) =>
-			`${n} ${plural('de', count, { one: 'aktiver Tag', other: 'aktive Tage' })} von ${days} im Jahr ${year} bisher`,
+			`${n} ${plural('de', count, { one: 'aktiver Tag', other: 'aktive Tage' })} von ${days} bisher im Jahr ${year}`,
 		highlightsMarked: 'Highlights markiert',
 		recordsMarked: 'Bestleistungen markiert',
 		highlight: 'Highlight',

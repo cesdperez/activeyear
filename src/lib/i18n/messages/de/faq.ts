@@ -5,7 +5,7 @@ export const faq: typeof en = {
 	items: [
 		{
 			question: 'Was ist das?',
-			answer: `Ein kostenloser Jahresrückblick für ${TARGET_YEAR} für Sportlerinnen und Sportler auf Garmin und Strava. Lade deinen Aktivitätenexport hoch und entdecke dein Sportjahr: Gesamtdistanz, Höhenmeter, Zeit und Kalorien, eine Aufteilung nach Sportart, persönliche Rekorde, Highlights und deine längste Serie.`
+			answer: `Ein kostenloser Jahresrückblick ${TARGET_YEAR} für Sportlerinnen und Sportler auf Garmin und Strava. Lade deinen Aktivitätenexport hoch und entdecke dein Sportjahr: Gesamtdistanz, Höhenmeter, Zeit und Kalorien, eine Aufteilung nach Sportart, persönliche Rekorde, Highlights und deine längste Serie.`
 		},
 		{
 			question: 'Sind meine Daten privat?',
