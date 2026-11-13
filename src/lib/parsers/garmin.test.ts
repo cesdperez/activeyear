@@ -480,6 +480,7 @@ describe('parseGarminCsv with quoted fields', () => {
 
 		expect(result.activities.map((a) => a.title)).toEqual(['Ride']);
 		expect(result.errors.map((e) => [e.type, e.row])).toEqual([['malformed-quotes', 2]]);
+		expect(result.rowCount).toBe(2);
 	});
 
 	it.each([2, 3])('reports each of %i adjacent unclosed rows', (count) => {

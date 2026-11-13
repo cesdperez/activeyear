@@ -550,7 +550,6 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 	const activities: Activity[] = [];
 	const errors: ParseError[] = [];
 	const years = new Set<number>();
-	let rowCount = 0;
 
 	const firstPass = Papa.parse<string[]>(csvContent, {
 		header: false,
@@ -564,6 +563,7 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 		? repairMalformedQuotes(content)
 		: { content, errors: [] };
 	errors.push(...repaired.errors);
+	let rowCount = repaired.errors.length;
 
 	readRows(deduplicateHeaders(repaired.content), (row, line, rowErrors) => {
 		rowCount++;

@@ -16,6 +16,35 @@ describe('cutShortFrom', () => {
 	});
 	it('does not warn when a prior year is present', () =>
 		expect(cutShortFrom(result(20, undefined, true), year)).toBeNull());
+	it.each([
+		[20, true],
+		[21, false]
+	])('uses all %i exported rows when one date is invalid', (count, warns) => {
+		const rows = Array.from(
+			{ length: count },
+			(_, i) => `Running,${i === 0 ? 'invalid' : `${year}-03-01 08:00:00`},10`
+		);
+		const parsed = parseGarminCsv(['Activity Type,Date,Distance', ...rows].join('\n'), year);
+		expect(parsed.activities).toHaveLength(count - 1);
+		expect(cutShortFrom(parsed, year)).toEqual(warns ? new Date(year, 2, 1, 8) : null);
+	});
+	it('counts a malformed-quote row in the exported page', () => {
+		const rows = Array.from(
+			{ length: 19 },
+			() => `Running,${year}-03-01 08:00:00,true,Run,10,100,00:50:00,10`
+		);
+		const broken = `Running,${year}-03-01 08:00:00,true,"Open title,10,100,00:50:00,10`;
+		const parsed = parseGarminCsv(
+			[
+				'Activity Type,Date,Favorite,Title,Distance,Calories,Time,Total Ascent',
+				broken,
+				...rows
+			].join('\n'),
+			year
+		);
+		expect(parsed.activities).toHaveLength(19);
+		expect(cutShortFrom(parsed, year)).toEqual(new Date(year, 2, 1, 8));
+	});
 	it('does not warn for an incomplete page', () =>
 		expect(cutShortFrom(result(23), year)).toBeNull());
 	it('does not warn for early January', () =>
