@@ -1,4 +1,5 @@
 import Papa from 'papaparse';
+import { MILES_TO_KM, FEET_TO_METERS, YARDS_TO_METERS } from '../constants/units.js';
 import { GARMIN_LOCALES } from './garminLocales.js';
 import {
 	firstLine,
@@ -15,7 +16,8 @@ import type {
 	ActivityType,
 	GarminRawActivity,
 	ParseError,
-	ParseResult
+	ParseResult,
+	ParseOptions
 } from '../types/index.js';
 import { TARGET_YEAR } from '../constants/time.js';
 import {
@@ -97,6 +99,8 @@ const ACTIVITY_TYPE_MAP: Record<string, ActivityType> = {
 	'Track Cycling': 'cycling',
 	Multisport: 'other'
 };
+
+const SWIM_TYPES = new Set(['Pool Swim', 'Open Water Swimming', 'Swimming']);
 
 const DISTANCE_IN_METERS_TYPES = new Set([
 	'Pool Swim',
@@ -498,7 +502,12 @@ function flattenWholeRowQuoted(rows: string[][], content: string): string | null
 	return allRows.map((row) => (row.length === 1 ? row[0] : Papa.unparse([row]))).join('\n');
 }
 
-function readActivity(row: GarminRawActivity, date: Date, types: Record<string, string>): Activity {
+function readActivity(
+	row: GarminRawActivity,
+	date: Date,
+	types: Record<string, string>,
+	options?: ParseOptions
+): Activity {
 	const activityType = types[row['Activity Type']] ?? row['Activity Type'];
 	const type = mapActivityType(activityType);
 	const distance = TYPES_WITHOUT_DISTANCE.has(type)
@@ -507,15 +516,26 @@ function readActivity(row: GarminRawActivity, date: Date, types: Record<string, 
 			? parseGarminMeterDistance(row['Distance'])
 			: parseGarminDistance(row['Distance']);
 
+	const imperial = options?.garminUnits === 'imperial';
+	const distanceFactor = imperial
+		? SWIM_TYPES.has(activityType)
+			? YARDS_TO_METERS
+			: DISTANCE_IN_METERS_TYPES.has(activityType)
+				? 1
+				: MILES_TO_KM
+		: 1;
+
 	return {
 		date,
 		type,
 		title: row['Title'] || '',
-		distance,
+		distance: distance * distanceFactor,
 		duration:
 			parseGarminTime(row['Moving Time']) || parseGarminTime(row['Total Time'] || row['Time']),
 		calories: parseGarminCalories(row['Calories']),
-		elevation: parseGarminElevation(row['Total Ascent']),
+		elevation: Math.round(
+			parseGarminElevation(row['Total Ascent']) * (imperial ? FEET_TO_METERS : 1)
+		),
 		favorite: row['Favorite']?.toLowerCase() === 'true'
 	};
 }
@@ -552,7 +572,11 @@ function readRows(
 /**
  * Parse a Garmin CSV string and return activities for the specified year
  */
-export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_YEAR): ParseResult {
+export function parseGarminCsv(
+	csvContent: string,
+	targetYear: number = TARGET_YEAR,
+	options?: ParseOptions
+): ParseResult {
 	const activities: Activity[] = [];
 	const errors: ParseError[] = [];
 	const years = new Set<number>();
@@ -604,7 +628,8 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 		}
 
 		years.add(date.getFullYear());
-		if (isInYear(date, targetYear)) activities.push(readActivity(row, date, locale?.types ?? {}));
+		if (isInYear(date, targetYear))
+			activities.push(readActivity(row, date, locale?.types ?? {}, options));
 	});
 
 	return { source: 'garmin', activities, errors, yearsInFile: sortedYears(years), rowCount };

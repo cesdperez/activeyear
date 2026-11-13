@@ -1,5 +1,8 @@
 import type { upload as en } from '../en/upload.js';
 export const upload: typeof en = {
+	garminUnits: 'Unidades de tu cuenta de Garmin',
+	metric: 'Métrico',
+	imperial: 'Imperial',
 	drop: 'Arrastra aquí tu CSV de Garmin o Strava',
 	browse: 'o haz clic para buscar',
 	saved: '¿Ya guardaste tu año? Arrastra el archivo .json',

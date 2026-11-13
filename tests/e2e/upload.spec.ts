@@ -61,6 +61,22 @@ function isFileDragCancelled(target: Locator, type: 'dragover' | 'drop') {
 }
 
 test.describe('Upload Flow', () => {
+	test('imports Garmin imperial distances', async ({ page }) => {
+		await gotoUpload(page);
+		const group = page.getByRole('group', { name: 'Units in your Garmin account' });
+		await expect(group.getByRole('button', { name: 'Metric', exact: true })).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+		await group.getByRole('button', { name: 'Imperial' }).click();
+		await uploadFile(
+			page,
+			`Activity Type,Date,Title,Distance\nRunning,${TARGET_YEAR}-03-01 08:00:00,Run,6.21`
+		);
+		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
+		await expect(page.getByTestId('main-stats').getByText('10.0km')).toBeVisible();
+	});
+
 	test('home page displays upload UI', async ({ page }) => {
 		await page.goto('/');
 

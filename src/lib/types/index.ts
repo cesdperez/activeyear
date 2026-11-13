@@ -88,6 +88,10 @@ export type WidgetVariantProps =
 export type SummaryMetric = 'distance' | 'elevation' | 'duration' | 'calories';
 
 export type Unit = 'km' | 'miles';
+export type GarminUnits = 'metric' | 'imperial';
+export interface ParseOptions {
+	garminUnits?: GarminUnits;
+}
 
 export type AvatarError = { type: 'invalid' | 'unreadable' };
 export type ExportError = { type: 'ready' | 'fontsUnavailable' | 'failed' };
@@ -118,7 +122,7 @@ export interface ParseResult {
 /** Reads one export format; `detect` decides whether `parse` should handle the file. */
 export interface ActivityParser {
 	detect(csvContent: string): boolean;
-	parse(csvContent: string, year: number): ParseResult;
+	parse(csvContent: string, year: number, options?: ParseOptions): ParseResult;
 }
 
 /** Row errors that keep the row out of the totals. */

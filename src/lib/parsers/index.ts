@@ -1,13 +1,17 @@
-import type { ActivityParser, ParseResult } from '#lib/types/index.js';
+import type { ActivityParser, ParseResult, ParseOptions } from '#lib/types/index.js';
 import { garminParser } from './garmin.js';
 import { stravaParser } from './strava.js';
 
 const PARSERS: ActivityParser[] = [garminParser, stravaParser];
 
 /** Parses the CSV with the first parser that recognises its format. */
-export function parseActivityCsv(csvContent: string, year: number): ParseResult {
+export function parseActivityCsv(
+	csvContent: string,
+	year: number,
+	options?: ParseOptions
+): ParseResult {
 	const parser = PARSERS.find((p) => p.detect(csvContent));
-	if (parser) return parser.parse(csvContent, year);
+	if (parser) return parser.parse(csvContent, year, options);
 
 	return {
 		source: null,

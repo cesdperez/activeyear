@@ -1,3 +1,4 @@
+import { parseActivityCsv } from './index.js';
 import { describe, it, expect } from 'vitest';
 import {
 	parseGarminCsv,
@@ -690,4 +691,34 @@ describe('Garmin sport distances', () => {
 			['winter', 2.5]
 		]);
 	});
+});
+
+describe('imperial Garmin exports', () => {
+	it('converts miles, feet and swim yards while leaving rowing metres unchanged', () => {
+		const header = 'Activity Type,Date,Title,Distance,Total Ascent\n';
+		const date = `${TARGET_YEAR}-03-01 08:00:00`;
+		const imperial = parseGarminCsv(
+			header +
+				`Running,${date},Run,6.21,328\nPool Swim,${date},Swim,1640,0\nIndoor Rowing,${date},Row,2000,0`,
+			TARGET_YEAR,
+			{ garminUnits: 'imperial' }
+		);
+		const metric = parseGarminCsv(
+			header +
+				`Running,${date},Run,10,100\nPool Swim,${date},Swim,1500,0\nIndoor Rowing,${date},Row,2000,0`,
+			TARGET_YEAR
+		);
+		expect(imperial.activities).toHaveLength(3);
+		for (const [index, activity] of imperial.activities.entries()) {
+			expect(activity.distance).toBeCloseTo(metric.activities[index].distance, 1);
+			expect(activity.elevation).toBe(metric.activities[index].elevation);
+		}
+	});
+});
+
+it('ignores Garmin units for Strava exports', () => {
+	const csv = loadFixture('strava-activities.csv');
+	expect(parseActivityCsv(csv, TARGET_YEAR, { garminUnits: 'imperial' })).toEqual(
+		parseActivityCsv(csv, TARGET_YEAR)
+	);
 });

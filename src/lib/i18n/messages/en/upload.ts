@@ -1,4 +1,7 @@
 export const upload = {
+	garminUnits: 'Units in your Garmin account',
+	metric: 'Metric',
+	imperial: 'Imperial',
 	drop: 'Drop your Garmin or Strava CSV here',
 	browse: 'or click to browse',
 	saved: 'Saved your year before? Drop the .json file',
