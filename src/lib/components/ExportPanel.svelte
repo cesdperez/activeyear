@@ -5,7 +5,6 @@
 	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
 	import { exportLock } from '#lib/stores/exportLock.svelte.js';
 	import { highlightsStore } from '#lib/stores/highlights.svelte.js';
-	import { observeExportActions } from '#lib/stores/supportVisibility.svelte.js';
 	import ExportCarousel from './ExportCarousel.svelte';
 	import SupportLink from './dashboard/SupportLink.svelte';
 	import LightmileDisclosure from './LightmileDisclosure.svelte';
@@ -316,7 +315,6 @@
 			<div class="space-y-3">
 				<!-- aria-disabled instead of disabled keeps focus on the button while exporting. -->
 				<button
-					{@attach observeExportActions}
 					id="export-download"
 					onclick={() => handleExport()}
 					aria-disabled={exportLock.isExporting}

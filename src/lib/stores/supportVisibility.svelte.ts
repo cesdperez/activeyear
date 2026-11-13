@@ -22,5 +22,3 @@ export const observeSupport = countWhileVisible('count');
 
 /** Hides the floating support link while the element is on screen, so it never covers its controls. */
 export const observeBusyArea = countWhileVisible('busyAreas');
-
-export const observeExportActions = countWhileVisible('busyAreas');
