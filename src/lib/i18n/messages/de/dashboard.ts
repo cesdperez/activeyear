@@ -2,6 +2,7 @@ import { plural } from '#lib/i18n/plural.js';
 import type { dashboard as en } from '../en/dashboard.js';
 
 export const dashboard: typeof en = {
+	backToStart: 'Zurück zum Anfang',
 	supportExport:
 		'Hat dir dein Rückblick gefallen? ActiveYear ist kostenlos und von einer Person gemacht.',
 	supportFooter: 'Gefällt dir ActiveYear?',

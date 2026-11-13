@@ -252,3 +252,9 @@ test('Upload different file button is named without its decorative glyph', async
 		page.getByRole('button', { name: 'Upload different file', exact: true })
 	).toBeVisible();
 });
+
+test('back to start returns focus to the upload zone', async ({ page }) => {
+	await openDemo(page);
+	await page.getByRole('button', { name: 'Back to start' }).click();
+	await expect(page.locator('#upload-zone')).toBeFocused();
+});

@@ -12,7 +12,7 @@
 	}
 </script>
 
-<button class="btn-secondary" disabled={appStore.isExporting} onclick={uploadAnother}>
+<button class="btn-secondary w-full" disabled={appStore.isExporting} onclick={uploadAnother}>
 	<ArrowCounterClockwise class="h-4 w-4" weight="bold" aria-hidden="true" />
 	{i18n.m.dashboard.uploadDifferentFile}
 </button>

@@ -19,8 +19,13 @@
 	}
 </script>
 
-<div class="text-center">
-	<button type="button" class="btn-secondary" disabled={appStore.isExporting} onclick={saveYear}>
+<div class="w-full text-center">
+	<button
+		type="button"
+		class="btn-secondary w-full"
+		disabled={appStore.isExporting}
+		onclick={saveYear}
+	>
 		<DownloadSimple class="h-4 w-4" weight="bold" aria-hidden="true" />
 		{i18n.m.dashboard.saveMyYear}
 	</button>

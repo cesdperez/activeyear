@@ -14,7 +14,7 @@ describe('parseEvent', () => {
 		],
 		theme_selected: ['neon', 'minimalist', 'retro', 'classic', 'synthwave', 'lightmile'],
 		export: ['neon', 'minimalist', 'retro', 'classic', 'synthwave', 'lightmile'],
-		support_clicked: ['export', 'footer'],
+		support_clicked: ['export', 'footer', 'faq', 'floating'],
 		more_stats_opened: [''],
 		sports_count: ['1', '2', '3-5', '6+']
 	};

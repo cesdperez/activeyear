@@ -1,6 +1,7 @@
 import { plural } from '#lib/i18n/plural.js';
 
 export const dashboard = {
+	backToStart: 'Back to start',
 	supportExport: 'Enjoyed your recap? ActiveYear is free and made by one person.',
 	supportFooter: 'Enjoying ActiveYear?',
 	buyMeAGel: 'Buy me a gel',
