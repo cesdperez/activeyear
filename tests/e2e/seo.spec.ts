@@ -75,7 +75,14 @@ test.describe('Search and AI discovery', () => {
 		const faq = blocks[1].mainEntity as { name: string; acceptedAnswer: { text: string } }[];
 		for (const { name, acceptedAnswer } of faq) {
 			await expect(page.getByText(name, { exact: true })).toBeVisible();
-			await expect(page.getByText(acceptedAnswer.text, { exact: true })).toBeVisible();
+			const answer = page.locator('dt', { hasText: name }).locator('..').locator('dd');
+			await expect(answer).toBeVisible();
+			const text = await answer.evaluate((element) => {
+				const copy = element.cloneNode(true) as HTMLElement;
+				copy.querySelectorAll('.sr-only').forEach((hidden) => hidden.remove());
+				return (copy.textContent ?? '').replace(/\s+/g, ' ').trim();
+			});
+			expect(text).toBe(acceptedAnswer.text.replace(/\s+/g, ' ').trim());
 		}
 		expect(cspViolations).toEqual([]);
 	});
