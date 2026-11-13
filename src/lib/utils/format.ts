@@ -43,9 +43,7 @@ export function formatDistance(locale: Locale, km: number, unit: Unit = 'km'): s
 	return `${Number(oneDecimal).toLocaleString(INTL_LOCALES[locale], { minimumFractionDigits: 1, maximumFractionDigits: 1 })}${suffix}`;
 }
 
-/**
- * Format duration in seconds to "Xh Ym" format, or "Xs" under a minute
- */
+/** "Xh Ym", "Xh" on a whole hour, "Ym" under an hour, or "Xs" under a minute. */
 export function formatDuration(locale: Locale, seconds: number): string {
 	if (seconds <= 0) return '0m';
 	const underAMinute = secondsUnderAMinute(seconds);
@@ -54,9 +52,8 @@ export function formatDuration(locale: Locale, seconds: number): string {
 	const hours = Math.floor(seconds / ONE_HOUR_IN_SECONDS);
 	const minutes = Math.floor((seconds % ONE_HOUR_IN_SECONDS) / ONE_MINUTE_IN_SECONDS);
 
-	if (hours === 0) {
-		return `${minutes}m`;
-	}
+	if (hours === 0) return `${minutes}m`;
+	if (minutes === 0) return `${formatCount(locale, hours)}h`;
 	return `${formatCount(locale, hours)}h ${minutes}m`;
 }
 

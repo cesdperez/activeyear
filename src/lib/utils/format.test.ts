@@ -58,9 +58,13 @@ describe('formatDuration', () => {
 	});
 
 	it('formats hours and minutes', () => {
-		expect(formatDuration('en', 3600)).toBe('1h 0m');
 		expect(formatDuration('en', 5400)).toBe('1h 30m');
 		expect(formatDuration('en', 12888)).toBe('3h 34m');
+	});
+
+	it('drops the minutes on a whole hour', () => {
+		expect(formatDuration('en', 3600)).toBe('1h');
+		expect(formatDuration('en', 150 * 3600 + 59)).toBe('150h');
 	});
 
 	it('groups thousands of hours', () => {
