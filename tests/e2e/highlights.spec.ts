@@ -8,6 +8,7 @@ import {
 	uploadCsv,
 	uploadSample
 } from './helpers.js';
+import { TARGET_YEAR } from '../../src/lib/constants/time.js';
 
 async function uploadStrava(page: Page) {
 	await gotoUpload(page);
@@ -144,6 +145,41 @@ test('remove buttons tell highlights with the same title apart by date', async (
 		'Remove Eindhoven Road Cycling, Mar 3, from highlights'
 	]);
 });
+
+for (const width of [375, 390]) {
+	test(`biggest climbs keeps each row's three figures on one line at ${width}px`, async ({
+		page
+	}) => {
+		await page.setViewportSize({ width, height: 900 });
+		const rows = Array.from(
+			{ length: 5 },
+			(_, i) =>
+				`Cycling,${TARGET_YEAR}-06-0${i + 1} 08:00:00,false,Ride ${i + 1},175.3,3000,05:53:00,"2,34${i}"`
+		);
+		await uploadCsv(
+			page,
+			['Activity Type,Date,Favorite,Title,Distance,Calories,Time,Total Ascent', ...rows].join('\n')
+		);
+		const section = highlightsSection(page);
+		await section.getByRole('button', { name: 'Biggest climbs' }).click();
+		await expect(section.getByTestId('highlight-row').first()).toContainText('5h 53m');
+
+		const lines = () =>
+			section
+				.getByTestId('highlight-row')
+				.evaluateAll((items) =>
+					items.map(
+						(item) =>
+							new Set(
+								[...item.querySelector('.figures')!.children].map((figure) =>
+									Math.round(figure.getBoundingClientRect().top)
+								)
+							).size
+					)
+				);
+		await expect.poll(lines).toEqual([1, 1, 1, 1, 1]);
+	});
+}
 
 test('biggest climbs shows each climb', async ({ page }) => {
 	await uploadCsv(page, twelveTempos());

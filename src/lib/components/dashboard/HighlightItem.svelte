@@ -98,6 +98,17 @@
 		min-width: 3.5rem;
 	}
 
+	/* Three figures fit one line on a 375px phone only with tighter spacing. */
+	@media (max-width: 767.98px) {
+		.with-elevation .figures {
+			column-gap: 0.5rem;
+		}
+
+		.with-elevation .figures > span {
+			min-width: 3rem;
+		}
+	}
+
 	.elevation {
 		display: inline-flex;
 		align-items: center;
