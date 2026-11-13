@@ -24,7 +24,7 @@ export function loadYearFile(
 			type: 'loaded',
 			activities: saved.activities,
 			source: saved.source,
-			cutShort: null,
+			cutShort: saved.cutShort,
 			parseErrors: []
 		};
 	}

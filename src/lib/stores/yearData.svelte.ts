@@ -77,7 +77,7 @@ class YearData {
 	}
 
 	savedYearJson() {
-		return serializeSavedYear(this.#activities, this.#source, TARGET_YEAR);
+		return serializeSavedYear(this.#activities, this.#source, TARGET_YEAR, this.#cutShort);
 	}
 }
 

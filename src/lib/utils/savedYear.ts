@@ -16,12 +16,15 @@ function localDate(date: Date): string {
 export function serializeSavedYear(
 	activities: Activity[],
 	source: ActivitySource | null,
-	year: number
+	year: number,
+	cutShort: Date | null
 ): string {
 	return JSON.stringify({
 		version: SAVED_YEAR_VERSION,
 		year,
 		source,
+		// Optional within the version: files saved without it read as not cut short.
+		cutShort: cutShort && localDate(cutShort),
 		activities: activities.map((activity) => ({
 			...activity,
 			date: localDate(activity.date),
@@ -73,7 +76,7 @@ export function parseSavedYear(
 	json: string,
 	year: number
 ):
-	| { ok: true; activities: Activity[]; source: ActivitySource | null }
+	| { ok: true; activities: Activity[]; source: ActivitySource | null; cutShort: Date | null }
 	| { ok: false; error: SavedYearError } {
 	let parsed: unknown;
 	try {
@@ -102,7 +105,12 @@ export function parseSavedYear(
 	const activities = data.activities.map(parseActivity);
 	if (activities.some((activity) => activity === null || activity.date.getFullYear() !== year))
 		return { ok: false, error: { type: 'invalid-activities' } };
-	return { ok: true, activities: activities as Activity[], source: data.source };
+	return {
+		ok: true,
+		activities: activities as Activity[],
+		source: data.source,
+		cutShort: parseDate(data.cutShort)
+	};
 }
 
 export function savedYearErrorMessage(error: SavedYearError, locale: Locale = 'en'): string {

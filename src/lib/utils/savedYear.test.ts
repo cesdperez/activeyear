@@ -26,12 +26,13 @@ const valid = {
 
 describe('saved year', () => {
 	it('round trips local dates and all activity fields', () => {
-		const json = serializeSavedYear([activity], 'garmin', 2026);
+		const json = serializeSavedYear([activity], 'garmin', 2026, null);
 		expect(JSON.parse(json).activities[0].date).toBe('2026-03-04T05:06:07');
 		expect(parseSavedYear(json, 2026)).toEqual({
 			ok: true,
 			activities: [activity],
-			source: 'garmin'
+			source: 'garmin',
+			cutShort: null
 		});
 		expect(savedYearFileName(2026)).toBe('activeyear-2026.json');
 	});
@@ -43,11 +44,24 @@ describe('saved year', () => {
 			calories: -Infinity,
 			elevation: NaN
 		};
-		const json = serializeSavedYear([invalid], 'garmin', 2026);
+		const json = serializeSavedYear([invalid], 'garmin', 2026, null);
 		expect(parseSavedYear(json, 2026)).toEqual({
 			ok: true,
 			activities: [{ ...activity, distance: 0, duration: 0, calories: 0, elevation: 0 }],
-			source: 'garmin'
+			source: 'garmin',
+			cutShort: null
+		});
+	});
+	it('round trips the date a cut-short Garmin export starts on', () => {
+		const cutShort = new Date(2026, 2, 1, 8, 0, 0);
+		const json = serializeSavedYear([activity], 'garmin', 2026, cutShort);
+		expect(parseSavedYear(json, 2026)).toMatchObject({ ok: true, cutShort });
+	});
+	it('reads a file saved before the cut-short date was stored, or with an unreadable one', () => {
+		expect(parseSavedYear(JSON.stringify(valid), 2026)).toMatchObject({ cutShort: null });
+		expect(parseSavedYear(JSON.stringify({ ...valid, cutShort: 'soon' }), 2026)).toMatchObject({
+			ok: true,
+			cutShort: null
 		});
 	});
 	it.each(['[]', '{}', 'null', '{"foo":1}'])('rejects a non-saved file %s', (json) => {
@@ -103,7 +117,7 @@ describe('saved year', () => {
 				}),
 				2026
 			)
-		).toEqual({ ok: true, activities: [activity], source: 'garmin' });
+		).toEqual({ ok: true, activities: [activity], source: 'garmin', cutShort: null });
 	});
 });
 
