@@ -84,6 +84,35 @@ test.describe('Export fonts', () => {
 			.toEqual(Array(26).fill('loaded'));
 	});
 
+	// French groups thousands with a no-break space, which must not come from a fallback font.
+	test('a no-break space in a stat is as wide as a space in every app font', async ({ page }) => {
+		await page.goto('/');
+		await loadDemo(page);
+		await page.evaluate(() => document.fonts.ready);
+
+		const mismatches = await page.locator('#export-card').evaluate((card) => {
+			const families = ['Big Shoulders Display', 'Archivo', 'VT323', 'Outfit', 'Geist Mono'];
+			const span = document.createElement('span');
+			card.appendChild(span);
+			const width = (text: string) => {
+				span.textContent = text;
+				return span.getBoundingClientRect().width;
+			};
+			const found = [];
+			for (const family of families) {
+				for (const weight of [400, 700, 800]) {
+					span.style.font = `${weight} 100px "${family}"`;
+					const space = width('0 0');
+					const noBreak = width('0 0');
+					if (Math.abs(space - noBreak) > 0.5) found.push(`${family} ${weight}`);
+				}
+			}
+			span.remove();
+			return found;
+		});
+		expect(mismatches).toEqual([]);
+	});
+
 	test('export explains fonts that cannot load and saves nothing', async ({ page }) => {
 		await page.route(/\.woff2?$/, (route) => route.abort());
 		await page.goto('/');
