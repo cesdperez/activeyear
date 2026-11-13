@@ -3,6 +3,17 @@ import { uploadSample } from './helpers.js';
 
 test.use({ viewport: { width: 390, height: 844 } });
 
+test('export branding follows the selected theme', async ({ page }) => {
+	await uploadSample(page);
+	const card = page.locator('#export-card');
+	await page.getByRole('button', { name: /Lightmile Paper/ }).click();
+	await expect(card.getByRole('img', { name: 'Lightmile' })).toHaveCount(1);
+	await expect(card.getByText('lightmile.nl', { exact: false })).toHaveCount(1);
+	await page.getByRole('button', { name: /Classic/i }).click();
+	await expect(card.getByRole('img', { name: 'Lightmile' })).toHaveCount(0);
+	await expect(card.getByText('lightmile.nl', { exact: false })).toHaveCount(0);
+});
+
 test('hover disclosure overlays no theme options', async ({ page }) => {
 	await uploadSample(page);
 	const options = page.locator('[aria-labelledby="theme-label"] button.toggle');

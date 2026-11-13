@@ -155,6 +155,7 @@ Classic and Synthwave use the centered 320px Summary-card avatar with glow and s
 - **Fonts:** Archivo for display and statistics, Geist Mono for labels and metadata.
 - **Sport palette:** Blue, ink, and dark distinct hues, with mid-grey for other.
 - **Picker disclosure:** A small `?` opens a non-modal introduction and link on hover, focus or tap; Escape closes it.
+- **Export branding:** The header pairs the ActiveYear and Lightmile wordmarks with a muted multiplication sign. The footer credits both activeyear.app and lightmile.nl.
 
 ---
 

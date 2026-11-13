@@ -5,14 +5,23 @@
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { nameFontSize } from '#lib/utils/export.js';
 	import Logotype from '#lib/components/Logotype.svelte';
+	import LightmileWordmark from './LightmileWordmark.svelte';
 
 	let { title, userName, aside }: { title: string; userName: string; aside?: Snippet } = $props();
 </script>
 
 <header class="mb-[56px]">
 	<div class="flex items-center justify-between gap-10">
-		<Logotype class="text-[64px]" />
-		<p class="season card-label">
+		{#if appStore.theme === 'lightmile'}
+			<div class="flex shrink-0 items-center gap-4 whitespace-nowrap">
+				<Logotype class="text-[64px]" />
+				<span class="text-[40px] font-normal text-[var(--color-text-muted)]">×</span>
+				<LightmileWordmark class="h-[40px] w-auto text-[var(--color-text-primary)]" />
+			</div>
+		{:else}
+			<Logotype class="text-[64px]" />
+		{/if}
+		<p class:lightmile-season={appStore.theme === 'lightmile'} class="season card-label">
 			{(appStore.yearSoFar ? i18n.m.export.seasonSoFar : i18n.m.export.season)(TARGET_YEAR)}
 		</p>
 	</div>
@@ -35,6 +44,11 @@
 <style>
 	.season {
 		color: var(--color-accent);
+	}
+
+	.lightmile-season {
+		min-width: 0;
+		text-align: right;
 	}
 
 	.export-name {
