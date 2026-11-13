@@ -12,6 +12,7 @@ Events and values:
 - `export`: theme
 - `more_stats_opened`
 - `sports_count`: bucket (`1`, `2`, `3-5`, `6+`)
+- `support_clicked`: placement (`export`, `footer`)
 
 ## Weekly summary
 

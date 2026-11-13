@@ -242,6 +242,13 @@ Card header: logotype and "Season <TARGET_YEAR>" on one row, then the name and t
 - Centred: the logotype at `clamp(4.25rem, 19vw, 7.5rem)`, "Your <TARGET_YEAR> in Sport" under it, the upload zone centred below, then the demo link, the export guides and the questions.
 - The upload zone is a flat elevated surface with a 1px dashed border in text-dim; on hover or dragover the border turns solid accent and the surface lifts one step in colour.
 
+### Support link
+
+- Show "Buy me a gel" under the Download button after a successful export, and at the bottom of the dashboard after "Upload another file".
+- The export prompt is "Enjoyed your recap? ActiveYear is free and made by one person." The dashboard prompt is "Enjoying ActiveYear?".
+- Use a muted, underlined link like the landing page demo link.
+- Keep it a plain link so the CSP does not need to allow third-party scripts.
+
 ---
 
 ## Motion
