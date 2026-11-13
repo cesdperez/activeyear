@@ -187,7 +187,7 @@ describe('formatEverests', () => {
 
 	it('words the share and the multiple separately in each locale', () => {
 		expect(formatEverests('de', 1062)).toBe('12\u00a0% des Mount\u00a0Everest');
-		expect(formatEverests('de', 15042)).toBe('1,7-mal der Mount\u00a0Everest');
+		expect(formatEverests('de', 15042)).toBe('1,7 × Mount\u00a0Everest');
 		expect(formatEverests('es', 15042)).toBe('1,7 veces la altura del Everest');
 	});
 });

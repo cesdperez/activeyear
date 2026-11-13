@@ -38,7 +38,7 @@ export const common: typeof en = {
 	earthPartial: (share) => `${share} einer Erdumrundung`,
 	earthLaps: (laps) => `${laps} Erdumrundungen`,
 	everestPartial: (share) => `${share} des Mount\u00a0Everest`,
-	everestMultiple: (times) => `${times}-mal der Mount\u00a0Everest`,
+	everestMultiple: (times) => `${times} × Mount\u00a0Everest`,
 	lotr: 'Herr-der-Ringe-Marathons',
 	dayByDay: 'Tag für Tag',
 	yearLane: {

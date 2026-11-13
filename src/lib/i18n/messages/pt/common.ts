@@ -32,13 +32,13 @@ export const common: typeof en = {
 		activityLabel: (count: number) => plural('pt', count, { one: 'Atividade', other: 'Atividades' })
 	},
 	pizza: (count: number) =>
-		plural('pt', count, { one: 'fatia de pizza compensada', other: 'fatias de pizza compensadas' }),
-	lessPizza: 'Menos de uma fatia de pizza compensada',
+		plural('pt', count, { one: 'fatia de pizza queimada', other: 'fatias de pizza queimadas' }),
+	lessPizza: 'Menos de uma fatia de pizza queimada',
 	earthPartial: (share) => `${share} de uma volta ao mundo`,
 	earthLaps: (laps) => `${laps} voltas ao mundo`,
 	everestPartial: (share) => `${share} da altura do Everest`,
 	everestMultiple: (times) => `${times} vezes a altura do Everest`,
-	lotr: 'maratonas de SdA',
+	lotr: 'maratonas do SdA',
 	dayByDay: 'Dia a dia',
 	yearLane: {
 		summary: (n, count, days, year) =>
