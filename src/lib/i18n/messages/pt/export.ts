@@ -11,7 +11,7 @@ export const exportMessages: typeof en = {
 	focused: 'Estatística principal do cartão de resumo',
 	aboutLightmile: 'Sobre o Lightmile',
 	lightmileInfo:
-		'Lightmile é o clube de corrida que considero a minha comunidade. Se estiveres por Eindhoven, vem correr connosco!',
+		'O Lightmile é o clube de corrida que considero minha comunidade. Se você passar por Eindhoven, venha correr com a gente!',
 	theme: 'Tema',
 	generating: 'Gerando...',
 	download: 'Baixar todas as imagens',
