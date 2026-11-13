@@ -95,4 +95,21 @@ test.describe('touch', () => {
 		await help.tap();
 		await expect(help).toHaveAttribute('aria-expanded', 'false');
 	});
+
+	test('opening near the bottom keeps the link visible', async ({ page }) => {
+		await uploadSample(page);
+		const help = page.getByRole('button', { name: 'About Lightmile' });
+		await help.scrollIntoViewIfNeeded();
+		await help.evaluate((button) => {
+			window.scrollBy(0, button.getBoundingClientRect().bottom - window.innerHeight + 30);
+		});
+		const bottom = await help.evaluate((button) => button.getBoundingClientRect().bottom);
+		expect(bottom).toBeGreaterThan(804);
+		await help.tap();
+		const link = page.getByRole('link', { name: 'lightmile.nl' });
+		await expect(link).toBeVisible();
+		await expect
+			.poll(async () => (await link.boundingBox())!.y + (await link.boundingBox())!.height)
+			.toBeLessThanOrEqual(844);
+	});
 });

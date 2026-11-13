@@ -12,6 +12,10 @@
 
 	onDestroy(() => clearTimeout(closeTimer));
 
+	$effect(() => {
+		if (open) panel.scrollIntoView({ block: 'nearest' });
+	});
+
 	function enter(event: PointerEvent) {
 		if (event.pointerType === 'touch') return;
 		hovered = true;
