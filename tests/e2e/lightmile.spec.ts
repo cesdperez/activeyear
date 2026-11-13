@@ -60,6 +60,31 @@ test('keyboard opens, reaches link and escape returns focus', async ({ page }) =
 	await expect(help).toHaveAttribute('aria-expanded', 'false');
 });
 
+test('escape dismisses hover disclosure without moving outside focus', async ({ page }) => {
+	await uploadSample(page);
+	const name = page.locator('#userName');
+	const help = page.getByRole('button', { name: 'About Lightmile' });
+	await name.focus();
+	await help.hover();
+	await expect(page.locator('#lightmile-info')).toBeVisible();
+	await page.keyboard.press('Escape');
+	await expect(page.locator('#lightmile-info')).toBeHidden();
+	await expect(name).toBeFocused();
+});
+
+test('focus leaving keeps the hovered panel open', async ({ page }) => {
+	await uploadSample(page);
+	const help = page.getByRole('button', { name: 'About Lightmile' });
+	const panel = page.locator('#lightmile-info');
+	await help.focus();
+	await expect(panel).toBeVisible();
+	await panel.hover();
+	await page.locator('#userName').focus();
+	await expect(page.locator('#userName')).toBeFocused();
+	await expect(panel).toBeVisible();
+	await expect(help).toHaveAttribute('aria-expanded', 'true');
+});
+
 test.describe('touch', () => {
 	test.use({ hasTouch: true });
 	test('tap toggles disclosure', async ({ page }) => {
