@@ -165,29 +165,29 @@ describe('calculateEverests', () => {
 describe('formatEverests', () => {
 	it('formats small values as percentage', () => {
 		// (884 / 8848) * 100 = 9.99...% -> 10%
-		expect(formatEverests('en', 884)).toBe('10% of the height of Mt. Everest');
+		expect(formatEverests('en', 884)).toBe('10% of the height of Mt.\u00a0Everest');
 	});
 
 	it('formats larger values as multiplier', () => {
-		expect(formatEverests('en', 8848)).toBe('1.0x Mt. Everest');
-		expect(formatEverests('en', 20000)).toBe('2.3x Mt. Everest');
+		expect(formatEverests('en', 8848)).toBe('1.0x Mt.\u00a0Everest');
+		expect(formatEverests('en', 20000)).toBe('2.3x Mt.\u00a0Everest');
 	});
 
 	it('formats values between 0.1 and 1.0 as percentage', () => {
-		expect(formatEverests('en', 4424)).toBe('50% of the height of Mt. Everest');
+		expect(formatEverests('en', 4424)).toBe('50% of the height of Mt.\u00a0Everest');
 	});
 
 	it('never rounds a partial Everest up to 100%', () => {
-		expect(formatEverests('en', 8840)).toBe('99% of the height of Mt. Everest');
+		expect(formatEverests('en', 8840)).toBe('99% of the height of Mt.\u00a0Everest');
 	});
 
 	it('shows a share that would round to 0% as <1%', () => {
-		expect(formatEverests('en', 20)).toBe('<1% of the height of Mt. Everest');
+		expect(formatEverests('en', 20)).toBe('<1% of the height of Mt.\u00a0Everest');
 	});
 
 	it('words the share and the multiple separately in each locale', () => {
-		expect(formatEverests('de', 1062)).toBe('12\u00a0% der Höhe des Mount Everest');
-		expect(formatEverests('de', 15042)).toBe('1,7-mal so hoch wie der Mount Everest');
+		expect(formatEverests('de', 1062)).toBe('12\u00a0% der Höhe des Mount\u00a0Everest');
+		expect(formatEverests('de', 15042)).toBe('1,7-mal so hoch wie der Mount\u00a0Everest');
 		expect(formatEverests('es', 15042)).toBe('1,7 veces la altura del Everest');
 	});
 });

@@ -33,8 +33,8 @@ export const common = {
 	lessPizza: 'Less than a pizza slice burnt',
 	earthPartial: (share: string) => `${share} of a lap around the globe`,
 	earthLaps: (laps: string) => `${laps} laps around the globe`,
-	everestPartial: (share: string) => `${share} of the height of Mt. Everest`,
-	everestMultiple: (times: string) => `${times}x Mt. Everest`,
+	everestPartial: (share: string) => `${share} of the height of Mt.\u00a0Everest`,
+	everestMultiple: (times: string) => `${times}x Mt.\u00a0Everest`,
 	lotr: 'LotR marathons',
 	dayByDay: 'Day by day',
 	yearLane: {

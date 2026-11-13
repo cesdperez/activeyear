@@ -36,8 +36,8 @@ export const common: typeof en = {
 	lessPizza: 'Minder dan een stuk pizza weggetraind',
 	earthPartial: (share) => `${share} van een rondje om de aarde`,
 	earthLaps: (laps) => `${laps} rondjes om de aarde`,
-	everestPartial: (share) => `${share} van de hoogte van de Mount Everest`,
-	everestMultiple: (times) => `${times} keer de hoogte van de Mount Everest`,
+	everestPartial: (share) => `${share} van de hoogte van de Mount\u00a0Everest`,
+	everestMultiple: (times) => `${times} keer de hoogte van de Mount\u00a0Everest`,
 	lotr: 'Lord of the Rings-marathons',
 	dayByDay: 'Dag na dag',
 	yearLane: {
