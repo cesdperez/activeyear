@@ -32,17 +32,11 @@
 		exportAllCards: (options?: { allowFallbackFonts?: boolean }) => Promise<void>;
 	} | null>(null);
 
-	const themes = $derived(
-		THEME_OPTIONS.map((theme) => ({
-			...theme,
-			description:
-				theme.value === 'neon'
-					? i18n.m.export.cyberpunk
-					: theme.value === 'minimalist'
-						? i18n.m.export.swiss
-						: theme.description
-		}))
-	);
+	const descriptions = $derived<Record<Theme, string>>({
+		neon: i18n.m.export.cyberpunk,
+		minimalist: i18n.m.export.swiss,
+		retro: '8-bit'
+	});
 
 	async function handleExport(allowFallbackFonts = false) {
 		if (appStore.isExporting) return;
@@ -248,7 +242,7 @@
 					>{i18n.m.export.theme}</span
 				>
 				<div role="group" aria-labelledby="theme-label" class="flex gap-2">
-					{#each themes as theme (theme.value)}
+					{#each THEME_OPTIONS as theme (theme.value)}
 						<button
 							onclick={() => setTheme(theme.value)}
 							aria-pressed={appStore.theme === theme.value}
@@ -260,7 +254,7 @@
 						>
 							<div class="text-sm font-bold">{theme.label}</div>
 							<div class="text-xs">
-								{theme.description}
+								{descriptions[theme.value]}
 							</div>
 						</button>
 					{/each}
