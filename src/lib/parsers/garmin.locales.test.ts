@@ -2,6 +2,11 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { garminParser, parseGarminCsv, parseGarminDate } from './garmin.js';
 
+it('parses local dates with single-digit hours and date parts', () => {
+	expect(parseGarminDate('14/01/2023 8:21')).toEqual(new Date(2023, 0, 14, 8, 21));
+	expect(parseGarminDate('4.1.2023 8:21')).toEqual(new Date(2023, 0, 4, 8, 21));
+});
+
 const fixture = (name: string) =>
 	readFileSync(new URL(`./__fixtures__/garmin-${name}.csv`, import.meta.url), 'utf8');
 
@@ -140,7 +145,7 @@ describe('localized Garmin exports', () => {
 		expect(result.activities[1].distance).toBeCloseTo(1.5, 2);
 	});
 	it('recognizes Spanish cycling', () => {
-		const csv = 'Tipo de actividad,Fecha,Distancia\nCiclismo,2025-01-01 12:00:00,12';
+		const csv = 'Tipo de actividad,Fecha,Distancia\nCiclismo,2025-01-01 12:00:00,12.00';
 		expect(parseGarminCsv(csv, 2025).activities[0]).toMatchObject({
 			type: 'cycling',
 			distance: 12

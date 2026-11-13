@@ -705,7 +705,7 @@ describe('imperial Garmin exports', () => {
 		);
 		const metric = parseGarminCsv(
 			header +
-				`Running,${date},Run,10,100\nPool Swim,${date},Swim,1500,0\nIndoor Rowing,${date},Row,2000,0`,
+				`Running,${date},Run,10.00,100\nPool Swim,${date},Swim,1500,0\nIndoor Rowing,${date},Row,2000,0`,
 			TARGET_YEAR
 		);
 		expect(imperial.activities).toHaveLength(3);

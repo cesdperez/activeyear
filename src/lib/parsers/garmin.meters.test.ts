@@ -24,11 +24,19 @@ describe('Garmin Parser - Meter-based Activities', () => {
 		]);
 	});
 
-	it('keeps a dot as the decimal separator for km sports', () => {
+	it.each([
+		['Unknown Swim', '"1,450"', 'other', 1.45],
+		['Stand Up Paddleboarding', '3.83', 'paddling', 3.83],
+		['Running', '1.450', 'running', 1.45],
+		['Running', '"3,83"', 'running', 3.83],
+		['Pool Swim', '"1,450"', 'swimming', 1.45]
+	])('detects distance units for %s', (activity, distance, type, expected) => {
 		const csv =
 			'Activity Type,Date,Favorite,Title,Distance,Calories,Time\n' +
-			'Running,2025-01-21 16:50:29,false,Run,1.500,383,01:00:09.0';
+			`${activity},2025-01-21 16:50:29,false,Session,${distance},383,01:00:09.0`;
 
-		expect(parseGarminCsv(csv, 2025).activities[0].distance).toBe(1.5);
+		expect(parseGarminCsv(csv, 2025).activities[0]).toEqual(
+			expect.objectContaining({ type, distance: expected })
+		);
 	});
 });

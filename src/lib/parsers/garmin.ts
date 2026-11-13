@@ -103,20 +103,6 @@ const ACTIVITY_TYPE_MAP: Record<string, ActivityType> = {
 
 const SWIM_TYPES = new Set(['Pool Swim', 'Open Water Swimming', 'Swimming']);
 
-const DISTANCE_IN_METERS_TYPES = new Set([
-	'Pool Swim',
-	'Open Water Swimming',
-	'Swimming',
-	'Indoor Rowing',
-	'Rowing',
-	'Track Running',
-	'Indoor Track',
-	'Stand Up Paddleboarding',
-	'SUP',
-	'Kayaking',
-	'Canoeing'
-]);
-
 /**
  * Parse Garmin time format (HH:MM:SS or MM:SS.S) to seconds
  */
@@ -255,7 +241,7 @@ function isClockTime(hours: number, minutes: number, seconds: number): boolean {
 export function parseGarminDate(dateStr: string): Date | null {
 	const input = dateStr.trim();
 	const iso = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(input);
-	const local = /^(\d{2})([/.])(\d{2})\2(\d{4}) (\d{2}):(\d{2})(?::(\d{2}))?$/.exec(input);
+	const local = /^(\d{1,2})([/.])(\d{1,2})\2(\d{4}) (\d{1,2}):(\d{2})(?::(\d{2}))?$/.exec(input);
 	if (!iso && !local) return null;
 	const [year, month, day, hours, minutes, seconds] = iso
 		? iso.slice(1).map(Number)
@@ -511,17 +497,19 @@ function readActivity(
 ): Activity {
 	const activityType = types[row['Activity Type']] ?? row['Activity Type'];
 	const type = mapActivityType(activityType);
+	const distanceValue = (row['Distance'] ?? '').trim();
+	const meters = /^\d+$/.test(distanceValue) || /^\d{1,3}([.,]\d{3})+$/.test(distanceValue);
 	const distance = TYPES_WITHOUT_DISTANCE.has(type)
 		? 0
-		: DISTANCE_IN_METERS_TYPES.has(activityType)
+		: meters
 			? parseGarminMeterDistance(row['Distance'])
 			: parseGarminDistance(row['Distance']);
 
 	const imperial = options?.garminUnits === 'imperial';
 	const distanceFactor = imperial
-		? SWIM_TYPES.has(activityType)
+		? meters && SWIM_TYPES.has(activityType)
 			? YARDS_TO_METERS
-			: DISTANCE_IN_METERS_TYPES.has(activityType)
+			: meters
 				? 1
 				: MILES_TO_KM
 		: 1;
