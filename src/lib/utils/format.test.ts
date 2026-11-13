@@ -165,7 +165,7 @@ describe('calculateEverests', () => {
 describe('formatEverests', () => {
 	it('formats small values as percentage', () => {
 		// (884 / 8848) * 100 = 9.99...% -> 10%
-		expect(formatEverests('en', 884)).toBe('10% of the height of Mt.\u00a0Everest');
+		expect(formatEverests('en', 884)).toBe('10% of Mt.\u00a0Everest');
 	});
 
 	it('formats larger values as multiplier', () => {
@@ -174,15 +174,15 @@ describe('formatEverests', () => {
 	});
 
 	it('formats values between 0.1 and 1.0 as percentage', () => {
-		expect(formatEverests('en', 4424)).toBe('50% of the height of Mt.\u00a0Everest');
+		expect(formatEverests('en', 4424)).toBe('50% of Mt.\u00a0Everest');
 	});
 
 	it('never rounds a partial Everest up to 100%', () => {
-		expect(formatEverests('en', 8840)).toBe('99% of the height of Mt.\u00a0Everest');
+		expect(formatEverests('en', 8840)).toBe('99% of Mt.\u00a0Everest');
 	});
 
 	it('shows a share that would round to 0% as <1%', () => {
-		expect(formatEverests('en', 20)).toBe('<1% of the height of Mt.\u00a0Everest');
+		expect(formatEverests('en', 20)).toBe('<1% of Mt.\u00a0Everest');
 	});
 
 	it('words the share and the multiple separately in each locale', () => {
