@@ -3,7 +3,8 @@ import {
 	describeSkippedRows,
 	describeUnusableFile,
 	skippedRowsNotice,
-	unusableFileMessage
+	unusableFileMessage,
+	uploadErrorMessage
 } from './uploadErrors.js';
 import type { ParseError, ParseResult } from '#lib/types/index.js';
 
@@ -142,5 +143,20 @@ describe('skippedRowsNotice', () => {
 		[3, 'Skipped 3 rows that could not be read']
 	])('reports %i skipped rows', (count, notice) => {
 		expect(skippedRowsNotice(count)).toBe(notice);
+	});
+});
+
+describe('localized upload errors', () => {
+	it('translates the same error into Spanish and German', () => {
+		const error = {
+			type: 'rows-rejected',
+			skipped: { count: 1, reason: 'invalid-date', exampleRow: 2 }
+		} as const;
+		expect(uploadErrorMessage(error, 'es')).toBe(
+			'No se pudo leer la fila 2: la fecha no es válida'
+		);
+		expect(uploadErrorMessage(error, 'de')).toBe(
+			'Zeile 2 konnte nicht gelesen werden: das Datum ist ungültig'
+		);
 	});
 });

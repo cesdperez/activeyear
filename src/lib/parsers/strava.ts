@@ -100,6 +100,7 @@ function nonEnglishExportResult(): ParseResult {
 		errors: [
 			{
 				type: 'unsupported-format',
+				reason: 'strava-not-english',
 				row: 0,
 				message:
 					"This Strava export isn't in English. Set your Strava language to English, request a new archive, and upload its activities.csv."

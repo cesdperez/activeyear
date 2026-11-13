@@ -90,6 +90,11 @@ export type SavedYearError =
 	| { type: 'wrong-year'; year: unknown; expected: number }
 	| { type: 'invalid-activities' };
 
+export type UploadError =
+	| SavedYearError
+	| UnusableFileError
+	| { type: 'invalid-extension' | 'unrecognised' | 'strava-not-english' | 'unknown-failure' };
+
 export type ActivitySource = 'garmin' | 'strava';
 
 export interface ParseResult {
@@ -112,6 +117,7 @@ export type RowErrorType = 'invalid-date' | 'malformed-quotes' | 'missing-column
 export interface ParseError {
 	type: RowErrorType | 'invalid-number' | 'unsupported-format' | 'unknown';
 	row: number;
+	reason?: 'unrecognised' | 'strava-not-english';
 	message: string;
 }
 

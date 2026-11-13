@@ -106,3 +106,12 @@ describe('saved year', () => {
 		).toEqual({ ok: true, activities: [activity], source: 'garmin' });
 	});
 });
+
+it('translates saved-year errors', () => {
+	expect(savedYearErrorMessage({ type: 'invalid-file' }, 'es')).toBe(
+		'Este archivo no es un año guardado de ActiveYear'
+	);
+	expect(savedYearErrorMessage({ type: 'invalid-file' }, 'de')).toBe(
+		'Diese Datei ist kein gespeichertes ActiveYear-Jahr'
+	);
+});

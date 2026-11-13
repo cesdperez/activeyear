@@ -7,16 +7,13 @@ import {
 	summaryMetricWithValue,
 	selectHighlights
 } from '../utils/stats.js';
-import { parseSavedYear, savedYearErrorMessage, serializeSavedYear } from '#lib/utils/savedYear.js';
+import { parseSavedYear, serializeSavedYear } from '#lib/utils/savedYear.js';
 import { TARGET_YEAR } from '../constants/time.js';
 import { demoActivities } from '../data/demo.js';
-import {
-	describeSkippedRows,
-	describeUnusableFile,
-	unusableFileMessage
-} from '#lib/utils/uploadErrors.js';
+import { describeSkippedRows, describeUnusableFile } from '#lib/utils/uploadErrors.js';
 import type {
 	Activity,
+	UploadError,
 	ActivitySource,
 	ParseError,
 	Theme,
@@ -39,7 +36,7 @@ class AppStore {
 	#breakdown = $derived(calculateSportBreakdown(this.#activities));
 	#weeklyPattern = $derived(calculateWeeklyPattern(this.#activities));
 	#status = $state<AppStatus>('idle');
-	#error = $state<string | null>(null);
+	#error = $state<UploadError | null>(null);
 	#parseErrors = $state<ParseError[]>([]);
 	#skippedRowCount = $derived(describeSkippedRows(this.#parseErrors)?.count ?? 0);
 
@@ -124,7 +121,7 @@ class AppStore {
 	async processFile(file: File) {
 		const name = file.name.toLowerCase();
 		if (!name.endsWith('.csv') && !name.endsWith('.json')) {
-			this.#fail('Please upload a CSV or saved .json file');
+			this.#fail({ type: 'invalid-extension' });
 			return;
 		}
 
@@ -136,7 +133,7 @@ class AppStore {
 			if (name.endsWith('.json')) {
 				const saved = parseSavedYear(content, TARGET_YEAR);
 				if (!saved.ok) {
-					this.#fail(savedYearErrorMessage(saved.error));
+					this.#fail(saved.error);
 					return;
 				}
 				this.#load(saved.activities);
@@ -148,20 +145,20 @@ class AppStore {
 
 			const unreadable = result.errors.find((e) => e.type === 'unsupported-format');
 			if (unreadable) {
-				this.#fail(unreadable.message, result.errors);
+				this.#fail({ type: unreadable.reason ?? 'unrecognised' }, result.errors);
 				return;
 			}
 
 			if (result.activities.length === 0) {
-				this.#fail(unusableFileMessage(describeUnusableFile(result, TARGET_YEAR)), result.errors);
+				this.#fail(describeUnusableFile(result, TARGET_YEAR), result.errors);
 				return;
 			}
 
 			this.#source = result.source;
 			this.#load(result.activities);
 			this.#parseErrors = result.errors;
-		} catch (err) {
-			this.#fail(err instanceof Error ? err.message : 'Failed to parse file');
+		} catch {
+			this.#fail({ type: 'unknown-failure' });
 		}
 	}
 
@@ -186,7 +183,7 @@ class AppStore {
 	}
 
 	// Leaves parseErrors untouched when none are given, matching the CSV-extension and thrown-error paths.
-	#fail(message: string, parseErrors?: ParseError[]) {
+	#fail(message: UploadError, parseErrors?: ParseError[]) {
 		this.#status = 'error';
 		this.#error = message;
 		if (parseErrors) this.#parseErrors = parseErrors;

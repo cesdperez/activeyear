@@ -1,4 +1,5 @@
-import { SITE_NAME } from '#lib/constants/site.js';
+import { MESSAGES } from '#lib/i18n/messages/index.js';
+import type { Locale } from '#lib/types/index.js';
 import { SAVED_YEAR_VERSION } from '#lib/constants/savedYear.js';
 import { ACTIVITY_TYPES } from '#lib/constants/sports.js';
 import type { Activity, ActivitySource, ActivityType, SavedYearError } from '#lib/types/index.js';
@@ -104,15 +105,15 @@ export function parseSavedYear(
 	return { ok: true, activities: activities as Activity[], source: data.source };
 }
 
-export function savedYearErrorMessage(error: SavedYearError): string {
+export function savedYearErrorMessage(error: SavedYearError, locale: Locale = 'en'): string {
 	switch (error.type) {
 		case 'unsupported-version':
-			return `This saved year is from an older or newer version of ${SITE_NAME}`;
+			return MESSAGES[locale].upload.unsupportedVersion;
 		case 'wrong-year':
 			return typeof error.year === 'number' && Number.isFinite(error.year)
-				? `This file holds your ${error.year} year, not ${error.expected}`
-				: `This file is not a saved ${SITE_NAME} year`;
+				? MESSAGES[locale].upload.wrongYear(error.year, error.expected)
+				: MESSAGES[locale].upload.invalidSaved;
 		default:
-			return `This file is not a saved ${SITE_NAME} year`;
+			return MESSAGES[locale].upload.invalidSaved;
 	}
 }

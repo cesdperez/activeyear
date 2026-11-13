@@ -58,6 +58,7 @@ describe('parseActivityCsv', () => {
 		expect(result.errors).toEqual([
 			expect.objectContaining({
 				type: 'unsupported-format',
+				reason: 'unrecognised',
 				message: expect.stringContaining('English')
 			})
 		]);

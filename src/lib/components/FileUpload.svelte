@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
+	import { uploadErrorMessage } from '#lib/utils/uploadErrors.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import { createHydrated } from '#lib/stores/hydrated.svelte.js';
 	import { UPLOAD_ZONE_ID } from '#lib/constants/dom.js';
@@ -9,31 +11,8 @@
 
 	let isDragOver = $state(false);
 	let fileInput: HTMLInputElement;
-	let currentPhrase = $state('');
+	let currentPhrase = $state(0);
 	const hydrated = createHydrated();
-
-	const FUNNY_PHRASES = [
-		'Warming up the calves...',
-		'Inflating the tires...',
-		'Finding the GPS signal...',
-		'Chasing down segments...',
-		'Hydrating the data...',
-		'Lacing up the shoes...',
-		'Greasing the chain...',
-		'Stretching the glutes...',
-		'Calculating VO2 max...',
-		'Eating a pre-run banana...',
-		'Tightening the cleats...',
-		'Checking the wind direction...',
-		'Refilling the water bottles...',
-		'Syncing with the satellites...',
-		'Polishing the frame...',
-		'Adjusting the saddle height...',
-		'Loading the power meter...',
-		'Applying anti-chafe cream...',
-		'Checking the weather forecast...',
-		'Calibrating the heart rate monitor...'
-	];
 
 	function handleDragOver(event: DragEvent) {
 		event.preventDefault();
@@ -61,7 +40,7 @@
 	}
 
 	function randomPhrase() {
-		return FUNNY_PHRASES[Math.floor(Math.random() * FUNNY_PHRASES.length)];
+		return Math.floor(Math.random() * i18n.m.upload.loading.length);
 	}
 
 	async function upload(file: File) {
@@ -132,14 +111,16 @@
 			/>
 		</span>
 		<span class="block animate-pulse text-lg text-[var(--color-text-muted)]">
-			{currentPhrase}
+			{i18n.m.upload.loading[currentPhrase % i18n.m.upload.loading.length]}
 		</span>
 	{:else if appStore.status === 'error'}
 		<span class="mb-4 block">
 			<Warning class="mx-auto h-12 w-12 text-red-500" weight="bold" aria-hidden="true" />
 		</span>
-		<span class="mb-2 block text-lg text-red-500">{appStore.error}</span>
-		<span class="block text-sm text-[var(--color-text-dim)]">Click to try again</span>
+		<span class="mb-2 block text-lg text-red-500"
+			>{appStore.error ? uploadErrorMessage(appStore.error, i18n.locale) : ''}</span
+		>
+		<span class="block text-sm text-[var(--color-text-dim)]">{i18n.m.upload.retry}</span>
 	{:else}
 		<span class="mb-4 block">
 			<UploadSimple
@@ -149,19 +130,21 @@
 			/>
 		</span>
 		<span class="mb-1 block text-lg text-balance text-[var(--color-text-primary)]"
-			>Drop your Garmin or Strava CSV here</span
+			>{i18n.m.upload.drop}</span
 		>
-		<span class="mb-4 block text-sm text-[var(--color-text-muted)]">or click to browse</span>
-		<span class="mb-4 block text-xs text-[var(--color-text-dim)]"
-			>Saved your year before? Drop the .json file</span
-		>
+		<span class="mb-4 block text-sm text-[var(--color-text-muted)]">{i18n.m.upload.browse}</span>
+		<span class="mb-4 block text-xs text-[var(--color-text-dim)]">{i18n.m.upload.saved}</span>
 		<span class="flex items-center justify-center gap-1.5 text-xs text-[var(--color-text-dim)]">
 			<ShieldCheck class="h-3.5 w-3.5" weight="bold" aria-hidden="true" />
-			Your data never leaves this browser
+			{i18n.m.upload.privacy}
 		</span>
 	{/if}
 </button>
 
 <!-- A button's children are presentational, so live regions must sit outside it. -->
-<p role="status" class="sr-only">{loading ? 'Analyzing activities...' : ''}</p>
-<p role="alert" class="sr-only">{!loading && appStore.status === 'error' ? appStore.error : ''}</p>
+<p role="status" class="sr-only">{loading ? i18n.m.upload.analyzing : ''}</p>
+<p role="alert" class="sr-only">
+	{!loading && appStore.status === 'error'
+		? appStore.error && uploadErrorMessage(appStore.error, i18n.locale)
+		: ''}
+</p>

@@ -26,7 +26,7 @@ describe('appStore', () => {
 		await appStore.processFile(new File(['x'], 'activities.txt'));
 
 		expect(appStore.status).toBe('error');
-		expect(appStore.error).toBe('Please upload a CSV or saved .json file');
+		expect(appStore.error).toEqual({ type: 'invalid-extension' });
 	});
 
 	it('loads a saved JSON year', async () => {
@@ -44,27 +44,27 @@ describe('appStore', () => {
 	it('rejects invalid saved JSON', async () => {
 		await appStore.processFile(new File(['{'], 'year.json'));
 		expect(appStore.status).toBe('error');
-		expect(appStore.error).toBe('This file is not a saved ActiveYear year');
+		expect(appStore.error).toEqual({ type: 'invalid-file' });
 	});
 
 	it('rejects a CSV in a format no parser recognises', async () => {
 		await appStore.processFile(new File(['name,score\nAna,3'], 'scores.csv'));
 
 		expect(appStore.status).toBe('error');
-		expect(appStore.error).toContain("couldn't recognise this file");
+		expect(appStore.error).toEqual({ type: 'unrecognised' });
 	});
 
 	it.each([
-		['the error message', new Error('Disk read failed'), 'Disk read failed'],
-		['a generic message', 'not an Error', 'Failed to parse file']
-	])('shows %s when reading the file fails', async (_, failure, message) => {
+		['an error', new Error('Disk read failed')],
+		['a non-error rejection', 'not an Error']
+	])('shows %s when reading the file fails', async (_, failure) => {
 		const file = csvFile('');
 		file.text = () => Promise.reject(failure);
 
 		await appStore.processFile(file);
 
 		expect(appStore.status).toBe('error');
-		expect(appStore.error).toBe(message);
+		expect(appStore.error).toEqual({ type: 'unknown-failure' });
 	});
 
 	it('loads the target year activities from a Garmin export', async () => {
