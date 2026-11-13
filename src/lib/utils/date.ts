@@ -9,7 +9,30 @@ export function weekdayLabels(locale: Locale): string[] {
 	return Array.from({ length: 7 }, (_, i) => formatter.format(new Date(Date.UTC(2024, 0, i + 1))));
 }
 
+export function monthLabels(locale: Locale): string[] {
+	const formatter = new Intl.DateTimeFormat(INTL_LOCALES[locale], {
+		month: 'short',
+		timeZone: 'UTC'
+	});
+	return Array.from({ length: 12 }, (_, i) => formatter.format(new Date(Date.UTC(2024, i, 1))));
+}
+
 export function daysInYear(year: number): number {
 	const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 	return isLeapYear ? 366 : 365;
+}
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/**
+ * The local calendar date of `date` as a whole day count. Dates hold the CSV's local wall-clock
+ * time, and counting through Date.UTC keeps consecutive dates exactly one apart across DST changes.
+ */
+export function localDayNumber(date: Date): number {
+	return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / MS_PER_DAY;
+}
+
+export function localDateFromDayNumber(day: number): Date {
+	const utc = new Date(day * MS_PER_DAY);
+	return new Date(utc.getUTCFullYear(), utc.getUTCMonth(), utc.getUTCDate());
 }

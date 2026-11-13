@@ -13,6 +13,7 @@ import type {
 	WeeklyPattern,
 	YearStats
 } from '../types/index.js';
+import { localDateFromDayNumber, localDayNumber } from './date.js';
 import {
 	formatCalories,
 	formatDistance,
@@ -63,14 +64,6 @@ export function calculateYearStats(activities: Activity[]): YearStats {
 		longestStreak,
 		activityCount: activities.length
 	};
-}
-
-const MS_PER_DAY = 24 * 60 * 60 * 1000;
-
-// Dates hold the CSV's local wall-clock time, so the day is the local calendar date.
-// Date.UTC keeps consecutive dates exactly one apart across DST changes.
-function localDayNumber(date: Date): number {
-	return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / MS_PER_DAY;
 }
 
 function sortedActiveDays(activities: Activity[]): number[] {
@@ -233,11 +226,6 @@ export function calculateLongestBreak(activities: Activity[]): ActivityBreak | n
 		}
 	}
 	return longest;
-}
-
-function localDateFromDayNumber(day: number): Date {
-	const utc = new Date(day * MS_PER_DAY);
-	return new Date(utc.getUTCFullYear(), utc.getUTCMonth(), utc.getUTCDate());
 }
 
 export function calculateWeekdayTotals(activities: Activity[]): WeekdayTotals {
