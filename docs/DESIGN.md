@@ -55,7 +55,7 @@ Never use more than two typefaces per theme, the logotype aside. Stat values and
 
 Units in a stat value ("km", "h") are set smaller than the digits; size such a value with `scaledLength` so the digits, not the units, fill the space. Draw it with `ValueWithUnits.svelte` and pass the same `UNIT_SCALE` entry (from `src/lib/utils/totals.ts`) to both, so the drawn unit size matches the size the fit was measured with.
 
-Month and weekday labels come from `monthLabels` and `weekdayLabels` in `src/lib/utils/date.ts`, which format with `Intl.DateTimeFormat` in the current locale. Never hard-code month or day names.
+Month and weekday labels come from `monthLabels` and `weekdayLabels` in `src/lib/utils/date.ts`, which format with `Intl.DateTimeFormat` in the current locale. Never hard-code month or day names. The year lane uses `laneMonthLabels`, which drops the abbreviation period, and shrinks every month label to the size that fits the shortest month.
 
 ---
 

@@ -31,11 +31,15 @@
 	   condensed display font, so Retro rescales text and swaps the title sizes. */
 	.export-card {
 		--font-label: var(--font-text);
+		/* The advance per character of a typical word in --font-label, tracking included. */
+		--label-char-em: 0.52;
 		--label-size: 24px;
 		--label-tracking: 0.01em;
 		--text-scale: 1;
 		--stat-scale: 1;
 		--name-scale: 1.25;
+		/* The widest advance per character of --font-stat at weight 700. */
+		--name-char-em: 0.7;
 		--title-size: 120px;
 		--heading-size: 40px;
 		--round: 9999px;
@@ -54,6 +58,7 @@
 	.theme-classic,
 	.theme-synthwave {
 		--title-size: 90px;
+		--name-char-em: 1;
 	}
 
 	.theme-classic[data-variant='summary'],
@@ -78,17 +83,21 @@
 	}
 
 	.theme-lightmile {
+		--label-char-em: 0.62;
 		--title-size: 90px;
+		--name-char-em: 1;
 		--hero-shadow: none;
 	}
 
 	.theme-retro {
 		--font-label: var(--font-display);
+		--label-char-em: 1;
 		--label-size: 16px;
 		--label-tracking: 0;
 		--text-scale: 1.4;
 		--stat-scale: 1.3;
 		--name-scale: 2.1;
+		--name-char-em: 0.42;
 		--title-size: 52px;
 		--heading-size: 22px;
 		--round: 0;

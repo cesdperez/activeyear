@@ -1,5 +1,5 @@
-import type { Activity, PersonalRecords } from '#lib/types/index.js';
-import { dayOfYear, daysInYear } from './date.js';
+import type { Activity, Locale, PersonalRecords } from '#lib/types/index.js';
+import { dayOfYear, daysInYear, monthLabels } from './date.js';
 
 export interface LaneMarker {
 	day: number;
@@ -89,6 +89,26 @@ export function markerLeft(day: number, days: number): string {
 
 export function monthStartDays(year: number): number[] {
 	return Array.from({ length: 12 }, (_, month) => dayOfYear(new Date(year, month, 1)));
+}
+
+export function laneMonthLabels(locale: Locale): string[] {
+	return monthLabels(locale).map((label) => label.replace(/\.$/, ''));
+}
+
+/**
+ * The month label with the least lane per character, as its length and its month's share of the
+ * year. Sizing the labels to fit this one fits them all.
+ */
+export function monthLabelFit(labels: string[], year: number): { chars: number; share: number } {
+	const days = daysInYear(year);
+	const starts = monthStartDays(year);
+	const fits = labels.map((label, month) => ({
+		chars: label.length,
+		share: ((starts[month + 1] ?? days) - starts[month]) / days
+	}));
+	return fits.reduce((tightest, fit) =>
+		fit.chars / fit.share > tightest.chars / tightest.share ? fit : tightest
+	);
 }
 
 export function recordActivities(records: PersonalRecords | null): Activity[] {

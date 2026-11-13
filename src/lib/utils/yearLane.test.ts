@@ -6,6 +6,8 @@ import {
 	laneTicks,
 	markerLeft,
 	mergeCloseMarkers,
+	laneMonthLabels,
+	monthLabelFit,
 	monthStartDays,
 	recordActivities
 } from './yearLane.js';
@@ -159,6 +161,41 @@ describe('monthStartDays', () => {
 	it('gives the day each month starts on', () => {
 		expect(monthStartDays(2026)).toEqual([0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]);
 		expect(monthStartDays(2028)[2]).toBe(60);
+	});
+});
+
+describe('laneMonthLabels', () => {
+	it('drops the abbreviation period so each label fits its month', () => {
+		expect(laneMonthLabels('fr').slice(0, 3)).toEqual(['janv', 'févr', 'mars']);
+		expect(laneMonthLabels('en').slice(0, 2)).toEqual(['Jan', 'Feb']);
+	});
+});
+
+describe('monthLabelFit', () => {
+	const labels = (feb: string) => [
+		'jan',
+		feb,
+		'mar',
+		'apr',
+		'may',
+		'jun',
+		'jul',
+		'aug',
+		'sep',
+		'oct',
+		'nov',
+		'dec'
+	];
+
+	it('picks the label with the least room per character', () => {
+		expect(monthLabelFit(labels('févr.'), 2026)).toEqual({ chars: 5, share: 28 / 365 });
+		expect(monthLabelFit(labels('feb'), 2026)).toEqual({ chars: 3, share: 28 / 365 });
+		expect(monthLabelFit(labels('feb'), 2028)).toEqual({ chars: 3, share: 29 / 366 });
+	});
+
+	it('measures the last month to the end of the year', () => {
+		const long = ['j', 'f', 'm', 'a', 'm', 'j', 'j', 'a', 's', 'o', 'n', 'déc.'];
+		expect(monthLabelFit(long, 2026)).toEqual({ chars: 4, share: 31 / 365 });
 	});
 });
 

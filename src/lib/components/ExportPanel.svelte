@@ -19,6 +19,8 @@
 	} from '#lib/types/index.js';
 	import { THEME_OPTIONS, USER_NAME_MAX_LENGTH } from '#lib/constants/export.js';
 	import { FontsUnavailableError } from '#lib/utils/fonts.js';
+	import { summaryMetricsWithValue } from '#lib/utils/stats.js';
+	import { yearData } from '#lib/stores/yearData.svelte.js';
 
 	let exportError = $state<ExportError | null>(null);
 	let exportStatus = $state<ExportStatus | null>(null);
@@ -44,6 +46,10 @@
 		{ value: 'duration', label: i18n.m.export.time },
 		{ value: 'calories', label: i18n.m.export.calories }
 	]);
+
+	const metricsWithValue = $derived(
+		yearData.stats ? summaryMetricsWithValue(yearData.stats, exportSettings.unit) : []
+	);
 
 	async function handleExport(allowFallbackFonts = false) {
 		if (exportLock.isExporting) return;
@@ -223,13 +229,16 @@
 				<span id="summary-metric-label" class="field-label">{i18n.m.export.focused}</span>
 				<div role="group" aria-labelledby="summary-metric-label" class="grid grid-cols-2 gap-2">
 					{#each metrics as metric (metric.value)}
+						{@const hasValue = metricsWithValue.includes(metric.value)}
 						<button
 							onclick={() => (exportSettings.summaryMetric = metric.value)}
 							aria-pressed={exportSettings.summaryMetric === metric.value}
-							disabled={exportLock.isExporting}
+							disabled={exportLock.isExporting || !hasValue}
+							title={hasValue ? undefined : i18n.m.export.noValue}
 							class="toggle px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
 						>
 							{metric.label}
+							{#if !hasValue}<span class="sr-only">({i18n.m.export.noValue})</span>{/if}
 						</button>
 					{/each}
 				</div>

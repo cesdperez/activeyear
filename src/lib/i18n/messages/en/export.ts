@@ -9,6 +9,7 @@ export const exportMessages = {
 	remove: 'Remove image',
 	upload: 'Upload image',
 	focused: 'Headline stat on the summary card',
+	noValue: 'Not recorded in your file',
 	aboutLightmile: 'About Lightmile',
 	lightmileInfo:
 		"Lightmile is the run club I call my community. If you're ever around Eindhoven, join us for a run!",

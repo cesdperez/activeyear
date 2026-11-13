@@ -10,6 +10,7 @@ export const exportMessages: typeof en = {
 	remove: 'Remover imagem',
 	upload: 'Enviar imagem',
 	focused: 'Estatística principal do cartão de resumo',
+	noValue: 'Não registrado no seu arquivo',
 	aboutLightmile: 'Sobre o Lightmile',
 	lightmileInfo:
 		'O Lightmile é o clube de corrida que considero minha comunidade. Se você passar por Eindhoven, venha correr com a gente!',

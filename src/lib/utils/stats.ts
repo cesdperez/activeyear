@@ -175,6 +175,13 @@ function shows(rounded: number): boolean {
 	return Number.isFinite(rounded) && rounded !== 0;
 }
 
+/** The summary stats that display a non-zero value, in panel order. */
+export function summaryMetricsWithValue(stats: YearStats, unit: Unit): SummaryMetric[] {
+	return SUMMARY_METRIC_DISPLAY.filter(([, display]) => display(stats, unit)).map(
+		([metric]) => metric
+	);
+}
+
 /**
  * Keeps `current` when it displays a non-zero value, otherwise the first summary stat, in panel
  * order, that does.
@@ -184,9 +191,7 @@ export function summaryMetricWithValue(
 	current: SummaryMetric,
 	unit: Unit
 ): SummaryMetric {
-	const withValue = SUMMARY_METRIC_DISPLAY.filter(([, display]) => display(stats, unit)).map(
-		([metric]) => metric
-	);
+	const withValue = summaryMetricsWithValue(stats, unit);
 	return withValue.includes(current) ? current : (withValue[0] ?? current);
 }
 

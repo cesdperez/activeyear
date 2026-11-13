@@ -34,6 +34,26 @@ describe('card models', () => {
 			'calories'
 		);
 	});
+	it('falls back to a hero with a value when the chosen stat shows zero', () => {
+		expect(summaryCardModel(data, { ...settings, summaryMetric: 'distance' }, 'en').hero?.id).toBe(
+			'duration'
+		);
+		expect(
+			summaryCardModel(
+				{ ...data, stats: { ...stats, totalDistance: 0.04 } },
+				{ ...settings, summaryMetric: 'distance' },
+				'en'
+			).hero?.id
+		).toBe('duration');
+		const nothing = { ...stats, totalDuration: 0, totalCalories: 0 };
+		expect(
+			summaryCardModel(
+				{ ...data, stats: nothing },
+				{ ...settings, summaryMetric: 'calories' },
+				'en'
+			).hero?.id
+		).toBe('calories');
+	});
 	it('handles missing stats and ranks sports by the chosen metric', () => {
 		expect(summaryCardModel({ ...data, stats: null }, settings, 'en').hero).toBeUndefined();
 		expect(summaryCardModel(data, settings, 'en').topSport?.type).toBe('yoga');

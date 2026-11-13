@@ -10,6 +10,7 @@ export const exportMessages: typeof en = {
 	remove: 'Bild entfernen',
 	upload: 'Bild hochladen',
 	focused: 'Hauptwert auf der Zusammenfassungskarte',
+	noValue: 'In deiner Datei nicht erfasst',
 	aboutLightmile: 'Über Lightmile',
 	lightmileInfo:
 		'Lightmile ist der Laufclub, den ich meine Community nenne. Wenn du mal in Eindhoven bist, lauf doch mit uns!',

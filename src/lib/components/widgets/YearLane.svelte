@@ -2,13 +2,14 @@
 	import type { Activity, WidgetVariant, WidgetVariantProps } from '#lib/types/index.js';
 	import {
 		laneMarkers,
+		laneMonthLabels,
 		laneTicks,
 		markerLeft,
 		mergeCloseMarkers,
+		monthLabelFit,
 		monthStartDays
 	} from '#lib/utils/yearLane.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
-	import { monthLabels } from '#lib/utils/date.js';
 	import { formatCount } from '#lib/utils/format.js';
 
 	type Props = {
@@ -67,8 +68,9 @@
 		mergeCloseMarkers(markers, days, laneWidth ? (style.headPx * days) / laneWidth : 0)
 	);
 	const activeDays = $derived(ticks.slice(0, counted).filter((height) => height > 0).length);
-	const hasRecords = $derived(markers.some((m) => m.kind === 'record'));
-	const hasHighlights = $derived(markers.some((m) => m.kind === 'highlight'));
+	// A highlight merged into a record head is not drawn, so the legend follows the heads.
+	const hasRecords = $derived(heads.some((head) => head.kind === 'record'));
+	const hasHighlights = $derived(heads.some((head) => head.kind === 'highlight'));
 
 	const activePath = $derived(path(ticks.map((h, day) => (day < counted ? h * 100 : 0))));
 	const restPath = $derived(
@@ -83,7 +85,8 @@
 			.join('');
 	}
 
-	const months = $derived(monthLabels(i18n.locale));
+	const months = $derived(laneMonthLabels(i18n.locale));
+	const monthFit = $derived(monthLabelFit(months, year));
 
 	const label = $derived(
 		[
@@ -126,7 +129,12 @@
 		{:else}
 			<div class="baseline" aria-hidden="true"></div>
 		{/if}
-		<div class="relative mt-2 h-[1.4em] {style.month}" aria-hidden="true">
+		<div
+			class="months relative mt-2 h-[1.4em] {style.month}"
+			aria-hidden="true"
+			style:--month-chars={monthFit.chars}
+			style:--month-share={monthFit.share}
+		>
 			{#each monthStartDays(year) as start, month (month)}
 				<span class="month" style:left="{(start / days) * 100}%">{months[month]}</span>
 			{/each}
@@ -231,7 +239,17 @@
 		border-width: 4px;
 	}
 
+	.months {
+		container-type: inline-size;
+	}
+
+	/* One size for every label, the largest that fits the tightest month with 0.25em to spare.
+	   --label-char-em is the label font's advance per character of a typical word. */
 	.month {
+		font-size: min(
+			1em,
+			100cqi * var(--month-share) / (var(--month-chars) * var(--label-char-em, 0.56) + 0.5)
+		);
 		position: absolute;
 		top: 0;
 		padding-left: 0.25em;
