@@ -1,6 +1,10 @@
 import { readFileSync } from 'fs';
 import { test, expect, type Locator, type Page } from '@playwright/test';
+import { TARGET_YEAR } from '../../src/lib/constants/time.js';
 import { DASHBOARD_HEADING, SAMPLE_CSV, garminCsv, gotoUpload, uploadCsv } from './helpers.js';
+
+const DAYS_IN_TARGET_YEAR =
+	(Date.UTC(TARGET_YEAR + 1, 0, 1) - Date.UTC(TARGET_YEAR, 0, 1)) / 86_400_000;
 
 async function openDemo(page: Page): Promise<void> {
 	await page.goto('/');
@@ -75,7 +79,7 @@ test('more stats are hidden until expanded', async ({ page }) => {
 		'true'
 	);
 	await expect(section).toBeVisible();
-	await expect(section.getByRole('heading', { name: 'More Stats' })).toBeVisible();
+	await expect(section.getByRole('heading', { name: 'More stats' })).toBeVisible();
 	for (const quarter of ['Q1', 'Q2', 'Q3', 'Q4']) {
 		await expect(section.getByRole('heading', { name: quarter, exact: true })).toBeVisible();
 	}
@@ -103,18 +107,51 @@ test('every weekly pattern bar has a fill', async ({ page }) => {
 	await openDemo(page);
 	const fills = await page
 		.getByTestId('weekly-pattern-bar')
-		.evaluateAll((bars) => bars.map((bar) => getComputedStyle(bar).backgroundImage));
+		.evaluateAll((bars) => bars.map((bar) => getComputedStyle(bar).backgroundColor));
 	expect(fills).toHaveLength(7);
-	for (const fill of fills) expect(fill).not.toBe('none');
+	for (const fill of fills) expect(fill).not.toBe('rgba(0, 0, 0, 0)');
 });
 
-test('stat cards show values instantly when reduced motion is preferred', async ({ page }) => {
+test('the headline number shows its final value at once when reduced motion is preferred', async ({
+	page
+}) => {
 	await openDemo(page);
-	const opacities = await page
-		.locator('[data-testid="main-stats"] > *, [data-testid="personal-records"] .pr-card')
-		.evaluateAll((cards) => cards.map((card) => (card as HTMLElement).style.opacity));
-	expect(opacities.length).toBeGreaterThan(0);
-	for (const opacity of opacities) expect(opacity).toBe('1');
+	await expect(page.getByTestId('headline-value')).toHaveText('2,032km');
+});
+
+test('the headline number counts up through smaller values to its exact total', async ({
+	browser
+}) => {
+	const context = await browser.newContext({ reducedMotion: 'no-preference' });
+	const page = await context.newPage();
+	// Every frame of the count-up is a DOM change, so recording mutations cannot miss one.
+	await page.addInitScript(() => {
+		const shown: string[] = [];
+		Object.assign(window, { headlineValues: shown });
+		new MutationObserver(() => {
+			const text = document.querySelector('[data-testid="headline-value"]')?.textContent?.trim();
+			if (text && text !== shown.at(-1)) shown.push(text);
+		}).observe(document, { subtree: true, childList: true, characterData: true });
+	});
+	await openDemo(page);
+	await expect(page.getByTestId('headline-value')).toHaveText('2,032km');
+
+	const shown = await page.evaluate(
+		() => (window as unknown as { headlineValues: string[] }).headlineValues
+	);
+	expect(shown.at(-1)).toBe('2,032km');
+	expect(shown.slice(0, -1).filter((value) => /[1-9]/.test(value)).length).toBeGreaterThan(0);
+	await context.close();
+});
+
+test('the year lane counts its active days out of every day of the year and names its marks', async ({
+	page
+}) => {
+	await openDemo(page);
+	const lane = page.getByTestId('year-lane').first().getByRole('img');
+	await expect(lane).toHaveAccessibleName(
+		`180 active days out of ${DAYS_IN_TARGET_YEAR} in ${TARGET_YEAR}, highlights marked, personal records marked`
+	);
 });
 
 test('summary uses singular nouns for a single activity on a single day', async ({ page }) => {
@@ -137,24 +174,21 @@ for (const width of [320, 360, 768, 1024, 1280, 1920]) {
 		await openDemo(page);
 
 		expect(
-			await overflowingElements(page.locator('[data-testid="main-stats"] .stat-value'))
+			await overflowingElements(
+				page.getByTestId('main-stats').getByTestId(/^(headline|board)-value$/)
+			)
 		).toEqual([]);
-		expect(
-			await overflowingElements(page.locator('[data-testid="personal-records"] .stat-value'))
-		).toEqual([]);
-		expect(
-			await overflowingElements(page.getByTestId('consistency-stats').locator('.stat-card'))
-		).toEqual([]);
+		expect(await overflowingElements(page.getByTestId('record-value'))).toEqual([]);
 		expect(await overflowingElements(page.getByTestId('weekly-pattern-row'))).toEqual([]);
 	});
 
-	test(`main stat values share one font size at ${width}px`, async ({ page }) => {
+	test(`results board values share one font size at ${width}px`, async ({ page }) => {
 		await page.setViewportSize({ width, height: 900 });
 		await openDemo(page);
 		const sizes = await page
-			.locator('[data-testid="main-stats"] .stat-value')
+			.getByTestId('board-value')
 			.evaluateAll((values) => values.map((value) => getComputedStyle(value).fontSize));
-		expect(sizes).toHaveLength(4);
+		expect(sizes).toHaveLength(5);
 		expect(new Set(sizes).size).toBe(1);
 	});
 }

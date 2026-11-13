@@ -93,7 +93,7 @@ test.describe('Export panel accessibility', () => {
 	test('stat and theme groups are labelled and expose the selected button', async ({ page }) => {
 		await uploadSample(page);
 
-		const statGroup = page.getByRole('group', { name: /Focused Stat/ });
+		const statGroup = page.getByRole('group', { name: /Headline stat/ });
 		await expect(statGroup.getByRole('button', { name: 'Distance' })).toHaveAttribute(
 			'aria-pressed',
 			'true'

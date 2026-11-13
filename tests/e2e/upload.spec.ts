@@ -122,7 +122,7 @@ test.describe('Upload Flow', () => {
 			has: page.getByRole('heading', { name: 'Highlights', exact: true })
 		});
 		const caption = page.getByText('Your longest sessions of the year.');
-		await expect(highlights.locator('.stat-card').first()).toBeVisible();
+		await expect(highlights.getByTestId('highlight-row').first()).toBeVisible();
 		await expect(caption).toBeVisible();
 
 		await page.getByRole('button', { name: 'Upload different file' }).click();

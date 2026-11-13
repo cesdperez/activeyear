@@ -39,7 +39,7 @@ test.describe('Export fonts', () => {
 
 		const faces = await page.evaluate(() =>
 			[...document.fonts]
-				.filter((f) => /Outfit|JetBrains Mono/.test(f.family))
+				.filter((f) => /Big Shoulders Display|Archivo|Press Start 2P|VT323/.test(f.family))
 				.map((f) => `${f.family} ${f.weight} ${f.unicodeRange.slice(0, 12)} ${f.status}`)
 		);
 		expect(faces.filter((f) => !f.endsWith('loaded'))).toEqual([]);
@@ -73,11 +73,11 @@ test.describe('Export fonts', () => {
 			.poll(() =>
 				page.evaluate(() =>
 					[...document.fonts]
-						.filter((f) => /Outfit|JetBrains Mono/.test(f.family))
+						.filter((f) => /Big Shoulders Display|Archivo|Press Start 2P|VT323/.test(f.family))
 						.map((f) => f.status)
 				)
 			)
-			.toEqual(Array(16).fill('loaded'));
+			.toEqual(Array(18).fill('loaded'));
 	});
 
 	test('export explains fonts that cannot load and saves nothing', async ({ page }) => {

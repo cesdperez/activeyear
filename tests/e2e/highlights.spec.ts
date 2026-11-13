@@ -19,7 +19,7 @@ for (const source of ['Garmin', 'Strava'] as const) {
 			'aria-pressed',
 			'true'
 		);
-		await expect(section.locator('.stat-card').first()).toBeVisible();
+		await expect(section.getByTestId('highlight-row').first()).toBeVisible();
 		const search = section.getByRole('searchbox', { name: 'Search your activities' });
 		await chips.getByRole('button', { name: 'Biggest climbs' }).click();
 		const title = source === 'Garmin' ? 'Indoor Cycling' : 'Evening Yoga';
@@ -32,15 +32,13 @@ for (const source of ['Garmin', 'Strava'] as const) {
 		await result.click();
 		await expect(section.getByText('Your own picks.')).toBeVisible();
 		await expect(result).toHaveAttribute('aria-pressed', 'true');
-		const titles = (await section.locator('.stat-card span[title]').allTextContents()).map((t) =>
+		const titles = (await section.getByTestId('highlight-title').allTextContents()).map((t) =>
 			t.trim()
 		);
 		await showSlide(page, 2);
 		await expect(page.locator('#export-card .highlight-title')).toHaveText(titles);
 		await section.getByRole('button', { name: `Remove ${title} from highlights` }).click();
-		await expect(section.locator('.stat-card span[title]').filter({ hasText: title })).toHaveCount(
-			0
-		);
+		await expect(section.getByTestId('highlight-title').filter({ hasText: title })).toHaveCount(0);
 		await expect(
 			page.locator('#export-card .highlight-title').filter({ hasText: title })
 		).toHaveCount(0);

@@ -40,7 +40,7 @@ test.describe('Content Security Policy', () => {
 		await expect(heading).toBeVisible();
 		await expect
 			.poll(() => heading.evaluate((el) => getComputedStyle(el).fontFamily))
-			.toContain('Outfit');
+			.toContain('Big Shoulders Display');
 	});
 
 	test('upload, confetti and PNG export run without violations', async ({ page }) => {

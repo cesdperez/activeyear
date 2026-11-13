@@ -49,7 +49,9 @@ test('rejects a saved year from another year', async ({ page }) => {
 	await gotoUpload(page);
 	await uploadJson(page, Buffer.from(JSON.stringify(json)));
 	await expect(page.getByRole('alert')).toContainText(String(TARGET_YEAR - 1));
-	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).not.toBeVisible();
+	await expect(
+		page.getByRole('heading', { name: DASHBOARD_HEADING, exact: true })
+	).not.toBeVisible();
 });
 
 test('rejects JSON that is not a saved year', async ({ page }) => {
@@ -57,5 +59,7 @@ test('rejects JSON that is not a saved year', async ({ page }) => {
 	await uploadJson(page, Buffer.from('{}'));
 	await expect(page.getByRole('alert')).not.toBeEmpty();
 	await expect(page.getByText('Click to try again')).toBeVisible();
-	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).not.toBeVisible();
+	await expect(
+		page.getByRole('heading', { name: DASHBOARD_HEADING, exact: true })
+	).not.toBeVisible();
 });

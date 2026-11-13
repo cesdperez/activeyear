@@ -7,10 +7,10 @@ const CARDS = ['summary', 'breakdown', 'highlights'] as const;
 const favourites = (count: number, title: (i: number) => string) =>
 	Array.from({ length: count }, (_, i) => ({ title: title(i), favorite: true }));
 
-/** Text and icons in the export card that fall below WCAG contrast on the Minimal background. */
+/** Text and icons in the export card that fall below WCAG contrast on the background behind them. */
 function lowContrastText(page: Page): Promise<string[]> {
 	return page.locator('#export-card').evaluate((cardEl) => {
-		const background = [253, 253, 253];
+		const cardBackground = [250, 250, 249];
 		const luminance = (rgb: number[]) => {
 			const [r, g, b] = rgb.map((c) => {
 				const s = c / 255;
@@ -18,27 +18,43 @@ function lowContrastText(page: Page): Promise<string[]> {
 			});
 			return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 		};
-		const blended = (color: string, el: Element) => {
+		const channels = (color: string) => {
 			const [r, g, b, a = 1] = (color.match(/[\d.]+/g) ?? []).map(Number);
-			let alpha = a;
+			return { rgb: [r, g, b], alpha: a };
+		};
+		const over = (top: { rgb: number[]; alpha: number }, below: number[]) =>
+			top.rgb.map((c, i) => c * top.alpha + below[i] * (1 - top.alpha));
+		const backgroundBehind = (el: Element) => {
+			const layers: Element[] = [];
+			for (let node: Element | null = el; node && node !== cardEl; node = node.parentElement)
+				layers.unshift(node);
+			return layers.reduce(
+				(below, node) => over(channels(getComputedStyle(node).backgroundColor), below),
+				cardBackground
+			);
+		};
+		const ancestorOpacity = (el: Element) => {
+			let alpha = 1;
 			for (let node: Element | null = el; node && node !== cardEl; node = node.parentElement)
 				alpha *= Number(getComputedStyle(node).opacity);
-			return [r, g, b].map((c, i) => c * alpha + background[i] * (1 - alpha));
+			return alpha;
 		};
-		const ratio = (rgb: number[]) => {
-			const [hi, lo] = [luminance(rgb), luminance(background)].sort((x, y) => y - x);
+		const ratio = (a: number[], b: number[]) => {
+			const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
 			return (hi + 0.05) / (lo + 0.05);
 		};
 		const failures: string[] = [];
 		for (const el of cardEl.querySelectorAll('*')) {
-			const isIcon = el.matches('.record-icon-compact, .highlight-star');
+			const isIcon = el.matches('.highlight-star');
 			const hasText = [...el.childNodes].some(
 				(n) => n.nodeType === Node.TEXT_NODE && /[A-Za-z0-9]/.test(n.textContent ?? '')
 			);
 			if (!hasText && !isIcon) continue;
 			const style = getComputedStyle(el);
-			const color = el instanceof SVGElement ? style.fill : style.color;
-			const contrast = ratio(blended(color, el));
+			const color = channels(el instanceof SVGElement ? style.fill : style.color);
+			const background = backgroundBehind(el);
+			const text = over({ rgb: color.rgb, alpha: color.alpha * ancestorOpacity(el) }, background);
+			const contrast = ratio(text, background);
 			if (contrast < (isIcon ? 3 : 4.5))
 				failures.push(`${(el.textContent ?? '').trim().slice(0, 20)} ${contrast.toFixed(2)}`);
 		}
@@ -101,7 +117,7 @@ test.describe('Export card layout', () => {
 					.first()
 					.evaluate((el) => getComputedStyle(el).fontSize)
 			)
-			.toBe('32px');
+			.toBe('40px');
 		expect(await overflowingCardElements(page, '*')).toEqual([]);
 	});
 
@@ -175,7 +191,7 @@ test.describe('Export card layout', () => {
 		await expect(page.locator('#export-card')).toHaveAttribute('data-theme', 'minimalist');
 
 		const ratios = await page.locator('#export-card .weekly-bar').evaluateAll((bars) => {
-			const background = [253, 253, 253];
+			const background = [250, 250, 249];
 			const luminance = (rgb: number[]) => {
 				const [r, g, b] = rgb.map((c) => {
 					const s = c / 255;
