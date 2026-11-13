@@ -10,7 +10,7 @@ const baseUrl = process.argv[2] ?? `http://localhost:${PREVIEW_PORT}`;
 
 // Keeps only the header and the totals board, centred in the frame, without the layout's top bars.
 const COMPOSITION_CSS = `
-	main > div > :not(:has(> header), [data-testid='main-stats']), header > button, [data-testid='main-stats'] dl,
+	main > div > :not(:has(> header), [data-testid='main-stats']), header > button, [data-testid='demo-data-tag'], [data-testid='main-stats'] dl,
 	body .absolute.top-4 {
 		display: none !important;
 	}

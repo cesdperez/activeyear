@@ -56,7 +56,7 @@
 <header class="mt-12 mb-12 text-center md:mt-8 md:mb-14">
 	<Logotype class="mb-8 text-[1.75rem]" />
 	{#if demo}
-		<p class="mb-4">
+		<p class="mb-4" data-testid="demo-data-tag">
 			<span
 				class="inline-block rounded-[var(--radius-control)] border border-[var(--color-border)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-muted)]"
 				>{i18n.m.dashboard.demoData}</span
