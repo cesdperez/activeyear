@@ -46,7 +46,7 @@
 			<div class="space-y-10">
 				<div>
 					<h3 class="mb-4 text-xl font-bold">Quarters</h3>
-					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+					<div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
 						{#each quarters as quarter (quarter.quarter)}
 							<div class="stat-card min-w-0 p-4">
 								<h4
@@ -90,18 +90,37 @@
 				</div>
 				<div>
 					<h3 class="mb-4 text-xl font-bold">By weekday</h3>
-					<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
+					<div class="stat-card divide-y divide-[var(--color-text-muted)]/20 px-4 md:hidden">
 						{#each WEEKDAY_LABELS as day, i (day)}
-							<div class="stat-card min-w-0 p-4">
+							<div class="flex items-baseline justify-between gap-4 py-2">
+								<span
+									class="text-xs font-medium tracking-wider text-[var(--color-text-muted)] uppercase"
+								>
+									{day}
+								</span>
+								<span class="text-right">
+									<span class="font-bold text-[var(--color-accent)]">
+										{formatDistance(weekdays.distance[i], unit)}
+									</span>
+									<span class="ml-2 text-sm text-[var(--color-text-muted)]">
+										{formatDuration(weekdays.duration[i])}
+									</span>
+								</span>
+							</div>
+						{/each}
+					</div>
+					<div class="hidden gap-3 md:grid md:grid-cols-7">
+						{#each WEEKDAY_LABELS as day, i (day)}
+							<div class="stat-card min-w-0 p-2 lg:p-4">
 								<h4
 									class="text-xs font-medium tracking-wider text-[var(--color-text-muted)] uppercase"
 								>
 									{day}
 								</h4>
-								<p class="text-xl font-bold break-words text-[var(--color-accent)]">
+								<p class="text-base font-bold break-words text-[var(--color-accent)] lg:text-xl">
 									{formatDistance(weekdays.distance[i], unit)}
 								</p>
-								<p class="text-sm break-words text-[var(--color-text-muted)]">
+								<p class="text-xs break-words text-[var(--color-text-muted)] lg:text-sm">
 									{formatDuration(weekdays.duration[i])}
 								</p>
 							</div>
@@ -110,7 +129,7 @@
 				</div>
 				<div>
 					<h3 class="mb-4 text-xl font-bold">Average per activity</h3>
-					<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+					<div class="grid grid-cols-2 gap-3 md:grid-cols-3">
 						{#each averages as average (average.type)}
 							<div class="stat-card min-w-0 p-4">
 								<h4
