@@ -14,6 +14,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
+	import LanguagePicker from '#lib/components/LanguagePicker.svelte';
 	import MetaTags from '#lib/components/MetaTags.svelte';
 	import { inlinedFontFaceCss, loadAppFonts } from '#lib/utils/fonts.js';
 
@@ -33,6 +34,7 @@
 
 {#if page.route.id !== '/404'}
 	<MetaTags />
+	<LanguagePicker />
 {/if}
 
 {@render children()}

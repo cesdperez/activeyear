@@ -10,7 +10,7 @@
 	];
 </script>
 
-<div class="absolute top-4 right-4 z-10 flex items-center gap-2 md:right-8">
+<div class="absolute top-4 right-28 z-10 flex items-center gap-2 md:right-32">
 	<div
 		role="group"
 		aria-label={i18n.m.dashboard.distanceUnit}
