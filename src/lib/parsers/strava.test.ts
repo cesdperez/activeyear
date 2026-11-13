@@ -189,6 +189,27 @@ function oneRowCsv(header: string, date: string): string {
 }
 
 describe('localized Strava exports', () => {
+	it('maps Portuguese sports and preserves their totals', () => {
+		const csv =
+			'Data da atividade,Nome da atividade,Tipo de atividade,Tempo em movimento,Distância\n"2 de mar. de 2026, 06:34:08",Run,Corrida,100,1000\n"2 de mar. de 2026, 06:34:08",Ride,Pedalada,200,2000\n"2 de mar. de 2026, 06:34:08",Walk,Caminhada,300,3000';
+		const result = stravaParser.parse(csv, 2026);
+		expect(result.errors).toEqual([]);
+		expect(
+			result.activities.map(({ type, distance, duration }) => [type, distance, duration])
+		).toEqual([
+			['running', 1, 100],
+			['cycling', 2, 200],
+			['walking', 3, 300]
+		]);
+	});
+	it('recognizes untranslated French activity types', () => {
+		const csv =
+			"Date de l'activité,Nom de l'activité,Type d'activité,Durée de déplacement,Distance\n\"9 juin 2026, 15:13:37\",Yoga,Yoga,100,1000";
+		const result = stravaParser.parse(csv, 2026);
+		expect(result.errors).toEqual([]);
+		expect(result.activities[0].type).toBe('yoga');
+	});
+
 	it.each(['es', 'fr', 'de', 'it'])('matches English totals for %s', (locale) => {
 		const english = stravaParser.parse(loadFixture('strava-locale-en.csv'), 2026);
 		const localized = stravaParser.parse(loadFixture(`strava-locale-${locale}.csv`), 2026);

@@ -1,6 +1,7 @@
 import Papa from 'papaparse';
-import { STRAVA_LOCALES, type StravaLocale } from './stravaLocales.js';
+import { STRAVA_LOCALES } from './stravaLocales.js';
 import {
+	bestLocale,
 	firstLine,
 	readHeaderCells,
 	isCalendarDate,
@@ -10,7 +11,13 @@ import {
 	invalidDateError
 } from './csv.js';
 import { TYPES_WITHOUT_DISTANCE } from '#lib/constants/parsing.js';
-import type { Activity, ActivityParser, ActivityType, ParseResult } from '#lib/types/index.js';
+import type {
+	Activity,
+	ActivityParser,
+	ActivityType,
+	ParseResult,
+	StravaLocale
+} from '#lib/types/index.js';
 
 const KEY_HEADERS = ['Activity Date', 'Activity Type', 'Moving Time'];
 // Localized exports translate headers but keep activities/<id>.fit.gz filenames.
@@ -84,13 +91,6 @@ function parseStravaDate(value: string): Date | null {
 	return new Date(
 		Date.UTC(year, month, day, (hour % 12) + (match[7] === 'PM' ? 12 : 0), minute, second)
 	);
-}
-
-function findLocale(headers: string[]): StravaLocale | undefined {
-	return STRAVA_LOCALES.map((locale) => ({
-		locale,
-		score: headers.filter((header) => header in locale.headers).length
-	})).sort((a, b) => b.score - a.score)[0]?.locale;
 }
 
 function parseLocalizedDate(value: string, locale: StravaLocale): Date | null {
@@ -169,8 +169,7 @@ function readActivity(
 	date: Date,
 	locale?: StravaLocale
 ): Activity {
-	const type =
-		ACTIVITY_TYPES[locale ? locale.types[data[columns.type]] : data[columns.type]] ?? 'other';
+	const type = ACTIVITY_TYPES[locale?.types[data[columns.type]] ?? data[columns.type]] ?? 'other';
 	return {
 		date,
 		type,
@@ -213,7 +212,7 @@ function readRows(
 
 function parse(csv: string, year: number): ParseResult {
 	const headers = readHeaders(csv);
-	const locale = hasEnglishHeaders(headers) ? undefined : findLocale(headers);
+	const locale = hasEnglishHeaders(headers) ? undefined : bestLocale(headers, STRAVA_LOCALES);
 	const translated = locale ? headers.map((header) => locale.headers[header] ?? header) : headers;
 	if (!KEY_HEADERS.every((header) => translated.includes(header)))
 		return unsupportedLanguageExportResult();
@@ -267,7 +266,7 @@ function parse(csv: string, year: number): ParseResult {
 export const stravaParser: ActivityParser = {
 	detect: (csv) => {
 		const headers = readHeaders(csv);
-		const locale = findLocale(headers);
+		const locale = bestLocale(headers, STRAVA_LOCALES);
 		return (
 			hasEnglishHeaders(headers) ||
 			KEY_HEADERS.every((header) => headers.some((cell) => locale?.headers[cell] === header)) ||

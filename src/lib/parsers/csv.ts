@@ -35,3 +35,19 @@ export function papaRowErrors(errors: Papa.ParseError[], row: number): ParseErro
 export function invalidDateError(row: number): ParseError {
 	return { type: 'invalid-date', row, message: 'Invalid date format' };
 }
+
+export function bestLocale<T extends { headers: Record<string, string> }>(
+	headers: string[],
+	locales: readonly T[]
+): T | undefined {
+	let best = 0;
+	let selected: T | undefined;
+	for (const locale of locales) {
+		const score = headers.filter((header) => Object.hasOwn(locale.headers, header)).length;
+		if (score > best) {
+			best = score;
+			selected = locale;
+		}
+	}
+	return selected;
+}

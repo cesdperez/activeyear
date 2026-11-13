@@ -1,8 +1,4 @@
-export type StravaLocale = {
-	headers: Record<string, string>;
-	types: Record<string, string>;
-	months: string[];
-};
+import type { StravaLocale } from '#lib/types/index.js';
 
 export const STRAVA_LOCALES: StravaLocale[] = [
 	{

@@ -1,7 +1,4 @@
-interface GarminLocale {
-	headers: Record<string, string>;
-	types: Record<string, string>;
-}
+import type { GarminLocale } from '#lib/types/index.js';
 
 const fields = [
 	'Activity Type',
@@ -38,7 +35,14 @@ export const GARMIN_LOCALES: GarminLocale[] = [
 		types: {
 			Carrera: 'Running',
 			'Entrenamiento en cinta': 'Treadmill Running',
-			'Trail running': 'Trail Running'
+			'Trail running': 'Trail Running',
+			Ciclismo: 'Cycling',
+			'Ciclismo en sala': 'Indoor Cycling',
+			'Natación en piscina': 'Pool Swim',
+			'Natación en aguas abiertas': 'Open Water Swimming',
+			Caminar: 'Walking',
+			Senderismo: 'Hiking',
+			'Entrenamiento de fuerza': 'Strength Training'
 		}
 	},
 	{
@@ -60,6 +64,11 @@ export const GARMIN_LOCALES: GarminLocale[] = [
 		types: {
 			Laufen: 'Running',
 			Laufbandtraining: 'Treadmill Running',
+			Schwimmbadschwimmen: 'Pool Swim',
+			Freiwasserschwimmen: 'Open Water Swimming',
+			Gehen: 'Walking',
+			Wandern: 'Hiking',
+			Trailrunning: 'Trail Running',
 			Radfahren: 'Cycling',
 			'Indoor Cycling': 'Indoor Cycling',
 			'Virtuelles Radfahren': 'Virtual Cycling',
@@ -110,6 +119,10 @@ export const GARMIN_LOCALES: GarminLocale[] = [
 		types: {
 			Corsa: 'Running',
 			Camminata: 'Walking',
+			'Nuoto in piscina': 'Pool Swim',
+			Escursionismo: 'Hiking',
+			'Allenamento di forza': 'Strength Training',
+			'Corsa su tapis roulant': 'Treadmill Running',
 			Ciclismo: 'Cycling',
 			'Ciclismo su strada': 'Road Cycling',
 			Cardio: 'Cardio',

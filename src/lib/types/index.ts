@@ -195,3 +195,14 @@ export interface SportAverage {
 export type Locale = (typeof import('#lib/constants/locales.js').LOCALES)[number];
 
 export type Messages = typeof import('#lib/i18n/messages/en/index.js').en;
+
+export interface GarminLocale {
+	headers: Record<string, string>;
+	types: Record<string, string>;
+}
+
+export type StravaLocale = {
+	headers: Record<string, string>;
+	types: Record<string, string>;
+	months: string[];
+};

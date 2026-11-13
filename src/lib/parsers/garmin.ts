@@ -2,6 +2,7 @@ import Papa from 'papaparse';
 import { MILES_TO_KM, FEET_TO_METERS, YARDS_TO_METERS } from '../constants/units.js';
 import { GARMIN_LOCALES } from './garminLocales.js';
 import {
+	bestLocale,
 	firstLine,
 	readHeaderCells,
 	isCalendarDate,
@@ -587,11 +588,15 @@ export function parseGarminCsv(
 	}
 	const headers = readHeaderCells(firstLine(csvContent));
 	const locale = detectLocale(headers);
-	const lines = csvContent.split(/\r?\n/);
-	const headerIndex = findHeaderIndex(lines);
-	if (headerIndex !== -1 && locale) {
-		lines[headerIndex] = Papa.unparse([headers.map((header) => locale.headers[header] ?? header)]);
-		csvContent = lines.join('\n');
+	if (locale) {
+		const lines = csvContent.split(/\r?\n/);
+		const headerIndex = findHeaderIndex(lines);
+		if (headerIndex !== -1) {
+			lines[headerIndex] = Papa.unparse([
+				headers.map((header) => locale.headers[header] ?? header)
+			]);
+			csvContent = lines.join('\n');
+		}
 	}
 
 	const firstPass = Papa.parse<string[]>(csvContent, {
@@ -651,16 +656,7 @@ function detectDelimiter(line: string): ',' | ';' {
 
 function detectLocale(headers: string[]) {
 	if (KEY_HEADERS.every((header) => headers.includes(header))) return undefined;
-	let best = 0;
-	let selected: (typeof GARMIN_LOCALES)[number] | undefined;
-	for (const locale of GARMIN_LOCALES) {
-		const score = headers.filter((header) => header in locale.headers).length;
-		if (score > best) {
-			best = score;
-			selected = locale;
-		}
-	}
-	return selected;
+	return bestLocale(headers, GARMIN_LOCALES);
 }
 
 function hasGarminHeaders(csvContent: string): boolean {

@@ -129,4 +129,21 @@ describe('localized Garmin exports', () => {
 		);
 		expect(result.activities[0]).toMatchObject({ type: 'swimming', distance: 1.725 });
 	});
+	it('converts localized imperial distances and elevation', () => {
+		const csv =
+			'Activiteittype,Datum,Afstand,Totale stijging\nHardlopen,2025-01-01 12:00:00,6.21,328\nZwembad,2025-01-02 12:00:00,"1,640",0';
+		const result = parseGarminCsv(csv, 2025, { garminUnits: 'imperial' });
+		expect(result.errors).toEqual([]);
+		expect(result.activities[0].distance).toBeCloseTo(9.99, 2);
+		expect(result.activities[0].elevation).toBe(100);
+		expect(result.activities[1].type).toBe('swimming');
+		expect(result.activities[1].distance).toBeCloseTo(1.5, 2);
+	});
+	it('recognizes Spanish cycling', () => {
+		const csv = 'Tipo de actividad,Fecha,Distancia\nCiclismo,2025-01-01 12:00:00,12';
+		expect(parseGarminCsv(csv, 2025).activities[0]).toMatchObject({
+			type: 'cycling',
+			distance: 12
+		});
+	});
 });
