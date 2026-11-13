@@ -43,6 +43,13 @@ describe('appStore', () => {
 		}
 	});
 
+	it('preserves the lightmile theme on reset', () => {
+		appStore.theme = 'lightmile';
+		appStore.reset();
+		expect(appStore.theme).toBe('lightmile');
+		appStore.theme = 'neon';
+	});
+
 	it('starts idle with empty results', () => {
 		expect(appStore.status).toBe('idle');
 		expect(appStore.activities).toEqual([]);

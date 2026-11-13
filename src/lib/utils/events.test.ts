@@ -12,9 +12,9 @@ describe('parseEvent', () => {
 			'invalid-saved-year',
 			'read-failed'
 		],
-		theme_selected: ['neon', 'minimalist', 'retro', 'classic', 'synthwave'],
-		export: ['neon', 'minimalist', 'retro', 'classic', 'synthwave'],
-		support_clicked: ['export', 'footer'],
+		theme_selected: ['neon', 'minimalist', 'retro', 'classic', 'synthwave', 'lightmile'],
+		export: ['neon', 'minimalist', 'retro', 'classic', 'synthwave', 'lightmile'],
+		support_clicked: ['export', 'footer', 'faq', 'floating'],
 		more_stats_opened: [''],
 		sports_count: ['1', '2', '3-5', '6+']
 	};

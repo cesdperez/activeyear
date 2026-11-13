@@ -3,8 +3,10 @@
 	import { tick } from 'svelte';
 	import { track } from '#lib/analytics/track.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
+	import { observeExportActions } from '#lib/stores/supportVisibility.svelte.js';
 	import ExportCarousel from './ExportCarousel.svelte';
 	import SupportLink from './dashboard/SupportLink.svelte';
+	import LightmileDisclosure from './LightmileDisclosure.svelte';
 	import SectionHeading from './dashboard/SectionHeading.svelte';
 	import { DownloadSimple, Image as ImageIcon, SpinnerGap, Trash } from 'phosphor-svelte';
 	import type {
@@ -14,7 +16,7 @@
 		ExportError,
 		ExportStatus
 	} from '#lib/types/index.js';
-	import { THEME_OPTIONS, UPCOMING_THEMES, USER_NAME_MAX_LENGTH } from '#lib/constants/export.js';
+	import { THEME_OPTIONS, USER_NAME_MAX_LENGTH } from '#lib/constants/export.js';
 	import { FontsUnavailableError } from '#lib/utils/fonts.js';
 
 	let exportError = $state<ExportError | null>(null);
@@ -31,7 +33,8 @@
 		minimalist: i18n.m.export.resultSheet,
 		retro: i18n.m.export.arcade,
 		classic: i18n.m.export.classic,
-		synthwave: i18n.m.export.synthwave
+		synthwave: i18n.m.export.synthwave,
+		lightmile: i18n.m.export.lightmile
 	});
 
 	const metrics = $derived<{ value: SummaryMetric; label: string }[]>([
@@ -240,32 +243,27 @@
 					class="grid grid-cols-2 gap-2 sm:grid-cols-3"
 				>
 					{#each THEME_OPTIONS as theme (theme.value)}
-						<button
-							onclick={() => setTheme(theme.value)}
-							aria-pressed={appStore.theme === theme.value}
-							disabled={appStore.isExporting}
-							class="toggle flex-1 px-4 py-3 text-center disabled:cursor-not-allowed disabled:opacity-50"
-						>
-							<div class="text-sm">{theme.label}</div>
-							<div class="theme-description text-xs">
-								{descriptions[theme.value]}
-							</div>
-						</button>
-					{/each}
-					{#each UPCOMING_THEMES as theme (theme.label)}
-						<button
-							disabled
-							class="toggle px-4 py-3 text-center disabled:cursor-not-allowed disabled:opacity-50"
-						>
-							<div class="text-sm">{theme.label}</div>
-							<div class="theme-description text-xs">{i18n.m.export.comingSoon}</div>
-						</button>
+						<div class="theme-cell">
+							<button
+								onclick={() => setTheme(theme.value)}
+								aria-pressed={appStore.theme === theme.value}
+								disabled={appStore.isExporting}
+								class="toggle h-full w-full px-4 py-3 text-center disabled:cursor-not-allowed disabled:opacity-50"
+							>
+								<div class="text-sm">{theme.label}</div>
+								<div class="theme-description text-xs">{descriptions[theme.value]}</div>
+							</button>
+							{#if theme.value === 'lightmile'}
+								<LightmileDisclosure />
+							{/if}
+						</div>
 					{/each}
 				</div>
 			</div>
 
 			<!-- aria-disabled instead of disabled keeps focus on the button while exporting. -->
 			<button
+				{@attach observeExportActions}
 				id="export-download"
 				onclick={() => handleExport()}
 				aria-disabled={appStore.isExporting}
@@ -351,6 +349,11 @@
 		border-color: var(--color-accent);
 		background: var(--color-accent);
 		color: var(--color-on-accent);
+	}
+
+	.theme-cell {
+		position: relative;
+		min-width: 0;
 	}
 
 	.preview-wrapper {

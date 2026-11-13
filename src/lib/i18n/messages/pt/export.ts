@@ -8,6 +8,9 @@ export const exportMessages: typeof en = {
 	remove: 'Remover imagem',
 	upload: 'Enviar imagem',
 	focused: 'Estatística principal do cartão de resumo',
+	aboutLightmile: 'Sobre o Lightmile',
+	lightmileInfo:
+		'Lightmile é o clube de corrida que considero a minha comunidade. Se estiveres por Eindhoven, és bem-vindo a correr connosco.',
 	theme: 'Tema',
 	generating: 'Gerando...',
 	download: 'Baixar todas as imagens',
@@ -44,7 +47,7 @@ export const exportMessages: typeof en = {
 	arcade: 'Fliperama',
 	classic: 'O original',
 	synthwave: 'Brilho dos anos 80',
-	comingSoon: 'Em breve',
+	lightmile: 'Papel e tinta',
 	consistency: 'Constância',
 	withoutRestDay: 'Sem dia de descanso',
 	sports: 'Esportes',

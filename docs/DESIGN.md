@@ -146,7 +146,15 @@ Classic and Synthwave use the centered 320px Summary-card avatar with glow and s
 
 ### Lightmile
 
-Reserved and disabled in the theme picker until designed. Add it to `Theme` when it ships.
+**Aesthetic:** Paper & ink. An editorial paper surface lets the athlete's numbers lead, with a quiet route line as a nod to running.
+
+- **Surface:** Paper `#f4f3ef`, elevated mist `#e4e3de`, line `#0a0a0a24`.
+- **Text:** Ink `#0a0a0a`, muted `#404040`, dim `#555555` (all above 4.5:1 on paper).
+- **Accent:** Electric blue `#2438d6`, with paper text on blue.
+- **Effects:** A thin dashed blue route line in the background.
+- **Fonts:** Archivo for display and statistics, Geist Mono for labels and metadata.
+- **Sport palette:** Blue, ink, and dark distinct hues, with mid-grey for other.
+- **Picker disclosure:** A small `?` opens a non-modal introduction and link on hover, focus or tap; Escape closes it.
 
 ---
 
@@ -218,7 +226,7 @@ For upload/processing states:
 | 640-1024px | 2-column grid for stats. Preview centered.               |
 | > 1024px   | Sidebar controls + main preview area.                    |
 
-The language picker sits in the top-right corner of every page except the 404, 16px from the top and 16px from the right (32px from `md`). On the dashboard the toolbar (km/mi toggle and celebration button) sits directly to its left in the same row, vertically centred on it. The root layout holds both in one bar, so they cannot drift apart or overlap at any width.
+The language picker sits in the top-right corner of every page except the 404, 16px from the top and 16px from the right (32px from `md`). On the dashboard the toolbar (km/mi toggle and celebration button) sits directly to its left in the same row, vertically centred on it. The root layout holds both in one bar, so they cannot drift apart or overlap at any width. A back-to-start control with an arrow and label sits at the top-left on the dashboard, mirroring the right bar and returning users to the upload screen. The centred dashboard header sits below this row.
 
 ### Export Canvas
 
@@ -248,7 +256,7 @@ Card header: logotype and "Season <TARGET_YEAR>" on one row, then the name and t
 
 - Show "Buy me a gel" under the Download button after a successful export, and at the bottom of the dashboard after "Upload another file".
 - The export prompt is "Enjoyed your recap? ActiveYear is free and made by one person." The dashboard prompt is "Enjoying ActiveYear?".
-- Use a muted, underlined link like the landing page demo link.
+- Use an accent-coloured link with a lightning icon. A compact fixed link appears after the header scrolls away, except when another support link or the export actions are visible, or an export is running.
 - Keep it a plain link so the CSP does not need to allow third-party scripts.
 
 ---
@@ -416,7 +424,7 @@ Quick-reference values for common needs:
 
 - Panels: `6px` (`--radius-panel`), `0` in Retro
 - Controls: `4px` (`--radius-control`)
-- No pills. Circles only for the avatar and lane markers.
+- Pills are reserved for the floating support link. Circles are for the avatar and lane markers.
 
 ### Transitions
 

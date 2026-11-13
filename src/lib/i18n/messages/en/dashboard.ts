@@ -1,6 +1,7 @@
 import { plural } from '#lib/i18n/plural.js';
 
 export const dashboard = {
+	backToStart: 'Back to start',
 	supportExport: 'Enjoyed your recap? ActiveYear is free and made by one person.',
 	cutShort: (date: string) =>
 		`Your export starts on ${date}. If your year started earlier, scroll to the bottom of All Activities in Garmin Connect and export again.`,

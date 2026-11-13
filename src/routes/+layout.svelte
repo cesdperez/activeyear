@@ -11,6 +11,14 @@
 	import '@fontsource/archivo/latin-ext-500';
 	import '@fontsource/archivo/latin-600';
 	import '@fontsource/archivo/latin-ext-600';
+	import '@fontsource/archivo/latin-800';
+	import '@fontsource/archivo/latin-ext-800';
+	import '@fontsource/archivo/latin-900';
+	import '@fontsource/archivo/latin-ext-900';
+	import '@fontsource/geist-mono/latin-400';
+	import '@fontsource/geist-mono/latin-ext-400';
+	import '@fontsource/geist-mono/latin-700';
+	import '@fontsource/geist-mono/latin-ext-700';
 	import '@fontsource/archivo/latin-700';
 	import '@fontsource/archivo/latin-ext-700';
 	import '@fontsource/press-start-2p/latin-400';
@@ -35,6 +43,7 @@
 	import { page } from '$app/state';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import LanguagePicker from '#lib/components/LanguagePicker.svelte';
+	import BackToStart from '#lib/components/dashboard/BackToStart.svelte';
 	import DashboardToolbar from '#lib/components/dashboard/DashboardToolbar.svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import { THEME_OPTIONS } from '#lib/constants/export.js';
@@ -57,6 +66,9 @@
 
 {#if page.route.id !== '/404'}
 	<MetaTags />
+	{#if appStore.status === 'ready'}
+		<div class="absolute top-4 left-4 z-20 flex h-11 items-center md:left-8"><BackToStart /></div>
+	{/if}
 	<div class="absolute top-4 right-4 z-20 flex items-center gap-2 md:right-8">
 		{#if appStore.status === 'ready'}<DashboardToolbar />{/if}
 		<LanguagePicker />

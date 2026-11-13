@@ -287,3 +287,9 @@ test('uploaded finished year has no so far labels', async ({ page }) => {
 	).toBeVisible();
 	await expect(page.locator('body')).not.toContainText('so far');
 });
+
+test('back to start returns focus to the upload zone', async ({ page }) => {
+	await openDemo(page);
+	await page.getByRole('button', { name: 'Back to start' }).click();
+	await expect(page.locator('#upload-zone')).toBeFocused();
+});

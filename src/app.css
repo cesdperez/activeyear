@@ -92,6 +92,23 @@
 	--font-stat: 'Outfit', system-ui, sans-serif;
 }
 
+[data-theme='lightmile'] {
+	--color-surface: #f4f3ef;
+	--color-surface-elevated: #e4e3de;
+	--color-surface-hover: #d8d7d1;
+	--color-border: #0a0a0a24;
+	--color-text-primary: #0a0a0a;
+	--color-text-muted: #404040;
+	--color-text-dim: #555555;
+	--color-accent: #2438d6;
+	--color-accent-glow: transparent;
+	--color-accent-subtle: rgba(36, 56, 214, 0.08);
+	--color-on-accent: #f4f3ef;
+	--font-display: 'Archivo', sans-serif;
+	--font-text: 'Geist Mono', monospace;
+	--font-stat: 'Archivo', sans-serif;
+}
+
 html {
 	font-family: var(--font-text);
 	background-color: var(--color-surface);

@@ -2,6 +2,7 @@ import { plural } from '#lib/i18n/plural.js';
 import type { dashboard as en } from '../en/dashboard.js';
 
 export const dashboard: typeof en = {
+	backToStart: 'Volver al inicio',
 	supportExport: '¿Te gustó tu resumen? ActiveYear es gratis y lo hace una sola persona.',
 	cutShort: (date: string) =>
 		`Tu exportación empieza el ${date}. Si tu año empezó antes, desplázate hasta el final de Todas las actividades en Garmin Connect y vuelve a exportar.`,

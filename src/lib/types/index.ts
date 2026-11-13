@@ -74,7 +74,7 @@ export interface GarminRawActivity {
 	[key: string]: string; // Allow other columns
 }
 
-export type Theme = 'neon' | 'minimalist' | 'retro' | 'classic' | 'synthwave';
+export type Theme = 'neon' | 'minimalist' | 'retro' | 'classic' | 'synthwave' | 'lightmile';
 
 export type AspectRatio = '9:16';
 
@@ -150,6 +150,7 @@ export type UnusableFileError =
 export interface FaqItem {
 	question: string;
 	answer: string;
+	tip?: { text: string; label: string };
 }
 
 export type JsonLdObject = Record<string, unknown>;

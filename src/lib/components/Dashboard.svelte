@@ -16,19 +16,23 @@
 	import UploadAnotherFile from '#lib/components/dashboard/UploadAnotherFile.svelte';
 	import SupportLink from '#lib/components/dashboard/SupportLink.svelte';
 	import SaveYear from '#lib/components/dashboard/SaveYear.svelte';
+	import FloatingSupportLink from '#lib/components/dashboard/FloatingSupportLink.svelte';
 	import { useConfettiRain } from '#lib/components/dashboard/confettiRain.svelte.js';
 
 	useConfettiRain();
+	let header: HTMLDivElement;
 </script>
 
 <div class="relative mx-auto max-w-6xl overflow-x-hidden px-4 py-12 sm:px-6 md:py-16 lg:px-8">
-	<DashboardHeader
-		activityCount={appStore.stats?.activityCount ?? 0}
-		activeDays={appStore.stats?.activeDays ?? 0}
-		skippedRowCount={appStore.skippedRowCount}
-		cutShort={appStore.cutShort}
-		yearSoFar={appStore.yearSoFar}
-	/>
+	<div bind:this={header}>
+		<DashboardHeader
+			activityCount={appStore.stats?.activityCount ?? 0}
+			activeDays={appStore.stats?.activeDays ?? 0}
+			skippedRowCount={appStore.skippedRowCount}
+			cutShort={appStore.cutShort}
+			yearSoFar={appStore.yearSoFar}
+		/>
+	</div>
 	<MainStats
 		stats={appStore.stats}
 		unit={appStore.unit}
@@ -55,8 +59,12 @@
 	<MoreStats activities={appStore.activities} breakdown={appStore.breakdown} unit={appStore.unit} />
 	<ExportPanel />
 	<div class="mt-24 flex flex-col items-center gap-6">
-		<SaveYear />
-		<UploadAnotherFile />
+		<div class="grid w-full max-w-xl items-start gap-4 sm:grid-cols-2">
+			<SaveYear />
+			<UploadAnotherFile />
+		</div>
 		<SupportLink placement="footer" />
 	</div>
 </div>
+
+<FloatingSupportLink {header} />

@@ -152,7 +152,9 @@ test.describe('Export card layout', () => {
 		'Wolfgang Amadeus Mozart Bartholdy Wilhelmina'.slice(0, 40)
 	]) {
 		for (const [index, card] of CARDS.entries()) {
-			for (const theme of card === 'summary' ? ['neon', 'classic', 'synthwave'] : ['neon']) {
+			for (const theme of card === 'summary'
+				? ['neon', 'classic', 'synthwave', 'lightmile']
+				: ['neon']) {
 				test(`${card} ${theme} card fits the ${name.length} character name ${name.slice(0, 8)}...`, async ({
 					page
 				}) => {
@@ -162,7 +164,7 @@ test.describe('Export card layout', () => {
 					);
 					await page.locator('#userName').fill(name);
 					if (theme !== 'neon')
-						await page.getByRole('button', { name: new RegExp(theme, 'i') }).click();
+						await page.getByRole('button', { name: new RegExp(`^${theme}`, 'i') }).click();
 					await showSlide(page, index);
 					await expect(page.locator('#export-card')).toHaveAttribute('data-theme', theme);
 

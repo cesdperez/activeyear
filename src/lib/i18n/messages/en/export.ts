@@ -7,6 +7,9 @@ export const exportMessages = {
 	remove: 'Remove image',
 	upload: 'Upload image',
 	focused: 'Headline stat on the summary card',
+	aboutLightmile: 'About Lightmile',
+	lightmileInfo:
+		"Lightmile is the run club I call my community. If you're ever around Eindhoven, you're welcome to join us.",
 	theme: 'Theme',
 	generating: 'Generating...',
 	download: 'Download all images',
@@ -44,7 +47,7 @@ export const exportMessages = {
 	arcade: 'Arcade',
 	classic: 'The original',
 	synthwave: 'Eighties glow',
-	comingSoon: 'Coming soon',
+	lightmile: 'Paper & ink',
 	consistency: 'Consistency',
 	withoutRestDay: 'Without a rest day',
 	sports: 'Sports',
