@@ -25,7 +25,7 @@ export default defineConfig({
 		{
 			name: 'webkit',
 			use: { ...devices['Desktop Safari'] },
-			testMatch: /export-(glow|fonts)\.spec\.ts/
+			testMatch: /export-(glow|fonts|shadows)\.spec\.ts/
 		}
 	],
 	webServer: {
