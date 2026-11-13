@@ -91,9 +91,11 @@
 		color: var(--color-text-dim);
 	}
 
-	.remove:enabled:hover {
-		color: var(--color-text-primary);
-		background: var(--color-surface-hover);
+	@media (hover: hover) {
+		.remove:enabled:hover {
+			color: var(--color-text-primary);
+			background: var(--color-surface-hover);
+		}
 	}
 
 	.remove:disabled {
