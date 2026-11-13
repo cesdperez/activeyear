@@ -151,7 +151,7 @@ test.describe('Upload Flow', () => {
 		await gotoUpload(page);
 		await uploadFile(
 			page,
-			`Tipo de actividad,Fecha,Título,Distancia,Calorías,Tiempo,Ascenso total\nCarrera,${TARGET_YEAR}-03-01 08:00:00,Carrera,10,500,01:00:00,100\nEntrenamiento en cinta,${TARGET_YEAR}-03-02 08:00:00,Cinta,5,250,00:30:00,0`
+			`Tipo de actividad,Fecha,Título,Distancia,Calorías,Tiempo,Ascenso total\nCarrera,${TARGET_YEAR}-03-01 08:00:00,Carrera,10.00,500,01:00:00,100\nEntrenamiento en cinta,${TARGET_YEAR}-03-02 08:00:00,Cinta,5.00,250,00:30:00,0`
 		);
 		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
 		await expect(page.getByTestId('main-stats').getByText('15.0km')).toBeVisible();
