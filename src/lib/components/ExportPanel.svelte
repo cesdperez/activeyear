@@ -13,7 +13,7 @@
 		Fire
 	} from 'phosphor-svelte';
 	import type { Theme, SummaryMetric } from '#lib/types/index.js';
-	import { USER_NAME_MAX_LENGTH } from '#lib/constants/export.js';
+	import { THEME_OPTIONS, USER_NAME_MAX_LENGTH } from '#lib/constants/export.js';
 	import { FontsUnavailableError } from '#lib/utils/fonts.js';
 
 	let exportError = $state<{ message: string; fontsUnavailable: boolean } | null>(null);
@@ -24,16 +24,6 @@
 	let carouselRef = $state<{
 		exportAllCards: (options?: { allowFallbackFonts?: boolean }) => Promise<void>;
 	} | null>(null);
-
-	const themes: {
-		value: Theme;
-		label: string;
-		description: string;
-	}[] = [
-		{ value: 'neon', label: 'Neon', description: 'Cyberpunk' },
-		{ value: 'minimalist', label: 'Minimal', description: 'Swiss' },
-		{ value: 'retro', label: 'Retro', description: '8-bit' }
-	];
 
 	async function handleExport(allowFallbackFonts = false) {
 		if (appStore.isExporting) return;
@@ -236,7 +226,7 @@
 			<div>
 				<span id="theme-label" class="mb-2 block text-sm font-medium text-zinc-400">Theme</span>
 				<div role="group" aria-labelledby="theme-label" class="flex gap-2">
-					{#each themes as theme (theme.value)}
+					{#each THEME_OPTIONS as theme (theme.value)}
 						<button
 							onclick={() => setTheme(theme.value)}
 							aria-pressed={appStore.theme === theme.value}

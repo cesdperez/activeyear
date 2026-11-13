@@ -1,6 +1,6 @@
-import type { Theme } from '#lib/types/index.js';
+import { THEME_OPTIONS } from '#lib/constants/export.js';
 
-const THEMES = ['neon', 'minimalist', 'retro'] as const satisfies readonly Theme[];
+const THEMES = THEME_OPTIONS.map((theme) => theme.value);
 
 export const EVENT_VALUES = {
 	upload_success: ['1-10', '11-50', '51-200', '200+'],
