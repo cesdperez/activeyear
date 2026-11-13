@@ -32,8 +32,8 @@ export const common: typeof en = {
 		activityLabel: (count: number) => plural('fr', count, { one: 'Activité', other: 'Activités' })
 	},
 	pizza: (count: number) =>
-		plural('fr', count, { one: 'part de pizza brûlée', other: 'parts de pizza brûlées' }),
-	lessPizza: 'Moins d’une part de pizza brûlée',
+		plural('fr', count, { one: 'part de pizza éliminée', other: 'parts de pizza éliminées' }),
+	lessPizza: 'Moins d’une part de pizza éliminée',
 	earthPartial: (share) => `${share} d’un tour du monde`,
 	earthLaps: (laps) => `${laps} tours du monde`,
 	everestPartial: (share) => `${share} de la hauteur de l’Everest`,

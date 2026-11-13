@@ -31,9 +31,9 @@ export const common: typeof en = {
 		activityLabel: (count: number) =>
 			plural('de', count, { one: 'Aktivität', other: 'Aktivitäten' })
 	},
-	pizza: (count: number) =>
-		plural('de', count, { one: 'verbranntes Stück Pizza', other: 'verbrannte Stücke Pizza' }),
-	lessPizza: 'Weniger als ein Stück Pizza verbrannt',
+	// "Stück" stays singular after a number, as in "3 Stück Pizza".
+	pizza: () => 'Stück Pizza abtrainiert',
+	lessPizza: 'Weniger als ein Stück Pizza abtrainiert',
 	earthPartial: (share) => `${share} einer Erdumrundung`,
 	earthLaps: (laps) => `${laps} Erdumrundungen`,
 	everestPartial: (share) => `${share} der Höhe des Mount Everest`,

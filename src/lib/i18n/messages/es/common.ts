@@ -34,8 +34,11 @@ export const common: typeof en = {
 			plural('es', count, { one: 'Actividad', other: 'Actividades' })
 	},
 	pizza: (count: number) =>
-		plural('es', count, { one: 'porción de pizza quemada', other: 'porciones de pizza quemadas' }),
-	lessPizza: 'Menos de una porción de pizza quemada',
+		plural('es', count, {
+			one: 'porción de pizza compensada',
+			other: 'porciones de pizza compensadas'
+		}),
+	lessPizza: 'Menos de una porción de pizza compensada',
 	earthPartial: (share) => `${share} de una vuelta al mundo`,
 	earthLaps: (laps) => `${laps} vueltas al mundo`,
 	everestPartial: (share) => `${share} de la altura del Everest`,
