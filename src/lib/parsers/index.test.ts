@@ -48,19 +48,11 @@ describe('parseActivityCsv', () => {
 		expect(garminParser.detect(stravaCsv)).toBe(false);
 	});
 
-	it('rejects a CSV that no parser recognises', () => {
-		const spanishGarminCsv =
-			'Tipo de actividad,Fecha,Título,Distancia\nCarrera,2025-01-01 08:00:00,Run,10.0';
-
-		const result = parseActivityCsv(spanishGarminCsv, 2025);
-
-		expect(result.activities).toEqual([]);
-		expect(result.errors).toEqual([
-			expect.objectContaining({
-				type: 'unsupported-format',
-				reason: 'unrecognised',
-				message: expect.stringContaining('English')
-			})
-		]);
+	it('parses a Spanish Garmin export', () => {
+		const csv = 'Tipo de actividad,Fecha,Título,Distancia\nCarrera,2025-01-01 08:00:00,Run,10.0';
+		const result = parseActivityCsv(csv, 2025);
+		expect(result.errors).toEqual([]);
+		expect(result.activities).toHaveLength(1);
+		expect(result.activities[0]).toMatchObject({ type: 'running', distance: 10 });
 	});
 });

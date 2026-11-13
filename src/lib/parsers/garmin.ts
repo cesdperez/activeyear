@@ -1,4 +1,5 @@
 import Papa from 'papaparse';
+import { GARMIN_LOCALES } from './garminLocales.js';
 import {
 	firstLine,
 	readHeaderCells,
@@ -23,7 +24,7 @@ import {
 	TYPES_WITHOUT_DISTANCE
 } from '../constants/parsing.js';
 
-// Garmin localises headers, so other languages miss these. Every Garmin export has all three.
+// Garmin exports contain all three headers after translation.
 const KEY_HEADERS = ['Activity Type', 'Date', 'Distance'];
 
 const ACTIVITY_TYPE_MAP: Record<string, ActivityType> = {
@@ -118,7 +119,7 @@ export function parseGarminTime(timeStr: string): number {
 	if (!timeStr || timeStr === '--') return 0;
 
 	// Handle MM:SS.S format (e.g., "00:02:10.0")
-	const parts = timeStr.split(':');
+	const parts = timeStr.replace(',', '.').split(':');
 	if (parts.length === 3) {
 		const hours = parseInt(parts[0], 10);
 		const minutes = parseInt(parts[1], 10);
@@ -244,12 +245,16 @@ function isClockTime(hours: number, minutes: number, seconds: number): boolean {
 }
 
 /**
- * Parse YYYY-MM-DD HH:MM:SS, returning null for other formats or impossible dates.
+ * Parse Garmin or spreadsheet dates, returning null for impossible dates.
  */
 export function parseGarminDate(dateStr: string): Date | null {
-	const match = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(dateStr.trim());
-	if (!match) return null;
-	const [year, month, day, hours, minutes, seconds] = match.slice(1).map(Number);
+	const input = dateStr.trim();
+	const iso = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(input);
+	const local = /^(\d{2})([/.])(\d{2})\2(\d{4}) (\d{2}):(\d{2})(?::(\d{2}))?$/.exec(input);
+	if (!iso && !local) return null;
+	const [year, month, day, hours, minutes, seconds] = iso
+		? iso.slice(1).map(Number)
+		: [local![4], local![3], local![1], local![5], local![6], local![7] ?? '0'].map(Number);
 	if (!isCalendarDate(year, month, day) || !isClockTime(hours, minutes, seconds)) return null;
 	return new Date(year, month - 1, day, hours, minutes, seconds);
 }
@@ -493,11 +498,12 @@ function flattenWholeRowQuoted(rows: string[][], content: string): string | null
 	return allRows.map((row) => (row.length === 1 ? row[0] : Papa.unparse([row]))).join('\n');
 }
 
-function readActivity(row: GarminRawActivity, date: Date): Activity {
-	const type = mapActivityType(row['Activity Type']);
+function readActivity(row: GarminRawActivity, date: Date, types: Record<string, string>): Activity {
+	const activityType = types[row['Activity Type']] ?? row['Activity Type'];
+	const type = mapActivityType(activityType);
 	const distance = TYPES_WITHOUT_DISTANCE.has(type)
 		? 0
-		: DISTANCE_IN_METERS_TYPES.has(row['Activity Type'])
+		: DISTANCE_IN_METERS_TYPES.has(activityType)
 			? parseGarminMeterDistance(row['Distance'])
 			: parseGarminDistance(row['Distance']);
 
@@ -551,6 +557,19 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 	const errors: ParseError[] = [];
 	const years = new Set<number>();
 
+	const delimiter = detectDelimiter(firstLine(csvContent));
+	if (delimiter === ';') {
+		csvContent = Papa.unparse(Papa.parse<string[]>(csvContent, { delimiter: ';' }).data);
+	}
+	const headers = readHeaderCells(firstLine(csvContent));
+	const locale = detectLocale(headers);
+	const lines = csvContent.split(/\r?\n/);
+	const headerIndex = findHeaderIndex(lines);
+	if (headerIndex !== -1 && locale) {
+		lines[headerIndex] = Papa.unparse([headers.map((header) => locale.headers[header] ?? header)]);
+		csvContent = lines.join('\n');
+	}
+
 	const firstPass = Papa.parse<string[]>(csvContent, {
 		header: false,
 		skipEmptyLines: true
@@ -585,21 +604,50 @@ export function parseGarminCsv(csvContent: string, targetYear: number = TARGET_Y
 		}
 
 		years.add(date.getFullYear());
-		if (isInYear(date, targetYear)) activities.push(readActivity(row, date));
+		if (isInYear(date, targetYear)) activities.push(readActivity(row, date, locale?.types ?? {}));
 	});
 
 	return { source: 'garmin', activities, errors, yearsInFile: sortedYears(years), rowCount };
 }
 
-// Quotes are dropped before splitting so a header row wrapped whole in quotes still matches.
+function detectDelimiter(line: string): ',' | ';' {
+	let quoted = false;
+	let commas = 0;
+	let semicolons = 0;
+	for (let i = 0; i < line.length; i++) {
+		if (line[i] === '"') {
+			if (quoted && line[i + 1] === '"') i++;
+			else quoted = !quoted;
+		} else if (!quoted && line[i] === ',') commas++;
+		else if (!quoted && line[i] === ';') semicolons++;
+	}
+	return semicolons > commas ? ';' : ',';
+}
+
+function detectLocale(headers: string[]) {
+	if (KEY_HEADERS.every((header) => headers.includes(header))) return undefined;
+	let best = 0;
+	let selected: (typeof GARMIN_LOCALES)[number] | undefined;
+	for (const locale of GARMIN_LOCALES) {
+		const score = headers.filter((header) => header in locale.headers).length;
+		if (score > best) {
+			best = score;
+			selected = locale;
+		}
+	}
+	return selected;
+}
+
 function hasGarminHeaders(csvContent: string): boolean {
-	const headers = new Set(
-		firstLine(csvContent)
-			.replaceAll('"', '')
-			.split(',')
-			.map((h) => h.trim())
-	);
-	return KEY_HEADERS.every((h) => headers.has(h));
+	const line = firstLine(csvContent);
+	const delimiter = detectDelimiter(line);
+	const headers = line
+		.replaceAll('"', '')
+		.split(delimiter)
+		.map((h) => h.trim());
+	const locale = detectLocale(headers);
+	const translated = new Set(headers.map((header) => locale?.headers[header] ?? header));
+	return KEY_HEADERS.every((header) => translated.has(header));
 }
 
 export const garminParser: ActivityParser = {
