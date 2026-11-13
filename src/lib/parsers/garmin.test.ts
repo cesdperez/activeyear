@@ -313,6 +313,19 @@ describe('parseGarminCsv moving time', () => {
 		const result = parseGarminCsv(`${header},Moving Time,Total Time\n${row},--,00:16:00`, 2026);
 		expect(result.activities[0].duration).toBe(960);
 	});
+
+	it.each([
+		['Strength Training', '0.00'],
+		['Yoga', '--'],
+		['Rock Climbing', '0.10'],
+		['Pool Swim', '"1,586"']
+	])('keeps the rests of a %s session by using Time', (type, distance) => {
+		const result = parseGarminCsv(
+			`${header},Moving Time\n${type},2026-11-03 21:31:56,Session,${distance},118,01:12:37,00:23:02`,
+			2026
+		);
+		expect(result.activities[0].duration).toBe(4357);
+	});
 });
 
 describe('parseGarminCsv favorite field', () => {

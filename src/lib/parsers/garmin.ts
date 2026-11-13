@@ -269,6 +269,12 @@ function deduplicateHeaders(csvContent: string): string {
 	return lines.join('\n');
 }
 
+// Moving time drops the rests between sets and pool lengths, which are part of those sessions.
+function readDuration(row: GarminRawActivity, includeRests: boolean): number {
+	const timer = parseGarminTime(row['Total Time'] || row['Time']);
+	return (includeRests ? timer : 0) || parseGarminTime(row['Moving Time']) || timer;
+}
+
 function readActivity(
 	row: GarminRawActivity,
 	date: Date,
@@ -299,8 +305,7 @@ function readActivity(
 		type,
 		title: row['Title'] || '',
 		distance: distance * distanceFactor,
-		duration:
-			parseGarminTime(row['Moving Time']) || parseGarminTime(row['Total Time'] || row['Time']),
+		duration: readDuration(row, distance === 0 || activityType === 'Pool Swim'),
 		calories: parseGarminCalories(row['Calories']),
 		elevation: Math.round(
 			parseGarminElevation(row['Total Ascent']) * (imperial ? FEET_TO_METERS : 1)
