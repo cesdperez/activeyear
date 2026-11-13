@@ -10,7 +10,7 @@ export const exportMessages: typeof en = {
 	focused: 'Hoofdstatistiek op de overzichtskaart',
 	aboutLightmile: 'Over Lightmile',
 	lightmileInfo:
-		'Lightmile is de hardloopclub die ik mijn community noem. Ben je eens in de buurt van Eindhoven, dan ben je welkom om mee te lopen.',
+		'Lightmile is de hardloopclub die ik mijn community noem. Ben je eens in de buurt van Eindhoven? Loop een keer met ons mee!',
 	theme: 'Thema',
 	generating: 'Bezig met maken...',
 	download: 'Alle afbeeldingen downloaden',

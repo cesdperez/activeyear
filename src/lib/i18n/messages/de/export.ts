@@ -10,7 +10,7 @@ export const exportMessages: typeof en = {
 	focused: 'Hauptwert auf der Zusammenfassungskarte',
 	aboutLightmile: 'Über Lightmile',
 	lightmileInfo:
-		'Lightmile ist der Laufclub, den ich meine Community nenne. Wenn du einmal in Eindhoven bist, bist du herzlich eingeladen, mitzulaufen.',
+		'Lightmile ist der Laufclub, den ich meine Community nenne. Wenn du mal in Eindhoven bist, lauf doch mit uns!',
 	theme: 'Design',
 	generating: 'Wird erstellt...',
 	download: 'Alle Bilder herunterladen',

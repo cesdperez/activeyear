@@ -9,7 +9,7 @@ export const exportMessages = {
 	focused: 'Headline stat on the summary card',
 	aboutLightmile: 'About Lightmile',
 	lightmileInfo:
-		"Lightmile is the run club I call my community. If you're ever around Eindhoven, you're welcome to join us.",
+		"Lightmile is the run club I call my community. If you're ever around Eindhoven, join us for a run!",
 	theme: 'Theme',
 	generating: 'Generating...',
 	download: 'Download all images',
