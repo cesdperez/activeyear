@@ -1,6 +1,12 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { KOFI_URL } from '../../src/lib/constants/site.js';
 import { DASHBOARD_HEADING, gotoUpload } from './helpers.js';
+
+// Below the highlights, which hide the floating support link while on screen.
+const scrollToRecords = (page: Page) =>
+	page
+		.getByRole('heading', { name: 'Personal records' })
+		.evaluate((heading) => heading.scrollIntoView({ block: 'start' }));
 
 test('event endpoint accepts only valid events', async ({ request, baseURL }) => {
 	for (const [body, status] of [
@@ -29,7 +35,7 @@ test('floating support link tracks its placement', async ({ page }) => {
 	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
 	const link = page.locator('a.fixed').filter({ hasText: 'Buy me a gel' });
 	await expect(link).toBeHidden();
-	await page.evaluate(() => window.scrollTo(0, 1000));
+	await scrollToRecords(page);
 	await expect(link).toBeVisible();
 	const event = page.waitForRequest(
 		(request) =>
@@ -40,7 +46,7 @@ test('floating support link tracks its placement', async ({ page }) => {
 
 	await page.locator('[data-support-placement="footer"] a').scrollIntoViewIfNeeded();
 	await expect(link).toBeHidden();
-	await page.evaluate(() => window.scrollTo(0, 1000));
+	await scrollToRecords(page);
 	await expect(link).toBeVisible();
 });
 
@@ -50,10 +56,48 @@ test('floating support link hides when export actions are visible on mobile', as
 	await page.getByRole('button', { name: /demo data/i }).click();
 	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
 	const link = page.locator('a.fixed').filter({ hasText: 'Buy me a gel' });
-	await page.evaluate(() => window.scrollTo(0, 1000));
+	await scrollToRecords(page);
 	await expect(link).toBeVisible();
 	await page.locator('#export-download').scrollIntoViewIfNeeded();
 	await expect(link).toBeHidden();
+});
+
+test('floating support link stays off the highlights controls and clear of focus', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/');
+	await page.getByRole('button', { name: /demo data/i }).click();
+	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
+	const link = page.locator('a.fixed').filter({ hasText: 'Buy me a gel' });
+	await scrollToRecords(page);
+	await expect(link).toBeVisible();
+	expect(await page.evaluate(() => document.documentElement.style.scrollPaddingBottom)).toBe(
+		'5rem'
+	);
+	await page.getByRole('searchbox', { name: 'Add an activity' }).scrollIntoViewIfNeeded();
+	await expect(link).toBeHidden();
+});
+
+test('support link text sits on the sentence baseline', async ({ page }) => {
+	await page.goto('/');
+	await page.getByRole('button', { name: /demo data/i }).click();
+	const footer = page.locator('[data-support-placement="footer"]');
+	await footer.scrollIntoViewIfNeeded();
+	const offset = await footer.evaluate((p) => {
+		const textBottom = (text: string) => {
+			const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT);
+			while (walker.nextNode()) {
+				if (!walker.currentNode.textContent!.includes(text)) continue;
+				const range = document.createRange();
+				range.selectNodeContents(walker.currentNode);
+				return range.getBoundingClientRect().bottom;
+			}
+			throw new Error(`no text ${text}`);
+		};
+		return Math.abs(textBottom('Buy me a gel') - textBottom('Enjoying ActiveYear?'));
+	});
+	expect(offset).toBeLessThan(1);
 });
 
 test('FAQ support link tracks its placement', async ({ page }) => {

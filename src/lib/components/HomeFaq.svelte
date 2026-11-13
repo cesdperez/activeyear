@@ -1,5 +1,5 @@
 <script lang="ts">
-	import KofiLink from './KofiLink.svelte';
+	import GelLink from './GelLink.svelte';
 	import { faqItems } from '#lib/data/faq.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { faqPageSchema } from '#lib/utils/structuredData.js';
@@ -22,11 +22,7 @@
 					{answer}
 					{#if tip}
 						{tip.text}
-						<KofiLink
-							placement="faq"
-							class="underline decoration-[var(--color-border)] underline-offset-4 hover:text-[var(--color-text-primary)] hover:decoration-[var(--color-accent)]"
-							>{tip.label}</KofiLink
-						>.
+						<GelLink placement="faq">{tip.label}</GelLink>.
 					{/if}
 				</dd>
 			</div>
