@@ -2,10 +2,10 @@ import { test, expect, type Download } from '@playwright/test';
 import { readFileSync } from 'fs';
 import { PNG } from 'pngjs';
 import { TARGET_YEAR } from '../../src/lib/constants/time.js';
-import { SAMPLE_CSV } from './helpers.js';
+import { gotoUpload, SAMPLE_CSV } from './helpers.js';
 
 test('Spanish upload and export', async ({ page }) => {
-	await page.goto('/es/');
+	await gotoUpload(page, '/es/');
 	await page.locator('input[type="file"]').setInputFiles(SAMPLE_CSV);
 	await expect(page.getByRole('heading', { name: `Tu ${TARGET_YEAR}` })).toBeVisible();
 	await expect(page.getByRole('heading', { name: 'Exportar' })).toBeVisible();

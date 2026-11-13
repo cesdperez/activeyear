@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { PNG } from 'pngjs';
 import pixelmatch from 'pixelmatch';
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
-import { uploadSample } from './helpers.js';
+import { gotoUpload, uploadSample } from './helpers.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -88,12 +88,12 @@ async function captureSpecificCardDownload(page: Page, cardIndex: number): Promi
 	};
 	page.on('download', downloadHandler);
 
-	await downloadButton.click();
-
-	// Wait for all 3 downloads to complete
-	await page.waitForTimeout(3000);
-
-	page.off('download', downloadHandler);
+	try {
+		await downloadButton.click();
+		await expect.poll(() => downloads.length, { timeout: 15000 }).toBe(3);
+	} finally {
+		page.off('download', downloadHandler);
+	}
 
 	// Get the download for our specific card
 	const download = downloads[cardIndex];
@@ -219,7 +219,7 @@ test.describe('Export Visual Fidelity', () => {
 
 	for (const [cardIndex, cardName] of CARDS.entries()) {
 		test(`German ${cardName} card snapshot`, async ({ page }) => {
-			await page.goto('/de/');
+			await gotoUpload(page, '/de/');
 			await page
 				.locator('input[type="file"]')
 				.first()

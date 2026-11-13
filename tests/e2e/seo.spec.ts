@@ -32,7 +32,6 @@ test.describe('Search and AI discovery', () => {
 
 	test('German page has localized metadata and language alternates', async ({ page }) => {
 		await page.goto('/de/');
-		await expect(page.locator('html')).toHaveAttribute('lang', 'de');
 		await expect(page).toHaveTitle(/Jahresrückblick/);
 		await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${SITE_URL}/de/`);
 		for (const locale of ['en', 'es', 'pt', 'fr', 'de', 'nl', 'x-default']) {
@@ -41,6 +40,17 @@ test.describe('Search and AI discovery', () => {
 				'href',
 				`${SITE_URL}${path}`
 			);
+		}
+	});
+
+	test('prerendered pages declare their language', async ({ request }) => {
+		for (const [path, lang] of [
+			['/', 'en'],
+			['/de/', 'de']
+		]) {
+			const response = await request.get(path);
+			expect(response.status()).toBe(200);
+			expect(await response.text()).toMatch(new RegExp(`<html\\s+lang="${lang}"`));
 		}
 	});
 

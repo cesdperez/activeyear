@@ -54,6 +54,14 @@ test('dismisses stored language suggestion', async ({ page }) => {
 	await expect(page.getByRole('link', { name: 'Ver en español' })).toHaveCount(0);
 });
 
+test.describe('fresh German-speaking visitor', () => {
+	test.use({ locale: 'de-DE' });
+	test('suggests German', async ({ page }) => {
+		await page.goto('/');
+		await expect(page.getByRole('link', { name: 'Auf Deutsch ansehen' })).toBeVisible();
+	});
+});
+
 test.describe('without JavaScript', () => {
 	test.use({ javaScriptEnabled: false });
 	test('provides language links', async ({ page }) => {
