@@ -33,6 +33,7 @@ test('phone visitors see the demo before upload, desktop visitors see it after',
 	const hint = page.getByText('Export on a computer, or try the demo.');
 	const demo = page.getByRole('button', { name: /demo data/i });
 	const upload = page.locator('.upload-zone');
+	await expect(demo).toHaveCount(1);
 	await expect(hint).toBeVisible();
 	const mobileDemo = (await demo.boundingBox())!;
 	const mobileUpload = (await upload.boundingBox())!;
@@ -44,6 +45,8 @@ test('phone visitors see the demo before upload, desktop visitors see it after',
 	await page.setViewportSize({ width: 1280, height: 800 });
 	await page.goto('/');
 	await expect(hint).toBeHidden();
+	await expect(demo).toHaveCount(1);
+	await expect(demo).toHaveCSS('border-top-width', '0px');
 	const desktopDemo = (await demo.boundingBox())!;
 	const desktopUpload = (await upload.boundingBox())!;
 	expect(desktopDemo.y).toBeGreaterThan(desktopUpload.y + desktopUpload.height);
