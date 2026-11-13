@@ -36,6 +36,13 @@ describe('upload', () => {
 		expect(track).toHaveBeenCalledExactlyOnceWith('upload_error', 'unsupported-file-type');
 	});
 
+	it('asks to unzip a .zip export', async () => {
+		await uploadStore.processFile(new File(['PK'], 'export_123.zip'));
+
+		expect(uploadStore.error).toEqual({ type: 'zip-archive' });
+		expect(track).toHaveBeenCalledExactlyOnceWith('upload_error', 'unsupported-file-type');
+	});
+
 	it('loads a saved JSON year', async () => {
 		await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
 		const activities = yearData.activities;

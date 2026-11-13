@@ -118,7 +118,7 @@
 				aria-hidden="true"
 			/>
 		</span>
-		<span class="mb-2 block text-lg text-[var(--color-text-primary)]"
+		<span class="mb-2 block text-lg text-balance text-[var(--color-text-primary)]"
 			>{uploadStore.error ? uploadErrorMessage(uploadStore.error, i18n.locale) : ''}</span
 		>
 		<span class="block text-sm text-[var(--color-text-dim)]">{i18n.m.upload.retry}</span>

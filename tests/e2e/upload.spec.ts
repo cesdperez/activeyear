@@ -12,7 +12,7 @@ import {
 	uploadSample
 } from './helpers.js';
 
-const WRONG_YEAR_MESSAGE = `This file has activities from ${TARGET_YEAR - 1}, none from ${TARGET_YEAR}`;
+const WRONG_YEAR_MESSAGE = `This file has activities from ${TARGET_YEAR - 1}, none from ${TARGET_YEAR}. Export your activities again to include ${TARGET_YEAR}.`;
 
 async function uploadFile(page: Page, csv: string) {
 	await page.locator('input[type="file"]').setInputFiles({
@@ -286,7 +286,7 @@ test.describe('Upload Flow', () => {
 		await uploadFile(page, [garminCsv([]), ...rows].join('\n'));
 
 		await expect(page.getByRole('alert')).toHaveText(
-			'3 rows could not be read, e.g. row 2: the date is not valid',
+			'3 rows could not be read, e.g. row 2: the date is not valid.',
 			{ timeout: 10000 }
 		);
 	});

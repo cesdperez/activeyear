@@ -69,6 +69,14 @@ function parseActivity(value: unknown): Activity | null {
 	};
 }
 
+// Garmin's account data export holds activities in *_summarizedActivities.json.
+function isGarminDataExport(parsed: unknown): boolean {
+	return (
+		Array.isArray(parsed) &&
+		parsed.some((item) => item && typeof item === 'object' && 'summarizedActivitiesExport' in item)
+	);
+}
+
 export function parseSavedYear(
 	json: string,
 	year: number
@@ -81,6 +89,7 @@ export function parseSavedYear(
 	} catch {
 		return { ok: false, error: { type: 'invalid-file' } };
 	}
+	if (isGarminDataExport(parsed)) return { ok: false, error: { type: 'garmin-data-export' } };
 	if (
 		!parsed ||
 		typeof parsed !== 'object' ||
@@ -107,6 +116,8 @@ export function parseSavedYear(
 
 export function savedYearErrorMessage(error: SavedYearError, locale: Locale = 'en'): string {
 	switch (error.type) {
+		case 'garmin-data-export':
+			return MESSAGES[locale].upload.garminDataExport;
 		case 'unsupported-version':
 			return MESSAGES[locale].upload.unsupportedVersion;
 		case 'wrong-year':

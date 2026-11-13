@@ -8,7 +8,7 @@ import type {
 	GarminUnits
 } from '#lib/types/index.js';
 import { activityCountBucket, sportsCountBucket } from '#lib/utils/events.js';
-import { hasYearFileExtension, isSavedYearFileName, loadYearFile } from '#lib/utils/yearFile.js';
+import { isSavedYearFileName, loadYearFile, unsupportedFileError } from '#lib/utils/yearFile.js';
 import { describeSkippedRows } from '#lib/utils/uploadErrors.js';
 import { decodeText } from '#lib/utils/decodeText.js';
 import { TARGET_YEAR } from '#lib/constants/time.js';
@@ -54,8 +54,9 @@ class UploadStore {
 	}
 
 	async processFile(file: File) {
-		if (!hasYearFileExtension(file.name)) {
-			this.#fail('unsupported-file-type', { type: 'invalid-extension' });
+		const unsupported = unsupportedFileError(file.name);
+		if (unsupported) {
+			this.#fail('unsupported-file-type', unsupported);
 			return;
 		}
 

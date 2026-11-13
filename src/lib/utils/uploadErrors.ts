@@ -60,7 +60,9 @@ export function yearsMessage(year: number, yearsInFile: number[], locale: Locale
 export function unusableFileMessage(error: UnusableFileError, locale: Locale = 'en'): string {
 	if (error.type === 'rows-rejected') return skippedRowsMessage(error.skipped, locale);
 	const years = yearsMessage(error.year, error.yearsInFile, locale);
-	return error.skipped ? `${years}. ${skippedRowsMessage(error.skipped, locale)}` : years;
+	const skipped = error.skipped ? skippedRowsMessage(error.skipped, locale) : null;
+	const exportAgain = MESSAGES[locale].upload.exportAgain(error.year);
+	return [years, skipped, exportAgain].filter(Boolean).join(' ');
 }
 
 export function skippedRowsNotice(count: number, locale: Locale = 'en'): string {
@@ -72,6 +74,8 @@ export function uploadErrorMessage(error: UploadError, locale: Locale): string {
 	switch (error.type) {
 		case 'invalid-extension':
 			return m.invalidExtension;
+		case 'zip-archive':
+			return m.zipArchive;
 		case 'unrecognised':
 			return m.unrecognised;
 		case 'strava-unsupported-language':
