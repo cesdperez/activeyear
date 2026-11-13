@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import type { Activity, ActivitySource, Unit } from '#lib/types/index.js';
 	import { Star } from 'phosphor-svelte';
 	import SectionHeading from './SectionHeading.svelte';
@@ -13,12 +14,12 @@
 
 <section class="mb-16">
 	<SectionHeading
-		title="Highlights"
+		title={i18n.m.dashboard.highlights}
 		class={source === 'strava' && highlights.length > 0 ? 'mb-2' : 'mb-8'}
 	/>
 	{#if source === 'strava' && highlights.length > 0}
 		<p class="mb-8 text-sm text-[var(--color-text-muted)]">
-			Your longest sessions of the year. Strava exports don't include favorites.
+			{i18n.m.dashboard.stravaHighlights}
 		</p>
 	{/if}
 
@@ -38,11 +39,10 @@
 			>
 				<Star class="h-10 w-10 text-yellow-500" weight="fill" aria-hidden="true" />
 			</div>
-			<p class="mb-4 text-lg text-[var(--color-text-muted)]">No highlights yet</p>
+			<p class="mb-4 text-lg text-[var(--color-text-muted)]">{i18n.m.dashboard.noHighlights}</p>
 			{#if source === 'garmin'}
 				<p class="max-w-md text-sm text-balance text-[var(--color-text-muted)]">
-					Mark activities as favorites in Garmin Connect by tapping the star icon on any activity,
-					then re-export your data to see them here.
+					{i18n.m.dashboard.garminFavoritesHint}
 				</p>
 			{/if}
 		</div>

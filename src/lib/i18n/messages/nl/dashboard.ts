@@ -1,3 +1,4 @@
+import { plural } from '#lib/i18n/plural.js';
 import type { dashboard as en } from '../en/dashboard.js';
 
 export const dashboard: typeof en = {
@@ -15,10 +16,28 @@ export const dashboard: typeof en = {
 	disableCelebration: 'Feestmodus uitschakelen',
 	enableCelebration: 'Feestmodus inschakelen',
 	celebrationConfetti: 'Feestelijke confetti',
-	yourYear: 'Jouw',
-	across: 'op',
-	activeDay: 'actieve dag',
-	activeDays: 'actieve dagen',
+	yourYear: (year) => `Jouw jaar ${year}`,
+	activitySummaryActivities: (n, count) =>
+		`${n} ${plural('nl', count, { one: 'activiteit', other: 'activiteiten' })}`,
+	activitySummaryDays: (n, count) =>
+		`op ${n} ${plural('nl', count, { one: 'actieve dag', other: 'actieve dagen' })}`,
+	activeDaysLabel: (count) => plural('nl', count, { one: 'Actieve dag', other: 'Actieve dagen' }),
+	streakCaption: (count) =>
+		plural('nl', count, { one: 'actieve dag op rij', other: 'meeste actieve dagen op rij' }),
+	dayStreak: 'Dagen op rij',
+	percentOfYear: (percent) => `${percent} van het jaar`,
+	longestDistance: 'Langste afstand',
+	longestDuration: 'Langste duur',
+	biggestBurn: 'Meeste calorieën',
+	breakdownMetric: 'Maatstaf voor verdeling',
+	activities: 'Activiteiten',
+	time: 'Tijd',
+	highlights: 'Hoogtepunten',
+	stravaHighlights: 'Je langste trainingen van het jaar. Strava-exports bevatten geen favorieten.',
+	noHighlights: 'Nog geen hoogtepunten',
+	garminFavoritesHint:
+		'Markeer activiteiten als favoriet in Garmin Connect door op het sterretje bij een activiteit te tikken en exporteer je gegevens opnieuw om ze hier te zien.',
+	quarter: (quarter) => `K${quarter}`,
 	jumpExport: 'Naar exporteren',
 	fewerStats: 'Minder statistieken',
 	moreStats: 'Meer statistieken',

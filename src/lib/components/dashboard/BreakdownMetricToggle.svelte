@@ -1,16 +1,17 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import type { BreakdownMetric } from '#lib/types/index.js';
 
-	const options: { metric: BreakdownMetric; label: string }[] = [
-		{ metric: 'count', label: 'Activities' },
-		{ metric: 'duration', label: 'Time' }
-	];
+	const options: { metric: BreakdownMetric; label: string }[] = $derived([
+		{ metric: 'count', label: i18n.m.dashboard.activities },
+		{ metric: 'duration', label: i18n.m.dashboard.time }
+	]);
 </script>
 
 <div
 	role="group"
-	aria-label="Breakdown metric"
+	aria-label={i18n.m.dashboard.breakdownMetric}
 	class="flex self-start rounded-lg bg-[var(--color-surface-elevated)] p-1"
 >
 	{#each options as { metric, label } (metric)}

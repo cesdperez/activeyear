@@ -21,35 +21,36 @@
 	}
 </script>
 
+{#snippet summaryPhrase(phrase: string, count: string)}
+	{@const [before, after] = phrase.split(count)}
+	<span class="text-[var(--color-text-muted)]">
+		{before}<span class="font-mono font-bold text-[var(--color-accent)]">{count}</span>{after}
+	</span>
+{/snippet}
+
 <header class="mb-16 text-center md:mb-24">
 	<h1
-		class="glow-text mb-6 text-5xl font-bold tracking-tight md:text-7xl"
+		class="glow-text mb-6 text-5xl font-bold tracking-tight wrap-anywhere md:text-7xl"
 		tabindex="-1"
 		{@attach (heading) => heading.focus()}
 	>
-		{i18n.m.dashboard.yourYear}
-		{TARGET_YEAR}
+		{i18n.m.dashboard.yourYear(TARGET_YEAR)}
 	</h1>
 	<div
 		data-testid="activity-summary"
 		class="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full border border-[rgba(255,255,255,0.05)] bg-[var(--color-surface-elevated)] px-4 py-2"
 	>
-		<span class="inline-flex items-center gap-2 whitespace-nowrap">
-			<span class="font-mono font-bold text-[var(--color-accent)]"
-				>{formatCount(i18n.locale, activityCount)}</span
-			>
-			<span class="text-[var(--color-text-muted)]"
-				>{i18n.m.common.nouns.activity(activityCount)} {i18n.m.dashboard.across}</span
-			>
-		</span>
-		<span class="inline-flex items-center gap-2 whitespace-nowrap">
-			<span class="font-mono font-bold text-[var(--color-accent)]"
-				>{formatCount(i18n.locale, activeDays)}</span
-			>
-			<span class="text-[var(--color-text-muted)]"
-				>{activeDays === 1 ? i18n.m.dashboard.activeDay : i18n.m.dashboard.activeDays}</span
-			>
-		</span>
+		{@render summaryPhrase(
+			i18n.m.dashboard.activitySummaryActivities(
+				formatCount(i18n.locale, activityCount),
+				activityCount
+			),
+			formatCount(i18n.locale, activityCount)
+		)}
+		{@render summaryPhrase(
+			i18n.m.dashboard.activitySummaryDays(formatCount(i18n.locale, activeDays), activeDays),
+			formatCount(i18n.locale, activeDays)
+		)}
 	</div>
 	{#if skippedRowCount > 0}
 		<p class="mt-3 flex items-center justify-center gap-1.5 text-sm text-[var(--color-text-muted)]">

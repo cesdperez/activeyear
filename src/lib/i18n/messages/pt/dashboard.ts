@@ -1,3 +1,4 @@
+import { plural } from '#lib/i18n/plural.js';
 import type { dashboard as en } from '../en/dashboard.js';
 
 export const dashboard: typeof en = {
@@ -15,10 +16,32 @@ export const dashboard: typeof en = {
 	disableCelebration: 'Desativar modo de celebração',
 	enableCelebration: 'Ativar modo de celebração',
 	celebrationConfetti: 'Confete de celebração',
-	yourYear: 'Seu',
-	across: 'em',
-	activeDay: 'dia ativo',
-	activeDays: 'dias ativos',
+	yourYear: (year) => `Seu ${year}`,
+	activitySummaryActivities: (n, count) =>
+		`${n} ${plural('pt', count, { one: 'atividade', other: 'atividades' })}`,
+	activitySummaryDays: (n, count) =>
+		`em ${n} ${plural('pt', count, { one: 'dia ativo', other: 'dias ativos' })}`,
+	activeDaysLabel: (count) => plural('pt', count, { one: 'Dia ativo', other: 'Dias ativos' }),
+	streakCaption: (count) =>
+		plural('pt', count, {
+			one: 'dia ativo consecutivo',
+			other: 'máximo de dias ativos consecutivos'
+		}),
+	dayStreak: 'Sequência de dias',
+	percentOfYear: (percent) => `${percent} do ano`,
+	longestDistance: 'Maior distância',
+	longestDuration: 'Maior duração',
+	biggestBurn: 'Mais calorias queimadas',
+	breakdownMetric: 'Métrica da distribuição',
+	activities: 'Atividades',
+	time: 'Tempo',
+	highlights: 'Destaques',
+	stravaHighlights:
+		'Suas sessões mais longas do ano. As exportações do Strava não incluem favoritos.',
+	noHighlights: 'Ainda não há destaques',
+	garminFavoritesHint:
+		'Marque atividades como favoritas no Garmin Connect tocando na estrela de qualquer atividade e exporte seus dados novamente para vê-las aqui.',
+	quarter: (quarter) => `T${quarter}`,
 	jumpExport: 'Ir para exportação',
 	fewerStats: 'Menos estatísticas',
 	moreStats: 'Mais estatísticas',

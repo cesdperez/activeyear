@@ -79,7 +79,7 @@
 			<div
 				class="mb-4 text-center text-[18px] font-bold tracking-widest text-[var(--color-text-muted)] uppercase"
 			>
-				When You Train
+				{i18n.m.dashboard.whenYouTrain}
 			</div>
 			<div
 				class="flex items-end justify-between gap-3"

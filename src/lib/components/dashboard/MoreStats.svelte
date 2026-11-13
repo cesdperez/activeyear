@@ -61,7 +61,7 @@
 								<h4
 									class="text-xs font-medium tracking-wider text-[var(--color-text-muted)] uppercase"
 								>
-									Q{quarter.quarter}
+									{i18n.m.dashboard.quarter(quarter.quarter)}
 								</h4>
 								{#if quarter.count}
 									<p class="mt-2 text-xl font-bold break-words text-[var(--color-accent)]">

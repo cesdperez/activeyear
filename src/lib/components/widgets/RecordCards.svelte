@@ -18,19 +18,19 @@
 	const cards = $derived([
 		{
 			icon: Trophy,
-			label: 'Longest Distance',
+			label: i18n.m.dashboard.longestDistance,
 			record: records.longestDistance,
 			format: (value: number) => formatDistance(i18n.locale, value, unit)
 		},
 		{
 			icon: Hourglass,
-			label: 'Longest Duration',
+			label: i18n.m.dashboard.longestDuration,
 			record: records.longestDuration,
 			format: (value: number) => formatDuration(i18n.locale, value)
 		},
 		{
 			icon: Fire,
-			label: 'Biggest Burn',
+			label: i18n.m.dashboard.biggestBurn,
 			record: records.biggestBurn,
 			format: (value: number) => formatCalories(i18n.locale, value)
 		}

@@ -21,7 +21,7 @@
 	const maxValue = $derived(Math.max(...sports.map((s) => s[metric]), 1));
 </script>
 
-<div class={isDashboard ? 'w-full max-w-2xl flex-1 space-y-6' : 'flex-1 space-y-6'}>
+<div class={isDashboard ? 'w-full max-w-2xl min-w-0 flex-1 space-y-6' : 'min-w-0 flex-1 space-y-6'}>
 	{#each sports as sport, i (sport.type)}
 		{@const IconComponent = sportIcons[sport.type]}
 		{@const value = sport[metric]}
@@ -48,13 +48,13 @@
 					</div>
 					<span
 						class={isDashboard
-							? 'font-bold tracking-wide text-white uppercase'
-							: 'text-[24px] font-bold tracking-wide text-[var(--color-text-primary)] uppercase'}
+							? 'min-w-0 font-bold tracking-wide wrap-anywhere text-white uppercase'
+							: 'min-w-0 text-[24px] font-bold tracking-wide wrap-anywhere text-[var(--color-text-primary)] uppercase'}
 					>
 						{i18n.m.common.sports[sport.type]}
 					</span>
 				</div>
-				<div class="text-right">
+				<div class="shrink-0 text-right">
 					{#if isDashboard}
 						<span class="font-mono font-bold text-[var(--color-accent)]">
 							{formattedValue}

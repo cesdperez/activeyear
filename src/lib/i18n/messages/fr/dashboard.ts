@@ -1,3 +1,4 @@
+import { plural } from '#lib/i18n/plural.js';
 import type { dashboard as en } from '../en/dashboard.js';
 
 export const dashboard: typeof en = {
@@ -15,10 +16,32 @@ export const dashboard: typeof en = {
 	disableCelebration: 'Désactiver le mode célébration',
 	enableCelebration: 'Activer le mode célébration',
 	celebrationConfetti: 'Confettis de célébration',
-	yourYear: 'Votre',
-	across: 'sur',
-	activeDay: 'jour actif',
-	activeDays: 'jours actifs',
+	yourYear: (year) => `Votre année ${year}`,
+	activitySummaryActivities: (n, count) =>
+		`${n} ${plural('fr', count, { one: 'activité', other: 'activités' })}`,
+	activitySummaryDays: (n, count) =>
+		`sur ${n} ${plural('fr', count, { one: 'jour actif', other: 'jours actifs' })}`,
+	activeDaysLabel: (count) => plural('fr', count, { one: 'Jour actif', other: 'Jours actifs' }),
+	streakCaption: (count) =>
+		plural('fr', count, {
+			one: 'jour actif consécutif',
+			other: 'plus longue série de jours actifs'
+		}),
+	dayStreak: 'Jours de suite',
+	percentOfYear: (percent) => `${percent} de l’année`,
+	longestDistance: 'Plus longue distance',
+	longestDuration: 'Plus longue durée',
+	biggestBurn: 'Plus de calories brûlées',
+	breakdownMetric: 'Mesure de répartition',
+	activities: 'Activités',
+	time: 'Temps',
+	highlights: 'Temps forts',
+	stravaHighlights:
+		'Vos séances les plus longues de l’année. Les exports Strava n’incluent pas les favoris.',
+	noHighlights: 'Pas encore de temps forts',
+	garminFavoritesHint:
+		'Ajoutez des activités à vos favoris dans Garmin Connect en touchant l’étoile d’une activité, puis exportez à nouveau vos données pour les voir ici.',
+	quarter: (quarter) => `T${quarter}`,
 	jumpExport: 'Aller à l’export',
 	fewerStats: 'Moins de statistiques',
 	moreStats: 'Plus de statistiques',

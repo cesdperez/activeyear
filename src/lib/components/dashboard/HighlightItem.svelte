@@ -28,7 +28,9 @@
 				<Star class="mt-1 h-4 w-4 shrink-0 text-yellow-500" weight="fill" aria-hidden="true" />
 			{/if}
 			<span class="line-clamp-3 font-bold wrap-anywhere text-white" title={activity.title}>
-				{activity.title || i18n.m.common.sports[activity.type] || 'Activity'}
+				{activity.title ||
+					i18n.m.common.sports[activity.type] ||
+					i18n.m.common.nouns.activityLabel(1)}
 			</span>
 		</div>
 		<div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--color-text-muted)]">
