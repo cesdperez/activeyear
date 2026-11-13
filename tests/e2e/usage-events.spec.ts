@@ -52,3 +52,45 @@ test('records upload errors', async ({ page }) => {
 		.poll(() => payloads.map((payload) => JSON.parse(payload)))
 		.toEqual([{ event: 'upload_error', value: 'unsupported-file-type' }]);
 });
+
+test('records support link placements in order', async ({ page }) => {
+	const payloads: string[] = [];
+	await page.route('**/api/event', async (route) => {
+		payloads.push(route.request().postData() ?? '');
+		await route.fulfill({ status: 204 });
+	});
+	await page
+		.context()
+		.route('https://ko-fi.com/**', (route) => route.fulfill({ status: 200, body: '' }));
+
+	await uploadSample(page);
+	const download = page.waitForEvent('download');
+	await page.getByRole('button', { name: /Download All Images/i }).click();
+	await download;
+
+	const exportPopup = page.waitForEvent('popup');
+	await page
+		.locator('#export-panel')
+		.getByRole('link', { name: /Buy me a gel/i })
+		.click();
+	await (await exportPopup).close();
+	const footerPopup = page.waitForEvent('popup');
+	await page
+		.getByRole('link', { name: /Buy me a gel/i })
+		.last()
+		.click();
+	await (await footerPopup).close();
+
+	await expect
+		.poll(
+			() =>
+				payloads
+					.map((payload) => JSON.parse(payload))
+					.filter((payload) => payload.event === 'support_clicked'),
+			{ timeout: 15000 }
+		)
+		.toEqual([
+			{ event: 'support_clicked', value: 'export' },
+			{ event: 'support_clicked', value: 'footer' }
+		]);
+});
