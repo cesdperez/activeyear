@@ -43,6 +43,7 @@
 	import { page } from '$app/state';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import LanguagePicker from '#lib/components/LanguagePicker.svelte';
+	import BackToStart from '#lib/components/dashboard/BackToStart.svelte';
 	import DashboardToolbar from '#lib/components/dashboard/DashboardToolbar.svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
 	import { THEME_OPTIONS } from '#lib/constants/export.js';
@@ -65,6 +66,9 @@
 
 {#if page.route.id !== '/404'}
 	<MetaTags />
+	{#if appStore.status === 'ready'}
+		<div class="absolute top-4 left-4 z-20 flex h-9 items-center md:left-8"><BackToStart /></div>
+	{/if}
 	<div class="absolute top-4 right-4 z-20 flex items-center gap-2 md:right-8">
 		{#if appStore.status === 'ready'}<DashboardToolbar />{/if}
 		<LanguagePicker />

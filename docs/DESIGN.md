@@ -225,7 +225,7 @@ For upload/processing states:
 | 640-1024px | 2-column grid for stats. Preview centered.               |
 | > 1024px   | Sidebar controls + main preview area.                    |
 
-The language picker sits in the top-right corner of every page except the 404, 16px from the top and 16px from the right (32px from `md`). On the dashboard the toolbar (km/mi toggle and celebration button) sits directly to its left in the same row, vertically centred on it. The root layout holds both in one bar, so they cannot drift apart or overlap at any width. A small logotype button at the top-left returns dashboard users to the upload screen. The centred dashboard header sits below this row.
+The language picker sits in the top-right corner of every page except the 404, 16px from the top and 16px from the right (32px from `md`). On the dashboard the toolbar (km/mi toggle and celebration button) sits directly to its left in the same row, vertically centred on it. The root layout holds both in one bar, so they cannot drift apart or overlap at any width. A back-to-start control with an arrow and label sits at the top-left on the dashboard, mirroring the right bar and returning users to the upload screen. The centred dashboard header sits below this row.
 
 ### Export Canvas
 

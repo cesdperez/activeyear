@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { observeSupport } from '#lib/stores/supportVisibility.svelte.js';
 	import { Lightning } from 'phosphor-svelte';
 	import { track } from '#lib/analytics/track.js';
 	import { KOFI_URL } from '#lib/constants/site.js';
@@ -15,6 +16,7 @@
 	{placement === 'export' ? i18n.m.dashboard.supportExport : i18n.m.dashboard.supportFooter}
 	<!-- eslint-disable svelte/no-navigation-without-resolve -- external site, not an app route -->
 	<a
+		{@attach observeSupport}
 		href={KOFI_URL}
 		target="_blank"
 		rel="noopener"
