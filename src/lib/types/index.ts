@@ -205,3 +205,26 @@ export interface SportAverage {
 export type Locale = (typeof import('#lib/constants/locales.js').LOCALES)[number];
 
 export type Messages = typeof import('#lib/i18n/messages/en/index.js').en;
+
+export interface SummaryCardData {
+	stats: YearStats | null;
+	breakdown: SportBreakdown[];
+	records: PersonalRecords | null;
+}
+
+export interface SummaryCardSettings {
+	theme: Theme;
+	unit: Unit;
+	summaryMetric: SummaryMetric;
+	breakdownMetric: BreakdownMetric;
+}
+
+export interface BreakdownCardData {
+	stats: YearStats | null;
+	breakdown: SportBreakdown[] | null;
+}
+
+export interface BreakdownCardSettings {
+	theme: Theme;
+	breakdownMetric: BreakdownMetric;
+}

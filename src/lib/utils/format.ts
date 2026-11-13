@@ -17,6 +17,17 @@ const PIZZA_SLICE_CALORIES = 285;
 const KM_TO_MILES = 0.621371;
 const METERS_TO_FEET = 3.28084;
 
+export function roundedDistance(km: number, unit: Unit): number {
+	const value = unit === 'miles' ? km * KM_TO_MILES : km;
+	return Number(value.toFixed(1));
+}
+
+export function roundedElevation(meters: number, unit: Unit): number {
+	const step = unit === 'miles' ? 50 : 10;
+	const value = unit === 'miles' ? meters * METERS_TO_FEET : meters;
+	return Math.round(value / step) * step;
+}
+
 /**
  * Format distance with appropriate precision
  * - Under 100: one decimal
@@ -26,7 +37,7 @@ export function formatDistance(locale: Locale, km: number, unit: Unit = 'km'): s
 	const value = unit === 'miles' ? km * KM_TO_MILES : km;
 	const suffix = unit === 'miles' ? 'mi' : 'km';
 
-	const oneDecimal = value.toFixed(1);
+	const oneDecimal = roundedDistance(km, unit);
 	if (Number(oneDecimal) >= 100) {
 		return `${formatCount(locale, Math.round(value))}${suffix}`;
 	}
@@ -99,11 +110,10 @@ export function formatCalories(locale: Locale, calories: number): string {
  */
 export function formatElevation(locale: Locale, meters: number, unit: Unit = 'km'): string {
 	if (unit === 'miles') {
-		const feet = meters * METERS_TO_FEET;
-		const rounded = Math.round(feet / 50) * 50; // Round to nearest 50ft
+		const rounded = roundedElevation(meters, unit);
 		return `${rounded.toLocaleString(INTL_LOCALES[locale])}ft`;
 	}
-	const rounded = Math.round(meters / 10) * 10;
+	const rounded = roundedElevation(meters, unit);
 	return `${rounded.toLocaleString(INTL_LOCALES[locale])}m`;
 }
 

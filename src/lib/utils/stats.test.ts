@@ -1,3 +1,5 @@
+import { formatDistance, formatElevation, formatDuration, showsValue } from './format.js';
+
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import {
 	calculateQuarterTotals,
@@ -460,5 +462,38 @@ describe('more stats', () => {
 			{ type: 'cycling', count: 2, averageDistance: 15, averageDuration: 150 },
 			{ type: 'running', count: 3, averageDistance: 3, averageDuration: 30 }
 		]);
+	});
+});
+
+describe('summary metric display boundaries', () => {
+	it('matches formatted values around their display thresholds', () => {
+		const base = {
+			totalDistance: 0,
+			totalElevation: 0,
+			totalDuration: 0,
+			totalCalories: 1,
+			activeDays: 0,
+			longestStreak: 0,
+			activityCount: 0
+		};
+		for (const [metric, field, values, unit] of [
+			['distance', 'totalDistance', [0.04, 0.05], 'km'],
+			['elevation', 'totalElevation', [4.99, 5], 'km'],
+			['elevation', 'totalElevation', [7.62, 7.63], 'miles'],
+			['duration', 'totalDuration', [0, 0.01, 59.9], 'km']
+		] as const) {
+			for (const value of values) {
+				const current = { ...base, [field]: value };
+				const formatted =
+					metric === 'distance'
+						? formatDistance('en', value, unit)
+						: metric === 'elevation'
+							? formatElevation('en', value, unit)
+							: formatDuration('en', value);
+				expect(summaryMetricWithValue(current, metric, unit)).toBe(
+					showsValue(formatted) ? metric : 'calories'
+				);
+			}
+		}
 	});
 });

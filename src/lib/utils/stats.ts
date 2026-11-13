@@ -14,13 +14,7 @@ import type {
 	YearStats
 } from '../types/index.js';
 import { localDateFromDayNumber, localDayNumber } from './date.js';
-import {
-	formatCalories,
-	formatDistance,
-	formatDuration,
-	formatElevation,
-	showsValue
-} from './format.js';
+import { roundedDistance, roundedElevation } from './format.js';
 
 /**
  * Calculate aggregate year stats from activities
@@ -170,11 +164,11 @@ export function calculateWeeklyPattern(activities: Activity[]): WeeklyPattern {
 	return pattern;
 }
 
-const SUMMARY_METRIC_DISPLAY: [SummaryMetric, (stats: YearStats, unit: Unit) => string][] = [
-	['distance', (stats, unit) => formatDistance('en', stats.totalDistance, unit)],
-	['elevation', (stats, unit) => formatElevation('en', stats.totalElevation, unit)],
-	['duration', (stats) => formatDuration('en', stats.totalDuration)],
-	['calories', (stats) => formatCalories('en', stats.totalCalories)]
+const SUMMARY_METRIC_DISPLAY: [SummaryMetric, (stats: YearStats, unit: Unit) => boolean][] = [
+	['distance', (stats, unit) => roundedDistance(stats.totalDistance, unit) !== 0],
+	['elevation', (stats, unit) => roundedElevation(stats.totalElevation, unit) !== 0],
+	['duration', (stats) => stats.totalDuration > 0],
+	['calories', (stats) => Math.round(stats.totalCalories) !== 0]
 ];
 
 /**
@@ -186,9 +180,9 @@ export function summaryMetricWithValue(
 	current: SummaryMetric,
 	unit: Unit
 ): SummaryMetric {
-	const withValue = SUMMARY_METRIC_DISPLAY.filter(([, display]) =>
-		showsValue(display(stats, unit))
-	).map(([metric]) => metric);
+	const withValue = SUMMARY_METRIC_DISPLAY.filter(([, display]) => display(stats, unit)).map(
+		([metric]) => metric
+	);
 	return withValue.includes(current) ? current : (withValue[0] ?? current);
 }
 
