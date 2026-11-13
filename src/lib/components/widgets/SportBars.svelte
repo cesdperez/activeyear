@@ -3,7 +3,12 @@
 	import { sportIcons } from '#lib/constants/sports.js';
 	import type { SportColors } from '#lib/utils/breakdown.js';
 	import { formatCount, formatDuration } from '#lib/utils/format.js';
-	import type { BreakdownMetric, SportBreakdown, WidgetVariantProps } from '#lib/types/index.js';
+	import type {
+		BreakdownMetric,
+		SportBreakdown,
+		WidgetVariant,
+		WidgetVariantProps
+	} from '#lib/types/index.js';
 
 	let {
 		sports,
@@ -16,73 +21,70 @@
 		metric: BreakdownMetric;
 	} & WidgetVariantProps = $props();
 
-	const isDashboard = $derived(variant === 'dashboard');
+	interface Styles {
+		list: string;
+		row: string;
+		icon: string;
+		name: string;
+		value: string;
+		bar: string;
+		/** Entrance animation of the dashboard rows. */
+		enter: (index: number) => string | undefined;
+	}
+
+	const STYLES: Record<WidgetVariant, Styles> = {
+		dashboard: {
+			list: 'w-full max-w-2xl flex-1 space-y-6',
+			row: 'group flex flex-col gap-2',
+			icon: 'h-5 w-5',
+			name: 'text-xl',
+			value: 'text-2xl',
+			bar: 'h-2',
+			enter: (i) => `animation: fadeInUp 0.4s ease-out both; animation-delay: ${600 + i * 50}ms`
+		},
+		export: {
+			list: 'flex-1 space-y-6',
+			row: 'flex flex-col gap-2',
+			icon: 'h-7 w-7',
+			name: 'text-[calc(30px*var(--stat-scale,1))]',
+			value: 'text-[calc(32px*var(--stat-scale,1))]',
+			bar: 'h-3',
+			enter: () => undefined
+		}
+	};
+
+	const style = $derived(STYLES[variant]);
 	const maxValue = $derived(Math.max(...sports.map((s) => s[metric]), 1));
 </script>
 
-<div class={isDashboard ? 'w-full max-w-2xl min-w-0 flex-1 space-y-6' : 'min-w-0 flex-1 space-y-6'}>
+<div class={style.list}>
 	{#each sports as sport, i (sport.type)}
 		{@const IconComponent = sportIcons[sport.type]}
 		{@const value = sport[metric]}
 		{@const formattedValue =
 			metric === 'count' ? formatCount(i18n.locale, value) : formatDuration(i18n.locale, value)}
-		{@const percentage = (value / maxValue) * 100}
-		{@const color = colors[sport.type]}
 
-		<div
-			class={isDashboard ? 'group flex flex-col gap-2' : 'flex flex-col gap-2'}
-			style={isDashboard
-				? `animation: fadeInUp 0.4s ease-out both; animation-delay: ${600 + i * 50}ms`
-				: undefined}
-		>
-			<div class="flex items-center justify-between gap-3">
-				<div class="flex min-w-0 items-center gap-3">
-					<div
-						class={isDashboard
-							? 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-transform group-hover:scale-110'
-							: 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg'}
-						style="background: {color}20; color: {color};"
-					>
-						<IconComponent class="h-5 w-5" weight="bold" aria-hidden="true" />
-					</div>
-					<span
-						class={isDashboard
-							? 'min-w-0 font-bold tracking-wide wrap-anywhere text-white uppercase'
-							: 'min-w-0 text-[24px] font-bold tracking-wide wrap-anywhere text-[var(--color-text-primary)] uppercase'}
-					>
+		<div class={style.row} style={style.enter(i)}>
+			<div class="flex items-end justify-between gap-4">
+				<div class="flex min-w-0 items-center gap-3 text-[var(--color-text-primary)]">
+					<IconComponent class="shrink-0 {style.icon}" weight="bold" aria-hidden="true" />
+					<span class="stat-value truncate leading-none {style.name}">
 						{i18n.m.common.sports[sport.type]}
 					</span>
 				</div>
-				<div class="shrink-0 text-right">
-					{#if isDashboard}
-						<span class="font-mono font-bold text-[var(--color-accent)]">
-							{formattedValue}
-						</span>
-					{:else}
-						<div
-							class="text-[22px] leading-none font-bold whitespace-nowrap text-[var(--color-text-primary)]"
-						>
-							{formattedValue}
-						</div>
-					{/if}
-				</div>
+				<span
+					class="stat-value leading-none whitespace-nowrap text-[var(--color-text-primary)] {style.value}"
+				>
+					{formattedValue}
+				</span>
 			</div>
 
-			{#if isDashboard}
-				<div class="h-2 overflow-hidden rounded-full bg-[var(--color-surface-elevated)]">
-					<div
-						class="h-full rounded-full transition-all duration-1000 ease-out"
-						style="width: {percentage}%; background: {color}; box-shadow: 0 0 10px {color}40;"
-					></div>
-				</div>
-			{:else}
-				<div class="sport-bar-bg h-3 overflow-hidden rounded-full bg-[rgba(0,0,0,0.05)]">
-					<div
-						class="h-full rounded-full transition-all duration-500"
-						style="width: {percentage}%; background: {color}; filter: drop-shadow(0 0 4px {color}40);"
-					></div>
-				</div>
-			{/if}
+			<div class="sport-bar-bg w-full bg-[var(--color-surface-hover)] {style.bar}">
+				<div
+					class="h-full transition-all duration-500"
+					style="width: {(value / maxValue) * 100}%; background: {colors[sport.type]};"
+				></div>
+			</div>
 		</div>
 	{/each}
 </div>

@@ -1,27 +1,25 @@
-import { it, expect } from 'vitest';
+import { it, expectTypeOf } from 'vitest';
 import type { ComponentProps } from 'svelte';
-import WeeklyPattern from './WeeklyPattern.svelte';
-import SportDonut from './SportDonut.svelte';
-import { sportColorsFor } from '#lib/utils/breakdown.js';
+import type { SportColors } from '#lib/utils/breakdown.js';
+import type { WeeklyPattern as Week } from '#lib/types/index.js';
+import type WeeklyPattern from './WeeklyPattern.svelte';
+import type SportDonut from './SportDonut.svelte';
 
-const weeklyDashboard: ComponentProps<typeof WeeklyPattern> = {
-	variant: 'dashboard',
-	pattern: [0, 0, 0, 0, 0, 0, 0]
-};
-// @ts-expect-error Export widgets require a theme.
-const weeklyExport: ComponentProps<typeof WeeklyPattern> = {
-	variant: 'export',
-	pattern: [0, 0, 0, 0, 0, 0, 0]
-};
-// @ts-expect-error Export widgets require a theme.
-const donutExport: ComponentProps<typeof SportDonut> = {
-	variant: 'export',
-	sports: [],
-	colors: sportColorsFor([]),
-	metric: 'count'
-};
-it('accepts dashboard props without a theme', () => {
-	expect(weeklyDashboard.variant).toBe('dashboard');
-	expect(weeklyExport.variant).toBe('export');
-	expect(donutExport.variant).toBe('export');
+// Checked by `pnpm check`; at runtime the assertions are no-ops.
+it('requires a theme for export widgets but not dashboard widgets', () => {
+	expectTypeOf<{ variant: 'dashboard'; pattern: Week }>().toExtend<
+		ComponentProps<typeof WeeklyPattern>
+	>();
+	expectTypeOf<{ variant: 'export'; theme: 'neon'; pattern: Week }>().toExtend<
+		ComponentProps<typeof WeeklyPattern>
+	>();
+	expectTypeOf<{ variant: 'export'; pattern: Week }>().not.toExtend<
+		ComponentProps<typeof WeeklyPattern>
+	>();
+	expectTypeOf<{
+		variant: 'export';
+		sports: [];
+		colors: SportColors;
+		metric: 'count';
+	}>().not.toExtend<ComponentProps<typeof SportDonut>>();
 });

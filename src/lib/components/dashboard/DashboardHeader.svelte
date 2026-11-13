@@ -5,6 +5,7 @@
 	import { skippedRowsNotice } from '#lib/utils/uploadErrors.js';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { ArrowDown, Warning } from 'phosphor-svelte';
+	import Logotype from '#lib/components/Logotype.svelte';
 
 	let {
 		activityCount,
@@ -23,23 +24,19 @@
 
 {#snippet summaryPhrase(phrase: string, count: string)}
 	{@const [before, after] = phrase.split(count)}
-	<span class="text-[var(--color-text-muted)]">
-		{before}<span class="font-mono font-bold text-[var(--color-accent)]">{count}</span>{after}
-	</span>
+	<span class="whitespace-nowrap">{before}<span class="count">{count}</span>{after}</span>
 {/snippet}
 
-<header class="mb-16 text-center md:mb-24">
+<header class="mt-12 mb-12 text-center md:mt-8 md:mb-14">
+	<Logotype class="mb-8 text-[1.75rem]" />
 	<h1
-		class="glow-text mb-6 text-5xl font-bold tracking-tight wrap-anywhere md:text-7xl"
+		class="display-heading mb-5 text-[clamp(3.5rem,13vw,7rem)] font-black"
 		tabindex="-1"
 		{@attach (heading) => heading.focus()}
 	>
 		{i18n.m.dashboard.yourYear(TARGET_YEAR)}
 	</h1>
-	<div
-		data-testid="activity-summary"
-		class="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full border border-[rgba(255,255,255,0.05)] bg-[var(--color-surface-elevated)] px-4 py-2"
-	>
+	<p data-testid="activity-summary" class="text-lg text-[var(--color-text-muted)]">
 		{@render summaryPhrase(
 			i18n.m.dashboard.activitySummaryActivities(
 				formatCount(i18n.locale, activityCount),
@@ -51,7 +48,7 @@
 			i18n.m.dashboard.activitySummaryDays(formatCount(i18n.locale, activeDays), activeDays),
 			formatCount(i18n.locale, activeDays)
 		)}
-	</div>
+	</p>
 	{#if skippedRowCount > 0}
 		<p class="mt-3 flex items-center justify-center gap-1.5 text-sm text-[var(--color-text-muted)]">
 			<Warning class="h-4 w-4 shrink-0" weight="bold" aria-hidden="true" />
@@ -59,16 +56,22 @@
 		</p>
 	{/if}
 
-	<div class="mt-8">
-		<button
-			class="group inline-flex items-center gap-2 text-sm font-medium text-[var(--color-accent)] transition-colors duration-200 hover:text-white"
-			onclick={jumpToExport}
-		>
-			<span>{i18n.m.dashboard.jumpExport}</span>
-			<ArrowDown
-				class="h-4 w-4 transition-transform group-hover:translate-y-1"
-				aria-hidden="true"
-			/>
-		</button>
-	</div>
+	<button
+		class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-accent)] transition-colors duration-200 hover:text-[var(--color-text-primary)]"
+		onclick={jumpToExport}
+	>
+		{i18n.m.dashboard.jumpExport}
+		<ArrowDown class="h-4 w-4" weight="bold" aria-hidden="true" />
+	</button>
 </header>
+
+<style>
+	.count {
+		font-family: var(--font-display);
+		font-size: 1.625rem;
+		font-weight: 800;
+		line-height: 1;
+		color: var(--color-accent);
+		font-variant-numeric: tabular-nums;
+	}
+</style>

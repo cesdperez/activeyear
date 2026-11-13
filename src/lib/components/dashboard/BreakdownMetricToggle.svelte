@@ -9,18 +9,10 @@
 	]);
 </script>
 
-<div
-	role="group"
-	aria-label={i18n.m.dashboard.breakdownMetric}
-	class="flex self-start rounded-lg bg-[var(--color-surface-elevated)] p-1"
->
+<div role="group" aria-label={i18n.m.dashboard.breakdownMetric} class="segmented self-start">
 	{#each options as { metric, label } (metric)}
-		{@const pressed = appStore.breakdownMetric === metric}
 		<button
-			class="rounded-md px-3 py-1.5 text-xs font-bold tracking-wider uppercase transition-all duration-200 {pressed
-				? 'bg-[var(--color-accent)] text-black'
-				: 'text-[var(--color-text-dim)] enabled:hover:text-white'} disabled:cursor-not-allowed disabled:opacity-50"
-			aria-pressed={pressed}
+			aria-pressed={appStore.breakdownMetric === metric}
 			disabled={appStore.isExporting}
 			onclick={() => (appStore.breakdownMetric = metric)}
 		>

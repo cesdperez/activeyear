@@ -10,19 +10,11 @@
 	];
 </script>
 
-<div class="absolute top-4 right-28 z-10 flex items-center gap-2 md:right-32">
-	<div
-		role="group"
-		aria-label={i18n.m.dashboard.distanceUnit}
-		class="flex rounded-full border border-[rgba(255,255,255,0.05)] bg-[var(--color-surface-elevated)] p-0.5"
-	>
+<div class="absolute top-4 right-24 z-10 flex items-center gap-2 min-[1400px]:right-8 md:right-28">
+	<div role="group" aria-label={i18n.m.dashboard.distanceUnit} class="segmented">
 		{#each units as { unit, label } (unit)}
-			{@const pressed = appStore.unit === unit}
 			<button
-				class="rounded-full px-2.5 py-1 text-xs font-bold tracking-wider uppercase transition-all duration-200 {pressed
-					? 'bg-[var(--color-accent)] text-black'
-					: 'text-[var(--color-text-dim)] enabled:hover:text-white'} disabled:cursor-not-allowed disabled:opacity-50"
-				aria-pressed={pressed}
+				aria-pressed={appStore.unit === unit}
 				disabled={appStore.isExporting}
 				onclick={() => (appStore.unit = unit)}
 			>
@@ -31,9 +23,9 @@
 		{/each}
 	</div>
 	<button
-		class="rounded-full p-2 transition-all duration-300 hover:scale-110 {appStore.confettiEnabled
-			? 'bg-[var(--color-surface-elevated)] text-[var(--color-accent)] shadow-lg'
-			: 'bg-transparent text-[var(--color-text-dim)] hover:text-white'}"
+		class="grid h-9 w-9 place-items-center rounded-[var(--radius-control)] transition-colors duration-150 {appStore.confettiEnabled
+			? 'text-[var(--color-accent)]'
+			: 'text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]'}"
 		onclick={() => (appStore.confettiEnabled = !appStore.confettiEnabled)}
 		title={appStore.confettiEnabled
 			? i18n.m.dashboard.disableCelebration
@@ -41,6 +33,10 @@
 		aria-label={i18n.m.dashboard.celebrationConfetti}
 		aria-pressed={appStore.confettiEnabled}
 	>
-		<Confetti class="h-6 w-6" aria-hidden="true" />
+		<Confetti
+			class="h-5 w-5"
+			weight={appStore.confettiEnabled ? 'fill' : 'regular'}
+			aria-hidden="true"
+		/>
 	</button>
 </div>

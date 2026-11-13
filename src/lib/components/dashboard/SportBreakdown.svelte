@@ -14,9 +14,9 @@
 </script>
 
 {#if breakdown.length > 0}
-	<section data-testid="sport-breakdown">
-		<div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
-			<SectionHeading title={i18n.m.dashboard.bySport} class="flex-1" />
+	<section data-testid="sport-breakdown" class="mb-16">
+		<div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-baseline">
+			<SectionHeading title={i18n.m.dashboard.bySport} class="mb-0 md:mb-0" />
 			<BreakdownMetricToggle />
 		</div>
 

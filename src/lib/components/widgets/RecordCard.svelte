@@ -1,124 +1,103 @@
 <script lang="ts">
-	import { onMount, untrack, type Component } from 'svelte';
-	import { prefersReducedMotion, spring } from 'svelte/motion';
-	import type { IconComponentProps } from 'phosphor-svelte';
-	import type { WidgetVariantProps } from '#lib/types/index.js';
+	import type { WidgetVariant, WidgetVariantProps } from '#lib/types/index.js';
 
 	type Props = {
-		icon: Component<IconComponentProps>;
 		value: string;
 		label: string;
 		activityTitle: string;
-		/** Dashboard entrance delay in ms. */
-		delay?: number;
 	} & WidgetVariantProps;
 
-	let { icon: Icon, value, label, activityTitle, variant, delay = 0 }: Props = $props();
+	let { value, label, activityTitle, variant }: Props = $props();
 
-	const animate = untrack(() => variant === 'dashboard' && !prefersReducedMotion.current);
-	let opacity = spring(animate ? 0 : 1, { stiffness: 0.1, damping: 0.6 });
-	let scale = spring(animate ? 0.95 : 1, { stiffness: 0.15, damping: 0.5 });
+	const STYLES: Record<
+		WidgetVariant,
+		{ bib: string; label: string; fitMax: string; title: string }
+	> = {
+		dashboard: {
+			bib: 'gap-3 px-5 pt-7 pb-5',
+			label: 'stat-label',
+			fitMax: '2.5rem',
+			title: 'text-sm line-clamp-3'
+		},
+		export: {
+			// Two label lines, so the values of neighbouring bibs line up.
+			bib: 'gap-3 px-5 pt-10 pb-5',
+			label: 'card-label min-h-[calc(var(--label-size)*2.6)] text-[var(--color-text-muted)]',
+			fitMax: 'calc(64px * var(--stat-scale))',
+			title: 'card-text-sm line-clamp-2'
+		}
+	};
 
-	onMount(() => {
-		if (!animate) return;
-		const timer = setTimeout(() => {
-			opacity.set(1);
-			scale.set(1);
-		}, delay);
-
-		return () => clearTimeout(timer);
-	});
+	const style = $derived(STYLES[variant]);
 </script>
 
-{#if variant === 'dashboard'}
-	<div
-		class="pr-card group relative overflow-hidden"
-		style="opacity: {$opacity}; transform: scale({$scale});"
-	>
+<div class="pr-card bib flex h-full flex-col {style.bib}" data-variant={variant}>
+	<span class="min-w-0 text-balance {style.label}">{label}</span>
+
+	<div class="@container">
 		<div
-			class="absolute inset-0 z-0 bg-gradient-to-br from-[var(--color-surface-elevated)] to-[var(--color-surface)]"
-		></div>
-
-		<div
-			class="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-[var(--color-accent)] opacity-[0.05] blur-[60px] transition-opacity duration-500 group-hover:opacity-[0.1]"
-		></div>
-
-		<div class="relative z-10 flex items-start gap-4 p-6">
-			<div
-				class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[rgba(255,255,255,0.05)] bg-[var(--color-surface-hover)] text-[var(--color-gold)] shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:border-[rgba(250,204,21,0.3)]"
-			>
-				<div class="icon-inner">
-					<Icon weight="fill" aria-hidden="true" />
-				</div>
-			</div>
-
-			<div class="@container min-w-0 flex-1">
-				<div class="stat-label mb-1 text-xs tracking-wider wrap-anywhere opacity-70">
-					{label}
-				</div>
-
-				<div
-					class="stat-value fit-value group-hover:glow-text mb-1 text-white transition-all duration-300"
-					style:--fit-chars={value.length}
-					style:--fit-max="1.875rem"
-				>
-					{value}
-				</div>
-
-				{#if activityTitle}
-					<div
-						class="mt-2 flex items-start gap-1.5 border-t border-[rgba(255,255,255,0.05)] pt-2 text-xs text-[var(--color-text-muted)]"
-					>
-						<span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[var(--color-accent)] opacity-50"
-						></span>
-						<span class="line-clamp-3 min-w-0 wrap-anywhere" title={activityTitle}
-							>{activityTitle}</span
-						>
-					</div>
-				{/if}
-			</div>
-		</div>
-
-		<div
-			class="pointer-events-none absolute inset-0 rounded-2xl border border-[rgba(255,255,255,0.05)] transition-colors duration-300 group-hover:border-[rgba(34,211,238,0.3)]"
-		></div>
-	</div>
-{:else}
-	<div class="record-card-compact min-w-0">
-		<div class="record-icon-compact">
-			<Icon class="h-14 w-14" weight="fill" aria-hidden="true" />
-		</div>
-		<div
-			class="text-[42px] leading-tight font-black whitespace-nowrap text-[var(--color-text-primary)]"
+			data-testid="record-value"
+			class="stat-value fit-value leading-[1.05] text-[var(--color-text-primary)]"
+			style:--fit-chars={value.length}
+			style:--fit-max={style.fitMax}
 		>
 			{value}
 		</div>
+	</div>
+
+	{#if activityTitle}
 		<div
-			class="w-full text-[18px] tracking-widest text-balance wrap-anywhere text-[var(--color-text-muted)] uppercase"
+			class="mt-auto min-w-0 border-t border-[var(--color-border)] pt-3 wrap-anywhere text-[var(--color-text-muted)] {style.title}"
+			title={activityTitle}
 		>
-			{label}
-		</div>
-		<div class="mt-2 line-clamp-2 w-full text-[16px] font-medium text-[var(--color-accent)]">
 			{activityTitle}
 		</div>
-	</div>
-{/if}
+	{/if}
+</div>
 
 <style>
-	.pr-card {
-		border-radius: 1rem;
-		box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.2);
-		transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+	/* A race bib: accent band across the top and two safety-pin holes. */
+	.bib {
+		position: relative;
+		background: var(--color-surface-elevated);
+		border: var(--panel-border-width, 1px) solid var(--color-border);
+		border-top: 4px solid var(--color-accent);
+		border-radius: var(--panel-radius, var(--radius-panel));
+		box-shadow: var(--panel-shadow, none);
 	}
 
-	.pr-card:hover {
-		transform: translateY(-4px) scale(1.01) !important; /* Override spring for hover */
-		box-shadow: 0 20px 40px -4px rgba(0, 0, 0, 0.3);
+	.bib::before,
+	.bib::after {
+		content: '';
+		position: absolute;
+		top: 0.625rem;
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 9999px;
+		background: var(--color-surface);
+		box-shadow: inset 0 0 0 1px var(--color-border);
 	}
 
-	.icon-inner :global(svg) {
-		width: 1.5rem;
-		height: 1.5rem;
-		stroke-width: 1.75;
+	.bib::before {
+		left: 0.625rem;
+	}
+
+	.bib::after {
+		right: 0.625rem;
+	}
+
+	.bib[data-variant='export']::before,
+	.bib[data-variant='export']::after {
+		top: 14px;
+		width: 14px;
+		height: 14px;
+	}
+
+	.bib[data-variant='export']::before {
+		left: 14px;
+	}
+
+	.bib[data-variant='export']::after {
+		right: 14px;
 	}
 </style>

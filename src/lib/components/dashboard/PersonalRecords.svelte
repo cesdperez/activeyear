@@ -8,11 +8,11 @@
 </script>
 
 {#if records}
-	<section data-testid="personal-records" class="mb-16">
+	<section data-testid="personal-records" class="mb-20 md:mb-28">
 		<SectionHeading title={i18n.m.dashboard.personalRecords} />
 
-		<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-			<RecordCards {records} {unit} variant="dashboard" delay={450} />
+		<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+			<RecordCards {records} {unit} variant="dashboard" />
 		</div>
 	</section>
 {/if}

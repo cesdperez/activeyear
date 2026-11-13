@@ -1,15 +1,29 @@
 <script lang="ts">
+	import type { WidgetVariant } from '#lib/types/index.js';
+
 	interface Props {
 		title: string;
+		variant?: WidgetVariant;
 		class?: string;
 	}
 
-	let { title, class: className = 'mb-8' }: Props = $props();
+	const VARIANTS = {
+		dashboard: { title: 'mb-6 text-3xl md:text-4xl', tag: 'h2' },
+		export: { title: 'export-heading mb-6', tag: 'p' }
+	} as const;
+
+	let { title, variant = 'dashboard', class: className }: Props = $props();
+
+	const style = $derived(VARIANTS[variant]);
 </script>
 
-<div class="flex items-end gap-4 {className}">
-	<h2 class="min-w-0 text-3xl font-bold tracking-tight wrap-anywhere">{title}</h2>
-	<div
-		class="mb-2 h-px flex-1 bg-gradient-to-r from-[var(--color-accent)] to-transparent opacity-20"
-	></div>
-</div>
+<svelte:element this={style.tag} class="display-heading {style.title} {className ?? ''}">
+	{title}
+</svelte:element>
+
+<style>
+	.export-heading {
+		font-size: var(--heading-size);
+		line-height: 1.1;
+	}
+</style>

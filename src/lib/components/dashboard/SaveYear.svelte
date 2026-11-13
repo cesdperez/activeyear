@@ -19,13 +19,8 @@
 	}
 </script>
 
-<div class="mt-24 -mb-20 text-center">
-	<button
-		type="button"
-		class="inline-flex items-center gap-2 rounded-lg border border-[var(--color-text-dim)] px-6 py-3 text-sm font-medium text-zinc-400 transition-all duration-300 enabled:hover:bg-[var(--color-surface-elevated)] enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-		disabled={appStore.isExporting}
-		onclick={saveYear}
-	>
+<div class="text-center">
+	<button type="button" class="btn-secondary" disabled={appStore.isExporting} onclick={saveYear}>
 		<DownloadSimple class="h-4 w-4" weight="bold" aria-hidden="true" />
 		{i18n.m.dashboard.saveMyYear}
 	</button>

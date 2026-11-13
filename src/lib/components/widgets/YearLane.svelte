@@ -1,0 +1,196 @@
+<script lang="ts">
+	import type { Activity, WidgetVariant, WidgetVariantProps } from '#lib/types/index.js';
+	import { laneMarkers, laneTicks, monthStartDays } from '#lib/utils/yearLane.js';
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
+	import { monthLabels } from '#lib/utils/date.js';
+	import { formatCount } from '#lib/utils/format.js';
+
+	type Props = {
+		activities: Activity[];
+		highlights: Activity[];
+		records: Activity[];
+		year: number;
+	} & WidgetVariantProps;
+
+	let { activities, highlights, records, year, variant }: Props = $props();
+
+	// In viewBox units: one day is 1 wide, the lane 100 tall.
+	const TICK_WIDTH = 0.62;
+	const REST_HEIGHT = 7;
+
+	const STYLES: Record<
+		WidgetVariant,
+		{ lane: string; markers: string; month: string; legend: string }
+	> = {
+		dashboard: {
+			lane: 'h-16 md:h-24',
+			markers: 'h-5',
+			month: 'text-[0.6875rem] md:text-xs',
+			legend: 'text-xs'
+		},
+		export: {
+			lane: 'h-[190px]',
+			markers: 'h-[34px]',
+			month: 'card-label',
+			legend: 'card-text-sm'
+		}
+	};
+
+	const style = $derived(STYLES[variant]);
+	const ticks = $derived(laneTicks(activities, year));
+	const days = $derived(ticks.length);
+	const markers = $derived(laneMarkers(highlights, records, year));
+	const activeDays = $derived(ticks.filter((height) => height > 0).length);
+	const hasRecords = $derived(markers.some((m) => m.kind === 'record'));
+	const hasHighlights = $derived(markers.some((m) => m.kind === 'highlight'));
+
+	const activePath = $derived(path(ticks.map((h) => h * 100)));
+	const restPath = $derived(path(ticks.map((h) => (h > 0 ? 0 : REST_HEIGHT))));
+
+	function path(heights: number[]): string {
+		return heights
+			.map((h, day) =>
+				h > 0 ? `M${day + (1 - TICK_WIDTH) / 2} 100v${-h}h${TICK_WIDTH}v${h}z` : ''
+			)
+			.join('');
+	}
+
+	const months = $derived(monthLabels(i18n.locale));
+	const position = (day: number) => `${((day + 0.5) / days) * 100}%`;
+
+	const label = $derived(
+		[
+			i18n.m.common.yearLane.summary(
+				formatCount(i18n.locale, activeDays),
+				activeDays,
+				formatCount(i18n.locale, days),
+				year
+			),
+			hasHighlights ? i18n.m.common.yearLane.highlightsMarked : '',
+			hasRecords ? i18n.m.common.yearLane.recordsMarked : ''
+		]
+			.filter(Boolean)
+			.join(', ')
+	);
+</script>
+
+<figure class="year-lane w-full" data-testid="year-lane" data-variant={variant}>
+	<div role="img" aria-label={label}>
+		<div class="relative {style.markers}" aria-hidden="true">
+			{#each markers as { day, kind } (day)}
+				<span class="marker marker-{kind}" style:left={position(day)}></span>
+			{/each}
+		</div>
+		<svg
+			viewBox="0 0 {days} 100"
+			preserveAspectRatio="none"
+			class="block w-full {style.lane}"
+			aria-hidden="true"
+			focusable="false"
+		>
+			<path d={restPath} class="rest" />
+			<path d={activePath} class="active" />
+		</svg>
+		<div class="baseline" aria-hidden="true"></div>
+		<div class="relative mt-2 h-[1.4em] {style.month}" aria-hidden="true">
+			{#each monthStartDays(year) as start, month (month)}
+				<span class="month" style:left="{(start / days) * 100}%">{months[month]}</span>
+			{/each}
+		</div>
+	</div>
+	{#if hasHighlights || hasRecords}
+		<figcaption class="legend mt-3 flex flex-wrap justify-end gap-x-5 gap-y-1 {style.legend}">
+			{#if hasHighlights}<span class="flex items-center gap-2"
+					><span class="key marker-highlight" aria-hidden="true"></span>{i18n.m.common.yearLane
+						.highlight}</span
+				>{/if}
+			{#if hasRecords}<span class="flex items-center gap-2"
+					><span class="key marker-record" aria-hidden="true"></span>{i18n.m.common.yearLane
+						.record}</span
+				>{/if}
+		</figcaption>
+	{/if}
+</figure>
+
+<style>
+	.active {
+		fill: var(--color-accent);
+	}
+
+	.rest {
+		fill: var(--color-text-dim);
+		opacity: 0.45;
+	}
+
+	.baseline {
+		height: 1px;
+		background: var(--color-text-dim);
+	}
+
+	/* Course points: a head above the lane on a stem that drops to the ticks. */
+	.marker {
+		position: absolute;
+		bottom: 0;
+		width: 1px;
+		height: 45%;
+		background: var(--color-text-dim);
+		transform: translateX(-50%);
+	}
+
+	.marker::before,
+	.key {
+		content: '';
+		display: block;
+		width: 0.5rem;
+		height: 0.5rem;
+		box-sizing: border-box;
+	}
+
+	.marker::before {
+		position: absolute;
+		bottom: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	[data-variant='export'] .marker::before,
+	[data-variant='export'] .key {
+		width: 18px;
+		height: 18px;
+	}
+
+	[data-variant='export'] .marker {
+		width: 2px;
+	}
+
+	.marker-highlight::before,
+	.key.marker-highlight {
+		border: 2px solid var(--color-text-primary);
+		border-radius: 9999px;
+	}
+
+	.marker-record::before,
+	.key.marker-record {
+		background: var(--color-text-primary);
+		clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+		scale: 1.3;
+	}
+
+	[data-variant='export'] .marker-highlight::before,
+	[data-variant='export'] .key.marker-highlight {
+		border-width: 4px;
+	}
+
+	.month {
+		position: absolute;
+		top: 0;
+		padding-left: 0.25em;
+		border-left: 1px solid var(--color-border);
+		line-height: 1.4;
+		color: var(--color-text-dim);
+	}
+
+	.legend {
+		color: var(--color-text-muted);
+	}
+</style>

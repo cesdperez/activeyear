@@ -1,34 +1,25 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
-	import { Trophy, Hourglass, Fire } from 'phosphor-svelte';
 	import { formatDistance, formatDuration, formatCalories } from '#lib/utils/format.js';
 	import type { PersonalRecords, Unit, WidgetVariantProps } from '#lib/types/index.js';
 	import RecordCard from './RecordCard.svelte';
 
-	type Props = {
-		records: PersonalRecords;
-		unit: Unit;
-		/** Dashboard entrance delay in ms of the first card; each next card waits 50 ms more. */
-		delay?: number;
-	} & WidgetVariantProps;
+	type Props = { records: PersonalRecords; unit: Unit } & WidgetVariantProps;
 
-	let { records, unit, delay = 0, ...variantProps }: Props = $props();
+	let { records, unit, ...variantProps }: Props = $props();
 
 	const cards = $derived([
 		{
-			icon: Trophy,
 			label: i18n.m.dashboard.longestDistance,
 			record: records.longestDistance,
 			format: (value: number) => formatDistance(i18n.locale, value, unit)
 		},
 		{
-			icon: Hourglass,
 			label: i18n.m.dashboard.longestDuration,
 			record: records.longestDuration,
 			format: (value: number) => formatDuration(i18n.locale, value)
 		},
 		{
-			icon: Fire,
 			label: i18n.m.dashboard.biggestBurn,
 			record: records.biggestBurn,
 			format: (value: number) => formatCalories(i18n.locale, value)
@@ -36,15 +27,13 @@
 	]);
 </script>
 
-{#each cards as { icon, label, record, format }, i (label)}
+{#each cards as { label, record, format } (label)}
 	{#if record}
 		<RecordCard
 			{...variantProps}
-			{icon}
 			value={format(record.value)}
 			{label}
 			activityTitle={record.activity.title}
-			delay={delay + i * 50}
 		/>
 	{/if}
 {/each}

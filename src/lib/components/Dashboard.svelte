@@ -1,10 +1,14 @@
 <script lang="ts">
+	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { appStore } from '#lib/stores/app.svelte.js';
+	import { TARGET_YEAR } from '#lib/constants/time.js';
+	import { recordActivities } from '#lib/utils/yearLane.js';
 	import ExportPanel from '#lib/components/ExportPanel.svelte';
 	import DashboardToolbar from '#lib/components/dashboard/DashboardToolbar.svelte';
 	import DashboardHeader from '#lib/components/dashboard/DashboardHeader.svelte';
 	import MainStats from '#lib/components/dashboard/MainStats.svelte';
-	import ConsistencyStats from '#lib/components/widgets/ConsistencyStats.svelte';
+	import SectionHeading from '#lib/components/dashboard/SectionHeading.svelte';
+	import YearLane from '#lib/components/widgets/YearLane.svelte';
 	import WeeklyPattern from '#lib/components/widgets/WeeklyPattern.svelte';
 	import HighlightsSection from '#lib/components/dashboard/HighlightsSection.svelte';
 	import PersonalRecords from '#lib/components/dashboard/PersonalRecords.svelte';
@@ -17,25 +21,32 @@
 	useConfettiRain();
 </script>
 
-<div class="relative mx-auto max-w-7xl overflow-x-hidden px-4 py-12 sm:px-6 md:py-20 lg:px-8">
+<div class="relative mx-auto max-w-6xl overflow-x-hidden px-4 py-12 sm:px-6 md:py-16 lg:px-8">
 	<DashboardToolbar />
 	<DashboardHeader
 		activityCount={appStore.stats?.activityCount ?? 0}
 		activeDays={appStore.stats?.activeDays ?? 0}
 		skippedRowCount={appStore.skippedRowCount}
 	/>
-	<MainStats stats={appStore.stats} unit={appStore.unit} />
-	<ConsistencyStats
-		variant="dashboard"
-		activeDays={appStore.stats?.activeDays ?? 0}
-		longestStreak={appStore.stats?.longestStreak ?? 0}
-	/>
+	<MainStats stats={appStore.stats} unit={appStore.unit} focus={appStore.summaryMetric} />
+	<section class="mb-20 md:mb-28">
+		<SectionHeading title={i18n.m.common.dayByDay} />
+		<YearLane
+			variant="dashboard"
+			activities={appStore.activities}
+			highlights={appStore.highlights}
+			records={recordActivities(appStore.records)}
+			year={TARGET_YEAR}
+		/>
+	</section>
 	<WeeklyPattern variant="dashboard" pattern={appStore.weeklyPattern} />
 	<HighlightsSection />
 	<PersonalRecords records={appStore.records} unit={appStore.unit} />
 	<SportBreakdown breakdown={appStore.breakdown} metric={appStore.breakdownMetric} />
 	<MoreStats activities={appStore.activities} breakdown={appStore.breakdown} unit={appStore.unit} />
 	<ExportPanel />
-	<SaveYear />
-	<UploadAnotherFile />
+	<div class="mt-24 flex flex-col items-center gap-6">
+		<SaveYear />
+		<UploadAnotherFile />
+	</div>
 </div>
