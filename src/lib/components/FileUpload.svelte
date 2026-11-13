@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { uploadErrorMessage } from '#lib/utils/uploadErrors.js';
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { uploadStore } from '#lib/stores/upload.svelte.js';
 	import { createHydrated } from '#lib/stores/hydrated.svelte.js';
 	import { UPLOAD_ZONE_ID } from '#lib/constants/dom.js';
 	import { MIN_UPLOAD_LOADING_MS } from '#lib/constants/time.js';
@@ -50,7 +50,7 @@
 		const phraseInterval = setInterval(() => (currentPhrase = randomPhrase()), 1000);
 		try {
 			await Promise.all([
-				appStore.processFile(file),
+				uploadStore.processFile(file),
 				new Promise((resolve) => setTimeout(resolve, MIN_UPLOAD_LOADING_MS))
 			]);
 		} finally {
@@ -113,7 +113,7 @@
 		<span class="block animate-pulse text-lg text-[var(--color-text-muted)]">
 			{i18n.m.upload.loading[currentPhrase % i18n.m.upload.loading.length]}
 		</span>
-	{:else if appStore.status === 'error'}
+	{:else if uploadStore.status === 'error'}
 		<span class="mb-4 block">
 			<Warning
 				class="h-12 w-12 text-[var(--color-text-primary)]"
@@ -122,7 +122,7 @@
 			/>
 		</span>
 		<span class="mb-2 block text-lg text-[var(--color-text-primary)]"
-			>{appStore.error ? uploadErrorMessage(appStore.error, i18n.locale) : ''}</span
+			>{uploadStore.error ? uploadErrorMessage(uploadStore.error, i18n.locale) : ''}</span
 		>
 		<span class="block text-sm text-[var(--color-text-dim)]">{i18n.m.upload.retry}</span>
 	{:else}
@@ -148,7 +148,7 @@
 <!-- A button's children are presentational, so live regions must sit outside it. -->
 <p role="status" class="sr-only">{loading ? i18n.m.upload.analyzing : ''}</p>
 <p role="alert" class="sr-only">
-	{!loading && appStore.status === 'error'
-		? appStore.error && uploadErrorMessage(appStore.error, i18n.locale)
+	{!loading && uploadStore.status === 'error'
+		? uploadStore.error && uploadErrorMessage(uploadStore.error, i18n.locale)
 		: ''}
 </p>

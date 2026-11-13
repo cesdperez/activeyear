@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { yearData } from '#lib/stores/yearData.svelte.js';
+	import { highlightsStore } from '#lib/stores/highlights.svelte.js';
+	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
 	import { showsValue } from '#lib/utils/format.js';
 	import { scaledLength, totalStats, UNIT_SCALE } from '#lib/utils/totals.js';
 	import { recordActivities } from '#lib/utils/yearLane.js';
@@ -13,14 +15,14 @@
 	import ValueWithUnits from './ValueWithUnits.svelte';
 	import YearLane from './widgets/YearLane.svelte';
 
-	const centeredAvatar = $derived(CENTERED_AVATAR_THEMES.includes(appStore.theme));
-	const topSport = $derived(rankSports(appStore.breakdown, appStore.breakdownMetric)[0]);
+	const centeredAvatar = $derived(CENTERED_AVATAR_THEMES.includes(exportSettings.theme));
+	const topSport = $derived(rankSports(yearData.breakdown, exportSettings.breakdownMetric)[0]);
 	const TopIcon = $derived(topSport ? (sportIcons[topSport.type] ?? Target) : Target);
 
 	const totals = $derived(
-		appStore.stats ? totalStats(i18n.locale, appStore.stats, appStore.unit) : []
+		yearData.stats ? totalStats(i18n.locale, yearData.stats, exportSettings.unit) : []
 	);
-	const hero = $derived(totals.find((s) => s.id === appStore.summaryMetric) ?? totals[0]);
+	const hero = $derived(totals.find((s) => s.id === exportSettings.summaryMetric) ?? totals[0]);
 	const supporting = $derived(totals.filter((s) => s !== hero && showsValue(s.value)));
 	const fitChars = $derived(
 		Math.max(...supporting.map((s) => scaledLength(s.value, UNIT_SCALE.board)))
@@ -29,8 +31,12 @@
 
 {#snippet avatar()}
 	<div class="avatar-container">
-		{#if appStore.userPfp}
-			<img src={appStore.userPfp} alt={i18n.m.export.profile} class="h-full w-full object-cover" />
+		{#if exportSettings.userPfp}
+			<img
+				src={exportSettings.userPfp}
+				alt={i18n.m.export.profile}
+				class="h-full w-full object-cover"
+			/>
 		{:else}
 			<div class="flex h-full w-full items-center justify-center text-[var(--color-accent)]">
 				<TopIcon class="h-24 w-24" weight="bold" aria-hidden="true" />
@@ -126,13 +132,13 @@
 		<p class="card-label mb-3 text-[var(--color-text-muted)]">{i18n.m.common.dayByDay}</p>
 		<YearLane
 			variant="export"
-			theme={appStore.theme}
-			activities={appStore.activities}
-			highlights={appStore.highlights}
-			records={recordActivities(appStore.records)}
+			theme={exportSettings.theme}
+			activities={yearData.activities}
+			highlights={highlightsStore.highlights}
+			records={recordActivities(yearData.records)}
 			year={TARGET_YEAR}
-			elapsedDays={appStore.daysCounted}
-			yearSoFar={appStore.yearSoFar}
+			elapsedDays={yearData.daysCounted}
+			yearSoFar={yearData.yearSoFar}
 		/>
 	</section>
 

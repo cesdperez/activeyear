@@ -228,3 +228,5 @@ export interface BreakdownCardSettings {
 	theme: Theme;
 	breakdownMetric: BreakdownMetric;
 }
+
+export type AppStatus = 'idle' | 'parsing' | 'ready' | 'error';

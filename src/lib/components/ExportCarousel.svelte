@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
+	import { exportLock } from '#lib/stores/exportLock.svelte.js';
 	import SummaryCard from './SummaryCard.svelte';
 	import BreakdownCard from './BreakdownCard.svelte';
 	import HighlightsCard from './HighlightsCard.svelte';
@@ -30,7 +31,7 @@
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
-		if (appStore.isExporting) return;
+		if (exportLock.isExporting) return;
 		if (event.key === 'ArrowRight') nextSlide();
 		else if (event.key === 'ArrowLeft') prevSlide();
 		else return;
@@ -43,7 +44,7 @@
 	}
 
 	function handlePointerUp(event: PointerEvent) {
-		if (!swipeStart || appStore.isExporting) {
+		if (!swipeStart || exportLock.isExporting) {
 			swipeStart = null;
 			return;
 		}
@@ -61,9 +62,9 @@
 	}
 
 	export async function exportAllCards({ allowFallbackFonts = false } = {}): Promise<void> {
-		const baseFilename = exportFileStem(appStore.displayName, TARGET_YEAR);
+		const baseFilename = exportFileStem(exportSettings.displayName, TARGET_YEAR);
 
-		const theme = appStore.theme;
+		const theme = exportSettings.theme;
 		const originalSlide = currentSlide;
 
 		try {
@@ -112,7 +113,7 @@
 	<div class="carousel-nav">
 		<button
 			onclick={prevSlide}
-			disabled={appStore.isExporting}
+			disabled={exportLock.isExporting}
 			class="nav-button"
 			aria-label={i18n.m.export.previous}
 		>
@@ -125,7 +126,7 @@
 					class="dot {currentSlide === i ? 'active' : ''}"
 					aria-current={currentSlide === i ? 'true' : undefined}
 					onclick={() => (currentSlide = i as 0 | 1 | 2)}
-					disabled={appStore.isExporting}
+					disabled={exportLock.isExporting}
 					aria-label={i18n.m.export.goToSlide(i + 1)}
 				></button>
 			{/each}
@@ -133,7 +134,7 @@
 
 		<button
 			onclick={nextSlide}
-			disabled={appStore.isExporting}
+			disabled={exportLock.isExporting}
 			class="nav-button"
 			aria-label={i18n.m.export.next}
 		>
@@ -142,7 +143,7 @@
 	</div>
 
 	<!-- Silent while exporting, which flips through every slide. -->
-	<div class="slide-label" aria-live={appStore.isExporting ? 'off' : 'polite'} aria-atomic="true">
+	<div class="slide-label" aria-live={exportLock.isExporting ? 'off' : 'polite'} aria-atomic="true">
 		{slideLabels[currentSlide]} ({currentSlide + 1}/{SLIDE_COUNT})
 	</div>
 </section>

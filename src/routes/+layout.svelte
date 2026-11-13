@@ -45,7 +45,7 @@
 	import LanguagePicker from '#lib/components/LanguagePicker.svelte';
 	import BackToStart from '#lib/components/dashboard/BackToStart.svelte';
 	import DashboardToolbar from '#lib/components/dashboard/DashboardToolbar.svelte';
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { uploadStore } from '#lib/stores/upload.svelte.js';
 	import { THEME_OPTIONS } from '#lib/constants/export.js';
 	import MetaTags from '#lib/components/MetaTags.svelte';
 	import { inlinedFontFaceCss, loadAppFonts } from '#lib/utils/fonts.js';
@@ -66,11 +66,11 @@
 
 {#if page.route.id !== '/404'}
 	<MetaTags />
-	{#if appStore.status === 'ready'}
+	{#if uploadStore.status === 'ready'}
 		<div class="absolute top-4 left-4 z-20 flex h-11 items-center md:left-8"><BackToStart /></div>
 	{/if}
 	<div class="absolute top-4 right-4 z-20 flex items-center gap-2 md:right-8">
-		{#if appStore.status === 'ready'}<DashboardToolbar />{/if}
+		{#if uploadStore.status === 'ready'}<DashboardToolbar />{/if}
 		<LanguagePicker />
 	</div>
 {/if}

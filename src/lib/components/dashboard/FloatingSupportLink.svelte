@@ -3,7 +3,7 @@
 	import { Lightning } from 'phosphor-svelte';
 	import KofiLink from '#lib/components/KofiLink.svelte';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { exportLock } from '#lib/stores/exportLock.svelte.js';
 	import { supportVisibility } from '#lib/stores/supportVisibility.svelte.js';
 
 	let { header }: { header: HTMLElement | undefined } = $props();
@@ -19,7 +19,7 @@
 	});
 </script>
 
-{#if !headerVisible && supportVisibility.count === 0 && !supportVisibility.exportActionsVisible && !appStore.isExporting}
+{#if !headerVisible && supportVisibility.count === 0 && !supportVisibility.exportActionsVisible && !exportLock.isExporting}
 	<div transition:fade={{ duration: 150 }}>
 		<KofiLink
 			placement="floating"

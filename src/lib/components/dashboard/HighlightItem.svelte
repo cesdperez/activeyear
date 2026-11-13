@@ -9,7 +9,8 @@
 	} from '#lib/utils/format.js';
 	import type { Activity, Unit } from '#lib/types/index.js';
 	import { X } from 'phosphor-svelte';
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { highlightsStore } from '#lib/stores/highlights.svelte.js';
+	import { exportLock } from '#lib/stores/exportLock.svelte.js';
 
 	let { activity, unit }: { activity: Activity; unit: Unit } = $props();
 
@@ -37,8 +38,8 @@
 	<button
 		class="remove"
 		aria-label={i18n.m.dashboard.removeHighlight(activityTitle(i18n.locale, activity))}
-		disabled={appStore.isExporting}
-		onclick={() => appStore.removeHighlight(activity)}
+		disabled={exportLock.isExporting}
+		onclick={() => highlightsStore.removeHighlight(activity)}
 		><X class="h-4 w-4" weight="bold" aria-hidden="true" /></button
 	>
 </li>

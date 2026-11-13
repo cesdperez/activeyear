@@ -3,12 +3,13 @@
 	import { DownloadSimple } from 'phosphor-svelte';
 	import { SAVED_YEAR_URL_REVOKE_DELAY_MS } from '#lib/constants/savedYear.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { yearData } from '#lib/stores/yearData.svelte.js';
+	import { exportLock } from '#lib/stores/exportLock.svelte.js';
 	import { savedYearFileName } from '#lib/utils/savedYear.js';
 
 	function saveYear() {
 		const url = URL.createObjectURL(
-			new Blob([appStore.savedYearJson()], { type: 'application/json' })
+			new Blob([yearData.savedYearJson()], { type: 'application/json' })
 		);
 		const link = document.createElement('a');
 		link.href = url;
@@ -23,7 +24,7 @@
 	<button
 		type="button"
 		class="btn-secondary w-full"
-		disabled={appStore.isExporting}
+		disabled={exportLock.isExporting}
 		onclick={saveYear}
 	>
 		<DownloadSimple class="h-4 w-4" weight="bold" aria-hidden="true" />

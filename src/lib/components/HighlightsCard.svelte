@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { tick } from 'svelte';
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { highlightsStore } from '#lib/stores/highlights.svelte.js';
+	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
 	import { activityTitle, formatCount, formatDistance, formatDuration } from '#lib/utils/format.js';
 	import { monthLabels } from '#lib/utils/date.js';
 	import { timelineGap } from '#lib/utils/export.js';
@@ -45,8 +46,8 @@
 	let area = $state<HTMLElement>();
 	let list = $state<HTMLElement>();
 
-	let highlights = $derived(appStore.highlights.slice(0, limit));
-	let hiddenCount = $derived(appStore.highlights.length - highlights.length);
+	let highlights = $derived(highlightsStore.highlights.slice(0, limit));
+	let hiddenCount = $derived(highlightsStore.highlights.length - highlights.length);
 	let compact = $state(false);
 	let dense = $state(false);
 	let size = $derived(dense ? SIZES.dense : compact ? SIZES.compact : SIZES.full);
@@ -95,10 +96,10 @@
 
 	$effect(() => {
 		void [
-			appStore.highlights,
-			appStore.displayName,
-			appStore.theme,
-			appStore.unit,
+			highlightsStore.highlights,
+			exportSettings.displayName,
+			exportSettings.theme,
+			exportSettings.unit,
 			i18n.locale,
 			area,
 			list
@@ -170,7 +171,7 @@
 									>
 										{#if fav.distance > 0}
 											<span class="stat-value"
-												>{formatDistance(i18n.locale, fav.distance, appStore.unit)}</span
+												>{formatDistance(i18n.locale, fav.distance, exportSettings.unit)}</span
 											>
 										{/if}
 										<span class="stat-value">{formatDuration(i18n.locale, fav.duration)}</span>

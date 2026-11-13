@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { Plus, Check } from 'phosphor-svelte';
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { highlightsStore } from '#lib/stores/highlights.svelte.js';
+	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
+	import { exportLock } from '#lib/stores/exportLock.svelte.js';
 	import { HIGHLIGHTS_LIMIT } from '#lib/constants/export.js';
 	import {
 		activityTitle,
@@ -15,17 +17,17 @@
 
 	let query = $state('');
 	let announcement = $state('');
-	let results = $derived(query.trim() ? appStore.searchActivities(query) : []);
+	let results = $derived(query.trim() ? highlightsStore.searchActivities(query) : []);
 	let caption = $derived(
-		appStore.highlightPreset === 'custom'
+		highlightsStore.highlightPreset === 'custom'
 			? i18n.m.dashboard.customPicks
-			: i18n.m.dashboard.presets[appStore.highlightPreset].description
+			: i18n.m.dashboard.presets[highlightsStore.highlightPreset].description
 	);
 
 	function toggle(activity: Activity) {
-		const selected = appStore.isHighlight(activity);
-		if (selected) appStore.removeHighlight(activity);
-		else appStore.addHighlight(activity);
+		const selected = highlightsStore.isHighlight(activity);
+		if (selected) highlightsStore.removeHighlight(activity);
+		else highlightsStore.addHighlight(activity);
 		announcement = selected
 			? i18n.m.dashboard.removedHighlight(activityTitle(i18n.locale, activity))
 			: i18n.m.dashboard.addedHighlight(activityTitle(i18n.locale, activity));
@@ -37,11 +39,11 @@
 	<p class="mb-6 text-[var(--color-text-muted)]">{caption}</p>
 	<div class="mb-6 grid gap-3 lg:grid-cols-[auto_minmax(16rem,1fr)] lg:items-start">
 		<div role="group" aria-label={i18n.m.dashboard.highlightPresets} class="segmented">
-			{#each appStore.highlightPresets as preset (preset)}
+			{#each highlightsStore.highlightPresets as preset (preset)}
 				<button
-					aria-pressed={appStore.highlightPreset === preset}
-					disabled={appStore.isExporting}
-					onclick={() => appStore.applyHighlightPreset(preset)}
+					aria-pressed={highlightsStore.highlightPreset === preset}
+					disabled={exportLock.isExporting}
+					onclick={() => highlightsStore.applyHighlightPreset(preset)}
 					>{i18n.m.dashboard.presets[preset].label}</button
 				>
 			{/each}
@@ -61,7 +63,7 @@
 						announcement = '';
 					}
 				}}
-				disabled={appStore.isExporting}
+				disabled={exportLock.isExporting}
 				class="w-full rounded-[var(--radius-control)] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-4 py-2.5 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-dim)] focus-visible:border-[var(--color-accent)] disabled:opacity-50"
 			/>
 			<p
@@ -75,18 +77,21 @@
 				{announcement || (query.trim() ? i18n.m.dashboard.searchResults(results.length) : '')}
 			</div>
 			{#if query.trim()}
-				{#if !appStore.canAddHighlight}<p class="mt-2 text-sm text-[var(--color-text-muted)]">
+				{#if !highlightsStore.canAddHighlight}<p
+						class="mt-2 text-sm text-[var(--color-text-muted)]"
+					>
 						{i18n.m.dashboard.highlightLimit(HIGHLIGHTS_LIMIT)}
 					</p>{/if}
 				{#if results.length}
 					<ul class="panel mt-2 divide-y divide-[var(--color-border)] overflow-hidden">
 						{#each results as activity (activity)}
-							{@const selected = appStore.isHighlight(activity)}
+							{@const selected = highlightsStore.isHighlight(activity)}
 							<li>
 								<button
 									class="flex w-full items-center gap-3 px-4 py-3 text-left enabled:hover:bg-[var(--color-surface-hover)] disabled:opacity-50"
 									aria-pressed={selected}
-									disabled={appStore.isExporting || (!selected && !appStore.canAddHighlight)}
+									disabled={exportLock.isExporting ||
+										(!selected && !highlightsStore.canAddHighlight)}
 									onclick={() => toggle(activity)}
 									><span class="min-w-0 flex-1"
 										><span class="block font-semibold wrap-anywhere"
@@ -95,7 +100,7 @@
 											>{formatShortDate(i18n.locale, new Date(activity.date))}, {#if activity.distance > 0}{formatDistance(
 													i18n.locale,
 													activity.distance,
-													appStore.unit
+													exportSettings.unit
 												)},
 											{/if}{formatDuration(i18n.locale, activity.duration)}, {i18n.m.common.sports[
 												activity.type
@@ -120,11 +125,11 @@
 			{/if}
 		</div>
 	</div>
-	{#if appStore.highlights.length > 0}
+	{#if highlightsStore.highlights.length > 0}
 		<ol class="border-b border-[var(--color-border)]">
-			{#each appStore.highlights as activity, i (i)}<HighlightItem
+			{#each highlightsStore.highlights as activity, i (i)}<HighlightItem
 					{activity}
-					unit={appStore.unit}
+					unit={exportSettings.unit}
 				/>{/each}
 		</ol>
 	{:else}

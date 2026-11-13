@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
 	import type { CardVariant } from '#lib/types/index.js';
 	import ExportPreviewScale from './export/ExportPreviewScale.svelte';
 	import ExportCardSurface from './export/ExportCardSurface.svelte';
@@ -22,11 +22,11 @@
 </script>
 
 <ExportPreviewScale>
-	<ExportCardSurface {variant} theme={appStore.theme}>
-		<ExportCardBackground theme={appStore.theme} />
+	<ExportCardSurface {variant} theme={exportSettings.theme}>
+		<ExportCardBackground theme={exportSettings.theme} />
 
 		<div class="relative z-10 flex h-full flex-col p-[54px]">
-			<ExportCardHeader {title} userName={appStore.displayName} aside={headerAside} />
+			<ExportCardHeader {title} userName={exportSettings.displayName} aside={headerAside} />
 			{@render children()}
 			<ExportCardWatermark />
 		</div>

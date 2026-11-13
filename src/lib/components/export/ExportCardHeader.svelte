@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { yearData } from '#lib/stores/yearData.svelte.js';
+	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { nameFontSize } from '#lib/utils/export.js';
@@ -12,7 +13,7 @@
 
 <header class="mb-[56px]">
 	<div class="flex items-center justify-between gap-10">
-		{#if appStore.theme === 'lightmile'}
+		{#if exportSettings.theme === 'lightmile'}
 			<div class="flex shrink-0 items-center gap-4 whitespace-nowrap">
 				<Logotype class="text-[64px]" />
 				<span class="text-[40px] font-normal text-[var(--color-text-muted)]">×</span>
@@ -21,8 +22,8 @@
 		{:else}
 			<Logotype class="text-[64px]" />
 		{/if}
-		<p class:lightmile-season={appStore.theme === 'lightmile'} class="season card-label">
-			{(appStore.yearSoFar ? i18n.m.export.seasonSoFar : i18n.m.export.season)(TARGET_YEAR)}
+		<p class:lightmile-season={exportSettings.theme === 'lightmile'} class="season card-label">
+			{(yearData.yearSoFar ? i18n.m.export.seasonSoFar : i18n.m.export.season)(TARGET_YEAR)}
 		</p>
 	</div>
 	<div class="mt-12 flex items-end justify-between gap-10">

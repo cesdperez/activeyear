@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { uploadStore } from '#lib/stores/upload.svelte.js';
 	import { createHydrated } from '#lib/stores/hydrated.svelte.js';
 	import FileUpload from '#lib/components/FileUpload.svelte';
 	import Dashboard from '#lib/components/Dashboard.svelte';
@@ -13,12 +13,12 @@
 	const hydrated = createHydrated();
 	const demoDisabled = $derived(uploading || !hydrated.current);
 	function loadDemo() {
-		appStore.loadDemoData();
+		uploadStore.loadDemoData();
 	}
 </script>
 
 <main class="min-h-screen">
-	{#if appStore.status === 'ready'}
+	{#if uploadStore.status === 'ready'}
 		<Dashboard />
 	{:else}
 		<div

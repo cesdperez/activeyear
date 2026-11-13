@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { yearData } from '#lib/stores/yearData.svelte.js';
+	import { highlightsStore } from '#lib/stores/highlights.svelte.js';
+	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
+	import { uploadStore } from '#lib/stores/upload.svelte.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { recordActivities } from '#lib/utils/yearLane.js';
 	import ExportPanel from '#lib/components/ExportPanel.svelte';
@@ -26,37 +29,41 @@
 <div class="relative mx-auto max-w-6xl overflow-x-hidden px-4 py-12 sm:px-6 md:py-16 lg:px-8">
 	<div bind:this={header}>
 		<DashboardHeader
-			activityCount={appStore.stats?.activityCount ?? 0}
-			activeDays={appStore.stats?.activeDays ?? 0}
-			skippedRowCount={appStore.skippedRowCount}
-			cutShort={appStore.cutShort}
-			yearSoFar={appStore.yearSoFar}
+			activityCount={yearData.stats?.activityCount ?? 0}
+			activeDays={yearData.stats?.activeDays ?? 0}
+			skippedRowCount={uploadStore.skippedRowCount}
+			cutShort={yearData.cutShort}
+			yearSoFar={yearData.yearSoFar}
 		/>
 	</div>
 	<MainStats
-		stats={appStore.stats}
-		unit={appStore.unit}
-		focus={appStore.summaryMetric}
-		yearSoFar={appStore.yearSoFar}
-		daysCounted={appStore.daysCounted}
+		stats={yearData.stats}
+		unit={exportSettings.unit}
+		focus={exportSettings.summaryMetric}
+		yearSoFar={yearData.yearSoFar}
+		daysCounted={yearData.daysCounted}
 	/>
 	<section class="mb-20 md:mb-28">
 		<SectionHeading title={i18n.m.common.dayByDay} />
 		<YearLane
 			variant="dashboard"
-			activities={appStore.activities}
-			highlights={appStore.highlights}
-			records={recordActivities(appStore.records)}
+			activities={yearData.activities}
+			highlights={highlightsStore.highlights}
+			records={recordActivities(yearData.records)}
 			year={TARGET_YEAR}
-			elapsedDays={appStore.daysCounted}
-			yearSoFar={appStore.yearSoFar}
+			elapsedDays={yearData.daysCounted}
+			yearSoFar={yearData.yearSoFar}
 		/>
 	</section>
-	<WeeklyPattern variant="dashboard" pattern={appStore.weeklyPattern} />
+	<WeeklyPattern variant="dashboard" pattern={yearData.weeklyPattern} />
 	<HighlightsSection />
-	<PersonalRecords records={appStore.records} unit={appStore.unit} />
-	<SportBreakdown breakdown={appStore.breakdown} metric={appStore.breakdownMetric} />
-	<MoreStats activities={appStore.activities} breakdown={appStore.breakdown} unit={appStore.unit} />
+	<PersonalRecords records={yearData.records} unit={exportSettings.unit} />
+	<SportBreakdown breakdown={yearData.breakdown} metric={exportSettings.breakdownMetric} />
+	<MoreStats
+		activities={yearData.activities}
+		breakdown={yearData.breakdown}
+		unit={exportSettings.unit}
+	/>
 	<ExportPanel />
 	<div class="mt-24 flex flex-col items-center gap-6">
 		<div class="grid w-full max-w-xl items-start gap-4 sm:grid-cols-2">

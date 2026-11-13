@@ -2,7 +2,8 @@
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { tick } from 'svelte';
 	import { track } from '#lib/analytics/track.js';
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
+	import { exportLock } from '#lib/stores/exportLock.svelte.js';
 	import { observeExportActions } from '#lib/stores/supportVisibility.svelte.js';
 	import ExportCarousel from './ExportCarousel.svelte';
 	import SupportLink from './dashboard/SupportLink.svelte';
@@ -45,33 +46,33 @@
 	]);
 
 	async function handleExport(allowFallbackFonts = false) {
-		if (appStore.isExporting) return;
+		if (exportLock.isExporting) return;
 		if (!carouselRef) {
 			exportError = { type: 'ready' };
 			return;
 		}
+		const carousel = carouselRef;
 
-		appStore.isExporting = true;
 		exportError = null;
 		exportStatus = { type: 'generating' };
 
-		try {
-			await carouselRef.exportAllCards({ allowFallbackFonts });
-			track('export', appStore.theme);
-			exportStatus = { type: 'done' };
-		} catch (error) {
-			exportStatus = null;
-			exportError = {
-				type: error instanceof FontsUnavailableError ? 'fontsUnavailable' : 'failed'
-			};
-		} finally {
-			appStore.isExporting = false;
-		}
+		await exportLock.hold(async () => {
+			try {
+				await carousel.exportAllCards({ allowFallbackFonts });
+				track('export', exportSettings.theme);
+				exportStatus = { type: 'done' };
+			} catch (error) {
+				exportStatus = null;
+				exportError = {
+					type: error instanceof FontsUnavailableError ? 'fontsUnavailable' : 'failed'
+				};
+			}
+		});
 	}
 
 	function setTheme(theme: Theme) {
-		if (appStore.theme !== theme) track('theme_selected', theme);
-		appStore.theme = theme;
+		if (exportSettings.theme !== theme) track('theme_selected', theme);
+		exportSettings.theme = theme;
 	}
 
 	function readAsDataUrl(file: File): Promise<string> {
@@ -115,7 +116,7 @@
 		}
 
 		avatarError = null;
-		appStore.userPfp = dataUrl;
+		exportSettings.userPfp = dataUrl;
 		// The file input is replaced by the preview, which would drop focus to the page.
 		await tick();
 		removeImageButton?.focus();
@@ -129,7 +130,7 @@
 	}
 
 	async function removeImage() {
-		appStore.userPfp = null;
+		exportSettings.userPfp = null;
 		await tick();
 		avatarInput?.focus();
 	}
@@ -152,9 +153,9 @@
 					type="text"
 					id="userName"
 					autocomplete="name"
-					bind:value={appStore.userName}
+					bind:value={exportSettings.userName}
 					maxlength={USER_NAME_MAX_LENGTH}
-					disabled={appStore.isExporting}
+					disabled={exportLock.isExporting}
 					placeholder="César"
 					class="w-full rounded-[var(--radius-control)] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-4 py-3 text-[var(--color-text-primary)] placeholder-[var(--color-text-dim)] transition-colors focus-visible:border-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
 				/>
@@ -163,12 +164,12 @@
 			<!-- Profile Picture Upload -->
 			<div>
 				<label for="userAvatar" class="field-label">{i18n.m.export.picture}</label>
-				{#if appStore.userPfp}
+				{#if exportSettings.userPfp}
 					<div
 						class="flex items-center gap-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-3"
 					>
 						<img
-							src={appStore.userPfp}
+							src={exportSettings.userPfp}
 							alt={i18n.m.export.preview}
 							class="h-12 w-12 rounded-full border border-[var(--color-border)] object-cover"
 						/>
@@ -178,7 +179,7 @@
 						<button
 							bind:this={removeImageButton}
 							onclick={removeImage}
-							disabled={appStore.isExporting}
+							disabled={exportLock.isExporting}
 							class="p-2 text-[var(--color-text-dim)] transition-colors enabled:hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
 							title={i18n.m.export.remove}
 						>
@@ -192,7 +193,7 @@
 							id="userAvatar"
 							accept="image/*"
 							bind:this={avatarInput}
-							disabled={appStore.isExporting}
+							disabled={exportLock.isExporting}
 							onchange={handleImageUpload}
 							aria-describedby={avatarError ? 'userAvatar-error' : undefined}
 							class="peer sr-only"
@@ -223,9 +224,9 @@
 				<div role="group" aria-labelledby="summary-metric-label" class="grid grid-cols-2 gap-2">
 					{#each metrics as metric (metric.value)}
 						<button
-							onclick={() => (appStore.summaryMetric = metric.value)}
-							aria-pressed={appStore.summaryMetric === metric.value}
-							disabled={appStore.isExporting}
+							onclick={() => (exportSettings.summaryMetric = metric.value)}
+							aria-pressed={exportSettings.summaryMetric === metric.value}
+							disabled={exportLock.isExporting}
 							class="toggle px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
 						>
 							{metric.label}
@@ -246,8 +247,8 @@
 						<div class="theme-cell">
 							<button
 								onclick={() => setTheme(theme.value)}
-								aria-pressed={appStore.theme === theme.value}
-								disabled={appStore.isExporting}
+								aria-pressed={exportSettings.theme === theme.value}
+								disabled={exportLock.isExporting}
 								class="toggle h-full w-full px-4 py-3 text-center disabled:cursor-not-allowed disabled:opacity-50"
 							>
 								<div class="text-sm">{theme.label}</div>
@@ -266,10 +267,10 @@
 				{@attach observeExportActions}
 				id="export-download"
 				onclick={() => handleExport()}
-				aria-disabled={appStore.isExporting}
+				aria-disabled={exportLock.isExporting}
 				class="btn-primary flex w-full items-center justify-center gap-3 text-base aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
 			>
-				{#if appStore.isExporting}
+				{#if exportLock.isExporting}
 					<SpinnerGap class="h-5 w-5 animate-spin" weight="bold" aria-hidden="true" />
 					{i18n.m.export.generating}
 				{:else}

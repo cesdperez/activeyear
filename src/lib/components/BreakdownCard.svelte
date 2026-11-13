@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
-	import { appStore } from '#lib/stores/app.svelte.js';
+	import { yearData } from '#lib/stores/yearData.svelte.js';
+	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
 	import { selectTopSports, sportColorsFor } from '#lib/utils/breakdown.js';
 	import ExportCardBase from './ExportCardBase.svelte';
 	import SportDistribution from './breakdown/SportDistribution.svelte';
@@ -8,25 +9,27 @@
 	import ConsistencyStats from './widgets/ConsistencyStats.svelte';
 	import PersonalRecordsSection from './breakdown/PersonalRecordsSection.svelte';
 
-	let topSports = $derived(selectTopSports(appStore.breakdown || [], appStore.breakdownMetric));
-	let colors = $derived(sportColorsFor(topSports, appStore.theme));
+	let topSports = $derived(
+		selectTopSports(yearData.breakdown || [], exportSettings.breakdownMetric)
+	);
+	let colors = $derived(sportColorsFor(topSports, exportSettings.theme));
 </script>
 
 <ExportCardBase variant="breakdown" title={i18n.m.export.breakdown}>
 	{#if topSports.length > 0}
-		<SportDistribution sports={topSports} {colors} metric={appStore.breakdownMetric} />
+		<SportDistribution sports={topSports} {colors} metric={exportSettings.breakdownMetric} />
 	{/if}
 
-	<WeeklyPattern variant="export" pattern={appStore.weeklyPattern} theme={appStore.theme} />
+	<WeeklyPattern variant="export" pattern={yearData.weeklyPattern} theme={exportSettings.theme} />
 
 	<ConsistencyStats
-		activeDays={appStore.stats?.activeDays ?? 0}
-		longestStreak={appStore.stats?.longestStreak ?? 0}
-		yearSoFar={appStore.yearSoFar}
-		daysCounted={appStore.daysCounted}
+		activeDays={yearData.stats?.activeDays ?? 0}
+		longestStreak={yearData.stats?.longestStreak ?? 0}
+		yearSoFar={yearData.yearSoFar}
+		daysCounted={yearData.daysCounted}
 	/>
 
-	{#if appStore.records}
-		<PersonalRecordsSection records={appStore.records} unit={appStore.unit} />
+	{#if yearData.records}
+		<PersonalRecordsSection records={yearData.records} unit={exportSettings.unit} />
 	{/if}
 </ExportCardBase>

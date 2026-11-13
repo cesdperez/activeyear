@@ -1,4 +1,4 @@
-import { appStore } from '#lib/stores/app.svelte.js';
+import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
 import confetti from 'canvas-confetti';
 import { SPORT_PALETTES } from '#lib/constants/sports.js';
 
@@ -7,7 +7,7 @@ import { SPORT_PALETTES } from '#lib/constants/sports.js';
  */
 export function useConfettiRain() {
 	$effect(() => {
-		if (appStore.confettiEnabled) {
+		if (exportSettings.confettiEnabled) {
 			const cleanup = startConfetti();
 			return cleanup;
 		}
@@ -19,7 +19,7 @@ function startConfetti() {
 	let active = true;
 
 	(function frame() {
-		if (!appStore.confettiEnabled || !active) return;
+		if (!exportSettings.confettiEnabled || !active) return;
 
 		confetti({
 			particleCount: 1,
