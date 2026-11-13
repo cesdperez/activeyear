@@ -1,4 +1,9 @@
-import { APP_FONT_FAMILIES, FONTS_UNAVAILABLE_MESSAGE } from '#lib/constants/fonts.js';
+import {
+	APP_FONT_FAMILIES,
+	FONTS_UNAVAILABLE_MESSAGE,
+	THEME_FONT_FAMILIES
+} from '#lib/constants/fonts.js';
+import type { Theme } from '#lib/types/index.js';
 
 export class FontsUnavailableError extends Error {
 	readonly type = 'fonts-unavailable';
@@ -24,21 +29,29 @@ export async function loadAppFonts(): Promise<void> {
 	}
 }
 
-let inlinedFontCss: Promise<string> | undefined;
+const inlinedFontCss = new Map<Theme, Promise<string>>();
 
-/**
- * The app's @font-face CSS with every font file inlined as a data URL, so an export makes no
- * font requests. Fetched once; a failed fetch rejects with a FontsUnavailableError and is
- * retried on the next call.
- */
-export function inlinedFontFaceCss(): Promise<string> {
-	inlinedFontCss ??= Promise.all(appFontFaces().map(inlineFontFace))
-		.then((faces) => faces.join('\n'))
-		.catch((error) => {
-			inlinedFontCss = undefined;
-			throw new FontsUnavailableError({ cause: error });
-		});
-	return inlinedFontCss;
+/** Inlines the theme's font files. Failed fetches are retried on the next call. */
+export function inlinedFontFaceCss(theme: Theme): Promise<string> {
+	let css = inlinedFontCss.get(theme);
+	if (!css) {
+		css = Promise.all(
+			appFontFaces()
+				.filter((rule) =>
+					THEME_FONT_FAMILIES[theme].includes(
+						rule.style.getPropertyValue('font-family').replace(/["']/g, '')
+					)
+				)
+				.map(inlineFontFace)
+		)
+			.then((faces) => faces.join('\n'))
+			.catch((error) => {
+				inlinedFontCss.delete(theme);
+				throw new FontsUnavailableError({ cause: error });
+			});
+		inlinedFontCss.set(theme, css);
+	}
+	return css;
 }
 
 function appFontFaces(): CSSFontFaceRule[] {

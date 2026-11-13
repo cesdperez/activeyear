@@ -37,6 +37,7 @@
 	import LanguagePicker from '#lib/components/LanguagePicker.svelte';
 	import DashboardToolbar from '#lib/components/dashboard/DashboardToolbar.svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
+	import { THEME_OPTIONS } from '#lib/constants/export.js';
 	import MetaTags from '#lib/components/MetaTags.svelte';
 	import { inlinedFontFaceCss, loadAppFonts } from '#lib/utils/fonts.js';
 
@@ -46,10 +47,10 @@
 		document.documentElement.lang = i18n.locale;
 	});
 
-	// Fetch every face up front, so a later offline export still has them; export reports failures.
+	// Inline every theme's fonts up front so exports work offline.
 	onMount(() => {
 		loadAppFonts()
-			.then(inlinedFontFaceCss)
+			.then(() => Promise.all(THEME_OPTIONS.map(({ value }) => inlinedFontFaceCss(value))))
 			.catch(() => {});
 	});
 </script>

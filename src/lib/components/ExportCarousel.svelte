@@ -5,7 +5,7 @@
 	import SummaryCard from './SummaryCard.svelte';
 	import BreakdownCard from './BreakdownCard.svelte';
 	import HighlightsCard from './HighlightsCard.svelte';
-	import { exportFileStem, exportToPng, getThemeBackgroundColor } from '#lib/utils/export.js';
+	import { exportFileStem, exportToPng } from '#lib/utils/export.js';
 	import { CaretLeft, CaretRight } from 'phosphor-svelte';
 
 	let currentSlide = $state<0 | 1 | 2>(0);
@@ -63,7 +63,7 @@
 	export async function exportAllCards({ allowFallbackFonts = false } = {}): Promise<void> {
 		const baseFilename = exportFileStem(appStore.displayName, TARGET_YEAR);
 
-		const backgroundColor = getThemeBackgroundColor(appStore.theme);
+		const theme = appStore.theme;
 		const originalSlide = currentSlide;
 
 		try {
@@ -74,7 +74,7 @@
 				if (cardEl) {
 					await exportToPng(cardEl, {
 						filename: `${baseFilename}-${label.toLowerCase()}`,
-						backgroundColor,
+						theme,
 						allowFallbackFonts
 					});
 				}

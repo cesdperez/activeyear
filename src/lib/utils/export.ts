@@ -7,7 +7,7 @@ import { inlinedFontFaceCss } from './fonts.js';
 
 export interface ExportOptions {
 	filename: string;
-	backgroundColor?: string;
+	theme: Theme;
 	/** Export even when the app fonts cannot be embedded, letting the image fall back. */
 	allowFallbackFonts?: boolean;
 }
@@ -16,10 +16,10 @@ export interface ExportOptions {
  * Export an HTML element to PNG and trigger download
  */
 export async function exportToPng(element: HTMLElement, options: ExportOptions): Promise<void> {
-	const { filename, backgroundColor = THEME_SURFACES.neon, allowFallbackFonts = false } = options;
+	const { filename, theme, allowFallbackFonts = false } = options;
 
 	// Left to itself, modern-screenshot refetches every font file and silently skips failures.
-	const fontCss = await inlinedFontFaceCss().catch((error) => {
+	const fontCss = await inlinedFontFaceCss(theme).catch((error) => {
 		if (allowFallbackFonts) return undefined;
 		throw error;
 	});
@@ -31,7 +31,7 @@ export async function exportToPng(element: HTMLElement, options: ExportOptions):
 			height: element.offsetHeight,
 			scale: 1,
 			style: { textRendering: 'geometricPrecision' },
-			backgroundColor,
+			backgroundColor: THEME_SURFACES[theme],
 			font: fontCss ? { cssText: fontCss } : undefined,
 			filter: (node) => !(node instanceof HTMLElement && node.dataset.exportIgnore),
 			onCloneEachNode: keepLineClamp
@@ -88,8 +88,4 @@ export function timelineGap(available: number, itemsHeight: number, count: numbe
 	if (count < 2) return TIMELINE_GAP.min;
 	const gap = (available - itemsHeight) / (count - 1);
 	return Math.min(TIMELINE_GAP.max, Math.max(TIMELINE_GAP.min, gap));
-}
-
-export function getThemeBackgroundColor(theme: Theme): string {
-	return THEME_SURFACES[theme];
 }

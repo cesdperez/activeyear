@@ -56,6 +56,8 @@ export interface SportPalette {
 	other: string;
 }
 
+const RETRO_SECONDARY_COLORS = ['#5fe08a', '#ff7a7a', '#6fa8ff', '#ff7ccf', '#ff9f45'];
+
 export const SPORT_PALETTES: Record<Theme, SportPalette> = {
 	neon: {
 		colors: [
@@ -77,7 +79,7 @@ export const SPORT_PALETTES: Record<Theme, SportPalette> = {
 	},
 	minimalist: { colors: ['#c4281c', '#0f1417', '#525c61', '#8b9499'], other: '#c3c9cc' },
 	retro: {
-		colors: ['#ffd23a', '#5fe08a', '#ff7a7a', '#6fa8ff', '#ff7ccf', '#ff9f45'],
+		colors: ['#ffd23a', ...RETRO_SECONDARY_COLORS],
 		other: '#a9a1dc'
 	},
 	classic: {
@@ -85,7 +87,7 @@ export const SPORT_PALETTES: Record<Theme, SportPalette> = {
 		other: '#a1a1aa'
 	},
 	synthwave: {
-		colors: ['#facc15', '#5fe08a', '#ff7a7a', '#6fa8ff', '#ff7ccf', '#ff9f45'],
+		colors: ['#facc15', ...RETRO_SECONDARY_COLORS],
 		other: '#a5a0d8'
 	}
 };
