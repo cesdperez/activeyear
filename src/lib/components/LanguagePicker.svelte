@@ -77,10 +77,10 @@
 	}}
 />
 
-<div bind:this={container} class="absolute top-4 right-4 z-20 font-['Outfit'] md:right-8">
+<div bind:this={container} class="absolute top-4 right-4 z-20 md:right-8">
 	<button
 		bind:this={button}
-		class="flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full border border-[rgba(255,255,255,0.05)] bg-[var(--color-surface-elevated)] px-3 text-xs font-bold tracking-wider text-white"
+		class="flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-[var(--radius-control)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-xs font-semibold text-[var(--color-text-muted)] transition-colors duration-150 hover:border-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"
 		aria-label={`${i18n.m.picker.language} ${LOCALE_NAMES[i18n.locale]}`}
 		aria-haspopup="menu"
 		aria-expanded={open}
@@ -101,7 +101,7 @@
 			tabindex="-1"
 			aria-label={i18n.m.picker.language}
 			onkeydown={menuKeydown}
-			class="absolute top-full right-0 mt-2 min-w-44 rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[var(--color-surface-elevated)] p-1 shadow-lg"
+			class="panel absolute top-full right-0 mt-2 min-w-44 p-1"
 		>
 			{#each LOCALES as locale (locale)}
 				<a
@@ -115,7 +115,7 @@
 						open = false;
 						suggestion = null;
 					}}
-					class="flex min-h-11 items-center justify-between gap-4 rounded-xl px-3 text-sm text-white hover:bg-white/10"
+					class="flex min-h-11 items-center justify-between gap-4 rounded-[var(--radius-control)] px-3 text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)]"
 				>
 					{LOCALE_NAMES[locale]}{#if locale === i18n.locale}<Check
 							class="h-4 w-4 text-[var(--color-accent)]"
@@ -127,7 +127,7 @@
 	{/if}
 	{#if !open && suggestion && page.url.pathname === '/'}
 		<div
-			class="absolute top-full right-0 mt-2 flex items-center rounded-full border border-[rgba(255,255,255,0.05)] bg-[var(--color-surface-elevated)] text-sm whitespace-nowrap text-white"
+			class="panel absolute top-full right-0 mt-2 flex items-center text-sm whitespace-nowrap text-[var(--color-text-primary)]"
 		>
 			<a
 				href={resolve('/[[lang=locale]]', { lang: suggestion })}
@@ -151,15 +151,12 @@
 		</div>
 	{/if}
 	<noscript>
-		<nav
-			aria-label={i18n.m.picker.language}
-			class="absolute top-full right-0 mt-2 rounded-2xl bg-[var(--color-surface-elevated)] p-2"
-		>
+		<nav aria-label={i18n.m.picker.language} class="panel absolute top-full right-0 mt-2 p-2">
 			{#each LOCALES as locale (locale)}<a
 					href={resolve('/[[lang=locale]]', { lang: locale === 'en' ? undefined : locale })}
 					hreflang={locale}
 					lang={locale}
-					class="block px-3 py-2 text-white">{LOCALE_NAMES[locale]}</a
+					class="block px-3 py-2 text-[var(--color-text-primary)]">{LOCALE_NAMES[locale]}</a
 				>{/each}
 		</nav>
 	</noscript>
