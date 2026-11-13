@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Activity, WidgetVariant, WidgetVariantProps } from '#lib/types/index.js';
-	import { laneMarkers, laneTicks, monthStartDays } from '#lib/utils/yearLane.js';
+	import { laneMarkers, laneTicks, markerLeft, monthStartDays } from '#lib/utils/yearLane.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { monthLabels } from '#lib/utils/date.js';
 	import { formatCount } from '#lib/utils/format.js';
@@ -56,7 +56,6 @@
 	}
 
 	const months = $derived(monthLabels(i18n.locale));
-	const position = (day: number) => `${((day + 0.5) / days) * 100}%`;
 
 	const label = $derived(
 		[
@@ -78,7 +77,7 @@
 	<div role="img" aria-label={label}>
 		<div class="relative {style.markers}" aria-hidden="true">
 			{#each markers as { day, kind } (day)}
-				<span class="marker marker-{kind}" style:left={position(day)}></span>
+				<span class="marker marker-{kind}" style:left={markerLeft(day, days)}></span>
 			{/each}
 		</div>
 		<svg
@@ -125,6 +124,15 @@
 	.baseline {
 		height: 1px;
 		background: var(--color-text-dim);
+	}
+
+	.year-lane {
+		/* Half the widest head, the record diamond scaled 1.3. */
+		--marker-half: 0.325rem;
+	}
+
+	[data-variant='export'] {
+		--marker-half: 12px;
 	}
 
 	/* Course points: a head above the lane on a stem that drops to the ticks. */

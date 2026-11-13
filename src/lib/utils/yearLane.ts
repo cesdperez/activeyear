@@ -54,6 +54,14 @@ export function laneMarkers(
 	return [...kinds].map(([day, kind]) => ({ day, kind })).sort((a, b) => a.day - b.day);
 }
 
+/**
+ * CSS `left` for a marker centred on `day`, clamped by the lane's `--marker-half` so a head on the
+ * first or last day stays inside the lane.
+ */
+export function markerLeft(day: number, days: number): string {
+	return `clamp(var(--marker-half), ${((day + 0.5) / days) * 100}%, calc(100% - var(--marker-half)))`;
+}
+
 export function monthStartDays(year: number): number[] {
 	return Array.from({ length: 12 }, (_, month) => dayOfYear(new Date(year, month, 1)));
 }

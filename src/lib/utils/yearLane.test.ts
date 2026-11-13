@@ -1,6 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import type { Activity } from '#lib/types/index.js';
-import { dayOfYear, laneMarkers, laneTicks, monthStartDays, recordActivities } from './yearLane.js';
+import {
+	dayOfYear,
+	laneMarkers,
+	laneTicks,
+	markerLeft,
+	monthStartDays,
+	recordActivities
+} from './yearLane.js';
 
 const activity = (date: string, duration = 3600): Activity => ({
 	date: new Date(date),
@@ -96,6 +103,15 @@ describe('laneMarkers', () => {
 
 	it('leaves out activities from another year', () => {
 		expect(laneMarkers([activity('2025-06-01T08:00:00')], [], 2026)).toEqual([]);
+	});
+});
+
+describe('markerLeft', () => {
+	it('centres a marker on its day, kept half a head inside each end of the lane', () => {
+		expect(markerLeft(0, 365)).toBe(
+			`clamp(var(--marker-half), ${(0.5 / 365) * 100}%, calc(100% - var(--marker-half)))`
+		);
+		expect(markerLeft(364, 365)).toContain(`${(364.5 / 365) * 100}%`);
 	});
 });
 
