@@ -5,6 +5,7 @@ import {
 	laneMarkers,
 	laneTicks,
 	markerLeft,
+	mergeCloseMarkers,
 	monthStartDays,
 	recordActivities
 } from './yearLane.js';
@@ -103,6 +104,45 @@ describe('laneMarkers', () => {
 
 	it('leaves out activities from another year', () => {
 		expect(laneMarkers([activity('2025-06-01T08:00:00')], [], 2026)).toEqual([]);
+	});
+});
+
+describe('mergeCloseMarkers', () => {
+	const highlight = (day: number) => ({ day, kind: 'highlight' as const });
+	const record = (day: number) => ({ day, kind: 'record' as const });
+
+	it('keeps markers at least a head apart where they are', () => {
+		expect(mergeCloseMarkers([highlight(100), record(110)], 365, 8)).toEqual([
+			highlight(100),
+			record(110)
+		]);
+	});
+
+	it('merges markers closer than a head into one centred on them, a record winning', () => {
+		expect(mergeCloseMarkers([highlight(100), record(102), highlight(104)], 365, 8)).toEqual([
+			record(102)
+		]);
+	});
+
+	it('keeps merged heads a head apart however busy the stretch', () => {
+		const busy = Array.from({ length: 30 }, (_, day) => highlight(day));
+		const merged = mergeCloseMarkers(busy, 365, 8);
+
+		for (let i = 1; i < merged.length; i++) {
+			expect(merged[i].day - merged[i - 1].day).toBeGreaterThanOrEqual(8);
+		}
+	});
+
+	it('pulls heads at either end inside the lane before merging them', () => {
+		expect(mergeCloseMarkers([highlight(0), highlight(5), highlight(364)], 365, 8)).toEqual([
+			highlight(3.5),
+			highlight(360.5)
+		]);
+	});
+
+	it('keeps markers as they are when the head width is unknown', () => {
+		const markers = [highlight(0), highlight(1)];
+		expect(mergeCloseMarkers(markers, 365, 0)).toEqual(markers);
 	});
 });
 

@@ -55,6 +55,36 @@ export function laneMarkers(
 }
 
 /**
+ * Merges markers whose heads, `headDays` days wide, would overlap into one head at their mean day,
+ * a record winning, and pulls heads at either end of the lane inside it. Adjacent results are at
+ * least `headDays` apart.
+ */
+export function mergeCloseMarkers(
+	markers: LaneMarker[],
+	days: number,
+	headDays: number
+): LaneMarker[] {
+	if (headDays <= 0) return markers;
+	const first = headDays / 2 - 0.5;
+	const last = days - 0.5 - headDays / 2;
+	const centre = ({ sum, count }: { sum: number; count: number }) =>
+		Math.min(Math.max(sum / count, first), last);
+
+	const groups: { sum: number; count: number; kind: LaneMarker['kind'] }[] = [];
+	for (const { day, kind } of markers) {
+		groups.push({ sum: day, count: 1, kind });
+		while (groups.length > 1 && centre(groups.at(-1)!) - centre(groups.at(-2)!) < headDays) {
+			const top = groups.pop()!;
+			const below = groups.at(-1)!;
+			below.sum += top.sum;
+			below.count += top.count;
+			if (top.kind === 'record') below.kind = 'record';
+		}
+	}
+	return groups.map((group) => ({ day: centre(group), kind: group.kind }));
+}
+
+/**
  * CSS `left` for a marker centred on `day`, clamped by the lane's `--marker-half` so a head on the
  * first or last day stays inside the lane.
  */

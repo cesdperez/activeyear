@@ -1,6 +1,12 @@
 <script lang="ts">
 	import type { Activity, WidgetVariant, WidgetVariantProps } from '#lib/types/index.js';
-	import { laneMarkers, laneTicks, markerLeft, monthStartDays } from '#lib/utils/yearLane.js';
+	import {
+		laneMarkers,
+		laneTicks,
+		markerLeft,
+		mergeCloseMarkers,
+		monthStartDays
+	} from '#lib/utils/yearLane.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { monthLabels } from '#lib/utils/date.js';
 	import { formatCount } from '#lib/utils/format.js';
@@ -20,19 +26,22 @@
 
 	const STYLES: Record<
 		WidgetVariant,
-		{ lane: string; markers: string; month: string; legend: string }
+		{ lane: string; markers: string; month: string; legend: string; headPx: number }
 	> = {
 		dashboard: {
 			lane: 'h-16 md:h-24',
 			markers: 'h-5',
 			month: 'text-[0.6875rem] md:text-xs',
-			legend: 'text-xs'
+			legend: 'text-xs',
+			// The widest head, the record diamond, plus a sliver of air.
+			headPx: 12
 		},
 		export: {
 			lane: 'h-[190px]',
 			markers: 'h-[34px]',
 			month: 'card-label',
-			legend: 'card-text-sm'
+			legend: 'card-text-sm',
+			headPx: 28
 		}
 	};
 
@@ -40,6 +49,10 @@
 	const ticks = $derived(laneTicks(activities, year));
 	const days = $derived(ticks.length);
 	const markers = $derived(laneMarkers(highlights, records, year));
+	let laneWidth = $state(0);
+	const heads = $derived(
+		mergeCloseMarkers(markers, days, laneWidth ? (style.headPx * days) / laneWidth : 0)
+	);
 	const activeDays = $derived(ticks.filter((height) => height > 0).length);
 	const hasRecords = $derived(markers.some((m) => m.kind === 'record'));
 	const hasHighlights = $derived(markers.some((m) => m.kind === 'highlight'));
@@ -75,8 +88,8 @@
 
 <figure class="year-lane w-full" data-testid="year-lane" data-variant={variant}>
 	<div role="img" aria-label={label}>
-		<div class="relative {style.markers}" aria-hidden="true">
-			{#each markers as { day, kind } (day)}
+		<div class="relative {style.markers}" aria-hidden="true" bind:clientWidth={laneWidth}>
+			{#each heads as { day, kind } (day)}
 				<span class="marker marker-{kind}" style:left={markerLeft(day, days)}></span>
 			{/each}
 		</div>
