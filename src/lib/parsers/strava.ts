@@ -16,7 +16,8 @@ import type {
 	StravaLocale
 } from '#lib/types/index.js';
 
-const KEY_HEADERS = ['Activity Date', 'Activity Type', 'Moving Time'];
+const KEY_HEADERS = ['Activity Date', 'Activity Type'];
+const DURATION_HEADERS = ['Moving Time', 'Elapsed Time'];
 // Localized exports translate headers but keep activities/<id>.fit.gz filenames.
 const ACTIVITY_FILENAME = /(?:^|[",\r\n])activities\/\d+\.(?:fit|gpx|tcx)(?:\.gz)?(?=$|[",\r\n])/i;
 
@@ -66,8 +67,11 @@ function readHeaders(csv: string): string[] {
 	return readHeaderCells(firstLine(csv));
 }
 
-function hasEnglishHeaders(headers: string[]): boolean {
-	return KEY_HEADERS.every((header) => headers.includes(header));
+function hasRequiredHeaders(headers: string[]): boolean {
+	return (
+		KEY_HEADERS.every((header) => headers.includes(header)) &&
+		DURATION_HEADERS.some((header) => headers.includes(header))
+	);
 }
 
 function parseStravaDate(value: string): Date | null {
@@ -144,7 +148,9 @@ function columnIndexes(columns: string[]) {
 		date: columns.indexOf('Activity Date'),
 		name: columns.indexOf('Activity Name'),
 		type: columns.indexOf('Activity Type'),
-		movingTime: columns.indexOf('Moving Time'),
+		duration: columns.includes('Moving Time')
+			? columns.indexOf('Moving Time')
+			: columns.lastIndexOf('Elapsed Time'),
 		elevation: columns.indexOf('Elevation Gain'),
 		calories: columns.indexOf('Calories'),
 		// The last Distance is metres; the first is display text.
@@ -164,7 +170,7 @@ function readActivity(
 		type,
 		title: data[columns.name] ?? '',
 		distance: TYPES_WITHOUT_DISTANCE.has(type) ? 0 : parseNumber(data[columns.distance]) / 1000,
-		duration: parseNumber(data[columns.movingTime]),
+		duration: parseNumber(data[columns.duration]),
 		elevation: Math.round(parseNumber(data[columns.elevation])),
 		calories: Math.round(parseNumber(data[columns.calories])),
 		favorite: false
@@ -173,10 +179,9 @@ function readActivity(
 
 function parse(csv: string, year: number): ParseResult {
 	const headers = readHeaders(csv);
-	const locale = hasEnglishHeaders(headers) ? undefined : bestLocale(headers, STRAVA_LOCALES);
+	const locale = hasRequiredHeaders(headers) ? undefined : bestLocale(headers, STRAVA_LOCALES);
 	const translated = locale ? headers.map((header) => locale.headers[header] ?? header) : headers;
-	if (!KEY_HEADERS.every((header) => translated.includes(header)))
-		return unsupportedLanguageExportResult();
+	if (!hasRequiredHeaders(translated)) return unsupportedLanguageExportResult();
 
 	const columns = columnIndexes(translated);
 	return parseRows<string[]>(csv, {
@@ -205,8 +210,8 @@ export const stravaParser: ActivityParser = {
 		const headers = readHeaders(csv);
 		const locale = bestLocale(headers, STRAVA_LOCALES);
 		return (
-			hasEnglishHeaders(headers) ||
-			KEY_HEADERS.every((header) => headers.some((cell) => locale?.headers[cell] === header)) ||
+			hasRequiredHeaders(headers) ||
+			hasRequiredHeaders(headers.map((cell) => locale?.headers[cell] ?? '')) ||
 			ACTIVITY_FILENAME.test(csv.slice(0, 65536))
 		);
 	},

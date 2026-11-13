@@ -141,6 +141,14 @@ describe('Strava parser', () => {
 				.type
 		).toBe(expected);
 	});
+	it('falls back to elapsed time when an English export has no moving time', () => {
+		const csv =
+			'Activity Date,Activity Name,Activity Type,Elapsed Time,Distance,Elapsed Time,Distance\n"Oct 27, 2026, 7:32:12 PM",Lift,Weight Training,551,0,551.0,0.0';
+		expect(stravaParser.detect(csv)).toBe(true);
+		const result = parseActivityCsv(csv, 2026);
+		expect(result.errors).toEqual([]);
+		expect(result.activities[0]).toMatchObject({ type: 'strength', duration: 551 });
+	});
 	it('detects English and localized Strava exports but not Garmin', () => {
 		expect(stravaParser.detect(header)).toBe(true);
 		expect(stravaParser.detect('Activity Type,Date,Distance\nRunning,2026-01-01,1')).toBe(false);
