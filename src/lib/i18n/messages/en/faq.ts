@@ -20,7 +20,7 @@ export const faq = {
 		{
 			question: 'What can I share?',
 			answer:
-				'Three story-sized cards (1080 × 1920 PNG): a summary, a sport breakdown and your highlights, in Neon, Minimal or Retro style.'
+				'Three story-sized cards (1080 × 1920 PNG): a summary, a sport breakdown and your highlights, in six styles: Neon, Minimal, Retro, Classic, Synthwave and Lightmile.'
 		},
 		{
 			question: 'Can I reopen my recap later?',

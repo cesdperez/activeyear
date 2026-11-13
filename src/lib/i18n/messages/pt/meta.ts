@@ -12,7 +12,7 @@ export const meta: typeof en = {
 			'Funciona em qualquer navegador moderno no computador. Sem instalação, conta ou login.',
 			'O CSV é processado e analisado no navegador. Os dados de atividade nunca são enviados a um servidor.',
 			'Entrada: o CSV de atividades do Garmin Connect ou activities.csv de uma exportação do Strava, em inglês, espanhol, alemão, francês, italiano, holandês ou português.',
-			'Saída: um painel e três cartões PNG de 1080 × 1920 para compartilhar nos estilos Neon, Minimal ou Retro.',
+			'Saída: um painel e três cartões PNG de 1080 × 1920 para compartilhar, em seis estilos: Neon, Minimal, Retro, Classic, Synthwave e Lightmile.',
 			'Salvar: o painel permite baixar o ano processado como arquivo .json, que reabre a retrospectiva ao ser solto na área de upload.',
 			'Uma demonstração com dados de exemplo está disponível na página inicial.'
 		],

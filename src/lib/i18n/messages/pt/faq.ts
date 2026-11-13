@@ -21,7 +21,7 @@ export const faq: typeof en = {
 		{
 			question: 'O que posso compartilhar?',
 			answer:
-				'Três cards para stories (PNG de 1080 × 1920): um resumo, uma divisão por esporte e seus destaques, nos estilos Neon, Minimal ou Retro.'
+				'Três cards para stories (PNG de 1080 × 1920): um resumo, uma divisão por esporte e seus destaques, em seis estilos: Neon, Minimal, Retro, Classic, Synthwave e Lightmile.'
 		},
 		{
 			question: 'Posso abrir meu resumo novamente depois?',

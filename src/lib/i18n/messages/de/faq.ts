@@ -21,7 +21,7 @@ export const faq: typeof en = {
 		{
 			question: 'Was kann ich teilen?',
 			answer:
-				'Drei Karten im Story-Format (1080 × 1920 PNG): eine Zusammenfassung, eine Aufteilung nach Sportart und deine Highlights, im Stil Neon, Minimal oder Retro.'
+				'Drei Karten im Story-Format (1080 × 1920 PNG): eine Zusammenfassung, eine Aufteilung nach Sportart und deine Highlights, in sechs Stilen: Neon, Minimal, Retro, Classic, Synthwave und Lightmile.'
 		},
 		{
 			question: 'Kann ich meinen Rückblick später wieder öffnen?',

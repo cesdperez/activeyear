@@ -21,7 +21,7 @@ export const faq: typeof en = {
 		{
 			question: 'Wat kan ik delen?',
 			answer:
-				'Drie kaarten op storyformaat (1080 × 1920 PNG): een samenvatting, een verdeling per sport en je hoogtepunten, in Neon-, Minimal- of Retro-stijl.'
+				'Drie kaarten op storyformaat (1080 × 1920 PNG): een samenvatting, een verdeling per sport en je hoogtepunten, in zes stijlen: Neon, Minimal, Retro, Classic, Synthwave en Lightmile.'
 		},
 		{
 			question: 'Kan ik mijn overzicht later opnieuw openen?',
