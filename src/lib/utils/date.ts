@@ -32,7 +32,21 @@ export function localDayNumber(date: Date): number {
 	return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / MS_PER_DAY;
 }
 
+export function dayOfYear(date: Date): number {
+	return localDayNumber(date) - localDayNumber(new Date(date.getFullYear(), 0, 1));
+}
+
 export function localDateFromDayNumber(day: number): Date {
 	const utc = new Date(day * MS_PER_DAY);
 	return new Date(utc.getUTCFullYear(), utc.getUTCMonth(), utc.getUTCDate());
+}
+
+export function isYearRunning(year: number, today: Date): boolean {
+	return today.getFullYear() === year;
+}
+
+export function daysElapsed(year: number, today: Date): number {
+	if (today.getFullYear() > year) return daysInYear(year);
+	if (today.getFullYear() < year) return 0;
+	return dayOfYear(today) + 1;
 }

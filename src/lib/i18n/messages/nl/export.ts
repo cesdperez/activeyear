@@ -49,5 +49,6 @@ export const exportMessages: typeof en = {
 	consistency: 'Regelmaat',
 	withoutRestDay: 'Zonder rustdag',
 	sports: 'Sporten',
+	seasonSoFar: (year) => `Seizoen ${year} tot nu toe`,
 	season: (year) => `Seizoen ${year}`
 };

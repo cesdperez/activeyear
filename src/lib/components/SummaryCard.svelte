@@ -131,6 +131,8 @@
 			highlights={appStore.highlights}
 			records={recordActivities(appStore.records)}
 			year={TARGET_YEAR}
+			elapsedDays={appStore.daysCounted}
+			yearSoFar={appStore.yearSoFar}
 		/>
 	</section>
 

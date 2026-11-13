@@ -42,6 +42,8 @@ export const common: typeof en = {
 	yearLane: {
 		summary: (n, count, days, year) =>
 			`${n} ${plural('fr', count, { one: 'jour actif', other: 'jours actifs' })} sur ${days} en ${year}`,
+		summarySoFar: (n, count, days, year) =>
+			`${n} ${plural('fr', count, { one: 'jour actif', other: 'jours actifs' })} sur ${days} en ${year} jusqu’ici`,
 		highlightsMarked: 'temps forts signalés',
 		recordsMarked: 'records personnels signalés',
 		highlight: 'Temps fort',

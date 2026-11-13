@@ -18,7 +18,6 @@ import { ACTIVITY_TYPES, SPORT_PALETTES } from '#lib/constants/sports.js';
 import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '#lib/constants/time.js';
 import { consolidateBreakdown, mergeIntoOther } from './activity.js';
 import { donutSegments, scaledBarHeight, topIndices } from './charts.js';
-import { daysInYear } from './date.js';
 import { formatCount, secondsUnderAMinute } from './format.js';
 
 export interface SportDonutSegment {
@@ -148,6 +147,6 @@ export function weeklyBars(pattern: WeeklyPattern, containerHeight: number): Wee
 	}));
 }
 
-export function activeDaysPercent(activeDays: number, year: number): number {
-	return Math.min((activeDays / daysInYear(year)) * 100, 100);
+export function activeDaysPercent(activeDays: number, daysCounted: number): number {
+	return Math.min((activeDays / daysCounted) * 100, 100);
 }

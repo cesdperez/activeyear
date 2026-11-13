@@ -16,9 +16,19 @@
 		highlights: Activity[];
 		records: Activity[];
 		year: number;
+		elapsedDays?: number;
+		yearSoFar?: boolean;
 	} & WidgetVariantProps;
 
-	let { activities, highlights, records, year, variant }: Props = $props();
+	let {
+		activities,
+		highlights,
+		records,
+		year,
+		variant,
+		elapsedDays,
+		yearSoFar = false
+	}: Props = $props();
 
 	// In viewBox units: one day is 1 wide, the lane 100 tall.
 	const TICK_WIDTH = 0.62;
@@ -48,17 +58,22 @@
 	const style = $derived(STYLES[variant]);
 	const ticks = $derived(laneTicks(activities, year));
 	const days = $derived(ticks.length);
-	const markers = $derived(laneMarkers(highlights, records, year));
+	const counted = $derived(elapsedDays ?? days);
+	const markers = $derived(
+		laneMarkers(highlights, records, year).filter((marker) => marker.day < counted)
+	);
 	let laneWidth = $state(0);
 	const heads = $derived(
 		mergeCloseMarkers(markers, days, laneWidth ? (style.headPx * days) / laneWidth : 0)
 	);
-	const activeDays = $derived(ticks.filter((height) => height > 0).length);
+	const activeDays = $derived(ticks.slice(0, counted).filter((height) => height > 0).length);
 	const hasRecords = $derived(markers.some((m) => m.kind === 'record'));
 	const hasHighlights = $derived(markers.some((m) => m.kind === 'highlight'));
 
-	const activePath = $derived(path(ticks.map((h) => h * 100)));
-	const restPath = $derived(path(ticks.map((h) => (h > 0 ? 0 : REST_HEIGHT))));
+	const activePath = $derived(path(ticks.map((h, day) => (day < counted ? h * 100 : 0))));
+	const restPath = $derived(
+		path(ticks.map((h, day) => (day >= counted || h > 0 ? 0 : REST_HEIGHT)))
+	);
 
 	function path(heights: number[]): string {
 		return heights
@@ -72,10 +87,10 @@
 
 	const label = $derived(
 		[
-			i18n.m.common.yearLane.summary(
+			(yearSoFar ? i18n.m.common.yearLane.summarySoFar : i18n.m.common.yearLane.summary)(
 				formatCount(i18n.locale, activeDays),
 				activeDays,
-				formatCount(i18n.locale, days),
+				formatCount(i18n.locale, counted),
 				year
 			),
 			hasHighlights ? i18n.m.common.yearLane.highlightsMarked : '',
@@ -103,7 +118,14 @@
 			<path d={restPath} class="rest" />
 			<path d={activePath} class="active" />
 		</svg>
-		<div class="baseline" aria-hidden="true"></div>
+		{#if counted < days}
+			<div class="baselines" aria-hidden="true">
+				<div class="baseline" style:width="{(counted / days) * 100}%"></div>
+				<div class="future-baseline" style:width="{((days - counted) / days) * 100}%"></div>
+			</div>
+		{:else}
+			<div class="baseline" aria-hidden="true"></div>
+		{/if}
 		<div class="relative mt-2 h-[1.4em] {style.month}" aria-hidden="true">
 			{#each monthStartDays(year) as start, month (month)}
 				<span class="month" style:left="{(start / days) * 100}%">{months[month]}</span>
@@ -134,6 +156,13 @@
 		opacity: 0.45;
 	}
 
+	.baselines {
+		display: flex;
+	}
+	.future-baseline {
+		border-top: 1px dotted var(--color-text-dim);
+		opacity: 0.45;
+	}
 	.baseline {
 		height: 1px;
 		background: var(--color-text-dim);

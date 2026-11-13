@@ -1,7 +1,7 @@
+import { dayOfYear } from './date.js';
 import { describe, it, expect } from 'vitest';
 import type { Activity } from '#lib/types/index.js';
 import {
-	dayOfYear,
 	laneMarkers,
 	laneTicks,
 	markerLeft,

@@ -51,6 +51,7 @@ export const dashboard = {
 	disableCelebration: 'Disable celebration mode',
 	enableCelebration: 'Enable celebration mode',
 	celebrationConfetti: 'Celebration confetti',
+	yourYearSoFar: (year: number) => `Your ${year} so far`,
 	yourYear: (year: number) => `Your ${year}`,
 	activitySummaryActivities: (n: string, count: number) =>
 		`${n} ${plural('en', count, { one: 'activity', other: 'activities' })} across`,
@@ -59,6 +60,7 @@ export const dashboard = {
 	activeDaysLabel: (count: number) =>
 		plural('en', count, { one: 'Active day', other: 'Active days' }),
 	dayStreak: 'Day streak',
+	percentOfYearSoFar: (percent: string) => `${percent} of the year so far`,
 	percentOfYear: (percent: string) => `${percent} of the year`,
 	longestDistance: 'Longest distance',
 	longestDuration: 'Longest duration',

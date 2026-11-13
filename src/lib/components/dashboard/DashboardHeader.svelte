@@ -11,9 +11,15 @@
 		activityCount,
 		activeDays,
 		skippedRowCount,
-		cutShort
-	}: { activityCount: number; activeDays: number; skippedRowCount: number; cutShort: Date | null } =
-		$props();
+		cutShort,
+		yearSoFar
+	}: {
+		activityCount: number;
+		activeDays: number;
+		skippedRowCount: number;
+		cutShort: Date | null;
+		yearSoFar: boolean;
+	} = $props();
 
 	function jumpToExport() {
 		const heading = document.querySelector<HTMLElement>('#export-panel h2');
@@ -36,7 +42,7 @@
 		tabindex="-1"
 		{@attach (heading) => heading.focus()}
 	>
-		{i18n.m.dashboard.yourYear(TARGET_YEAR)}
+		{(yearSoFar ? i18n.m.dashboard.yourYearSoFar : i18n.m.dashboard.yourYear)(TARGET_YEAR)}
 	</h1>
 	<p data-testid="activity-summary" class="text-lg text-[var(--color-text-muted)]">
 		{@render summaryPhrase(

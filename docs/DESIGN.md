@@ -21,7 +21,7 @@ ActiveYear celebrates athletic accomplishment. Every design decision should make
 Returning users must recognise the app at a glance, so the anchors stay: a centred landing page with the ActiveYear wordmark as the hero, "Your <TARGET_YEAR> in Sport" under it and the upload zone centred below; a centred dashboard header; cyan as the brand colour. Everything else is drawn for this product rather than taken from a kit.
 
 - **Logotype:** `Logotype.svelte` sets "ActiveYear" in Big Shoulders Display 900 with a dotless i whose dot is a cyan day tick, the same mark the year lane draws. Use it on the landing page, the dashboard header, the 404 page and the export card header. The favicon is the same tick motif.
-- **Signature:** the year lane (`widgets/YearLane.svelte`): one horizontal lane with a tick per day of the year (366 in a leap year). An active day's tick height is the square root of that day's training time, scaled to the busiest day, with a 30% floor. Rest days are short dim ticks. Highlights (ring) and personal records (diamond) sit above the lane like course points on a race profile. Markers closer than a head width merge into one head at their mean day, a record winning, so a busy stretch reads as one point instead of a blob. It appears on the dashboard and on the Summary card in every theme.
+- **Signature:** the year lane (`widgets/YearLane.svelte`): one horizontal lane with a tick per day of the year (366 in a leap year). An active day's tick height is the square root of that day's training time, scaled to the busiest day, with a 30% floor. Rest days are short dim ticks. Highlights (ring) and personal records (diamond) sit above the lane like course points on a race profile. Markers closer than a head width merge into one head at their mean day, a record winning, so a busy stretch reads as one point instead of a blob. During a running season, future days have no ticks and the baseline is dotted and dimmer after today. It appears on the dashboard and on the Summary card in every theme.
 - **Dashboard notices:** the header shows muted warnings for skipped rows and Garmin exports that may stop before the full year.
 - **Totals:** a results board. One huge headline number (the focused stat, glowing), its fun fact, then the other totals, active days and longest streak in one ruled row. On phones the row becomes a results sheet: label left, value right. No boxes, no icons.
 - **Section shapes fit their data:** results board, lane, bar chart, a dense highlights table, bib badges, donut with bars, then quarters board and two tables under More stats. Headings are not numbered.
@@ -232,7 +232,7 @@ The shareable image. This is what users actually care about.
 - Canvas: 9:16 only, 1080×1920. Each PNG must be under 2 MB.
 - Hero numbers use the display font and fit with the existing `.fit-value` rule.
 
-Card header: logotype and "Season <TARGET_YEAR>" on one row, then the name and the card title. The Summary card shows the headline number, the year lane and a ruled list of the other totals.
+Card header: logotype and "Season <TARGET_YEAR>" on one row, then the name and the card title. A running season adds “so far” to the season label. The Summary card shows the headline number, the year lane and a ruled list of the other totals.
 
 **Aspect Ratios:**
 

@@ -1,18 +1,23 @@
 <script lang="ts">
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { activeDaysPercent } from '#lib/utils/breakdown.js';
-	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { formatCount, formatPercentOfYear } from '#lib/utils/format.js';
 	import SectionHeading from '#lib/components/dashboard/SectionHeading.svelte';
 
-	let { activeDays, longestStreak }: { activeDays: number; longestStreak: number } = $props();
+	let {
+		activeDays,
+		longestStreak,
+		yearSoFar,
+		daysCounted
+	}: { activeDays: number; longestStreak: number; yearSoFar: boolean; daysCounted: number } =
+		$props();
 
 	const cells = $derived([
 		{
 			value: formatCount(i18n.locale, activeDays),
 			label: i18n.m.dashboard.activeDaysLabel(activeDays),
-			fact: i18n.m.dashboard.percentOfYear(
-				formatPercentOfYear(i18n.locale, activeDaysPercent(activeDays, TARGET_YEAR))
+			fact: (yearSoFar ? i18n.m.dashboard.percentOfYearSoFar : i18n.m.dashboard.percentOfYear)(
+				formatPercentOfYear(i18n.locale, activeDaysPercent(activeDays, daysCounted))
 			)
 		},
 		{

@@ -27,8 +27,15 @@
 		activeDays={appStore.stats?.activeDays ?? 0}
 		skippedRowCount={appStore.skippedRowCount}
 		cutShort={appStore.cutShort}
+		yearSoFar={appStore.yearSoFar}
 	/>
-	<MainStats stats={appStore.stats} unit={appStore.unit} focus={appStore.summaryMetric} />
+	<MainStats
+		stats={appStore.stats}
+		unit={appStore.unit}
+		focus={appStore.summaryMetric}
+		yearSoFar={appStore.yearSoFar}
+		daysCounted={appStore.daysCounted}
+	/>
 	<section class="mb-20 md:mb-28">
 		<SectionHeading title={i18n.m.common.dayByDay} />
 		<YearLane
@@ -37,6 +44,8 @@
 			highlights={appStore.highlights}
 			records={recordActivities(appStore.records)}
 			year={TARGET_YEAR}
+			elapsedDays={appStore.daysCounted}
+			yearSoFar={appStore.yearSoFar}
 		/>
 	</section>
 	<WeeklyPattern variant="dashboard" pattern={appStore.weeklyPattern} />

@@ -41,6 +41,8 @@ export const common: typeof en = {
 	yearLane: {
 		summary: (n, count, days, year) =>
 			`${n} ${plural('pt', count, { one: 'dia ativo', other: 'dias ativos' })} de ${days} em ${year}`,
+		summarySoFar: (n, count, days, year) =>
+			`${n} ${plural('pt', count, { one: 'dia ativo', other: 'dias ativos' })} de ${days} em ${year} até agora`,
 		highlightsMarked: 'destaques marcados',
 		recordsMarked: 'recordes pessoais marcados',
 		highlight: 'Destaque',
