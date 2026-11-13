@@ -30,6 +30,24 @@ describe('highlight presets', () => {
 			expect(presetHighlights(activities, preset)).toEqual(activities.slice(2).reverse());
 		}
 	});
+	it('chooses the highest values before capping and sorts them by date', () => {
+		const activities = Array.from({ length: 12 }, (_, i) =>
+			activity(i + 1, { duration: i + 1, distance: 12 - i, elevation: ((i + 5) % 12) + 1 })
+		);
+		expect(presetHighlights(activities, 'longest')).toEqual(activities.slice(2));
+		expect(presetHighlights(activities, 'farthest')).toEqual(activities.slice(0, 10));
+		expect(presetHighlights(activities, 'climbs')).toEqual(
+			activities.filter((_, i) => i !== 7 && i !== 8)
+		);
+	});
+	it('picks the month with the greatest total duration', () => {
+		const january = activity(1, { duration: 30 });
+		const february = [
+			activity(1, { date: new Date(2025, 1, 1), duration: 20 }),
+			activity(2, { date: new Date(2025, 1, 2), duration: 20 })
+		];
+		expect(presetHighlights([january, ...february], 'best-month')).toEqual(february);
+	});
 	it('filters zero distance and elevation and ranks the rest', () => {
 		const zero = activity(1, { distance: 0, elevation: 0 });
 		const high = activity(2, { distance: 20, elevation: 100 });
@@ -70,6 +88,11 @@ describe('activity search', () => {
 		}
 		expect(searchActivities([run], texts, 'run cycling', 8)).toEqual([]);
 		expect(searchActivities([run], texts, '   ', 8)).toEqual([]);
+	});
+	it('matches one-decimal distances in kilometres and miles', () => {
+		const run = activity(1, { distance: 42.63 });
+		for (const query of ['42.6 km', '42.6km', '26.5 mi', '26.5mi'])
+			expect(searchActivities([run], [activitySearchText(run)], query, 8)).toEqual([run]);
 	});
 	it('returns newest matches first up to the limit', () => {
 		const activities = [activity(1), activity(3), activity(2)];

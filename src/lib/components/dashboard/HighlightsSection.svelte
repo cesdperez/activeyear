@@ -4,7 +4,12 @@
 	import { HIGHLIGHT_PRESETS } from '#lib/constants/highlights.js';
 	import { HIGHLIGHTS_LIMIT } from '#lib/constants/export.js';
 	import { sportNames } from '#lib/constants/sports.js';
-	import { formatDistance, formatDuration, formatShortDate } from '#lib/utils/format.js';
+	import {
+		activityTitle,
+		formatDistance,
+		formatDuration,
+		formatShortDate
+	} from '#lib/utils/format.js';
 	import type { Activity } from '#lib/types/index.js';
 	import SectionHeading from './SectionHeading.svelte';
 	import HighlightItem from './HighlightItem.svelte';
@@ -18,15 +23,11 @@
 			: HIGHLIGHT_PRESETS[appStore.highlightPreset].description
 	);
 
-	function titleOf(activity: Activity) {
-		return activity.title || sportNames[activity.type] || 'Activity';
-	}
-
 	function toggle(activity: Activity) {
 		const selected = appStore.isHighlight(activity);
 		if (selected) appStore.removeHighlight(activity);
 		else appStore.addHighlight(activity);
-		announcement = `${selected ? 'Removed' : 'Added'} ${titleOf(activity)}`;
+		announcement = `${selected ? 'Removed' : 'Added'} ${activityTitle(activity)}`;
 	}
 </script>
 
@@ -87,7 +88,7 @@
 								disabled={appStore.isExporting || (!selected && !appStore.canAddHighlight)}
 								onclick={() => toggle(activity)}
 								><span class="min-w-0 flex-1"
-									><span class="block font-bold wrap-anywhere">{titleOf(activity)}</span><span
+									><span class="block font-bold wrap-anywhere">{activityTitle(activity)}</span><span
 										class="block text-sm text-[var(--color-text-muted)]"
 										>{formatShortDate(new Date(activity.date))} · {#if activity.distance > 0}{formatDistance(
 												activity.distance,

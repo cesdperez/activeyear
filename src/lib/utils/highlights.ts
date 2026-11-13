@@ -56,7 +56,7 @@ export function activitySearchText(activity: Activity): string {
 	const isoDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 	const distance =
 		activity.distance > 0
-			? `${Math.round(activity.distance)} km ${Math.round(activity.distance / 1.609344)} mi`
+			? `${Math.round(activity.distance)} km ${Math.round(activity.distance / 1.609344)} mi ${activity.distance.toFixed(1)} km ${activity.distance.toFixed(1)}km ${(activity.distance / 1.609344).toFixed(1)} mi ${(activity.distance / 1.609344).toFixed(1)}mi`
 			: '';
 	return `${activity.title} ${sportNames[activity.type]} ${month} ${month.slice(0, 3)} ${date.getDate()} ${isoDate} ${distance}`.toLowerCase();
 }

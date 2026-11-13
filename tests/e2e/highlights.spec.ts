@@ -21,34 +21,28 @@ for (const source of ['Garmin', 'Strava'] as const) {
 		);
 		await expect(section.locator('.stat-card').first()).toBeVisible();
 		const search = section.getByRole('searchbox', { name: 'Search your activities' });
-		await search.fill(source === 'Garmin' ? 'Indoor Cycling' : 'Evening Yoga');
-		const result = section.locator('li button').first();
+		await chips.getByRole('button', { name: 'Biggest climbs' }).click();
+		const title = source === 'Garmin' ? 'Indoor Cycling' : 'Evening Yoga';
+		const nonMatch = source === 'Garmin' ? 'Sample Running' : 'Morning Swim';
+		await search.fill(title);
+		const result = section.locator('li button').filter({ hasText: title }).first();
 		await expect(result).toBeVisible();
-		if ((await result.getAttribute('aria-pressed')) === 'true') await result.click();
-		if (await result.isDisabled())
-			await section
-				.getByRole('button', { name: /^Remove .* from highlights$/ })
-				.first()
-				.click();
+		await expect(section.locator('li button').filter({ hasText: nonMatch })).toHaveCount(0);
+		await expect(result).toHaveAttribute('aria-pressed', 'false');
 		await result.click();
 		await expect(section.getByText('Your own picks.')).toBeVisible();
 		await expect(result).toHaveAttribute('aria-pressed', 'true');
-		await section
-			.getByRole('button', { name: /^Remove .* from highlights$/ })
-			.first()
-			.click();
+		const titles = (await section.locator('.stat-card span[title]').allTextContents()).map((t) =>
+			t.trim()
+		);
+		await showSlide(page, 2);
+		await expect(page.locator('#export-card .highlight-title')).toHaveText(titles);
 		await chips.getByRole('button', { name: 'Farthest' }).click();
 		await expect(chips.getByRole('button', { name: 'Farthest' })).toHaveAttribute(
 			'aria-pressed',
 			'true'
 		);
 		await expect(section.getByText('The days you went the distance.')).toBeVisible();
-		const titles = await section.locator('.stat-card span[title]').allTextContents();
-		await showSlide(page, 2);
-		const cardTitles = page.locator('#export-card .highlight-title');
-		await expect(cardTitles.first()).toBeVisible();
-		for (const title of await cardTitles.allTextContents())
-			expect(titles.map((t) => t.trim())).toContain(title.trim());
 	});
 }
 

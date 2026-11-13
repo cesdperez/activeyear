@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { sportNames, sportIcons } from '#lib/constants/sports.js';
-	import { formatDistance, formatDuration } from '#lib/utils/format.js';
+	import { activityTitle, formatDistance, formatDuration } from '#lib/utils/format.js';
 	import type { Activity, Unit } from '#lib/types/index.js';
 	import { X } from 'phosphor-svelte';
 	import { appStore } from '#lib/stores/app.svelte.js';
@@ -22,7 +22,7 @@
 >
 	<button
 		class="absolute top-2 right-2 rounded p-1 text-[var(--color-text-muted)] hover:text-[var(--color-accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)] disabled:opacity-50"
-		aria-label="Remove {activity.title || sportNames[activity.type] || 'Activity'} from highlights"
+		aria-label="Remove {activityTitle(activity)} from highlights"
 		disabled={appStore.isExporting}
 		onclick={() => appStore.removeHighlight(activity)}
 		><X class="h-5 w-5" aria-hidden="true" /></button
@@ -35,7 +35,7 @@
 	<div class="min-w-0 flex-1">
 		<div class="mb-1 flex items-start gap-2">
 			<span class="line-clamp-3 font-bold wrap-anywhere text-white" title={activity.title}>
-				{activity.title || sportNames[activity.type] || 'Activity'}
+				{activityTitle(activity)}
 			</span>
 		</div>
 		<div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--color-text-muted)]">

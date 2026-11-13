@@ -1,5 +1,10 @@
-import type { Unit } from '../types/index.js';
+import type { Activity, Unit } from '../types/index.js';
+import { sportNames } from '../constants/sports.js';
 import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '../constants/time.js';
+
+export function activityTitle(activity: Activity): string {
+	return activity.title || sportNames[activity.type] || 'Activity';
+}
 
 const EARTH_CIRCUMFERENCE_KM = 40075;
 const EVEREST_HEIGHT_M = 8848;
