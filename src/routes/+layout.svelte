@@ -64,7 +64,7 @@
 	});
 </script>
 
-{#if page.route.id !== '/404'}
+{#if page.route.id !== '/[[lang=locale]]/404'}
 	<MetaTags />
 	{#if uploadStore.status === 'ready'}
 		<div class="absolute top-4 left-4 z-20 flex h-11 items-center md:left-8"><BackToStart /></div>

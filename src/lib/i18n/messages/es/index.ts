@@ -6,4 +6,15 @@ import { faq } from './faq.js';
 import { dashboard } from './dashboard.js';
 import { exportMessages } from './export.js';
 import { picker } from './picker.js';
-export const es = { common, meta, landing, upload, faq, dashboard, export: exportMessages, picker };
+import { notFound } from './notFound.js';
+export const es = {
+	common,
+	meta,
+	landing,
+	upload,
+	faq,
+	dashboard,
+	export: exportMessages,
+	picker,
+	notFound
+};

@@ -54,6 +54,20 @@ test.describe('Search and AI discovery', () => {
 		}
 	});
 
+	test('unknown paths under a locale get that locale’s 404 page', async ({ page }) => {
+		const response = await page.goto('/de/gibtsnicht');
+
+		expect(response!.status()).toBe(404);
+		expect(await response!.text()).toMatch(/<html\s+lang="de"/);
+		await expect(page).toHaveTitle('Seite nicht gefunden · ActiveYear');
+		await expect(page.getByRole('heading', { name: 'Seite nicht gefunden' })).toBeVisible();
+		await expect(page.getByRole('link', { name: 'Zurück zu ActiveYear' })).toHaveAttribute(
+			'href',
+			'/de/'
+		);
+		await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+	});
+
 	test('apple touch icon is available as a PNG', async ({ page, request }) => {
 		await page.goto('/');
 
