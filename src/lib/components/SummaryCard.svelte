@@ -150,11 +150,9 @@
 	<dl class:compact-results={centeredAvatar} class="results">
 		{#each supporting as stat (stat.id)}
 			<div class="result">
-				<div class="min-w-0">
-					<dt class="card-label text-[var(--color-text-muted)]">{stat.label}</dt>
-					<dd class="fun-fact mt-1">{stat.funFact}</dd>
-				</div>
-				<dd class="@container w-[44%] shrink-0 text-right">
+				<dt class="result-label card-label text-[var(--color-text-muted)]">{stat.label}</dt>
+				<dd class="result-fact fun-fact mt-1">{stat.funFact}</dd>
+				<dd class="result-value @container text-right">
 					<span
 						class="stat-value fit-value block leading-none text-[var(--color-text-primary)]"
 						style:--fit-chars={fitChars}
@@ -225,13 +223,29 @@
 		padding-top: 48px;
 	}
 
+	/* A grid, so every dt and dd is a direct child of the row; the 1fr rows centre the label
+	   and fact against a taller value. */
 	.result {
-		display: flex;
-		align-items: center;
+		display: grid;
+		grid-template-columns: minmax(0, max-content) 44%;
+		grid-template-rows: 1fr auto auto 1fr;
 		justify-content: space-between;
-		gap: 32px;
+		column-gap: 32px;
 		padding: 26px 0;
 		border-top: var(--panel-border-width) solid var(--color-border);
+	}
+
+	.result-label {
+		grid-area: 2 / 1;
+	}
+
+	.result-fact {
+		grid-area: 3 / 1;
+	}
+
+	.result-value {
+		grid-area: 1 / 2 / -1;
+		align-self: center;
 	}
 
 	.result:last-child {

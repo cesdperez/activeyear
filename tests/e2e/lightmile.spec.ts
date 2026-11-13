@@ -96,6 +96,37 @@ test('focus leaving keeps the hovered panel open', async ({ page }) => {
 	await expect(help).toHaveAttribute('aria-expanded', 'true');
 });
 
+test('the help button is a 24px target clear of the theme options', async ({ page }) => {
+	await uploadSample(page);
+	const help = await page.getByRole('button', { name: 'About Lightmile' }).boundingBox();
+	expect(help!.width).toBeGreaterThanOrEqual(24);
+	expect(help!.height).toBeGreaterThanOrEqual(24);
+	const options = await page
+		.locator('[aria-labelledby="theme-label"] button.toggle')
+		.evaluateAll((elements) => elements.map((el) => el.getBoundingClientRect().toJSON()));
+	for (const { x, y, width, height } of options)
+		expect(
+			help!.x < x + width &&
+				help!.x + help!.width > x &&
+				help!.y < y + height &&
+				help!.y + help!.height > y
+		).toBe(false);
+});
+
+test('clicking the help button after hovering keeps it open', async ({ page }) => {
+	await uploadSample(page);
+	const help = page.getByRole('button', { name: 'About Lightmile' });
+	await help.hover();
+	await expect(help).toHaveAttribute('aria-expanded', 'true');
+	await help.click();
+	await expect(help).toHaveAttribute('aria-expanded', 'true');
+	await page.mouse.move(0, 0);
+	await page.waitForTimeout(400);
+	await expect(page.locator('#lightmile-info')).toBeVisible();
+	await help.click();
+	await expect(help).toHaveAttribute('aria-expanded', 'false');
+});
+
 test.describe('touch', () => {
 	test.use({ hasTouch: true });
 	test('tap toggles disclosure', async ({ page }) => {
@@ -104,6 +135,16 @@ test.describe('touch', () => {
 		await help.tap();
 		await expect(help).toHaveAttribute('aria-expanded', 'true');
 		await help.tap();
+		await expect(help).toHaveAttribute('aria-expanded', 'false');
+	});
+
+	test('tapping outside closes it', async ({ page }) => {
+		await uploadSample(page);
+		const help = page.getByRole('button', { name: 'About Lightmile' });
+		await help.tap();
+		await expect(page.locator('#lightmile-info')).toBeVisible();
+		await page.getByRole('heading', { name: 'Export' }).tap();
+		await expect(page.locator('#lightmile-info')).toBeHidden();
 		await expect(help).toHaveAttribute('aria-expanded', 'false');
 	});
 

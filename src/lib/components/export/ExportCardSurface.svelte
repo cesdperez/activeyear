@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { getContext } from 'svelte';
 	import { getExportDimensions } from '#lib/utils/export.js';
+	import { EXPORT_STAGE_CONTEXT } from '#lib/constants/dom.js';
 	import type { CardVariant, Theme } from '#lib/types/index.js';
 
 	let {
@@ -14,11 +16,12 @@
 	} = $props();
 
 	let dimensions = $derived(getExportDimensions());
+	const offscreen = getContext<boolean>(EXPORT_STAGE_CONTEXT) ?? false;
 </script>
 
 <div
 	class="export-card theme-{theme}"
-	id="export-card"
+	id={offscreen ? undefined : 'export-card'}
 	data-theme={theme}
 	data-variant={variant}
 	style="width: {dimensions.width}px; height: {dimensions.height}px;"

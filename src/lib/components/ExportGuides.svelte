@@ -107,8 +107,10 @@
 		text-underline-offset: 3px;
 	}
 
-	a:hover {
-		color: var(--color-text-primary);
+	@media (hover: hover) {
+		a:hover {
+			color: var(--color-text-primary);
+		}
 	}
 
 	.note {

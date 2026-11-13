@@ -4,9 +4,8 @@
 	import { getPreviewScale } from '#lib/utils/preview.js';
 	import { PREVIEW_MAX_SCALE } from '#lib/constants/preview.js';
 
-	// Vertical space the carousel nav, slide label and panel padding take around the card.
-	const PREVIEW_CHROME_HEIGHT = 200;
-	const PREVIEW_MIN_SCALE = 0.08;
+	// The same breakpoint that puts the controls beside the preview in ExportPanel.
+	const TWO_COLUMN_QUERY = '(min-width: 64rem)';
 
 	let { children }: { children: Snippet } = $props();
 
@@ -14,14 +13,33 @@
 
 	let scale = $state(PREVIEW_MAX_SCALE);
 
+	// The largest viewport height, so a phone's URL bar showing or hiding does not resize the card.
+	function largeViewportHeight(): number {
+		const probe = document.createElement('div');
+		probe.style.cssText = 'position: fixed; top: 0; height: 100lvh; visibility: hidden;';
+		document.body.append(probe);
+		const height = probe.offsetHeight;
+		probe.remove();
+		return Math.max(height, window.innerHeight);
+	}
+
 	$effect(() => {
 		if (typeof window === 'undefined') return;
+		let lastWidth = 0;
 
 		// Sized from the viewport only, so the controls beside it never move with the card.
 		function updateScale() {
-			const fitToWidth = getPreviewScale(window.innerWidth, dimensions.width);
-			const fitToHeight = (window.innerHeight - PREVIEW_CHROME_HEIGHT) / dimensions.height;
-			scale = Math.max(PREVIEW_MIN_SCALE, Math.min(fitToWidth, fitToHeight));
+			const width = window.innerWidth;
+			if (width === lastWidth && matchMedia('(pointer: coarse)').matches) return;
+			lastWidth = width;
+			scale = getPreviewScale(
+				{
+					width,
+					height: largeViewportHeight(),
+					twoColumn: matchMedia(TWO_COLUMN_QUERY).matches
+				},
+				dimensions
+			);
 		}
 
 		updateScale();

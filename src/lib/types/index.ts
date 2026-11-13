@@ -97,7 +97,7 @@ export interface ParseOptions {
 
 export type AvatarError = { type: 'invalid' | 'unreadable' };
 export type ExportError = { type: 'ready' | 'fontsUnavailable' | 'failed' };
-export type ExportStatus = { type: 'generating' | 'done' };
+export type ExportStatus = { type: 'generating' } | { type: 'done'; cards: number };
 
 export type SavedYearError =
 	| { type: 'invalid-file' }

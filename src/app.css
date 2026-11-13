@@ -6,6 +6,8 @@
 	--color-surface-elevated: #131a1e;
 	--color-surface-hover: #1b242a;
 	--color-border: #26323a;
+	/* Text fields need a 3:1 edge against the page and their own fill to read as fields. */
+	--color-input-border: #60717a;
 
 	--color-text-primary: #edf3f5;
 	--color-text-muted: #b6c4ca;
@@ -192,6 +194,8 @@ body {
 }
 
 .segmented > button {
+	/* With the group's padding and border, the row is 44px tall like the other controls. */
+	min-height: 2.375rem;
 	border-radius: 2px;
 	padding: 0.375rem 0.75rem;
 	font-size: 0.8125rem;
@@ -202,9 +206,18 @@ body {
 		color var(--transition-fast);
 }
 
-.segmented > button:enabled:hover {
-	color: var(--color-text-primary);
-	background: var(--color-surface-hover);
+@media (pointer: coarse) {
+	.segmented > button {
+		min-width: 2.75rem;
+		min-height: 2.75rem;
+	}
+}
+
+@media (hover: hover) {
+	.segmented > button:not([aria-pressed='true'], [aria-selected='true']):enabled:hover {
+		color: var(--color-text-primary);
+		background: var(--color-surface-hover);
+	}
 }
 
 .segmented > button[aria-pressed='true'],
@@ -242,6 +255,9 @@ body {
 	*::before,
 	*::after {
 		animation-duration: 0.01ms !important;
+		/* A looping spinner would flicker every frame, and a delay would keep staggered entrances. */
+		animation-iteration-count: 1 !important;
+		animation-delay: 0s !important;
 		transition-duration: 0.01ms !important;
 	}
 }
@@ -255,11 +271,18 @@ body {
 		background-color var(--transition-base);
 }
 
-.upload-zone:not([aria-disabled='true']):hover,
 .upload-zone.dragover {
 	border-color: var(--color-accent);
 	border-style: solid;
 	background: var(--color-surface-hover);
+}
+
+@media (hover: hover) {
+	.upload-zone:not([aria-disabled='true']):hover {
+		border-color: var(--color-accent);
+		border-style: solid;
+		background: var(--color-surface-hover);
+	}
 }
 
 .btn-primary {
@@ -271,8 +294,10 @@ body {
 	transition: background-color var(--transition-fast);
 }
 
-.btn-primary:not([aria-disabled='true']):hover {
-	background: var(--color-text-primary);
+@media (hover: hover) {
+	.btn-primary:not([aria-disabled='true']):hover {
+		background: var(--color-text-primary);
+	}
 }
 
 .btn-secondary {
@@ -290,9 +315,11 @@ body {
 		color var(--transition-fast);
 }
 
-.btn-secondary:enabled:hover {
-	border-color: var(--color-text-dim);
-	color: var(--color-text-primary);
+@media (hover: hover) {
+	.btn-secondary:enabled:hover {
+		border-color: var(--color-text-dim);
+		color: var(--color-text-primary);
+	}
 }
 
 .btn-secondary:disabled {

@@ -9,13 +9,18 @@
 	import SummaryCard from './SummaryCard.svelte';
 	import BreakdownCard from './BreakdownCard.svelte';
 	import HighlightsCard from './HighlightsCard.svelte';
+	import ExportStage from './export/ExportStage.svelte';
 	import { exportFileStem, exportToPng } from '#lib/utils/export.js';
 	import { CaretLeft, CaretRight } from 'phosphor-svelte';
 
 	const summaryModel = $derived(summaryCardModel(yearData, exportSettings, i18n.locale));
 	const breakdownModel = $derived(breakdownCardModel(yearData, exportSettings));
 
-	let currentSlide = $state<0 | 1 | 2>(0);
+	type Slide = 0 | 1 | 2;
+
+	let currentSlide = $state<Slide>(0);
+	let exportingSlide = $state<Slide | null>(null);
+	let stage = $state<HTMLElement>();
 	const slideLabels = $derived([
 		i18n.m.export.summary,
 		i18n.m.export.breakdown,
@@ -29,11 +34,11 @@
 	let swipeStart: { x: number; y: number } | null = null;
 
 	function nextSlide() {
-		currentSlide = ((currentSlide + 1) % SLIDE_COUNT) as 0 | 1 | 2;
+		currentSlide = ((currentSlide + 1) % SLIDE_COUNT) as Slide;
 	}
 
 	function prevSlide() {
-		currentSlide = ((currentSlide - 1 + SLIDE_COUNT) % SLIDE_COUNT) as 0 | 1 | 2;
+		currentSlide = ((currentSlide - 1 + SLIDE_COUNT) % SLIDE_COUNT) as Slide;
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -63,34 +68,66 @@
 		else prevSlide();
 	}
 
-	function getExportElement(): HTMLElement | null {
-		return document.getElementById('export-card');
-	}
-
-	export async function exportAllCards({ allowFallbackFonts = false } = {}): Promise<void> {
+	/** Exports every card worth sharing, leaving out an empty Highlights card, and returns how many. */
+	export async function exportAllCards({ allowFallbackFonts = false } = {}): Promise<number> {
 		const baseFilename = exportFileStem(exportSettings.displayName, TARGET_YEAR);
-
 		const theme = exportSettings.theme;
-		const originalSlide = currentSlide;
+		const slides = fileLabels.slice(0, highlightsStore.highlights.length ? SLIDE_COUNT : 2);
 
 		try {
-			for (const [index, label] of fileLabels.entries()) {
-				currentSlide = index as 0 | 1 | 2;
+			for (const [index, label] of slides.entries()) {
+				exportingSlide = index as Slide;
 				await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for render
-				const cardEl = getExportElement();
+				const cardEl = stage?.querySelector<HTMLElement>('.export-card');
 				if (cardEl) {
 					await exportToPng(cardEl, {
-						filename: `${baseFilename}-${label.toLowerCase()}`,
+						filename: `${baseFilename}-${label}`,
 						theme,
 						allowFallbackFonts
 					});
 				}
 			}
 		} finally {
-			currentSlide = originalSlide;
+			exportingSlide = null;
 		}
+		return slides.length;
 	}
 </script>
+
+{#snippet card(slide: Slide)}
+	{#if slide === 0}
+		<SummaryCard
+			model={summaryModel}
+			userPfp={exportSettings.userPfp}
+			activities={yearData.activities}
+			highlights={highlightsStore.highlights}
+			daysCounted={yearData.daysCounted}
+			yearSoFar={yearData.yearSoFar}
+			theme={exportSettings.theme}
+			displayName={exportSettings.displayName}
+		/>
+	{:else if slide === 1}
+		<BreakdownCard
+			model={breakdownModel}
+			weeklyPattern={yearData.weeklyPattern}
+			records={yearData.records}
+			unit={exportSettings.unit}
+			theme={exportSettings.theme}
+			breakdownMetric={exportSettings.breakdownMetric}
+			displayName={exportSettings.displayName}
+			yearSoFar={yearData.yearSoFar}
+			daysCounted={yearData.daysCounted}
+		/>
+	{:else}
+		<HighlightsCard
+			highlights={highlightsStore.highlights}
+			unit={exportSettings.unit}
+			theme={exportSettings.theme}
+			displayName={exportSettings.displayName}
+			yearSoFar={yearData.yearSoFar}
+		/>
+	{/if}
+{/snippet}
 
 <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
 <section
@@ -107,38 +144,7 @@
 		onpointerup={handlePointerUp}
 		onpointercancel={() => (swipeStart = null)}
 	>
-		{#if currentSlide === 0}
-			<SummaryCard
-				model={summaryModel}
-				userPfp={exportSettings.userPfp}
-				activities={yearData.activities}
-				highlights={highlightsStore.highlights}
-				daysCounted={yearData.daysCounted}
-				yearSoFar={yearData.yearSoFar}
-				theme={exportSettings.theme}
-				displayName={exportSettings.displayName}
-			/>
-		{:else if currentSlide === 1}
-			<BreakdownCard
-				model={breakdownModel}
-				weeklyPattern={yearData.weeklyPattern}
-				records={yearData.records}
-				unit={exportSettings.unit}
-				theme={exportSettings.theme}
-				breakdownMetric={exportSettings.breakdownMetric}
-				displayName={exportSettings.displayName}
-				yearSoFar={yearData.yearSoFar}
-				daysCounted={yearData.daysCounted}
-			/>
-		{:else}
-			<HighlightsCard
-				highlights={highlightsStore.highlights}
-				unit={exportSettings.unit}
-				theme={exportSettings.theme}
-				displayName={exportSettings.displayName}
-				yearSoFar={yearData.yearSoFar}
-			/>
-		{/if}
+		{@render card(currentSlide)}
 	</div>
 
 	<div class="carousel-nav">
@@ -156,7 +162,7 @@
 				<button
 					class="dot {currentSlide === i ? 'active' : ''}"
 					aria-current={currentSlide === i ? 'true' : undefined}
-					onclick={() => (currentSlide = i as 0 | 1 | 2)}
+					onclick={() => (currentSlide = i as Slide)}
 					disabled={exportLock.isExporting}
 					aria-label={i18n.m.export.goToSlide(i + 1)}
 				></button>
@@ -173,11 +179,14 @@
 		</button>
 	</div>
 
-	<!-- Silent while exporting, which flips through every slide. -->
-	<div class="slide-label" aria-live={exportLock.isExporting ? 'off' : 'polite'} aria-atomic="true">
+	<div class="slide-label" aria-live="polite" aria-atomic="true">
 		{slideLabels[currentSlide]} ({currentSlide + 1}/{SLIDE_COUNT})
 	</div>
 </section>
+
+{#if exportingSlide !== null}
+	<ExportStage bind:stage>{@render card(exportingSlide)}</ExportStage>
+{/if}
 
 <style>
 	.carousel-container {
@@ -218,9 +227,15 @@
 		cursor: pointer;
 	}
 
-	.nav-button:hover:enabled {
-		color: var(--color-accent);
-		border-color: var(--color-accent);
+	@media (hover: hover) {
+		.nav-button:hover:enabled {
+			color: var(--color-accent);
+			border-color: var(--color-accent);
+		}
+
+		.dot:hover:enabled:not(.active)::before {
+			background: var(--color-text-muted);
+		}
 	}
 
 	.carousel-dots {
@@ -231,7 +246,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: 1.75rem;
+		width: 2.75rem;
 		height: 2.75rem;
 		padding: 0;
 		background: none;
@@ -261,10 +276,6 @@
 	.dot.active::before {
 		background: var(--color-accent);
 		transform: scale(1.2);
-	}
-
-	.dot:hover:enabled:not(.active)::before {
-		background: var(--color-text-muted);
 	}
 
 	.dot:disabled,

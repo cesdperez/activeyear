@@ -64,7 +64,7 @@
 					}
 				}}
 				disabled={exportLock.isExporting}
-				class="w-full rounded-[var(--radius-control)] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-4 py-2.5 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-dim)] focus-visible:border-[var(--color-accent)] disabled:opacity-50"
+				class="min-h-11 w-full rounded-[var(--radius-control)] border border-[var(--color-input-border)] bg-[var(--color-surface-elevated)] px-4 py-2.5 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-dim)] focus-visible:border-[var(--color-accent)] disabled:opacity-50 pointer-coarse:min-h-[3.125rem]"
 			/>
 			<p
 				id="highlight-search-hint"
