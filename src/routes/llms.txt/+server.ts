@@ -1,8 +1,8 @@
 import { REPOSITORY_URL, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '#lib/constants/site.js';
 import { TARGET_YEAR } from '#lib/constants/time.js';
-import { FAQ } from '#lib/data/faq.js';
-import { GARMIN_EXPORT_NOTE, GARMIN_EXPORT_STEPS } from '#lib/data/garminExport.js';
-import { STRAVA_EXPORT_NOTE, STRAVA_EXPORT_STEPS } from '#lib/data/stravaExport.js';
+import { faqItems } from '#lib/data/faq.js';
+import { garminExportNote, garminExportSteps } from '#lib/data/garminExport.js';
+import { stravaExportNote, stravaExportSteps } from '#lib/data/stravaExport.js';
 import type { ExportStep } from '#lib/types/index.js';
 
 export const prerender = true;
@@ -10,13 +10,15 @@ export const prerender = true;
 export function GET(): Response {
 	const numbered = (steps: ExportStep[]) =>
 		steps.map(({ text, link }, i) => `${i + 1}. ${link ? `${text} ${link.href}` : text}`);
-	const exportSteps = numbered(GARMIN_EXPORT_STEPS);
-	const stravaSteps = numbered(STRAVA_EXPORT_STEPS);
+	const exportSteps = numbered(garminExportSteps('en'));
+	const stravaSteps = numbered(stravaExportSteps('en'));
 	const appSteps = [
 		`Open ${SITE_URL} and drop the CSV file onto the upload area.`,
 		'Pick a theme, add a name, and download the cards.'
 	].map((step, i) => `${exportSteps.length + i + 1}. ${step}`);
-	const faq = FAQ.map(({ question, answer }) => `### ${question}\n\n${answer}`).join('\n\n');
+	const faq = faqItems('en')
+		.map(({ question, answer }) => `### ${question}\n\n${answer}`)
+		.join('\n\n');
 	const body = `# ${SITE_NAME}
 
 > ${SITE_DESCRIPTION}
@@ -34,13 +36,13 @@ ${SITE_NAME} (${SITE_URL}) is a free web app that turns a Garmin Connect or Stra
 
 ${[...exportSteps, ...appSteps].join('\n')}
 
-${GARMIN_EXPORT_NOTE}
+${garminExportNote('en')}
 
 ## How to get your Strava data
 
 ${stravaSteps.join('\n')}
 
-${STRAVA_EXPORT_NOTE}
+${stravaExportNote('en')}
 
 ## FAQ
 

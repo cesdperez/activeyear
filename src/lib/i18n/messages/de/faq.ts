@@ -1,2 +1,64 @@
+import { TARGET_YEAR } from '#lib/constants/time.js';
 import type { faq as en } from '../en/faq.js';
-export const faq: typeof en = {};
+
+export const faq: typeof en = {
+	items: [
+		{
+			question: 'Was ist das?',
+			answer: `Ein kostenloser Jahresrückblick für ${TARGET_YEAR} für Sportlerinnen und Sportler auf Garmin und Strava. Lade deinen Aktivitätenexport hoch und entdecke dein Sportjahr: Gesamtdistanz, Höhenmeter, Zeit und Kalorien, eine Aufteilung nach Sportart, persönliche Rekorde, Highlights und deine längste Serie.`
+		},
+		{
+			question: 'Sind meine Daten privat?',
+			answer:
+				'Ja. Die Datei wird auf deinem Gerät gelesen und ausgewertet. Es wird nichts hochgeladen und du brauchst kein Konto.'
+		},
+		{
+			question: 'Welche Datei brauche ich?',
+			answer:
+				'Die Activities-CSV aus Garmin Connect oder activities.csv aus dem Export deines Strava-Kontos, jeweils auf Englisch. Unterstützt werden Laufen, Radfahren, Schwimmen, Gehen, Wandern, Krafttraining, Yoga, Paddeln, Rudern, Cardio, Wintersport, Schlägersport und Klettern.'
+		},
+		{
+			question: 'Was kann ich teilen?',
+			answer:
+				'Drei Karten im Story-Format (1080 × 1920 PNG): eine Zusammenfassung, eine Aufteilung nach Sportart und deine Highlights, im Stil Neon, Minimal oder Retro.'
+		},
+		{
+			question: 'Kann ich meinen Rückblick später wieder öffnen?',
+			answer:
+				'Ja. Lade über Jahr speichern auf deinem Dashboard eine kleine .json-Datei herunter und ziehe sie jederzeit in den Upload-Bereich, um den Rückblick wieder zu öffnen. Sie bleibt auf deinem Gerät.'
+		},
+		{
+			question: 'Funktioniert es mit Strava?',
+			answer:
+				'Ja. Lade activities.csv aus dem Export deines Strava-Kontos hoch (Settings, My Account, Download or Delete Your Account). Strava muss auf Englisch eingestellt sein.'
+		},
+		{
+			question: 'Ist es kostenlos?',
+			answer: 'Ja. Ohne Anmeldung und Werbung. Der Code ist auf GitHub quelloffen.'
+		}
+	],
+	garminSteps: [
+		{
+			text: 'Melde dich an unter',
+			link: { href: 'https://connect.garmin.com', label: 'connect.garmin.com' }
+		},
+		{ text: 'Gehe zu Activities → All Activities' },
+		{ text: `Scrolle nach unten, bis alle Aktivitäten aus ${TARGET_YEAR} geladen sind` },
+		{ text: 'Klicke auf Export CSV (Symbol oben rechts)' }
+	],
+	garminNote:
+		'Nutze die Website auf einem Computer. Die Garmin Connect App kann keine Daten exportieren.',
+	stravaSteps: [
+		{
+			text: 'Melde dich an unter',
+			link: { href: 'https://www.strava.com/account', label: 'strava.com' }
+		},
+		{ text: 'Gehe zu Settings → My Account → Download or Delete Your Account' },
+		{ text: 'Klicke auf Request your archive' },
+		{ text: 'Öffne den Download-Link aus der E-Mail von Strava und entpacke die Datei' },
+		{ text: 'Lade activities.csv hoch' }
+	],
+	stravaNote: 'Lade nur activities.csv hoch. Strava muss auf Englisch eingestellt sein.',
+	heading: 'Häufige Fragen',
+	guidesAria: 'Wähle deine Datenquelle'
+};

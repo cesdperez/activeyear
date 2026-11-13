@@ -1,38 +1,10 @@
-import { TARGET_YEAR } from '#lib/constants/time.js';
-import type { FaqItem } from '#lib/types/index.js';
+import type { Locale } from '#lib/types/index.js';
+import { faq as en } from '#lib/i18n/messages/en/faq.js';
+import { faq as es } from '#lib/i18n/messages/es/faq.js';
+import { faq as pt } from '#lib/i18n/messages/pt/faq.js';
+import { faq as fr } from '#lib/i18n/messages/fr/faq.js';
+import { faq as de } from '#lib/i18n/messages/de/faq.js';
+import { faq as nl } from '#lib/i18n/messages/nl/faq.js';
 
-export const FAQ: FaqItem[] = [
-	{
-		question: 'What is this?',
-		answer: `A free ${TARGET_YEAR} year in review for Garmin and Strava athletes. Upload your activity export and see your year in sport: total distance, elevation, time and calories, a breakdown by sport, personal records, highlights and your longest streak.`
-	},
-	{
-		question: 'Is my data private?',
-		answer:
-			'Yes. The file is read and analysed on your device. Nothing is uploaded, and there is no account to create.'
-	},
-	{
-		question: 'Which file does it need?',
-		answer:
-			'The Activities CSV from Garmin Connect or activities.csv from your Strava account export, in English. It covers running, cycling, swimming, walking, hiking, strength, yoga, paddling, rowing, cardio, winter sports, racket sports and climbing.'
-	},
-	{
-		question: 'What can I share?',
-		answer:
-			'Three story-sized cards (1080 × 1920 PNG): a summary, a sport breakdown and your highlights, in Neon, Minimal or Retro style.'
-	},
-	{
-		question: 'Can I reopen my recap later?',
-		answer:
-			'Yes. Use Save my year on your dashboard to download a small .json file, then drop it on the upload area any time to reopen the recap. It stays on your device.'
-	},
-	{
-		question: 'Does it work with Strava?',
-		answer:
-			'Yes. Upload activities.csv from your Strava account export (Settings, My Account, Download or Delete Your Account), with Strava set to English.'
-	},
-	{
-		question: 'Is it free?',
-		answer: 'Yes. No sign-up, no ads, and the code is open source on GitHub.'
-	}
-];
+export const faqMessages: Record<Locale, typeof en> = { en, es, pt, fr, de, nl };
+export const faqItems = (locale: Locale) => faqMessages[locale].items;
