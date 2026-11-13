@@ -94,7 +94,9 @@ function readRows<T>(
 		step: ({ data, errors, meta }) => {
 			// Exclude a consumed row break, but include a newline inside an unclosed quoted field.
 			const unclosedQuote = errors.some((error) => error.code === 'MissingQuotes');
-			const end = meta.cursor - (unclosedQuote ? 0 : 1);
+			const consumedBreak =
+				csv.slice(meta.cursor - meta.linebreak.length, meta.cursor) === meta.linebreak;
+			const end = meta.cursor - (!unclosedQuote && consumedBreak ? meta.linebreak.length : 0);
 			for (; scanned < end; scanned++) if (csv[scanned] === '\n') newlines++;
 			const line = newlines + 1 - countNewlines(Object.values(data as object));
 			if (skipHeaderRow) {

@@ -13,6 +13,13 @@ describe('isInYear', () => {
 });
 
 describe('shared CSV parsing', () => {
+	it('tracks a final lone LF when the detected line break is CRLF', () => {
+		const csv = 'Activity Date,Activity Type,Moving Time\r\nbad,Run,60\n';
+		expect(stravaParser.parse(csv, 2026).errors).toContainEqual(
+			expect.objectContaining({ type: 'invalid-date', row: 2 })
+		);
+	});
+
 	it.each(['\n', '\r\n'])('tracks malformed quotes at EOF with %j line endings', (newline) => {
 		const csv = ['Activity Date,Activity Type,Moving Time', '"bad,Run,1', ''].join(newline);
 		expect(stravaParser.parse(csv, 2026).errors).toContainEqual(
