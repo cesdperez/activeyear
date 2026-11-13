@@ -160,6 +160,21 @@ describe('skippedRowsNotice', () => {
 });
 
 describe('localized upload errors', () => {
+	it('puts the German verb particles at the end', () => {
+		expect(uploadErrorMessage({ type: 'unrecognised' }, 'de')).toMatch(
+			/aus deinem Strava-Export auf Englisch, .* oder Portugiesisch hoch\.$/
+		);
+		expect(uploadErrorMessage({ type: 'strava-unsupported-language' }, 'de')).toContain(
+			'Stelle Strava auf Englisch, Spanisch, Deutsch, Französisch, Italienisch, Niederländisch oder Portugiesisch um,'
+		);
+	});
+
+	it('says in French that the file was not recognised', () => {
+		expect(uploadErrorMessage({ type: 'unrecognised' }, 'fr')).toMatch(
+			/^Nous n’avons pas reconnu ce fichier\./
+		);
+	});
+
 	it('translates the same error into Spanish and German', () => {
 		const error = {
 			type: 'rows-rejected',

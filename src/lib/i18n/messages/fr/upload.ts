@@ -12,7 +12,7 @@ export const upload: typeof en = {
 	analyzing: 'Analyse des activités...',
 	invalidExtension: 'Veuillez importer un fichier CSV ou .json enregistré',
 	unrecognised:
-		'Ce fichier est inconnu. Importez le CSV des activités Garmin Connect ou activities.csv de votre export Strava en anglais, espagnol, allemand, français, italien, néerlandais ou portugais.',
+		'Nous n’avons pas reconnu ce fichier. Importez le CSV des activités Garmin Connect ou activities.csv de votre export Strava en anglais, espagnol, allemand, français, italien, néerlandais ou portugais.',
 	stravaUnsupportedLanguage:
 		'Cet export Strava est dans une langue que nous ne savons pas encore lire. Réglez Strava en anglais, espagnol, allemand, français, italien, néerlandais ou portugais, demandez une nouvelle archive et importez son fichier activities.csv.',
 	unknown: 'Impossible de traiter le fichier',
