@@ -101,6 +101,33 @@ test('more stats are hidden until expanded', async ({ page }) => {
 	}
 });
 
+test('weekday and sport bars keep their fill in forced colors mode', async ({ page }) => {
+	await openDemo(page);
+	const fills = () =>
+		page
+			.locator('[data-testid="weekly-pattern-bar"], [data-testid="sport-breakdown"] .bar-fill')
+			.evaluateAll((bars) => bars.map((bar) => getComputedStyle(bar).backgroundColor));
+	const normal = await fills();
+	expect(normal.length).toBeGreaterThan(7);
+	await page.emulateMedia({ forcedColors: 'active' });
+	expect(await fills()).toEqual(normal);
+});
+
+test('more stats mark every empty value the same way', async ({ page }) => {
+	await uploadCsv(
+		page,
+		garminCsv([{ title: 'Run' }, { title: 'Gym', type: 'Strength Training', distance: '0.0' }])
+	);
+	await page.getByRole('button', { name: 'More stats', exact: true }).click();
+	const section = page.getByTestId('more-stats');
+	const emptyCells = section.locator('td').filter({ hasText: /^(|0\.0km|0m)$/ });
+	await expect(emptyCells).toHaveCount(0);
+	const marked = section.locator('td').filter({ hasText: '–' });
+	await expect(marked.first()).toHaveText('–No data');
+	// Five empty weekdays, plus the gym day and the gym average without distance.
+	await expect(marked).toHaveCount(5 * 2 + 2);
+});
+
 test('Jump to Export moves focus to the export heading', async ({ page }) => {
 	await openDemo(page);
 	await page.getByRole('button', { name: 'Jump to Export' }).click();
