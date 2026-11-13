@@ -73,7 +73,7 @@ test.describe('Export Flow', () => {
 		await expect(page.getByRole('button', { name: /Neon/i })).toBeVisible();
 		await expect(page.getByRole('button', { name: /Minimal/i })).toBeVisible();
 		await expect(page.getByRole('button', { name: /Retro/i })).toBeVisible();
-		const lightmile = page.getByRole('button', { name: /Lightmile/i });
+		const lightmile = page.getByRole('button', { name: /Lightmile Paper/i });
 		await expect(lightmile).toBeVisible();
 		await expect(lightmile).toBeEnabled();
 		await lightmile.click();

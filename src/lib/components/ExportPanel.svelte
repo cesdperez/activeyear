@@ -17,6 +17,39 @@
 	import { THEME_OPTIONS, USER_NAME_MAX_LENGTH } from '#lib/constants/export.js';
 	import { FontsUnavailableError } from '#lib/utils/fonts.js';
 
+	let lightmileOpen = $state(false);
+	let lightmileButton = $state<HTMLButtonElement | null>(null);
+	let closeTimer: ReturnType<typeof setTimeout>;
+	let openBeforePointer = false;
+
+	function openLightmile() {
+		clearTimeout(closeTimer);
+		lightmileOpen = true;
+	}
+
+	function scheduleLightmileClose() {
+		clearTimeout(closeTimer);
+		closeTimer = setTimeout(() => {
+			if (!document.getElementById('lightmile-cell')?.contains(document.activeElement))
+				lightmileOpen = false;
+		}, 200);
+	}
+
+	function leaveLightmile(event: FocusEvent) {
+		if (!(event.currentTarget as HTMLElement).contains(event.relatedTarget as Node | null)) {
+			clearTimeout(closeTimer);
+			lightmileOpen = false;
+		}
+	}
+
+	function lightmileKeydown(event: KeyboardEvent) {
+		if (event.key === 'Escape' && lightmileOpen) {
+			event.preventDefault();
+			lightmileButton?.focus();
+			lightmileOpen = false;
+		}
+	}
+
 	let exportError = $state<ExportError | null>(null);
 	let exportStatus = $state<ExportStatus | null>(null);
 	let avatarError = $state<AvatarError | null>(null);
@@ -241,17 +274,58 @@
 					class="grid grid-cols-2 gap-2 sm:grid-cols-3"
 				>
 					{#each THEME_OPTIONS as theme (theme.value)}
-						<button
-							onclick={() => setTheme(theme.value)}
-							aria-pressed={appStore.theme === theme.value}
-							disabled={appStore.isExporting}
-							class="toggle flex-1 px-4 py-3 text-center disabled:cursor-not-allowed disabled:opacity-50"
+						<div
+							class="theme-cell"
+							id={theme.value === 'lightmile' ? 'lightmile-cell' : undefined}
+							onfocusout={leaveLightmile}
 						>
-							<div class="text-sm">{theme.label}</div>
-							<div class="theme-description text-xs">
-								{descriptions[theme.value]}
-							</div>
-						</button>
+							<button
+								onclick={() => setTheme(theme.value)}
+								aria-pressed={appStore.theme === theme.value}
+								disabled={appStore.isExporting}
+								class="toggle h-full w-full px-4 py-3 text-center disabled:cursor-not-allowed disabled:opacity-50"
+							>
+								<div class="text-sm">{theme.label}</div>
+								<div class="theme-description text-xs">{descriptions[theme.value]}</div>
+							</button>
+							{#if theme.value === 'lightmile'}
+								<button
+									type="button"
+									class="lightmile-help"
+									onkeydown={lightmileKeydown}
+									bind:this={lightmileButton}
+									aria-label={i18n.m.export.aboutLightmile}
+									aria-expanded={lightmileOpen}
+									aria-controls="lightmile-info"
+									onpointerenter={(event) => {
+										if (event.pointerType !== 'touch') openLightmile();
+									}}
+									onpointerleave={scheduleLightmileClose}
+									onfocus={openLightmile}
+									onpointerdown={() => (openBeforePointer = lightmileOpen)}
+									onclick={(event) => {
+										lightmileOpen = event.detail === 0 ? !lightmileOpen : !openBeforePointer;
+									}}>?</button
+								>
+								<div
+									id="lightmile-info"
+									class="lightmile-info"
+									role="group"
+									aria-label={i18n.m.export.aboutLightmile}
+									hidden={!lightmileOpen}
+									onpointerenter={openLightmile}
+									onpointerleave={scheduleLightmileClose}
+								>
+									{i18n.m.export.lightmileInfo}
+									<a
+										onkeydown={lightmileKeydown}
+										href="https://lightmile.nl"
+										target="_blank"
+										rel="noopener noreferrer">lightmile.nl</a
+									>
+								</div>
+							{/if}
+						</div>
 					{/each}
 				</div>
 			</div>
@@ -343,6 +417,44 @@
 		border-color: var(--color-accent);
 		background: var(--color-accent);
 		color: var(--color-on-accent);
+	}
+
+	.theme-cell {
+		position: relative;
+		min-width: 0;
+	}
+	.lightmile-help {
+		position: absolute;
+		top: 2px;
+		right: 3px;
+		width: 1.25rem;
+		height: 1.25rem;
+		color: var(--color-text-dim);
+		font-size: 0.75rem;
+		border-radius: var(--radius-control);
+	}
+	.lightmile-help:hover {
+		color: var(--color-text-primary);
+	}
+	.lightmile-info {
+		position: absolute;
+		z-index: 10;
+		top: 100%;
+		right: 0;
+		width: min(18rem, 85vw);
+		padding: 0.75rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-panel);
+		background: var(--color-surface-elevated);
+		color: var(--color-text-primary);
+		font-size: 0.875rem;
+	}
+	.lightmile-info[hidden] {
+		display: none;
+	}
+	.lightmile-info a {
+		color: var(--color-accent);
+		text-decoration: underline;
 	}
 
 	.preview-wrapper {
