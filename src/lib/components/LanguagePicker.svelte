@@ -77,7 +77,7 @@
 	}}
 />
 
-<div bind:this={container} class="absolute top-4 right-4 z-20 md:right-8">
+<div bind:this={container} class="relative">
 	<button
 		bind:this={button}
 		class="flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-[var(--radius-control)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-xs font-semibold text-[var(--color-text-muted)] transition-colors duration-150 hover:border-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"

@@ -10,7 +10,7 @@
 	];
 </script>
 
-<div class="absolute top-4 right-24 z-10 flex items-center gap-2 min-[1400px]:right-8 md:right-28">
+<div class="flex items-center gap-2">
 	<div role="group" aria-label={i18n.m.dashboard.distanceUnit} class="segmented">
 		{#each units as { unit, label } (unit)}
 			<button

@@ -4,7 +4,6 @@
 	import { TARGET_YEAR } from '#lib/constants/time.js';
 	import { recordActivities } from '#lib/utils/yearLane.js';
 	import ExportPanel from '#lib/components/ExportPanel.svelte';
-	import DashboardToolbar from '#lib/components/dashboard/DashboardToolbar.svelte';
 	import DashboardHeader from '#lib/components/dashboard/DashboardHeader.svelte';
 	import MainStats from '#lib/components/dashboard/MainStats.svelte';
 	import SectionHeading from '#lib/components/dashboard/SectionHeading.svelte';
@@ -22,7 +21,6 @@
 </script>
 
 <div class="relative mx-auto max-w-6xl overflow-x-hidden px-4 py-12 sm:px-6 md:py-16 lg:px-8">
-	<DashboardToolbar />
 	<DashboardHeader
 		activityCount={appStore.stats?.activityCount ?? 0}
 		activeDays={appStore.stats?.activeDays ?? 0}

@@ -23,6 +23,8 @@
 	import { page } from '$app/state';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import LanguagePicker from '#lib/components/LanguagePicker.svelte';
+	import DashboardToolbar from '#lib/components/dashboard/DashboardToolbar.svelte';
+	import { appStore } from '#lib/stores/app.svelte.js';
 	import MetaTags from '#lib/components/MetaTags.svelte';
 	import { inlinedFontFaceCss, loadAppFonts } from '#lib/utils/fonts.js';
 
@@ -42,7 +44,10 @@
 
 {#if page.route.id !== '/404'}
 	<MetaTags />
-	<LanguagePicker />
+	<div class="absolute top-4 right-4 z-20 flex items-center gap-2 md:right-8">
+		{#if appStore.status === 'ready'}<DashboardToolbar />{/if}
+		<LanguagePicker />
+	</div>
 {/if}
 
 {@render children()}
