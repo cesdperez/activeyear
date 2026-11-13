@@ -54,6 +54,18 @@ test('dismisses stored language suggestion', async ({ page }) => {
 	await expect(page.getByRole('link', { name: 'Ver en español' })).toHaveCount(0);
 });
 
+test('keeps the suggestion text clear of the dismiss button and its focus ring', async ({
+	page
+}) => {
+	await page.goto('/');
+	await page.evaluate(() => localStorage.setItem('activeyear.locale', 'fr'));
+	await page.reload();
+	const link = await page.getByRole('link', { name: 'Voir en français' }).boundingBox();
+	const dismiss = await page.getByRole('button', { name: /suggestion/ }).boundingBox();
+	// Each focus ring reaches 4px outside its box: 2px wide at a 2px offset.
+	expect(dismiss!.x - (link!.x + link!.width)).toBeGreaterThanOrEqual(8);
+});
+
 test.describe('fresh German-speaking visitor', () => {
 	test.use({ locale: 'de-DE' });
 	test('suggests German', async ({ page }) => {

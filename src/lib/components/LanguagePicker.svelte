@@ -127,7 +127,7 @@
 	{/if}
 	{#if !open && suggestion && page.url.pathname === '/'}
 		<div
-			class="panel absolute top-full right-0 mt-2 flex items-center text-sm whitespace-nowrap text-[var(--color-text-primary)]"
+			class="panel absolute top-full right-0 mt-2 flex items-center gap-2 pr-1 text-sm whitespace-nowrap text-[var(--color-text-primary)]"
 		>
 			<a
 				href={resolve('/[[lang=locale]]', { lang: suggestion })}
