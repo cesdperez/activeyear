@@ -54,6 +54,6 @@ export const faq = {
 		{ text: 'Upload activities.csv' }
 	],
 	stravaNote: 'Upload only activities.csv. Your Strava language must be English.',
-	heading: 'FAQ',
+	heading: 'Questions',
 	guidesAria: 'Choose your data source'
 };

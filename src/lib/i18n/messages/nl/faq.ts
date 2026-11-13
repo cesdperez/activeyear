@@ -55,6 +55,6 @@ export const faq: typeof en = {
 		{ text: 'Upload activities.csv' }
 	],
 	stravaNote: 'Upload alleen activities.csv. De taal van Strava moet Engels zijn.',
-	heading: 'Veelgestelde vragen',
+	heading: 'Vragen',
 	guidesAria: 'Kies je gegevensbron'
 };

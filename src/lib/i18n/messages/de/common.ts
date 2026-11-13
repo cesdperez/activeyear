@@ -37,5 +37,14 @@ export const common: typeof en = {
 	earthLaps: 'Erdumrundungen',
 	earthPartial: 'einer Erdumrundung',
 	everest: 'der Höhe des Mount Everest',
-	lotr: 'Herr-der-Ringe-Marathons'
+	lotr: 'Herr-der-Ringe-Marathons',
+	dayByDay: 'Tag für Tag',
+	yearLane: {
+		summary: (n, count, days, year) =>
+			`${n} ${plural('de', count, { one: 'aktiver Tag', other: 'aktive Tage' })} von ${days} im Jahr ${year}`,
+		highlightsMarked: 'Höhepunkte markiert',
+		recordsMarked: 'Bestleistungen markiert',
+		highlight: 'Höhepunkt',
+		record: 'Bestleistung'
+	}
 };

@@ -59,6 +59,6 @@ export const faq: typeof en = {
 		{ text: 'Lade activities.csv hoch' }
 	],
 	stravaNote: 'Lade nur activities.csv hoch. Strava muss auf Englisch eingestellt sein.',
-	heading: 'Häufige Fragen',
+	heading: 'Fragen',
 	guidesAria: 'Wähle deine Datenquelle'
 };

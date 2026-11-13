@@ -58,6 +58,6 @@ export const faq: typeof en = {
 		{ text: 'Sube activities.csv' }
 	],
 	stravaNote: 'Sube solo activities.csv. El idioma de Strava debe ser inglés.',
-	heading: 'Preguntas frecuentes',
+	heading: 'Preguntas',
 	guidesAria: 'Elige la fuente de tus datos'
 };

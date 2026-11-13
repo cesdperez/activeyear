@@ -5,7 +5,7 @@ export const dashboard: typeof en = {
 	customPicks: 'Je eigen selectie.',
 	highlightPresets: 'Hoogtepuntselecties',
 	searchActivities: 'Zoek je activiteiten',
-	searchPlaceholder: 'Zoek op titel, sport, maand of afstand',
+	searchPlaceholder: 'Voeg een activiteit toe: zoek op titel, sport, maand of afstand',
 	noSearchMatches: 'Geen activiteiten gevonden',
 	noPicks: 'Geen hoogtepunten gekozen. Kies een selectie of zoek je activiteiten.',
 	removeHighlight: (x: string) => `${x} uit hoogtepunten verwijderen`,
@@ -49,8 +49,6 @@ export const dashboard: typeof en = {
 	activitySummaryDays: (n, count) =>
 		`op ${n} ${plural('nl', count, { one: 'actieve dag', other: 'actieve dagen' })}`,
 	activeDaysLabel: (count) => plural('nl', count, { one: 'Actieve dag', other: 'Actieve dagen' }),
-	streakCaption: (count) =>
-		plural('nl', count, { one: 'actieve dag op rij', other: 'meeste actieve dagen op rij' }),
 	dayStreak: 'Dagen op rij',
 	percentOfYear: (percent) => `${percent} van het jaar`,
 	longestDistance: 'Langste afstand',
@@ -68,7 +66,6 @@ export const dashboard: typeof en = {
 	jumpExport: 'Naar exporteren',
 	fewerStats: 'Minder statistieken',
 	moreStats: 'Meer statistieken',
-	moreStatsTitle: 'Meer statistieken',
 	quarters: 'Kwartalen',
 	rest: 'Rust',
 	noActivities: 'Geen activiteiten',
@@ -78,5 +75,14 @@ export const dashboard: typeof en = {
 	to: 'tot',
 	noRestDay: 'Geen rustdag tussen activiteiten.',
 	byWeekday: 'Per weekdag',
-	averageActivity: 'Gemiddelde per activiteit'
+	averageActivity: 'Gemiddelde per activiteit',
+	activeDays: 'Actieve dagen',
+	longestStreakDays: 'Langste reeks in dagen',
+	totals: 'Totalen',
+	weekday: 'Dag',
+	sport: 'Sport',
+	distance: 'Afstand',
+	streakCaption: (count) =>
+		plural('nl', count, { one: 'actieve dag op rij', other: 'meeste actieve dagen op rij' }),
+	moreStatsTitle: 'Meer statistieken'
 };

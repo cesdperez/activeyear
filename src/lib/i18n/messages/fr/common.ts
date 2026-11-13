@@ -37,5 +37,14 @@ export const common: typeof en = {
 	earthLaps: 'tours du monde',
 	earthPartial: 'd’un tour du monde',
 	everest: 'de la hauteur de l’Everest',
-	lotr: 'marathons du Seigneur des Anneaux'
+	lotr: 'marathons du Seigneur des Anneaux',
+	dayByDay: 'Jour après jour',
+	yearLane: {
+		summary: (n, count, days, year) =>
+			`${n} ${plural('fr', count, { one: 'jour actif', other: 'jours actifs' })} sur ${days} en ${year}`,
+		highlightsMarked: 'temps forts signalés',
+		recordsMarked: 'records personnels signalés',
+		highlight: 'Temps fort',
+		record: 'Record personnel'
+	}
 };

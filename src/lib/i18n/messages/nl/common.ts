@@ -37,5 +37,14 @@ export const common: typeof en = {
 	earthLaps: 'rondjes om de aarde',
 	earthPartial: 'van een rondje om de aarde',
 	everest: 'van de hoogte van de Mount Everest',
-	lotr: 'Lord of the Rings-marathons'
+	lotr: 'Lord of the Rings-marathons',
+	dayByDay: 'Dag na dag',
+	yearLane: {
+		summary: (n, count, days, year) =>
+			`${n} ${plural('nl', count, { one: 'actieve dag', other: 'actieve dagen' })} van de ${days} in ${year}`,
+		highlightsMarked: 'hoogtepunten gemarkeerd',
+		recordsMarked: 'persoonlijke records gemarkeerd',
+		highlight: 'Hoogtepunt',
+		record: 'Persoonlijk record'
+	}
 };

@@ -4,7 +4,7 @@ export const dashboard = {
 	customPicks: 'Your own picks.',
 	highlightPresets: 'Highlight presets',
 	searchActivities: 'Search your activities',
-	searchPlaceholder: 'Search by title, sport, month or distance',
+	searchPlaceholder: 'Add an activity: search title, sport, month or distance',
 	noSearchMatches: 'No activities match',
 	noPicks: 'No highlights picked. Pick a preset or search your activities.',
 	removeHighlight: (x: string) => `Remove ${x} from highlights`,
@@ -30,13 +30,13 @@ export const dashboard = {
 		}
 	},
 
-	totalDistance: 'Total Distance',
-	elevationGained: 'Elevation Gained',
-	timeActive: 'Time Active',
-	caloriesBurned: 'Calories Burned',
-	personalRecords: 'Personal Records',
-	bySport: 'By Sport',
-	whenYouTrain: 'When You Train',
+	totalDistance: 'Total distance',
+	elevationGained: 'Elevation gained',
+	timeActive: 'Time active',
+	caloriesBurned: 'Calories burned',
+	personalRecords: 'Personal records',
+	bySport: 'By sport',
+	whenYouTrain: 'When you train',
 	uploadDifferentFile: 'Upload different file',
 	saveMyYear: 'Save my year',
 	reopenRecap: 'Reopen this recap later without exporting again',
@@ -50,17 +50,12 @@ export const dashboard = {
 	activitySummaryDays: (n: string, count: number) =>
 		`${n} ${plural('en', count, { one: 'active day', other: 'active days' })}`,
 	activeDaysLabel: (count: number) =>
-		plural('en', count, { one: 'Active Day', other: 'Active Days' }),
-	streakCaption: (count: number) =>
-		plural('en', count, {
-			one: 'most consecutive active day',
-			other: 'most consecutive active days'
-		}),
-	dayStreak: 'Day Streak',
+		plural('en', count, { one: 'Active day', other: 'Active days' }),
+	dayStreak: 'Day streak',
 	percentOfYear: (percent: string) => `${percent} of the year`,
-	longestDistance: 'Longest Distance',
-	longestDuration: 'Longest Duration',
-	biggestBurn: 'Biggest Burn',
+	longestDistance: 'Longest distance',
+	longestDuration: 'Longest duration',
+	biggestBurn: 'Biggest burn',
 	breakdownMetric: 'Breakdown metric',
 	activities: 'Activities',
 	time: 'Time',
@@ -73,7 +68,6 @@ export const dashboard = {
 	jumpExport: 'Jump to Export',
 	fewerStats: 'Fewer stats',
 	moreStats: 'More stats',
-	moreStatsTitle: 'More Stats',
 	quarters: 'Quarters',
 	rest: 'Rest',
 	noActivities: 'No activities',
@@ -83,5 +77,17 @@ export const dashboard = {
 	to: 'to',
 	noRestDay: 'No rest day between activities.',
 	byWeekday: 'By weekday',
-	averageActivity: 'Average per activity'
+	averageActivity: 'Average per activity',
+	activeDays: 'Active days',
+	longestStreakDays: 'Longest streak in days',
+	totals: 'Totals',
+	weekday: 'Day',
+	sport: 'Sport',
+	distance: 'Distance',
+	streakCaption: (count: number) =>
+		plural('en', count, {
+			one: 'most consecutive active day',
+			other: 'most consecutive active days'
+		}),
+	moreStatsTitle: 'More Stats'
 };

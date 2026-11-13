@@ -34,5 +34,14 @@ export const common = {
 	earthLaps: 'laps around the globe',
 	earthPartial: 'of a lap around the globe',
 	everest: 'the height of Mt. Everest',
-	lotr: 'LotR marathons'
+	lotr: 'LotR marathons',
+	dayByDay: 'Day by day',
+	yearLane: {
+		summary: (n: string, count: number, days: string, year: number) =>
+			`${n} active ${plural('en', count, { one: 'day', other: 'days' })} out of ${days} in ${year}`,
+		highlightsMarked: 'highlights marked',
+		recordsMarked: 'personal records marked',
+		highlight: 'Highlight',
+		record: 'Personal record'
+	}
 };

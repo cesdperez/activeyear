@@ -63,6 +63,6 @@ export const faq: typeof en = {
 		{ text: 'Importez activities.csv' }
 	],
 	stravaNote: 'Importez uniquement activities.csv. Strava doit être réglé en anglais.',
-	heading: 'Questions fréquentes',
+	heading: 'Questions',
 	guidesAria: 'Choisissez votre source de données'
 };

@@ -5,7 +5,7 @@ export const dashboard: typeof en = {
 	customPicks: 'Deine eigene Auswahl.',
 	highlightPresets: 'Highlight-Auswahl',
 	searchActivities: 'Aktivitäten suchen',
-	searchPlaceholder: 'Nach Titel, Sportart, Monat oder Distanz suchen',
+	searchPlaceholder: 'Aktivität hinzufügen: nach Titel, Sportart, Monat oder Distanz suchen',
 	noSearchMatches: 'Keine passenden Aktivitäten',
 	noPicks: 'Keine Highlights ausgewählt. Wähle eine Auswahl oder suche deine Aktivitäten.',
 	removeHighlight: (x: string) => `${x} aus Highlights entfernen`,
@@ -55,8 +55,6 @@ export const dashboard: typeof en = {
 	activitySummaryDays: (n, count) =>
 		`an ${n} ${plural('de', count, { one: 'aktivem Tag', other: 'aktiven Tagen' })}`,
 	activeDaysLabel: (count) => plural('de', count, { one: 'Aktiver Tag', other: 'Aktive Tage' }),
-	streakCaption: (count) =>
-		plural('de', count, { one: 'aktiver Tag in Folge', other: 'meiste aktive Tage in Folge' }),
 	dayStreak: 'Tage in Folge',
 	percentOfYear: (percent) => `${percent} des Jahres`,
 	longestDistance: 'Längste Distanz',
@@ -75,7 +73,6 @@ export const dashboard: typeof en = {
 	jumpExport: 'Zum Export',
 	fewerStats: 'Weniger Statistiken',
 	moreStats: 'Mehr Statistiken',
-	moreStatsTitle: 'Mehr Statistiken',
 	quarters: 'Quartale',
 	rest: 'Pause',
 	noActivities: 'Keine Aktivitäten',
@@ -85,5 +82,14 @@ export const dashboard: typeof en = {
 	to: 'bis',
 	noRestDay: 'Kein Ruhetag zwischen Aktivitäten.',
 	byWeekday: 'Nach Wochentag',
-	averageActivity: 'Durchschnitt pro Aktivität'
+	averageActivity: 'Durchschnitt pro Aktivität',
+	activeDays: 'Aktive Tage',
+	longestStreakDays: 'Längste Serie in Tagen',
+	totals: 'Gesamtwerte',
+	weekday: 'Tag',
+	sport: 'Sportart',
+	distance: 'Distanz',
+	streakCaption: (count) =>
+		plural('de', count, { one: 'aktiver Tag in Folge', other: 'meiste aktive Tage in Folge' }),
+	moreStatsTitle: 'Mehr Statistiken'
 };
