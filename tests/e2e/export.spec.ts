@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { PNG } from 'pngjs';
 import { downloadAllCards, uploadSample } from './helpers.js';
 
@@ -112,3 +112,29 @@ test.describe('Export Flow', () => {
 		await expect(exportCard).toHaveAttribute('data-theme', 'neon');
 	});
 });
+
+for (const width of [390, 768]) {
+	test(`the stacked Preview label lines up with the other labels and the card stays centred at ${width}px`, async ({
+		page
+	}) => {
+		await page.setViewportSize({ width, height: 900 });
+		await uploadSample(page);
+		const panel = page.locator('#export-panel');
+		const left = (text: string) =>
+			panel
+				.locator('.field-label', { hasText: text })
+				.first()
+				.evaluate((el) => el.getBoundingClientRect().left);
+		const centre = (locator: Locator) =>
+			locator.evaluate((el) => {
+				const rect = el.getBoundingClientRect();
+				return rect.left + rect.width / 2;
+			});
+		const column = await centre(panel);
+
+		expect(await left('Preview')).toBe(await left('Theme'));
+		await expect
+			.poll(async () => Math.abs((await centre(page.locator('.carousel-card'))) - column))
+			.toBeLessThanOrEqual(1);
+	});
+}

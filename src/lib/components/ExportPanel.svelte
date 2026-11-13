@@ -377,8 +377,16 @@
 		gap: 2rem;
 	}
 
+	/* Full width when stacked, so its label lines up with the control labels under it. */
 	.preview-column {
-		max-width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: safe center;
+		align-self: stretch;
+	}
+
+	.preview-column > .field-label {
+		align-self: stretch;
 	}
 
 	.controls {
@@ -392,6 +400,10 @@
 			align-items: flex-start;
 			justify-content: safe center;
 			gap: 4rem;
+		}
+
+		.preview-column {
+			align-self: auto;
 		}
 
 		.controls {
