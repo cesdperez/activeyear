@@ -33,5 +33,10 @@ export const common = {
 		recordsMarked: 'personal records marked',
 		highlight: 'Highlight',
 		record: 'Personal record'
+	},
+	footer: {
+		reportIssue: 'Report an issue',
+		otherProjects: 'See my other projects',
+		opensInNewTab: '(opens in a new tab)'
 	}
 };

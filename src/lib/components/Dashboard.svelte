@@ -16,7 +16,6 @@
 	import PersonalRecords from '#lib/components/dashboard/PersonalRecords.svelte';
 	import SportBreakdown from '#lib/components/dashboard/SportBreakdown.svelte';
 	import MoreStats from '#lib/components/dashboard/MoreStats.svelte';
-	import SupportLink from '#lib/components/dashboard/SupportLink.svelte';
 	import SaveYear from '#lib/components/dashboard/SaveYear.svelte';
 	import FloatingSupportLink from '#lib/components/dashboard/FloatingSupportLink.svelte';
 	import DashboardFileDrop from '#lib/components/dashboard/DashboardFileDrop.svelte';
@@ -70,11 +69,8 @@
 	<div {@attach observeBusyArea}>
 		<ExportPanel />
 	</div>
-	<div class="mt-24 flex flex-col items-center gap-6">
-		<div class="w-full max-w-xs">
-			<SaveYear />
-		</div>
-		<SupportLink placement="footer" />
+	<div class="mx-auto mt-24 w-full max-w-xs">
+		<SaveYear />
 	</div>
 </div>
 

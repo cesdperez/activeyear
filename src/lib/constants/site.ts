@@ -5,6 +5,8 @@ export const SITE_URL = 'https://activeyear.app';
 export const KOFI_URL = 'https://ko-fi.com/chechoxyz';
 export const SITE_NAME = 'ActiveYear';
 export const REPOSITORY_URL = 'https://github.com/cesdperez/activeyear';
+export const ISSUES_URL = `${REPOSITORY_URL}/issues`;
+export const AUTHOR_URL = 'https://checho.xyz';
 
 export function ogImageUrl(locale: Locale): string {
 	return `${SITE_URL}/${ogImageFile(locale)}`;

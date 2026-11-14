@@ -36,5 +36,10 @@ export const common: typeof en = {
 		recordsMarked: 'persoonlijke records gemarkeerd',
 		highlight: 'Hoogtepunt',
 		record: 'Persoonlijk record'
+	},
+	footer: {
+		reportIssue: 'Een probleem melden',
+		otherProjects: 'Bekijk mijn andere projecten',
+		opensInNewTab: '(opent in een nieuw tabblad)'
 	}
 };

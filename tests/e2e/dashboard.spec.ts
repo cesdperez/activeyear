@@ -85,6 +85,28 @@ test('footer offers a support link', async ({ page }) => {
 	await expect(support).toHaveAttribute('href', 'https://ko-fi.com/chechoxyz');
 });
 
+test('every page ends with a footer linking to issues and other projects', async ({ page }) => {
+	const expectFooterLinks = async () => {
+		const footer = page.getByRole('contentinfo');
+		await expect(footer.getByRole('link', { name: /Report an issue/ })).toHaveAttribute(
+			'href',
+			'https://github.com/cesdperez/activeyear/issues'
+		);
+		await expect(footer.getByRole('link', { name: /See my other projects/ })).toHaveAttribute(
+			'href',
+			'https://checho.xyz'
+		);
+		return footer;
+	};
+	await gotoUpload(page);
+	const landingFooter = await expectFooterLinks();
+	await expect(landingFooter.getByRole('link', { name: /Buy me a gel/ })).toHaveCount(0);
+	await openDemo(page);
+	const dashboardFooter = await expectFooterLinks();
+	await expect(dashboardFooter.getByText('Enjoying ActiveYear?')).toBeVisible();
+	await expect(dashboardFooter.getByRole('link', { name: /Buy me a gel/ })).toBeVisible();
+});
+
 test('more stats are hidden until expanded', async ({ page }) => {
 	await openDemo(page);
 	const toggle = page.getByRole('button', { name: 'More stats', exact: true });

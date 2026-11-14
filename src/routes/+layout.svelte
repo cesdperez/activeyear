@@ -50,6 +50,7 @@
 	import { uploadStore } from '#lib/stores/upload.svelte.js';
 	import { THEME_OPTIONS } from '#lib/constants/export.js';
 	import MetaTags from '#lib/components/MetaTags.svelte';
+	import SiteFooter from '#lib/components/SiteFooter.svelte';
 	import { inlinedFontFaceCss, loadAppFonts } from '#lib/utils/fonts.js';
 
 	let { children } = $props();
@@ -81,3 +82,5 @@
 {/if}
 
 {@render children()}
+
+<SiteFooter />

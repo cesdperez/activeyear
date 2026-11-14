@@ -127,9 +127,13 @@ The shareable image. This is what users actually care about.
 - On phones and touch tablets, show a short export hint and a full-width demo button before the upload zone.
 - The upload zone is a flat elevated surface with a dashed border; on hover or dragover the border turns solid accent and the surface lifts one step in colour.
 
+### Site footer
+
+Every page ends with a quiet footer (`SiteFooter.svelte`): on the dashboard the support line, then muted "Report an issue" (GitHub issues) and "See my other projects" (checho.xyz) links. External links open in a new tab, so a visitor never loses the dashboard.
+
 ### Support link
 
-- Show "Buy me a gel" under the Download button after a successful export, at the bottom of the dashboard after "Save my year", and in the FAQ.
+- Show "Buy me a gel" under the Download button after a successful export, in the site footer on the dashboard, and in the FAQ.
 - The export prompt is "Enjoyed your recap? ActiveYear is free and made by one person." The dashboard prompt is "Enjoying ActiveYear?".
 - Use an accent-coloured link that ends in a heart icon (`GelLink.svelte`), set inline so its text sits on the sentence's baseline.
 - A compact fixed link appears after the header scrolls away. It hides while another support link, the highlights section or the export panel is on screen, because it would cover their controls, and while an export runs. While it shows, the page has a bottom scroll padding so a focused control is never under it.

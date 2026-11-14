@@ -36,5 +36,10 @@ export const common: typeof en = {
 		recordsMarked: 'records personnels signalés',
 		highlight: 'Temps fort',
 		record: 'Record personnel'
+	},
+	footer: {
+		reportIssue: 'Signaler un problème',
+		otherProjects: 'Voir mes autres projets',
+		opensInNewTab: '(s’ouvre dans un nouvel onglet)'
 	}
 };

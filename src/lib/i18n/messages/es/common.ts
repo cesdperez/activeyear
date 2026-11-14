@@ -41,5 +41,10 @@ export const common: typeof en = {
 		recordsMarked: 'mejores marcas señaladas',
 		highlight: 'Destacado',
 		record: 'Mejor marca'
+	},
+	footer: {
+		reportIssue: 'Informar de un problema',
+		otherProjects: 'Ver mis otros proyectos',
+		opensInNewTab: '(se abre en una pestaña nueva)'
 	}
 };

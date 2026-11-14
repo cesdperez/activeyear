@@ -35,5 +35,10 @@ export const common: typeof en = {
 		recordsMarked: 'recordes pessoais marcados',
 		highlight: 'Destaque',
 		record: 'Recorde pessoal'
+	},
+	footer: {
+		reportIssue: 'Relatar um problema',
+		otherProjects: 'Ver meus outros projetos',
+		opensInNewTab: '(abre em uma nova aba)'
 	}
 };
