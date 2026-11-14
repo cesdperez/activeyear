@@ -36,7 +36,7 @@ export const common = {
 	},
 	footer: {
 		reportIssue: 'Report an issue',
-		otherProjects: 'See my other projects',
-		opensInNewTab: '(opens in a new tab)'
-	}
+		otherProjects: 'See my other projects'
+	},
+	opensInNewTab: '(opens in a new tab)'
 };

@@ -2,7 +2,8 @@
 	import { AUTHOR_URL, ISSUES_URL } from '#lib/constants/site.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { uploadStore } from '#lib/stores/upload.svelte.js';
-	import SupportLink from './dashboard/SupportLink.svelte';
+	import ExternalLink from '#lib/components/ExternalLink.svelte';
+	import SupportLink from '#lib/components/dashboard/SupportLink.svelte';
 
 	const links = $derived([
 		{ href: ISSUES_URL, label: i18n.m.common.footer.reportIssue },
@@ -20,15 +21,11 @@
 		<ul class="flex flex-wrap justify-center gap-x-6 text-sm">
 			{#each links as { href, label } (href)}
 				<li>
-					<!-- eslint-disable svelte/no-navigation-without-resolve -- external site, not an app route -->
-					<a
+					<ExternalLink
 						{href}
-						target="_blank"
-						rel="noopener"
 						class="inline-flex items-center text-[var(--color-text-muted)] underline decoration-[var(--color-border)] underline-offset-4 transition-colors duration-200 hover:text-[var(--color-text-primary)] hover:decoration-[var(--color-accent)] pointer-coarse:min-h-11"
-						>{label}<span class="sr-only"> {i18n.m.common.footer.opensInNewTab}</span></a
+						>{label}</ExternalLink
 					>
-					<!-- eslint-enable svelte/no-navigation-without-resolve -->
 				</li>
 			{/each}
 		</ul>

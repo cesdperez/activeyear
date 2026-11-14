@@ -3,6 +3,7 @@
 	import { stravaExportNote, stravaExportSteps } from '#lib/data/stravaExport.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import type { ExportStep } from '#lib/types/index.js';
+	import ExternalLink from '#lib/components/ExternalLink.svelte';
 	let selected = $state<'garmin' | 'strava'>('garmin');
 	let garminTab: HTMLButtonElement;
 	let stravaTab: HTMLButtonElement;
@@ -29,9 +30,7 @@
 				<span>
 					{text}
 					{#if link}
-						<!-- eslint-disable svelte/no-navigation-without-resolve -- external site, not an app route -->
-						<a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
-						<!-- eslint-enable svelte/no-navigation-without-resolve -->
+						<ExternalLink href={link.href}>{link.label}</ExternalLink>
 					{/if}
 				</span>
 			</li>
@@ -101,14 +100,14 @@
 		color: var(--color-accent);
 	}
 
-	a {
+	.steps :global(a) {
 		color: var(--color-accent);
 		text-decoration: underline;
 		text-underline-offset: 3px;
 	}
 
 	@media (hover: hover) {
-		a:hover {
+		.steps :global(a:hover) {
 			color: var(--color-text-primary);
 		}
 	}

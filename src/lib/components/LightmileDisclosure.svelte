@@ -2,6 +2,7 @@
 	import { onDestroy } from 'svelte';
 	import { Question } from 'phosphor-svelte';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
+	import ExternalLink from '#lib/components/ExternalLink.svelte';
 
 	let open = $state(false);
 	let button: HTMLButtonElement;
@@ -106,7 +107,7 @@
 		onfocusout={focusOut}
 	>
 		{i18n.m.export.lightmileInfo}
-		<a href="https://lightmile.nl" target="_blank" rel="noopener noreferrer">lightmile.nl</a>
+		<ExternalLink href="https://lightmile.nl">lightmile.nl</ExternalLink>
 	</div>
 </div>
 
@@ -159,7 +160,7 @@
 	.lightmile-info[hidden] {
 		display: none;
 	}
-	.lightmile-info a {
+	.lightmile-info :global(a) {
 		color: var(--color-accent);
 		text-decoration: underline;
 	}

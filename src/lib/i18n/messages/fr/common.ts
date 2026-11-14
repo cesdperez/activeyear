@@ -39,7 +39,7 @@ export const common: typeof en = {
 	},
 	footer: {
 		reportIssue: 'Signaler un problème',
-		otherProjects: 'Voir mes autres projets',
-		opensInNewTab: '(s’ouvre dans un nouvel onglet)'
-	}
+		otherProjects: 'Voir mes autres projets'
+	},
+	opensInNewTab: '(s’ouvre dans un nouvel onglet)'
 };

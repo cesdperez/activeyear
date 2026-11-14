@@ -44,7 +44,7 @@ export const common: typeof en = {
 	},
 	footer: {
 		reportIssue: 'Informar de un problema',
-		otherProjects: 'Ver mis otros proyectos',
-		opensInNewTab: '(se abre en una pestaña nueva)'
-	}
+		otherProjects: 'Ver mis otros proyectos'
+	},
+	opensInNewTab: '(se abre en una pestaña nueva)'
 };
