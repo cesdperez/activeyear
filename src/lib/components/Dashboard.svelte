@@ -16,7 +16,6 @@
 	import PersonalRecords from '#lib/components/dashboard/PersonalRecords.svelte';
 	import SportBreakdown from '#lib/components/dashboard/SportBreakdown.svelte';
 	import MoreStats from '#lib/components/dashboard/MoreStats.svelte';
-	import UploadAnotherFile from '#lib/components/dashboard/UploadAnotherFile.svelte';
 	import SupportLink from '#lib/components/dashboard/SupportLink.svelte';
 	import SaveYear from '#lib/components/dashboard/SaveYear.svelte';
 	import FloatingSupportLink from '#lib/components/dashboard/FloatingSupportLink.svelte';
@@ -72,9 +71,8 @@
 		<ExportPanel />
 	</div>
 	<div class="mt-24 flex flex-col items-center gap-6">
-		<div class="grid w-full max-w-xl items-start gap-4 sm:grid-cols-2">
+		<div class="w-full max-w-xs">
 			<SaveYear />
-			<UploadAnotherFile />
 		</div>
 		<SupportLink placement="footer" />
 	</div>

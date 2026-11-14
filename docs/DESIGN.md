@@ -102,7 +102,7 @@ Badge-like treatment. These are achievements, not data points.
 
 **Mobile-first.** The card is the product; it must be perfect at 375px.
 
-The language picker and, on the dashboard, the toolbar (km/mi toggle and celebration button) share one bar in the root layout's banner landmark, so they cannot drift apart or overlap at any width. The celebration button is hidden under reduced motion, where no confetti falls. The 404 page has no picker. A back-to-start control sits at the top-left on the dashboard, mirroring the right bar. The dashboard has its own history entry, so browser Back returns to the start screen like Back to start.
+The language picker and, on the dashboard, the toolbar (km/mi toggle and celebration button) share one bar in the root layout's banner landmark, so they cannot drift apart or overlap at any width. The celebration button is hidden under reduced motion, where no confetti falls. The 404 page has no picker. Back to start is the dashboard's one way back to the upload screen. It is fixed at the top-left, level with the right bar, so it stays in reach while the page scrolls, and the page keeps a top scroll padding so a focused control is never under it. The dashboard has its own history entry, so browser Back returns to the start screen like Back to start.
 
 ### Export Canvas
 
@@ -129,7 +129,7 @@ The shareable image. This is what users actually care about.
 
 ### Support link
 
-- Show "Buy me a gel" under the Download button after a successful export, at the bottom of the dashboard after "Upload another file", and in the FAQ.
+- Show "Buy me a gel" under the Download button after a successful export, at the bottom of the dashboard after "Save my year", and in the FAQ.
 - The export prompt is "Enjoyed your recap? ActiveYear is free and made by one person." The dashboard prompt is "Enjoying ActiveYear?".
 - Use an accent-coloured link that ends in a heart icon (`GelLink.svelte`), set inline so its text sits on the sentence's baseline.
 - A compact fixed link appears after the header scrolls away. It hides while another support link, the highlights section or the export panel is on screen, because it would cover their controls, and while an export runs. While it shows, the page has a bottom scroll padding so a focused control is never under it.

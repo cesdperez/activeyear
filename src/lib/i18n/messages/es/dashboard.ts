@@ -45,7 +45,6 @@ export const dashboard: typeof en = {
 	personalRecords: 'Mejores marcas',
 	bySport: 'Por deporte',
 	whenYouTrain: 'Cuándo entrenas',
-	uploadDifferentFile: 'Subir otro archivo',
 	saveMyYear: 'Guardar mi año',
 	reopenRecap: 'Abre este resumen más tarde sin volver a exportar',
 	distanceUnit: 'Unidad de distancia',

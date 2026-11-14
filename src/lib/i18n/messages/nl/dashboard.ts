@@ -47,7 +47,6 @@ export const dashboard: typeof en = {
 	personalRecords: 'Persoonlijke records',
 	bySport: 'Per sport',
 	whenYouTrain: 'Wanneer je traint',
-	uploadDifferentFile: 'Ander bestand uploaden',
 	saveMyYear: 'Mijn jaar opslaan',
 	reopenRecap: 'Open dit overzicht later zonder opnieuw te exporteren',
 	distanceUnit: 'Afstandseenheid',

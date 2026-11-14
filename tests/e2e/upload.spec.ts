@@ -185,7 +185,7 @@ test.describe('Upload Flow', () => {
 		await expect(highlights.getByTestId('highlight-row').first()).toBeVisible();
 		await expect(caption).toBeVisible();
 
-		await page.getByRole('button', { name: 'Upload different file' }).click();
+		await page.getByRole('button', { name: 'Back to start' }).click();
 		await page.getByRole('button', { name: 'See how it works with demo data' }).click();
 		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
 	});
@@ -233,10 +233,10 @@ test.describe('Upload Flow', () => {
 		);
 	});
 
-	test('allows uploading a different file', async ({ page }) => {
+	test('Back to start returns to the upload zone', async ({ page }) => {
 		await uploadSample(page);
 
-		await page.getByRole('button', { name: 'Upload different file' }).click();
+		await page.getByRole('button', { name: 'Back to start' }).click();
 
 		await expect(page.getByText('Drop your Garmin or Strava CSV here')).toBeVisible();
 	});
@@ -402,11 +402,9 @@ test.describe('Upload accessibility', () => {
 		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeFocused();
 	});
 
-	test('moves focus to the upload zone after choosing to upload a different file', async ({
-		page
-	}) => {
+	test('moves focus to the upload zone after Back to start', async ({ page }) => {
 		await uploadSample(page);
-		await page.getByRole('button', { name: 'Upload different file' }).click();
+		await page.getByRole('button', { name: 'Back to start' }).click();
 
 		await expect(uploadZone(page)).toBeFocused();
 		await expect(demoButton(page)).toBeEnabled();

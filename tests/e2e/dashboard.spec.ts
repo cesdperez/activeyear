@@ -310,11 +310,14 @@ for (const width of [320, 1024, 1280]) {
 	});
 }
 
-test('Upload different file button is named without its decorative glyph', async ({ page }) => {
+test('Back to start stays in view at the bottom of the dashboard', async ({ page }) => {
 	await openDemo(page);
-	await expect(
-		page.getByRole('button', { name: 'Upload different file', exact: true })
-	).toBeVisible();
+	await page.locator('[data-support-placement="footer"]').scrollIntoViewIfNeeded();
+	const back = page.getByRole('button', { name: 'Back to start' });
+	await expect(back).toBeInViewport();
+	await expect(page.getByRole('button', { name: /Upload different file/ })).toHaveCount(0);
+	await back.click();
+	await expect(page.locator('#upload-zone')).toBeFocused();
 });
 
 test('uploaded year shows progress so far', async ({ page }) => {
@@ -382,7 +385,10 @@ test('jump to export leaves room above the export heading', async ({ page }) => 
 	await page.getByRole('button', { name: 'Jump to Export' }).click();
 	const heading = page.locator('#export-panel h2');
 	await expect(heading).toBeFocused();
-	await expect.poll(async () => (await heading.boundingBox())!.y).toBeGreaterThanOrEqual(16);
+	const back = (await page.getByRole('button', { name: 'Back to start' }).boundingBox())!;
+	await expect
+		.poll(async () => (await heading.boundingBox())!.y)
+		.toBeGreaterThanOrEqual(back.y + back.height);
 });
 
 test('celebration mode is hidden under reduced motion', async ({ page }) => {

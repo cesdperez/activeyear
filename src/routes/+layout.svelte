@@ -70,7 +70,8 @@
 	<MetaTags />
 	<header>
 		{#if uploadStore.status === 'ready'}
-			<div class="absolute top-4 left-4 z-20 flex h-11 items-center md:left-8"><BackToStart /></div>
+			<!-- Fixed, unlike the bar on the right, so the way back stays in reach from anywhere on the dashboard. -->
+			<div class="fixed top-4 left-4 z-30 flex h-11 items-center md:left-8"><BackToStart /></div>
 		{/if}
 		<div class="absolute top-4 right-4 z-20 flex items-center gap-2 md:right-8">
 			{#if uploadStore.status === 'ready'}<DashboardToolbar />{/if}

@@ -23,7 +23,8 @@
 		demo: boolean;
 	} = $props();
 
-	const JUMP_GAP_PX = 32;
+	// Clears the fixed Back to start control at the top-left.
+	const JUMP_GAP_PX = 80;
 
 	function jumpToExport() {
 		const heading = document.querySelector<HTMLElement>('#export-panel h2');

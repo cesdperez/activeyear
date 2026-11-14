@@ -52,7 +52,6 @@ export const dashboard: typeof en = {
 	personalRecords: 'Bestleistungen',
 	bySport: 'Nach Sportart',
 	whenYouTrain: 'Wann du trainierst',
-	uploadDifferentFile: 'Andere Datei hochladen',
 	saveMyYear: 'Mein Jahr speichern',
 	reopenRecap: 'Diesen Rückblick später ohne erneuten Export öffnen',
 	distanceUnit: 'Distanzeinheit',

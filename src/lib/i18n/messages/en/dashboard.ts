@@ -46,7 +46,6 @@ export const dashboard = {
 	personalRecords: 'Personal records',
 	bySport: 'By sport',
 	whenYouTrain: 'When you train',
-	uploadDifferentFile: 'Upload different file',
 	saveMyYear: 'Save my year',
 	reopenRecap: 'Reopen this recap later without exporting again',
 	distanceUnit: 'Distance unit',

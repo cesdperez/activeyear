@@ -160,7 +160,7 @@ test.describe('Export panel accessibility', () => {
 		await expect(unitGroup.getByRole('button', { name: 'mi' })).toBeDisabled();
 		const metricGroup = page.getByRole('group', { name: 'Breakdown metric' });
 		await expect(metricGroup.getByRole('button', { name: 'Time' })).toBeDisabled();
-		await expect(page.getByRole('button', { name: /Upload different file/ })).toBeDisabled();
+		await expect(page.getByRole('button', { name: 'Back to start' })).toBeDisabled();
 		for (const control of [
 			page.getByRole('button', { name: /Retro/ }),
 			page.getByRole('button', { name: 'Next slide' }),
