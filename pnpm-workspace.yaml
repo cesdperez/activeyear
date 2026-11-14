@@ -6,5 +6,6 @@ minimumReleaseAge: 1440
 # Prebuilt binaries come from optional dependencies, and prepare installs git hooks.
 allowBuilds:
   esbuild: false
+  sharp: false
   simple-git-hooks: false
   workerd: false

@@ -1,6 +1,6 @@
 name = "activeyear"
 pages_build_output_dir = ".svelte-kit/cloudflare"
-compatibility_date = "2025-12-27"
+compatibility_date = "2026-10-30"
 
 [[analytics_engine_datasets]]
 binding = "EVENTS"
