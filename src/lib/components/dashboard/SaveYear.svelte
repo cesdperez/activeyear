@@ -23,7 +23,7 @@
 <div class="w-full text-center">
 	<button
 		type="button"
-		class="btn-secondary w-full"
+		class="btn-secondary w-full justify-center"
 		disabled={exportLock.isExporting}
 		onclick={saveYear}
 	>
