@@ -85,10 +85,16 @@ test.describe('Upload Flow', () => {
 	test.describe('in a US browser', () => {
 		test.use({ locale: 'en-US' });
 
-		test('starts on Imperial', async ({ page }) => {
+		test('still starts on Metric', async ({ page }) => {
 			await gotoUpload(page);
 			const group = page.getByRole('group', { name: 'Units in your Garmin account' });
-			await expect(group.getByRole('button', { name: 'Imperial' })).toHaveAttribute(
+			await expect(group.getByRole('button', { name: 'Metric' })).toHaveAttribute(
+				'aria-pressed',
+				'true'
+			);
+			await page.getByRole('button', { name: /demo data/i }).click();
+			const units = page.getByRole('group', { name: 'Distance unit' });
+			await expect(units.getByRole('button', { name: 'km' })).toHaveAttribute(
 				'aria-pressed',
 				'true'
 			);

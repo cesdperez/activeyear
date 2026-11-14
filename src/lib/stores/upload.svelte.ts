@@ -16,11 +16,9 @@ import { demoYear } from '#lib/data/demo.js';
 import { yearData } from './yearData.svelte.js';
 import { highlightsStore } from './highlights.svelte.js';
 import { exportSettings } from './exportSettings.svelte.js';
-import { browser } from '$app/env';
-import { unitsForLanguages } from '#lib/utils/regionUnits.js';
 
 class UploadStore {
-	garminUnits = $state<GarminUnits>(browser ? unitsForLanguages(navigator.languages) : 'metric');
+	garminUnits = $state<GarminUnits>('metric');
 	#status = $state<AppStatus>('idle');
 	#error = $state<UploadError | null>(null);
 	#parseErrors = $state<ParseError[]>([]);
