@@ -466,6 +466,10 @@
 		color: var(--color-on-accent);
 	}
 
+	#export-download {
+		scroll-margin-bottom: 2rem;
+	}
+
 	/* One line tall in both states, so the confirmation does not move what is under it. */
 	.export-note {
 		display: flex;

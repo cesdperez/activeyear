@@ -137,7 +137,7 @@ Every page ends with a quiet footer (`SiteFooter.svelte`): on the dashboard the 
 - Show "Buy me a gel" under the Download button after a successful export, in the site footer on the dashboard, and in the FAQ.
 - The export prompt is "Enjoyed your recap? ActiveYear is free and made by one person." The dashboard prompt is "Enjoying ActiveYear?".
 - Use an accent-coloured link that ends in a heart icon (`GelLink.svelte`), set inline so its text sits on the sentence's baseline.
-- A compact fixed link appears after the header scrolls away and stays until the footer's support line is on screen. It also hides while the export confirmation's support line is on screen and while an export runs. It never hides for a section it passes over, because that made it blink in and out while scrolling. While it shows, the page has a bottom scroll padding so a focused control is never under it.
+- A compact fixed link appears after the header scrolls away and stays until the footer's support line is on screen. It also hides while the export confirmation's support line is on screen and while an export runs. It never hides for a section it passes over, because that made it blink in and out while scrolling. While it shows, the page has bottom scroll padding for focused controls. The Download button has extra scroll margin for its helper line.
 - Keep it a plain link so the CSP does not need to allow third-party scripts.
 
 ---

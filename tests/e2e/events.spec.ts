@@ -74,6 +74,37 @@ test('floating support link stays on screen from the header to the footer on mob
 	await expect(link).toBeHidden();
 });
 
+test('focused controls leave the floating link clear on mobile', async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/');
+	await page.getByRole('button', { name: /demo data/i }).click();
+	const link = page.locator('a.fixed').filter({ hasText: 'Buy me a gel' });
+	for (const [control, content] of [
+		[
+			page.getByTestId('highlight-row').first().getByRole('button'),
+			page.getByTestId('highlight-row').first().getByRole('button')
+		],
+		[page.locator('#export-download'), page.locator('.export-note')]
+	] as const) {
+		await control.evaluate((el) =>
+			window.scrollTo(
+				0,
+				el.getBoundingClientRect().bottom + window.scrollY - window.innerHeight + 50
+			)
+		);
+		await expect(link).toBeVisible();
+		await control.focus();
+		await expect(link).toBeVisible();
+		await expect
+			.poll(async () => {
+				const a = await link.boundingBox();
+				const b = await content.boundingBox();
+				return a && b ? b.y + b.height - a.y : Infinity;
+			})
+			.toBeLessThanOrEqual(0);
+	}
+});
+
 test('support link text sits on the sentence baseline', async ({ page }) => {
 	await page.goto('/');
 	await page.getByRole('button', { name: /demo data/i }).click();
