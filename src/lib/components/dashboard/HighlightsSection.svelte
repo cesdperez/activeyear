@@ -18,10 +18,12 @@
 	import HighlightItem from './HighlightItem.svelte';
 
 	let query = $state('');
+	let open = $state(false);
 	let announcement = $state('');
 	// Survives edits that turn the preset into 'custom', so the climbs stay visible while tweaking.
 	let rankedByClimb = $state(highlightsStore.highlightPreset === 'climbs');
 	let searchInput = $state<HTMLInputElement>();
+	let searchWrapper = $state<HTMLDivElement>();
 	let list = $state<HTMLOListElement>();
 	let search = $derived(
 		query.trim() ? highlightsStore.searchActivities(query) : { matches: [], total: 0 }
@@ -78,6 +80,12 @@
 	}
 </script>
 
+<svelte:document
+	onpointerdown={(event) => {
+		if (!searchWrapper?.contains(event.target as Node)) open = false;
+	}}
+/>
+
 <section class="mb-20 md:mb-28">
 	<SectionHeading title={i18n.m.dashboard.highlights} class="mb-2" />
 	<p class="mb-6 text-[var(--color-text-muted)]">{caption}</p>
@@ -99,34 +107,108 @@
 				>
 			{/each}
 		</div>
-		<div class="relative">
-			<label for="highlight-search" class="mb-1.5 block text-sm font-medium"
-				>{i18n.m.dashboard.addActivity}</label
-			>
-			<input
-				data-section-lead
-				id="highlight-search"
-				type="search"
-				aria-describedby={highlightsStore.canAddHighlight
-					? 'highlight-search-hint'
-					: 'highlight-search-hint highlight-search-limit'}
-				bind:this={searchInput}
-				bind:value={query}
-				oninput={() => (announcement = '')}
-				onkeydown={(event) => {
-					if (event.key === 'Escape') {
-						query = '';
+		<div
+			class="relative"
+			bind:this={searchWrapper}
+			onfocusout={(event) => {
+				// WebKit reports no related target when a click moves focus from the input to a button.
+				if (event.relatedTarget instanceof Element && !searchWrapper?.contains(event.relatedTarget))
+					open = false;
+			}}
+		>
+			<div class="relative">
+				<label for="highlight-search" class="mb-1.5 block text-sm font-medium"
+					>{i18n.m.dashboard.addActivity}</label
+				>
+				<input
+					data-section-lead
+					id="highlight-search"
+					type="search"
+					aria-describedby={highlightsStore.canAddHighlight
+						? 'highlight-search-hint'
+						: 'highlight-search-hint highlight-search-limit'}
+					bind:this={searchInput}
+					bind:value={query}
+					onfocus={() => (open = true)}
+					oninput={() => {
+						open = true;
 						announcement = '';
-					}
-				}}
-				disabled={exportLock.isExporting}
-				class="h-11 w-full rounded-[var(--radius-control)] border border-[var(--color-input-border)] bg-[var(--color-surface-elevated)] px-4 py-2 text-base text-[var(--color-text-primary)] focus-visible:border-[var(--color-accent)] disabled:opacity-50 pointer-coarse:h-[3.125rem]"
-			/>
-			<p
-				id="highlight-search-hint"
-				class="mt-2 text-sm text-[var(--color-text-muted)]"
-				class:sr-only={query.trim()}
-			>
+					}}
+					onkeydown={(event) => {
+						if (event.key === 'Escape') {
+							query = '';
+							announcement = '';
+						}
+					}}
+					disabled={exportLock.isExporting}
+					class="h-11 w-full rounded-[var(--radius-control)] border border-[var(--color-input-border)] bg-[var(--color-surface-elevated)] px-4 py-2 text-base text-[var(--color-text-primary)] focus-visible:border-[var(--color-accent)] disabled:opacity-50 pointer-coarse:h-[3.125rem]"
+				/>
+				{#if open && query.trim()}
+					<div
+						class="panel absolute top-full right-0 left-0 z-20 mt-2 max-h-[min(28rem,60vh)] overflow-y-auto shadow-xl"
+					>
+						{#if search.matches.length}
+							<ul class="divide-y divide-[var(--color-border)]">
+								{#each search.matches as activity (activity)}
+									{@const selected = highlightsStore.isHighlight(activity)}
+									{@const unavailable = !selected && !highlightsStore.canAddHighlight}
+									<li>
+										<button
+											class="flex w-full items-center gap-3 px-4 py-3 text-left enabled:hover:bg-[var(--color-surface-hover)] disabled:opacity-50 aria-disabled:opacity-50 aria-disabled:hover:bg-transparent {selected
+												? 'bg-[color-mix(in_srgb,var(--color-accent)_10%,transparent)]'
+												: ''}"
+											aria-pressed={selected}
+											aria-disabled={unavailable || undefined}
+											disabled={exportLock.isExporting}
+											onclick={() => toggle(activity)}
+											><span class="min-w-0 flex-1"
+												><span class="block font-semibold wrap-anywhere"
+													>{activityTitle(i18n.locale, activity)}</span
+												><span class="block text-sm text-[var(--color-text-muted)]"
+													>{resultDetails(activity)}</span
+												></span
+											>{#if selected}<Check
+													class="h-5 w-5 shrink-0 text-[var(--color-accent)]"
+													weight="bold"
+													aria-hidden="true"
+												/>{:else}<Plus
+													class="h-5 w-5 shrink-0 text-[var(--color-text-muted)]"
+													weight="bold"
+													aria-hidden="true"
+												/>{/if}</button
+										>
+									</li>
+								{/each}
+							</ul>
+							{#if capped}<p class="px-4 py-2 text-sm text-[var(--color-text-muted)]">
+									{resultsSummary}
+								</p>{/if}
+						{:else}<p class="px-4 py-3 text-sm text-[var(--color-text-muted)]">
+								{i18n.m.dashboard.noSearchMatches}
+							</p>{/if}
+						<div
+							class="sticky bottom-0 flex items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-4 py-2"
+						>
+							<span class="text-sm text-[var(--color-text-muted)]"
+								>{i18n.m.dashboard.pickedCount(
+									highlightsStore.highlights.length,
+									HIGHLIGHTS_LIMIT
+								)}</span
+							>
+							<button
+								class="btn-secondary min-h-11 px-4 text-[var(--color-accent)]"
+								disabled={exportLock.isExporting}
+								onclick={() => {
+									query = '';
+									open = false;
+									searchInput?.focus();
+								}}>{i18n.m.dashboard.searchDone}</button
+							>
+						</div>
+					</div>
+				{/if}
+			</div>
+			<p id="highlight-search-hint" class="mt-2 text-sm text-[var(--color-text-muted)]">
 				{i18n.m.dashboard.searchHint}
 			</p>
 			<div class="sr-only" aria-live="polite">
@@ -135,49 +217,9 @@
 			{#if !highlightsStore.canAddHighlight}<p
 					id="highlight-search-limit"
 					class="mt-2 text-sm text-[var(--color-text-muted)]"
-					class:sr-only={!query.trim()}
 				>
 					{limitMessage}
 				</p>{/if}
-			{#if query.trim()}
-				{#if search.matches.length}
-					<ul class="panel mt-2 divide-y divide-[var(--color-border)] overflow-hidden">
-						{#each search.matches as activity (activity)}
-							{@const selected = highlightsStore.isHighlight(activity)}
-							{@const unavailable = !selected && !highlightsStore.canAddHighlight}
-							<li>
-								<button
-									class="flex w-full items-center gap-3 px-4 py-3 text-left enabled:hover:bg-[var(--color-surface-hover)] disabled:opacity-50 aria-disabled:opacity-50 aria-disabled:hover:bg-transparent"
-									aria-pressed={selected}
-									aria-disabled={unavailable || undefined}
-									disabled={exportLock.isExporting}
-									onclick={() => toggle(activity)}
-									><span class="min-w-0 flex-1"
-										><span class="block font-semibold wrap-anywhere"
-											>{activityTitle(i18n.locale, activity)}</span
-										><span class="block text-sm text-[var(--color-text-muted)]"
-											>{resultDetails(activity)}</span
-										></span
-									>{#if selected}<Check
-											class="h-5 w-5 shrink-0 text-[var(--color-accent)]"
-											weight="bold"
-											aria-hidden="true"
-										/>{:else}<Plus
-											class="h-5 w-5 shrink-0 text-[var(--color-text-muted)]"
-											weight="bold"
-											aria-hidden="true"
-										/>{/if}</button
-								>
-							</li>
-						{/each}
-					</ul>
-					{#if capped}<p class="mt-2 text-sm text-[var(--color-text-muted)]">
-							{resultsSummary}
-						</p>{/if}
-				{:else}<p class="mt-2 text-sm text-[var(--color-text-muted)]">
-						{i18n.m.dashboard.noSearchMatches}
-					</p>{/if}
-			{/if}
 		</div>
 	</div>
 	{#if highlightsStore.highlights.length > 0}

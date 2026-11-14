@@ -13,6 +13,8 @@ export const dashboard: typeof en = {
 	highlightPresets: 'Hoogtepuntselecties',
 	addActivity: 'Voeg een activiteit toe',
 	searchHint: 'Zoek op titel, sport, maand of afstand',
+	searchDone: 'Klaar',
+	pickedCount: (n: number, limit: number) => `${n} van ${limit} gekozen`,
 	searchResultsCapped: (shown: string, total: string) =>
 		`${shown} van ${total} getoond. Voeg woorden toe om je zoekopdracht te verfijnen.`,
 	noSearchMatches: 'Geen activiteiten gevonden',

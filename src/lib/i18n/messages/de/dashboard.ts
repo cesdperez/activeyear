@@ -14,6 +14,8 @@ export const dashboard: typeof en = {
 	highlightPresets: 'Highlight-Auswahl',
 	addActivity: 'Aktivität hinzufügen',
 	searchHint: 'Suche nach Titel, Sportart, Monat oder Distanz',
+	searchDone: 'Fertig',
+	pickedCount: (n: number, limit: number) => `${n} von ${limit} ausgewählt`,
 	searchResultsCapped: (shown: string, total: string) =>
 		`${shown} von ${total} angezeigt. Füge Wörter hinzu, um die Suche einzugrenzen.`,
 	noSearchMatches: 'Keine passenden Aktivitäten',

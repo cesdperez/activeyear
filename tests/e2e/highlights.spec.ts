@@ -41,6 +41,7 @@ for (const source of ['Garmin', 'Strava'] as const) {
 		await result.click();
 		await expect(section.getByText('Your own picks.')).toBeVisible();
 		await expect(result).toHaveAttribute('aria-pressed', 'true');
+		await section.getByRole('button', { name: 'Done', exact: true }).click();
 		const titles = (await section.getByTestId('highlight-title').allTextContents()).map((t) =>
 			t.trim()
 		);
@@ -62,7 +63,8 @@ for (const source of ['Garmin', 'Strava'] as const) {
 	});
 }
 
-test('presets and search work with a keyboard on mobile', async ({ page }) => {
+test('presets and search work with a keyboard on mobile', async ({ page, browserName }) => {
+	const tab = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
 	await page.setViewportSize({ width: 390, height: 844 });
 	await uploadSample(page);
 	const section = page
@@ -70,7 +72,7 @@ test('presets and search work with a keyboard on mobile', async ({ page }) => {
 		.filter({ has: page.getByRole('heading', { name: 'Highlights', exact: true }) });
 	const longest = section.getByRole('button', { name: 'Longest', exact: true });
 	await longest.focus();
-	await page.keyboard.press('Tab');
+	await page.keyboard.press(tab);
 	await page.keyboard.press('Space');
 	await expect(section.getByRole('button', { name: 'Farthest' })).toHaveAttribute(
 		'aria-pressed',
@@ -78,9 +80,9 @@ test('presets and search work with a keyboard on mobile', async ({ page }) => {
 	);
 	const search = section.getByRole('searchbox');
 	while (!(await search.evaluate((el) => el === document.activeElement)))
-		await page.keyboard.press('Tab');
+		await page.keyboard.press(tab);
 	await page.keyboard.type('Indoor Cycling');
-	await page.keyboard.press('Tab');
+	await page.keyboard.press(tab);
 	await page.keyboard.press('Enter');
 	await expect(section.getByText('Your own picks.')).toBeVisible();
 });
@@ -106,7 +108,47 @@ test('search shows how many activities matched and separates each figure', async
 	await expect(section.locator('li button').first()).toContainText('10.0km, 50m, Running');
 });
 
-test('at the highlight limit the search says so and results stay reachable', async ({ page }) => {
+test('search dropdown keeps picks in place and closes on outside click', async ({ page }) => {
+	await uploadCsv(page, twelveTempos());
+	const section = highlightsSection(page);
+	const search = section.getByRole('searchbox', { name: 'Add an activity' });
+	const picks = section.locator('ol');
+	const top = await picks.evaluate(
+		(element) => element.getBoundingClientRect().top + window.scrollY
+	);
+	await search.fill('tempo');
+	await expect(section.getByRole('button', { name: 'Done', exact: true })).toBeVisible();
+	await expect
+		.poll(() => picks.evaluate((element) => element.getBoundingClientRect().top + window.scrollY))
+		.toBe(top);
+	await section.getByRole('heading', { name: 'Highlights', exact: true }).click();
+	await expect(section.getByRole('button', { name: 'Done', exact: true })).toBeHidden();
+	await expect(picks).toBeVisible();
+	await expect(search).toHaveValue('tempo');
+	await search.focus();
+	await expect(section.getByRole('button', { name: 'Done', exact: true })).toBeVisible();
+});
+
+test('done clears search and the picked counter follows selections', async ({ page }) => {
+	await uploadCsv(page, twelveTempos());
+	const section = highlightsSection(page);
+	const search = section.getByRole('searchbox', { name: 'Add an activity' });
+	await search.fill('tempo 1');
+	await expect(section.getByText('10 of 10 picked')).toBeVisible();
+	await section.getByRole('button', { name: /^Tempo 10 Mar/ }).click();
+	await expect(section.getByText('9 of 10 picked')).toBeVisible();
+	await section.getByRole('button', { name: /^Tempo 10 Mar/ }).click();
+	await expect(section.getByText('10 of 10 picked')).toBeVisible();
+	await section.getByRole('button', { name: 'Done', exact: true }).click();
+	await expect(search).toHaveValue('');
+	await expect(search).toBeFocused();
+	await expect(section.getByRole('button', { name: 'Done', exact: true })).toBeHidden();
+});
+
+test('at the highlight limit the search says so and results stay reachable', async ({
+	page,
+	browserName
+}) => {
 	await uploadCsv(page, twelveTempos());
 	const section = highlightsSection(page);
 	const search = section.getByRole('searchbox', { name: 'Add an activity' });
@@ -114,7 +156,7 @@ test('at the highlight limit the search says so and results stay reachable', asy
 	await search.fill('tempo 12');
 	const result = section.locator('li button').filter({ hasText: 'Tempo 12' });
 	await expect(result).toHaveAttribute('aria-disabled', 'true');
-	await search.press('Tab');
+	await search.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
 	await expect(result).toBeFocused();
 });
 

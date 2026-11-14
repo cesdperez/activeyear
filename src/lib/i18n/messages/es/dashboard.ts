@@ -13,6 +13,8 @@ export const dashboard: typeof en = {
 	highlightPresets: 'Selecciones de destacados',
 	addActivity: 'Añade una actividad',
 	searchHint: 'Busca por título, deporte, mes o distancia',
+	searchDone: 'Listo',
+	pickedCount: (n: number, limit: number) => `${n} de ${limit} seleccionados`,
 	searchResultsCapped: (shown: string, total: string) =>
 		`Se muestran ${shown} de ${total}. Añade palabras para afinar la búsqueda.`,
 	noSearchMatches: 'No hay actividades coincidentes',

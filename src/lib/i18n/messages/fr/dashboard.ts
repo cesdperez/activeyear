@@ -14,6 +14,8 @@ export const dashboard: typeof en = {
 	highlightPresets: 'Sélections de temps forts',
 	addActivity: 'Ajoutez une activité',
 	searchHint: 'Recherchez par titre, sport, mois ou distance',
+	searchDone: 'Terminé',
+	pickedCount: (n: number, limit: number) => `${n} sur ${limit} sélectionnés`,
 	searchResultsCapped: (shown: string, total: string) =>
 		`${shown} sur ${total} affichés. Ajoutez des mots pour affiner la recherche.`,
 	noSearchMatches: 'Aucune activité correspondante',

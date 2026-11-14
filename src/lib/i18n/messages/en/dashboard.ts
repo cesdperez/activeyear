@@ -12,6 +12,8 @@ export const dashboard = {
 	highlightPresets: 'Highlight presets',
 	addActivity: 'Add an activity',
 	searchHint: 'Search by title, sport, month or distance',
+	searchDone: 'Done',
+	pickedCount: (n: number, limit: number) => `${n} of ${limit} picked`,
 	searchResultsCapped: (shown: string, total: string) =>
 		`Showing ${shown} of ${total}. Add words to narrow it down.`,
 	noSearchMatches: 'No activities match',

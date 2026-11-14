@@ -13,6 +13,8 @@ export const dashboard: typeof en = {
 	highlightPresets: 'Seleções de destaques',
 	addActivity: 'Adicione uma atividade',
 	searchHint: 'Busque por título, esporte, mês ou distância',
+	searchDone: 'Concluído',
+	pickedCount: (n: number, limit: number) => `${n} de ${limit} selecionados`,
 	searchResultsCapped: (shown: string, total: string) =>
 		`Mostrando ${shown} de ${total}. Adicione palavras para refinar a busca.`,
 	noSearchMatches: 'Nenhuma atividade encontrada',
