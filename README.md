@@ -1,71 +1,46 @@
-<div align="center">
-  <h1>ActiveYear 🏃🚴🎨</h1>
-  <h3>Turn your activity data into shareable year-in-review infographics.</h3>
+# ActiveYear
 
-  <p>
-    <img src="https://img.shields.io/badge/Svelte%205-FF3E00?style=for-the-badge&logo=svelte&logoColor=white" alt="Svelte" />
-    <img src="https://img.shields.io/badge/SvelteKit-FF3E00?style=for-the-badge&logo=svelte&logoColor=white" alt="SvelteKit" />
-    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
-    <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
-  </p>
+Turn your Garmin Connect or Strava activity export into shareable year-in-review cards.
 
-  <p>
-    <strong>Browser-only. Privacy-first. No login required.</strong>
-  </p>
-</div>
+https://activeyear.app
 
-<br />
+## Features
 
-## 📖 Overview
+- Runs in your browser. No account is required. Activity data never leaves your device.
+- Anonymous usage counts only. No cookies or tracking.
+- See distance, time, and activity count for each sport.
+- View fun stats such as Earth laps, Everests climbed, and pizza slices.
+- Review activity streaks and monthly distribution.
+- Choose from six card themes.
+- Download three 1080x1920 PNG story cards.
 
-**ActiveYear** ([activeyear.app](https://activeyear.app)) is a web tool that takes your Garmin Connect or Strava activity export and generates beautiful, social-media-ready stats cards for your year in sport.
+## Usage
 
-Whether you're a runner, cyclist, or multi-sport athlete, visualize your hard work with six card themes, including **Neon**, **Minimal**, and **Retro**.
+For Garmin Connect:
 
-## ✨ Features
+1. Open **Activities > All Activities**.
+2. Filter for the year you want to review.
+3. Scroll until every activity loads.
+4. Select **Export CSV**.
 
-- **🔒 Privacy First**: The file is read and analysed on your device, and there is no account to create. We record a few anonymous counts (like which theme you export and whether uploads work) to improve the app. No cookies, no tracking, and your activity data never leaves your device.
-- **📊 Deep Insights**:
-  - **Activity Breakdown**: Distance, time, and count per sport.
-  - **Fun Stats**: "Earth Laps", "Everests Climbed", and "Pizza Index" (calories burned).
-  - **Consistency**: Tracking active streaks and monthly distribution.
-- **🎨 Themed Exports**: Choose a visual style that fits your vibe.
-- **📱 Social Ready**: One-click export of three story cards (1080×1920) for Instagram Stories and other feeds.
+For Strava, use `activities.csv` from your account export.
 
-## 🚀 How to Use
+Drop the file into ActiveYear. Pick a theme, units, headline stat, name, and photo. Download the cards.
 
-1. **Export your Data (Garmin)**, or upload `activities.csv` from your Strava account export:
-   - Go to [Garmin Connect](https://connect.garmin.com) -> **Activities** -> **All Activities**.
-   - Filter by the year you want to review.
-   - **Important**: Scroll down until all activities are loaded in the table.
-   - Click the "Export CSV" icon (top right).
-2. **Upload**: Drag & drop the CSV into ActiveYear.
-   - If the file has no activities for the year, ActiveYear says which years it covers, or how many rows it could not read and why. Rows it skips are counted under the dashboard heading.
-3. **Customize**: Pick your theme, units, headline stat, name and photo.
-4. **Export**: Download your three PNG cards and share!
+## Development
 
-## 💻 Development
-
-This project is built with the **Svelte 5** (Runes), **SvelteKit**, and **Tailwind CSS 4**.
+Svelte 5, SvelteKit, Tailwind CSS 4, TypeScript, deployed on Cloudflare Pages.
 
 ```bash
-# Install dependencies
 pnpm install
-
-# Start development server
 pnpm dev
-
-# Run unit tests
 pnpm test:run
-
-# Run E2E tests
 pnpm test:e2e
+pnpm check
 ```
 
-## 🔎 Search and AI discovery
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/](docs/) (`DESIGN.md`, `i18n.md`, and `analytics.md`).
 
-The site URL, title and description live in `src/lib/constants/site.ts`. Prerendered routes build `robots.txt`, `sitemap.xml` and `llms.txt` from them, and the home page carries JSON-LD for the web app and its visible FAQ (`src/lib/data/faq.ts`).
+## License
 
-## 📄 License
-
-This project is open source and available under the simple MIT license.
+MIT. See [LICENSE](LICENSE).
