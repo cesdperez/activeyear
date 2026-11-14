@@ -20,7 +20,6 @@
 	import FloatingSupportLink from '#lib/components/dashboard/FloatingSupportLink.svelte';
 	import DashboardFileDrop from '#lib/components/dashboard/DashboardFileDrop.svelte';
 	import { useConfettiRain } from '#lib/components/dashboard/confettiRain.svelte.js';
-	import { observeBusyArea } from '#lib/stores/supportVisibility.svelte.js';
 
 	useConfettiRain();
 	let header: HTMLDivElement;
@@ -66,9 +65,7 @@
 		breakdown={yearData.breakdown}
 		unit={exportSettings.unit}
 	/>
-	<div {@attach observeBusyArea}>
-		<ExportPanel />
-	</div>
+	<ExportPanel />
 	<div class="mx-auto mt-24 w-full max-w-xs">
 		<SaveYear />
 	</div>

@@ -8,12 +8,8 @@
 
 	let { header }: { header: HTMLElement | undefined } = $props();
 	let headerVisible = $state(true);
-	let shown = $derived(
-		!headerVisible &&
-			supportVisibility.count === 0 &&
-			supportVisibility.busyAreas === 0 &&
-			!exportLock.isExporting
-	);
+	// Only these conditions: hiding over long sections made the link blink in and out while scrolling.
+	let shown = $derived(!headerVisible && supportVisibility.count === 0 && !exportLock.isExporting);
 
 	$effect(() => {
 		if (!header) return;

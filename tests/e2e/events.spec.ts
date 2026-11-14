@@ -2,7 +2,6 @@ import { test, expect, type Page } from '@playwright/test';
 import { KOFI_URL } from '../../src/lib/constants/site.js';
 import { DASHBOARD_HEADING, gotoUpload } from './helpers.js';
 
-// Below the highlights, which hide the floating support link while on screen.
 const scrollToRecords = (page: Page) =>
 	page
 		.getByRole('heading', { name: 'Personal records' })
@@ -50,19 +49,7 @@ test('floating support link tracks its placement', async ({ page }) => {
 	await expect(link).toBeVisible();
 });
 
-test('floating support link hides when export actions are visible on mobile', async ({ page }) => {
-	await page.setViewportSize({ width: 390, height: 844 });
-	await page.goto('/');
-	await page.getByRole('button', { name: /demo data/i }).click();
-	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
-	const link = page.locator('a.fixed').filter({ hasText: 'Buy me a gel' });
-	await scrollToRecords(page);
-	await expect(link).toBeVisible();
-	await page.locator('#export-download').scrollIntoViewIfNeeded();
-	await expect(link).toBeHidden();
-});
-
-test('floating support link stays off the highlights controls and clear of focus', async ({
+test('floating support link stays on screen from the header to the footer on mobile', async ({
 	page
 }) => {
 	await page.setViewportSize({ width: 390, height: 844 });
@@ -70,12 +57,20 @@ test('floating support link stays off the highlights controls and clear of focus
 	await page.getByRole('button', { name: /demo data/i }).click();
 	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
 	const link = page.locator('a.fixed').filter({ hasText: 'Buy me a gel' });
+	await expect(link).toBeHidden();
 	await scrollToRecords(page);
 	await expect(link).toBeVisible();
 	expect(await page.evaluate(() => document.documentElement.style.scrollPaddingBottom)).toBe(
 		'5rem'
 	);
-	await page.getByRole('searchbox', { name: 'Add an activity' }).scrollIntoViewIfNeeded();
+	for (const target of [
+		page.getByRole('searchbox', { name: 'Add an activity' }),
+		page.locator('#export-download')
+	]) {
+		await target.scrollIntoViewIfNeeded();
+		await expect(link).toBeVisible();
+	}
+	await page.locator('[data-support-placement="footer"]').scrollIntoViewIfNeeded();
 	await expect(link).toBeHidden();
 });
 

@@ -5,7 +5,6 @@
 	import { highlightsStore } from '#lib/stores/highlights.svelte.js';
 	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
 	import { exportLock } from '#lib/stores/exportLock.svelte.js';
-	import { observeBusyArea } from '#lib/stores/supportVisibility.svelte.js';
 	import { HIGHLIGHTS_LIMIT } from '#lib/constants/export.js';
 	import {
 		activityTitle,
@@ -79,7 +78,7 @@
 	}
 </script>
 
-<section class="mb-20 md:mb-28" {@attach observeBusyArea}>
+<section class="mb-20 md:mb-28">
 	<SectionHeading title={i18n.m.dashboard.highlights} class="mb-2" />
 	<p class="mb-6 text-[var(--color-text-muted)]">{caption}</p>
 	<div class="mb-6 grid gap-3 lg:grid-cols-[auto_minmax(16rem,1fr)] lg:items-start">
