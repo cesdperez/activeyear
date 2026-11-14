@@ -38,17 +38,19 @@ export const faq = {
 	],
 	garminSteps: [
 		{
-			text: 'Log in at',
+			text: 'In a browser on a computer (not the app), log in at',
 			link: { href: 'https://connect.garmin.com', label: 'connect.garmin.com' }
 		},
 		{ text: 'Go to Activities → All Activities' },
 		{ text: `Scroll down until all ${TARGET_YEAR} activities are loaded` },
 		{ text: 'Click Export CSV (top right). The file downloads right away.' }
 	],
-	garminNote:
-		"Use the website on a computer: the app can't export. Skip Garmin's full data export, which takes days and holds a different file.",
+	garminNote: "Skip Garmin's full data export, which takes days and holds a different file.",
 	stravaSteps: [
-		{ text: 'Log in at', link: { href: 'https://www.strava.com/account', label: 'strava.com' } },
+		{
+			text: 'In a browser on a computer (not the app), log in at',
+			link: { href: 'https://www.strava.com/account', label: 'strava.com' }
+		},
 		{ text: 'Under Download or Delete Your Account, click Get Started, then Request your archive' },
 		{ text: 'Wait for the email with the download link. It usually arrives within a few hours.' },
 		{ text: 'Unzip it and upload activities.csv' }

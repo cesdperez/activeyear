@@ -134,10 +134,10 @@ test.describe('Upload Flow', () => {
 		await gotoUpload(page);
 
 		await expect(page.getByText('How to get your data')).toBeVisible();
+		const browserStep = 'In a browser on a computer (not the app), log in at';
+		await expect(page.getByRole('tabpanel').getByText(browserStep)).toBeVisible();
 		await expect(page.getByText('connect.garmin.com')).toBeVisible();
-		await expect(
-			page.getByText(/Use the website on a computer: the app can't export\./)
-		).toBeVisible();
+		await expect(page.getByText(/Skip Garmin's full data export/)).toBeVisible();
 		await expect(
 			page.getByText(`Scroll down until all ${TARGET_YEAR} activities are loaded`)
 		).toBeVisible();
@@ -147,9 +147,8 @@ test.describe('Upload Flow', () => {
 		await stravaTab.click();
 		await expect(page.getByText('Download or Delete Your Account').first()).toBeVisible();
 		await expect(page.getByText(/usually arrives within a few hours/)).toBeVisible();
-		await expect(
-			page.getByText(/Use the website on a computer: the app can't export\./)
-		).toBeHidden();
+		await expect(page.getByRole('tabpanel').getByText(browserStep)).toBeVisible();
+		await expect(page.getByText(/Skip Garmin's full data export/)).toBeHidden();
 		await garminTab.click();
 		await garminTab.focus();
 		await page.keyboard.press('ArrowRight');

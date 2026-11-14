@@ -39,7 +39,7 @@ export const faq: typeof en = {
 	],
 	garminSteps: [
 		{
-			text: 'Log in op',
+			text: 'Open een browser op een computer (niet de app) en log in op',
 			link: { href: 'https://connect.garmin.com', label: 'connect.garmin.com' }
 		},
 		{ text: 'Ga naar Activiteiten → Alle activiteiten' },
@@ -49,9 +49,12 @@ export const faq: typeof en = {
 		}
 	],
 	garminNote:
-		'Gebruik de website op een computer: de app kan niet exporteren. De volledige gegevensexport van Garmin heb je niet nodig: die duurt dagen en bevat een ander bestand.',
+		'De volledige gegevensexport van Garmin heb je niet nodig: die duurt dagen en bevat een ander bestand.',
 	stravaSteps: [
-		{ text: 'Log in op', link: { href: 'https://www.strava.com/account', label: 'strava.com' } },
+		{
+			text: 'Open een browser op een computer (niet de app) en log in op',
+			link: { href: 'https://www.strava.com/account', label: 'strava.com' }
+		},
 		{
 			text: 'Klik onder “Download or Delete Your Account” (Je account downloaden of verwijderen) op “Get Started” (Aan de slag) en daarna op “Request your archive” (Je archief aanvragen)'
 		},

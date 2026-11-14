@@ -38,7 +38,10 @@ export const faq: typeof en = {
 		}
 	],
 	garminSteps: [
-		{ text: 'Entre em', link: { href: 'https://connect.garmin.com', label: 'connect.garmin.com' } },
+		{
+			text: 'No navegador de um computador (não no aplicativo), entre em',
+			link: { href: 'https://connect.garmin.com', label: 'connect.garmin.com' }
+		},
 		{ text: 'Acesse Atividades → Todas as atividades' },
 		{ text: `Role a página até carregar todas as atividades de ${TARGET_YEAR}` },
 		{
@@ -46,9 +49,12 @@ export const faq: typeof en = {
 		}
 	],
 	garminNote:
-		'Use o site em um computador: o aplicativo não permite exportar. Não peça a exportação completa de dados da Garmin: ela leva dias e traz outro arquivo.',
+		'Não peça a exportação completa de dados da Garmin: ela leva dias e traz outro arquivo.',
 	stravaSteps: [
-		{ text: 'Entre em', link: { href: 'https://www.strava.com/account', label: 'strava.com' } },
+		{
+			text: 'No navegador de um computador (não no aplicativo), entre em',
+			link: { href: 'https://www.strava.com/account', label: 'strava.com' }
+		},
 		{
 			text: 'Em “Download or Delete Your Account” (Baixar ou excluir sua conta), clique em “Get Started” (Começar) e depois em “Request your archive” (Solicitar seu arquivo)'
 		},

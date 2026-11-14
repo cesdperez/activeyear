@@ -39,7 +39,7 @@ export const faq: typeof en = {
 	],
 	garminSteps: [
 		{
-			text: 'Connectez-vous sur',
+			text: 'Dans un navigateur sur ordinateur (pas l’application), connectez-vous sur',
 			link: { href: 'https://connect.garmin.com', label: 'connect.garmin.com' }
 		},
 		{ text: 'Allez dans Activités → Toutes les activités' },
@@ -51,10 +51,10 @@ export const faq: typeof en = {
 		}
 	],
 	garminNote:
-		'Utilisez le site sur un ordinateur : l’application ne permet pas l’export. Inutile de demander l’export complet des données Garmin : il prend des jours et contient un autre fichier.',
+		'Inutile de demander l’export complet des données Garmin : il prend des jours et contient un autre fichier.',
 	stravaSteps: [
 		{
-			text: 'Connectez-vous sur',
+			text: 'Dans un navigateur sur ordinateur (pas l’application), connectez-vous sur',
 			link: { href: 'https://www.strava.com/account', label: 'strava.com' }
 		},
 		{

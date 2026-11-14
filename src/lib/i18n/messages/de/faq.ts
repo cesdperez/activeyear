@@ -39,7 +39,7 @@ export const faq: typeof en = {
 	],
 	garminSteps: [
 		{
-			text: 'Melde dich an unter',
+			text: 'Melde dich im Browser auf einem Computer (nicht in der App) an unter',
 			link: { href: 'https://connect.garmin.com', label: 'connect.garmin.com' }
 		},
 		{ text: 'Gehe zu Aktivitäten → Alle Aktivitäten' },
@@ -49,10 +49,10 @@ export const faq: typeof en = {
 		}
 	],
 	garminNote:
-		'Nutze die Website auf einem Computer: Die App kann nicht exportieren. Den vollständigen Datenexport von Garmin brauchst du nicht, er dauert Tage und enthält eine andere Datei.',
+		'Den vollständigen Datenexport von Garmin brauchst du nicht, er dauert Tage und enthält eine andere Datei.',
 	stravaSteps: [
 		{
-			text: 'Melde dich an unter',
+			text: 'Melde dich im Browser auf einem Computer (nicht in der App) an unter',
 			link: { href: 'https://www.strava.com/account', label: 'strava.com' }
 		},
 		{
