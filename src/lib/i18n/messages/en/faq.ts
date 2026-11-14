@@ -44,18 +44,18 @@ export const faq = {
 		},
 		{ text: 'Go to Activities → All Activities' },
 		{ text: `Scroll down until all ${TARGET_YEAR} activities are loaded` },
-		{ text: 'Click Export CSV (top-right icon)' }
+		{ text: 'Click Export CSV (top right). The file downloads right away.' }
 	],
-	garminNote: "Use the website on a computer. The Garmin Connect app can't export.",
+	garminNote:
+		"Use the website on a computer: the app can't export. Skip Garmin's full data export, which takes days and holds a different file.",
 	stravaSteps: [
 		{ text: 'Log in at', link: { href: 'https://www.strava.com/account', label: 'strava.com' } },
-		{ text: 'Go to Settings → My Account → Download or Delete Your Account' },
-		{ text: 'Click Request your archive' },
-		{ text: 'Open the download link Strava emails you and unzip it' },
-		{ text: 'Upload activities.csv' }
+		{ text: 'Under Download or Delete Your Account, click Get Started, then Request your archive' },
+		{ text: 'Wait for the email with the download link. It usually arrives within a few hours.' },
+		{ text: 'Unzip it and upload activities.csv' }
 	],
 	stravaNote:
-		'Upload only activities.csv. Strava must be set to English, Spanish, German, French, Italian, Dutch or Portuguese.',
+		'Strava must be set to English, Spanish, German, French, Italian, Dutch or Portuguese.',
 	heading: 'Questions',
 	guidesAria: 'Choose your data source'
 };

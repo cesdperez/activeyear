@@ -136,7 +136,7 @@ test.describe('Upload Flow', () => {
 		await expect(page.getByText('How to get your data')).toBeVisible();
 		await expect(page.getByText('connect.garmin.com')).toBeVisible();
 		await expect(
-			page.getByText("Use the website on a computer. The Garmin Connect app can't export.")
+			page.getByText(/Use the website on a computer: the app can't export\./)
 		).toBeVisible();
 		await expect(
 			page.getByText(`Scroll down until all ${TARGET_YEAR} activities are loaded`)
@@ -146,9 +146,9 @@ test.describe('Upload Flow', () => {
 		await expect(garminTab).toHaveAttribute('aria-selected', 'true');
 		await stravaTab.click();
 		await expect(page.getByText('Download or Delete Your Account').first()).toBeVisible();
-		await expect(page.getByText('Upload only activities.csv.')).toBeVisible();
+		await expect(page.getByText(/usually arrives within a few hours/)).toBeVisible();
 		await expect(
-			page.getByText("Use the website on a computer. The Garmin Connect app can't export.")
+			page.getByText(/Use the website on a computer: the app can't export\./)
 		).toBeHidden();
 		await garminTab.click();
 		await garminTab.focus();

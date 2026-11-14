@@ -151,6 +151,6 @@ test.describe('Search and AI discovery', () => {
 		expect(body).toContain(`${TARGET_YEAR} activities`);
 		expect(body).toContain('never uploaded');
 		expect(body).toContain('Download or Delete Your Account');
-		expect(body).toContain('Upload only activities.csv.');
+		expect(body).toContain('It usually arrives within a few hours.');
 	});
 });

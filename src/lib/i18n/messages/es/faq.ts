@@ -45,23 +45,25 @@ export const faq: typeof en = {
 		},
 		{ text: 'Ve a Actividades → Todas las actividades' },
 		{ text: `Desplázate hasta que se carguen todas las actividades de ${TARGET_YEAR}` },
-		{ text: 'Haz clic en «Export CSV» (Exportar CSV), el icono de arriba a la derecha' }
+		{
+			text: 'Haz clic en «Export CSV» (Exportar CSV), arriba a la derecha. El archivo se descarga al momento.'
+		}
 	],
-	garminNote: 'Usa la web en un ordenador. La aplicación Garmin Connect no permite exportar.',
+	garminNote:
+		'Usa la web en un ordenador: la aplicación no permite exportar. No pidas la exportación completa de datos de Garmin: tarda días y trae otro archivo.',
 	stravaSteps: [
 		{
 			text: 'Inicia sesión en',
 			link: { href: 'https://www.strava.com/account', label: 'strava.com' }
 		},
 		{
-			text: 'Ve a «Settings» (Ajustes) → «My Account» (Mi cuenta) → «Download or Delete Your Account» (Descargar o eliminar tu cuenta)'
+			text: 'En «Download or Delete Your Account» (Descargar o eliminar tu cuenta), haz clic en «Get Started» (Empezar) y luego en «Request your archive» (Solicitar tu archivo)'
 		},
-		{ text: 'Haz clic en «Request your archive» (Solicitar tu archivo)' },
-		{ text: 'Abre el enlace de descarga que Strava te envía por correo y descomprime el archivo' },
-		{ text: 'Sube activities.csv' }
+		{ text: 'Espera el correo con el enlace de descarga. Suele llegar en unas pocas horas.' },
+		{ text: 'Descomprime el archivo y sube activities.csv' }
 	],
 	stravaNote:
-		'Sube solo activities.csv. Strava debe estar configurado en inglés, español, alemán, francés, italiano, neerlandés o portugués.',
+		'Strava debe estar configurado en inglés, español, alemán, francés, italiano, neerlandés o portugués.',
 	heading: 'Preguntas',
 	guidesAria: 'Elige la fuente de tus datos'
 };

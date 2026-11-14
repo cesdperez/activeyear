@@ -48,20 +48,22 @@ export const faq: typeof en = {
 		},
 		{ text: 'Ga naar Activiteiten → Alle activiteiten' },
 		{ text: `Scroll naar beneden totdat alle activiteiten van ${TARGET_YEAR} zijn geladen` },
-		{ text: 'Klik rechtsboven op “Export CSV” (CSV exporteren)' }
+		{
+			text: 'Klik rechtsboven op “Export CSV” (CSV exporteren). Het bestand wordt meteen gedownload.'
+		}
 	],
-	garminNote: 'Gebruik de website op een computer. De Garmin Connect-app kan niet exporteren.',
+	garminNote:
+		'Gebruik de website op een computer: de app kan niet exporteren. De volledige gegevensexport van Garmin heb je niet nodig: die duurt dagen en bevat een ander bestand.',
 	stravaSteps: [
 		{ text: 'Log in op', link: { href: 'https://www.strava.com/account', label: 'strava.com' } },
 		{
-			text: 'Ga naar “Settings” (Instellingen) → “My Account” (Mijn account) → “Download or Delete Your Account” (Je account downloaden of verwijderen)'
+			text: 'Klik onder “Download or Delete Your Account” (Je account downloaden of verwijderen) op “Get Started” (Aan de slag) en daarna op “Request your archive” (Je archief aanvragen)'
 		},
-		{ text: 'Klik op “Request your archive” (Je archief aanvragen)' },
-		{ text: 'Open de downloadlink die Strava je mailt en pak het bestand uit' },
-		{ text: 'Upload activities.csv' }
+		{ text: 'Wacht op de e-mail met de downloadlink. Die komt meestal binnen een paar uur.' },
+		{ text: 'Pak het bestand uit en upload activities.csv' }
 	],
 	stravaNote:
-		'Upload alleen activities.csv. Stel de taal van Strava in op Engels, Spaans, Duits, Frans, Italiaans, Nederlands of Portugees.',
+		'Stel de taal van Strava in op Engels, Spaans, Duits, Frans, Italiaans, Nederlands of Portugees.',
 	heading: 'Vragen',
 	guidesAria: 'Kies je gegevensbron'
 };
