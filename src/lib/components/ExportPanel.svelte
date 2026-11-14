@@ -205,6 +205,71 @@
 		</div>
 
 		<div class="controls space-y-6">
+			<!-- First, so people see they can put their name and photo on the cards before styling them. -->
+			<div role="group" aria-labelledby="profile-label">
+				<span id="profile-label" class="field-label">{i18n.m.export.nameAndPhoto}</span>
+				<div class="flex items-center gap-3">
+					<input
+						type="text"
+						id="userName"
+						autocomplete="name"
+						aria-label={i18n.m.export.namePlaceholder}
+						bind:value={exportSettings.userName}
+						maxlength={USER_NAME_MAX_LENGTH}
+						disabled={exportLock.isExporting}
+						placeholder={i18n.m.export.namePlaceholder}
+						class="h-12 min-w-0 flex-1 rounded-[var(--radius-control)] border border-[var(--color-input-border)] bg-[var(--color-surface-elevated)] px-4 text-[var(--color-text-primary)] placeholder-[var(--color-text-dim)] transition-colors focus-visible:border-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
+					/>
+					{#if exportSettings.userPfp}
+						<img
+							src={exportSettings.userPfp}
+							alt={i18n.m.export.preview}
+							class="h-12 w-12 shrink-0 rounded-full border border-[var(--color-border)] object-cover"
+						/>
+						<button
+							bind:this={removeImageButton}
+							onclick={removeImage}
+							disabled={exportLock.isExporting}
+							aria-label={i18n.m.export.remove}
+							class="-ml-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-control)] text-[var(--color-text-dim)] transition-colors enabled:hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
+							title={i18n.m.export.remove}
+						>
+							<Trash class="h-4 w-4" aria-hidden="true" />
+						</button>
+					{:else}
+						<div class="relative shrink-0">
+							<input
+								type="file"
+								id="userAvatar"
+								accept="image/*"
+								bind:this={avatarInput}
+								disabled={exportLock.isExporting}
+								onchange={handleImageUpload}
+								aria-describedby={avatarError ? 'userAvatar-error' : undefined}
+								class="peer sr-only"
+							/>
+							<label
+								for="userAvatar"
+								title={i18n.m.export.upload}
+								class="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-dashed border-[var(--color-text-dim)] bg-[var(--color-surface-elevated)] text-[var(--color-text-dim)] transition-all peer-focus-visible:border-[var(--color-accent)] peer-focus-visible:text-[var(--color-text-primary)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[color:var(--color-accent)] peer-disabled:cursor-not-allowed peer-disabled:opacity-50 peer-enabled:hover:border-[var(--color-accent)] peer-enabled:hover:text-[var(--color-text-primary)]"
+							>
+								<ImageIcon class="h-5 w-5" aria-hidden="true" />
+								<span class="sr-only">{i18n.m.export.upload}</span>
+							</label>
+						</div>
+					{/if}
+				</div>
+				{#if avatarError}
+					<p
+						id="userAvatar-error"
+						role="alert"
+						class="mt-2 text-sm text-[var(--color-text-primary)]"
+					>
+						{i18n.m.export[avatarError.type]}
+					</p>
+				{/if}
+			</div>
+
 			<div>
 				<span id="theme-label" class="field-label">{i18n.m.export.theme}</span>
 				<div role="group" aria-labelledby="theme-label" class="theme-grid">
@@ -245,76 +310,6 @@
 						</button>
 					{/each}
 				</div>
-			</div>
-
-			<div>
-				<label for="userName" class="field-label">{i18n.m.export.name}</label>
-				<input
-					type="text"
-					id="userName"
-					autocomplete="name"
-					bind:value={exportSettings.userName}
-					maxlength={USER_NAME_MAX_LENGTH}
-					disabled={exportLock.isExporting}
-					placeholder={i18n.m.export.namePlaceholder}
-					class="w-full rounded-[var(--radius-control)] border border-[var(--color-input-border)] bg-[var(--color-surface-elevated)] px-4 py-3 text-[var(--color-text-primary)] placeholder-[var(--color-text-dim)] transition-colors focus-visible:border-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
-				/>
-			</div>
-
-			<div>
-				<label for="userAvatar" class="field-label">{i18n.m.export.picture}</label>
-				{#if exportSettings.userPfp}
-					<div
-						class="flex items-center gap-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-3"
-					>
-						<img
-							src={exportSettings.userPfp}
-							alt={i18n.m.export.preview}
-							class="h-12 w-12 rounded-full border border-[var(--color-border)] object-cover"
-						/>
-						<div class="min-w-0 flex-1">
-							<p class="truncate text-xs text-[var(--color-text-dim)]">{i18n.m.export.custom}</p>
-						</div>
-						<button
-							bind:this={removeImageButton}
-							onclick={removeImage}
-							disabled={exportLock.isExporting}
-							class="flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-control)] text-[var(--color-text-dim)] transition-colors enabled:hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
-							title={i18n.m.export.remove}
-						>
-							<Trash class="h-4 w-4" aria-hidden="true" />
-						</button>
-					</div>
-				{:else}
-					<div class="relative">
-						<input
-							type="file"
-							id="userAvatar"
-							accept="image/*"
-							bind:this={avatarInput}
-							disabled={exportLock.isExporting}
-							onchange={handleImageUpload}
-							aria-describedby={avatarError ? 'userAvatar-error' : undefined}
-							class="peer sr-only"
-						/>
-						<label
-							for="userAvatar"
-							class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-[var(--radius-control)] border border-dashed border-[var(--color-text-dim)] bg-[var(--color-surface-elevated)] px-4 py-3 text-[var(--color-text-dim)] transition-all peer-focus-visible:border-[var(--color-accent)] peer-focus-visible:text-[var(--color-text-primary)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[color:var(--color-accent)] peer-disabled:cursor-not-allowed peer-disabled:opacity-50 peer-enabled:hover:border-[var(--color-accent)] peer-enabled:hover:text-[var(--color-text-primary)]"
-						>
-							<ImageIcon class="h-5 w-5" aria-hidden="true" />
-							<span class="text-sm font-medium">{i18n.m.export.upload}</span>
-						</label>
-					</div>
-				{/if}
-				{#if avatarError}
-					<p
-						id="userAvatar-error"
-						role="alert"
-						class="mt-2 text-sm text-[var(--color-text-primary)]"
-					>
-						{i18n.m.export[avatarError.type]}
-					</p>
-				{/if}
 			</div>
 
 			<div class="space-y-3">

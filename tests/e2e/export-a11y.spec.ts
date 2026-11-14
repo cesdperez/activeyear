@@ -31,6 +31,20 @@ function collectDownloads(page: Page, count: number): Promise<Download[]> {
 }
 
 test.describe('Export panel accessibility', () => {
+	test('name and photo come first among the export controls', async ({ page }) => {
+		await uploadSample(page);
+		const name = page.getByRole('textbox', { name: 'Your name' });
+		await expect(name).toHaveAttribute('id', 'userName');
+		await expect(page.getByText('Your name and photo (optional)')).toBeVisible();
+		const nameBox = (await name.boundingBox())!;
+		const avatar = (await page.locator('label[for="userAvatar"]').boundingBox())!;
+		const theme = (await page.getByRole('group', { name: 'Theme' }).boundingBox())!;
+		expect(Math.abs(avatar.y + avatar.height / 2 - (nameBox.y + nameBox.height / 2))).toBeLessThan(
+			2
+		);
+		expect(nameBox.y + nameBox.height).toBeLessThan(theme.y);
+	});
+
 	test('profile picture upload is reachable by keyboard and focus returns after removal', async ({
 		page
 	}) => {

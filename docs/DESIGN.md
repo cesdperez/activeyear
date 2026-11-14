@@ -119,6 +119,7 @@ The shareable image. This is what users actually care about.
 
 - The preview comes first. Stacked on phones, it takes at most 55% of the large viewport height, so a theme tapped under it changes the card in view. From 1024px it sits beside the controls, and the two columns are centred together.
 - The preview sizes from the width and the large viewport height only, so a phone's URL bar or browser zoom never shrinks it below 240px.
+- The controls open with one compact row for the optional name and photo: the name field with a round photo button beside it. It comes first so people see early that the cards can carry their name, and it stays one row tall so the theme tiles stay close under the preview on phones.
 - Theme tiles are two equal-height columns in every locale.
 - After a download, a confirmation takes the helper line's place under the button for a few seconds.
 

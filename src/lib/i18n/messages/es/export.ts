@@ -2,10 +2,8 @@ import { plural } from '#lib/i18n/plural.js';
 import type { exportMessages as en } from '../en/export.js';
 export const exportMessages: typeof en = {
 	export: 'Exportar',
-	name: 'Tu nombre (opcional)',
-	picture: 'Foto de perfil (opcional)',
+	nameAndPhoto: 'Tu nombre y foto (opcional)',
 	preview: 'Vista previa',
-	custom: 'Foto añadida',
 	namePlaceholder: 'Tu nombre',
 	remove: 'Eliminar imagen',
 	upload: 'Subir imagen',

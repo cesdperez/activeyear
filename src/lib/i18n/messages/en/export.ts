@@ -1,10 +1,8 @@
 import { plural } from '#lib/i18n/plural.js';
 export const exportMessages = {
 	export: 'Export',
-	name: 'Your name (optional)',
-	picture: 'Profile picture (optional)',
+	nameAndPhoto: 'Your name and photo (optional)',
 	preview: 'Preview',
-	custom: 'Photo added',
 	namePlaceholder: 'Your name',
 	remove: 'Remove image',
 	upload: 'Upload image',
