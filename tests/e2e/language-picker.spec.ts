@@ -4,6 +4,32 @@ import { gotoUpload, uploadSample } from './helpers.js';
 const names = ['English', 'Español', 'Português', 'Français', 'Deutsch', 'Nederlands'];
 const codes = ['en', 'es', 'pt', 'fr', 'de', 'nl'];
 
+test('loads message catalogs on demand', async ({ page }) => {
+	const scripts: Promise<string>[] = [];
+	page.on('response', (response) => {
+		if (new URL(response.url()).pathname.endsWith('.js')) scripts.push(response.text());
+	});
+
+	await gotoUpload(page, '/es/');
+	const initialScripts = (await Promise.all(scripts)).join('\n');
+	expect(initialScripts).toContain('Otros deportes');
+	for (const marker of [
+		'Other sports',
+		'Outros esportes',
+		'Autres sports',
+		'Weitere Sportarten',
+		'Overige sporten'
+	]) {
+		expect(initialScripts).not.toContain(marker);
+	}
+
+	await page.getByRole('button', { name: 'ES, idioma: Español' }).click();
+	await page.getByRole('menuitem', { name: 'Deutsch' }).click();
+	await expect(page).toHaveURL(/\/de\/$/);
+	await expect(page.getByRole('button', { name: 'DE, Sprache: Deutsch' })).toBeVisible();
+	expect((await Promise.all(scripts)).join('\n')).toContain('Weitere Sportarten');
+});
+
 test('switches language with links', async ({ page }) => {
 	await gotoUpload(page);
 	const button = page.getByRole('button', { name: 'EN, language: English' });
