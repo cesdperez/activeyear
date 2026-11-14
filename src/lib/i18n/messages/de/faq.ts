@@ -37,7 +37,7 @@ export const faq: typeof en = {
 			answer: 'Ja. Ohne Anmeldung und Werbung. Der Code ist auf GitHub quelloffen.',
 			tip: {
 				text: 'Wenn dir die App gefällt, freue ich mich über ein Trinkgeld:',
-				label: 'Spendier mir ein Gel auf Ko-fi'
+				label: 'Spendier mir ein Gel auf ko-fi'
 			}
 		}
 	],

@@ -8,7 +8,7 @@ export const dashboard: typeof en = {
 		`Je export begint op ${date}. Als je jaar eerder begon, scrol dan in Garmin Connect naar het einde van Alle activiteiten en exporteer opnieuw.`,
 	supportFooter: 'Bevalt ActiveYear je?',
 	buyMeAGel: 'Trakteer me op een gel',
-	opensKofi: '(opent Ko-fi in een nieuw tabblad)',
+	opensKofi: '(opent ko-fi in een nieuw tabblad)',
 	customPicks: 'Je eigen selectie.',
 	highlightPresets: 'Hoogtepuntselecties',
 	addActivity: 'Voeg een activiteit toe',

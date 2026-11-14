@@ -7,7 +7,7 @@ export const dashboard = {
 		`Your export starts on ${date}. If your year started earlier, scroll to the bottom of All Activities in Garmin Connect and export again.`,
 	supportFooter: 'Enjoying ActiveYear?',
 	buyMeAGel: 'Buy me a gel',
-	opensKofi: '(opens Ko-fi in a new tab)',
+	opensKofi: '(opens ko-fi in a new tab)',
 	customPicks: 'Your own picks.',
 	highlightPresets: 'Highlight presets',
 	addActivity: 'Add an activity',

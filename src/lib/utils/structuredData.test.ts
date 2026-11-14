@@ -34,7 +34,7 @@ describe('faqPageSchema', () => {
 			name: 'Is it free?',
 			acceptedAnswer: {
 				'@type': 'Answer',
-				text: 'Yes. No sign-up, no ads, and the code is open source on GitHub. If you enjoy it, tips are welcome: buy me a gel on Ko-fi.'
+				text: 'Yes. No sign-up, no ads, and the code is open source on GitHub. If you enjoy it, tips are welcome: buy me a gel on ko-fi.'
 			}
 		});
 	});
