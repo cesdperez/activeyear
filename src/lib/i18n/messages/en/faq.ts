@@ -6,30 +6,29 @@ export const faq = {
 	items: [
 		{
 			question: 'What is this?',
-			answer: `A free ${TARGET_YEAR} year in review for Garmin and Strava athletes. Upload your activity export and see your year in sport: total distance, elevation, time and calories, a breakdown by sport, personal records, highlights and your longest streak.`
+			answer: `A free ${TARGET_YEAR} year in review for Garmin and Strava. Upload your activity export to see your distance, elevation, time, sports, records and longest streak.`
 		},
 		{
 			question: 'Is my data private?',
 			answer:
-				'Yes. The file is read and analysed on your device, and there is no account to create. We record a few anonymous counts (like which theme you export and whether uploads work) to improve the app. No cookies, no tracking, and your activity data never leaves your device.'
+				'Yes. Your file is read on your device and never leaves it. No account, no cookies, no tracking. We only count a few anonymous events, like which theme you export, to improve the app.'
 		},
 		{
 			question: 'Which file does it need?',
-			answer: `The Activities CSV from Garmin Connect or activities.csv from your Strava account export, in English, Spanish, German, French, Italian, Dutch or Portuguese. If your Garmin account uses imperial units, choose ${upload.imperial} on the upload screen. It covers running, cycling, swimming, walking, hiking, strength, yoga, paddling, rowing, cardio, winter sports, racket sports and climbing.`
+			answer: `The Activities CSV from Garmin Connect, or activities.csv from your Strava export. If your Garmin account uses imperial units, choose ${upload.imperial} on the upload screen.`
 		},
 		{
 			question: 'What can I share?',
 			answer:
-				'Three story-sized cards (1080 × 1920 PNG): a summary, a sport breakdown and your highlights, in six styles: Neon, Minimal, Retro, Classic, Synthwave and Lightmile.'
+				'Three story-sized cards (a summary, your sports and your highlights) in six styles: Neon, Minimal, Retro, Classic, Synthwave and Lightmile.'
 		},
 		{
 			question: 'Can I reopen my recap later?',
-			answer: `Yes. Use ${dashboard.saveMyYear} on your dashboard to download a small .json file, then drop it on the upload area any time to reopen the recap. It stays on your device.`
+			answer: `Yes. Use ${dashboard.saveMyYear} on your dashboard to download a small .json file. Drop it on the upload area to reopen your recap.`
 		},
 		{
 			question: 'Does it work with Strava?',
-			answer:
-				'Yes. Upload activities.csv from your Strava account export (Settings, My Account, Download or Delete Your Account), with Strava set to English, Spanish, German, French, Italian, Dutch or Portuguese.'
+			answer: 'Yes. Request your account export in Strava settings, then upload its activities.csv.'
 		},
 		{
 			question: 'Is it free?',

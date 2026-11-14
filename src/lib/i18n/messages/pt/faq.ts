@@ -7,30 +7,30 @@ export const faq: typeof en = {
 	items: [
 		{
 			question: 'O que é isto?',
-			answer: `Uma retrospectiva gratuita de ${TARGET_YEAR} para atletas do Garmin e Strava. Envie sua exportação de atividades e veja seu ano no esporte: distância, elevação, tempo e calorias totais, divisão por esporte, recordes pessoais, destaques e sua maior sequência.`
+			answer: `Uma retrospectiva gratuita de ${TARGET_YEAR} para Garmin e Strava. Envie sua exportação de atividades para ver sua distância, elevação, tempo, esportes, recordes e maior sequência.`
 		},
 		{
 			question: 'Meus dados são privados?',
 			answer:
-				'Sim. O arquivo é lido e analisado no seu dispositivo e não é preciso criar uma conta. Registramos algumas contagens anônimas, como o tema que você exporta e se os envios funcionam, para melhorar o aplicativo. Sem cookies, sem rastreamento e seus dados de atividades nunca saem do seu dispositivo.'
+				'Sim. Seu arquivo é lido no seu dispositivo e nunca sai dele. Sem conta, cookies ou rastreamento. Contamos apenas alguns eventos anônimos, como o tema que você exporta, para melhorar o aplicativo.'
 		},
 		{
 			question: 'Qual arquivo preciso usar?',
-			answer: `O CSV de Activities do Garmin Connect ou o activities.csv da exportação da sua conta do Strava, em inglês, espanhol, alemão, francês, italiano, holandês ou português. Se sua conta Garmin usa unidades imperiais, escolha ${upload.imperial} na tela de envio. Inclui corrida, ciclismo, natação, caminhada, trilha, força, yoga, esportes a remo, cardio, esportes de inverno, esportes de raquete e escalada.`
+			answer: `O CSV de Activities do Garmin Connect ou o activities.csv da sua exportação do Strava. Se sua conta Garmin usa unidades imperiais, escolha ${upload.imperial} na tela de envio.`
 		},
 		{
 			question: 'O que posso compartilhar?',
 			answer:
-				'Três cards para stories (PNG de 1080 × 1920): um resumo, uma divisão por esporte e seus destaques, em seis estilos: Neon, Minimal, Retro, Classic, Synthwave e Lightmile.'
+				'Três cards para stories: um resumo, seus esportes e seus destaques, em seis estilos: Neon, Minimal, Retro, Classic, Synthwave e Lightmile.'
 		},
 		{
 			question: 'Posso abrir meu resumo novamente depois?',
-			answer: `Sim. Use ${dashboard.saveMyYear} no painel para baixar um pequeno arquivo .json e arraste-o para a área de envio quando quiser reabrir o resumo. Ele fica no seu dispositivo.`
+			answer: `Sim. Use ${dashboard.saveMyYear} no painel para baixar um pequeno arquivo .json. Arraste-o para a área de envio para reabrir seu resumo.`
 		},
 		{
 			question: 'Funciona com o Strava?',
 			answer:
-				'Sim. Envie activities.csv da exportação da sua conta do Strava, que você solicita em “Settings” (Configurações) → “My Account” (Minha conta) → “Download or Delete Your Account” (Baixar ou excluir sua conta). O Strava deve estar configurado em inglês, espanhol, alemão, francês, italiano, holandês ou português.'
+				'Sim. Solicite a exportação da sua conta nas configurações do Strava e envie o arquivo activities.csv.'
 		},
 		{
 			question: 'É grátis?',

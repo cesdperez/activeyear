@@ -7,30 +7,30 @@ export const faq: typeof en = {
 	items: [
 		{
 			question: 'Was ist das?',
-			answer: `Ein kostenloser Jahresrückblick ${TARGET_YEAR} für Sportlerinnen und Sportler auf Garmin und Strava. Lade deinen Aktivitätenexport hoch und entdecke dein Sportjahr: Gesamtdistanz, Höhenmeter, Zeit und Kalorien, eine Aufteilung nach Sportart, persönliche Rekorde, Highlights und deine längste Serie.`
+			answer: `Ein kostenloser Jahresrückblick ${TARGET_YEAR} für Garmin und Strava. Lade deinen Aktivitätenexport hoch und sieh deine Distanz, Höhenmeter, Zeit, Sportarten, Rekorde und längste Serie.`
 		},
 		{
 			question: 'Sind meine Daten privat?',
 			answer:
-				'Ja. Die Datei wird auf deinem Gerät gelesen und ausgewertet und du brauchst kein Konto. Um die App zu verbessern, erfassen wir einige anonyme Zählwerte, etwa welches Design du exportierst und ob Uploads funktionieren. Keine Cookies, kein Tracking und deine Aktivitätsdaten verlassen nie dein Gerät.'
+				'Ja. Deine Datei wird auf deinem Gerät gelesen und verlässt es nie. Kein Konto, keine Cookies, kein Tracking. Wir erfassen nur einige anonyme Ereignisse, etwa welches Design du exportierst, um die App zu verbessern.'
 		},
 		{
 			question: 'Welche Datei brauche ich?',
-			answer: `Die Activities-CSV aus Garmin Connect oder activities.csv aus dem Export deines Strava-Kontos, auf Englisch, Spanisch, Deutsch, Französisch, Italienisch, Niederländisch oder Portugiesisch. Wenn dein Garmin-Konto imperiale Einheiten verwendet, wähle ${upload.imperial} auf der Upload-Seite. Unterstützt werden Laufen, Radfahren, Schwimmen, Gehen, Wandern, Krafttraining, Yoga, Paddeln, Rudern, Cardio, Wintersport, Schlägersport und Klettern.`
+			answer: `Die Activities-CSV aus Garmin Connect oder activities.csv aus deinem Strava-Export. Wenn dein Garmin-Konto imperiale Einheiten verwendet, wähle ${upload.imperial} auf der Upload-Seite.`
 		},
 		{
 			question: 'Was kann ich teilen?',
 			answer:
-				'Drei Karten im Story-Format (1080 × 1920 PNG): eine Zusammenfassung, eine Aufteilung nach Sportart und deine Highlights, in sechs Stilen: Neon, Minimal, Retro, Classic, Synthwave und Lightmile.'
+				'Drei Karten im Story-Format: eine Zusammenfassung, deine Sportarten und deine Highlights, in sechs Stilen: Neon, Minimal, Retro, Classic, Synthwave und Lightmile.'
 		},
 		{
 			question: 'Kann ich meinen Rückblick später wieder öffnen?',
-			answer: `Ja. Lade über „${dashboard.saveMyYear}“ auf deinem Dashboard eine kleine .json-Datei herunter und ziehe sie jederzeit in den Upload-Bereich, um den Rückblick wieder zu öffnen. Sie bleibt auf deinem Gerät.`
+			answer: `Ja. Lade über „${dashboard.saveMyYear}“ auf deinem Dashboard eine kleine .json-Datei herunter. Ziehe sie in den Upload-Bereich, um den Rückblick wieder zu öffnen.`
 		},
 		{
 			question: 'Funktioniert es mit Strava?',
 			answer:
-				'Ja. Lade activities.csv aus dem Export deines Strava-Kontos hoch. Den Export forderst du unter „Settings“ (Einstellungen) → „My Account“ (Mein Konto) → „Download or Delete Your Account“ (Konto herunterladen oder löschen) an. Strava muss auf Englisch, Spanisch, Deutsch, Französisch, Italienisch, Niederländisch oder Portugiesisch eingestellt sein.'
+				'Ja. Fordere deinen Kontoexport in den Strava-Einstellungen an und lade dann activities.csv daraus hoch.'
 		},
 		{
 			question: 'Ist es kostenlos?',
