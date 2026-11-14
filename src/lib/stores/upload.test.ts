@@ -10,7 +10,6 @@ describe('upload', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		uploadStore.reset();
-		uploadStore.garminUnits = 'metric';
 		exportSettings.unit = 'km';
 	});
 
@@ -45,6 +44,7 @@ describe('upload', () => {
 
 	it('loads a saved JSON year', async () => {
 		await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
+		uploadStore.chooseGarminUnits('metric');
 		const activities = yearData.activities;
 		const json = yearData.savedYearJson();
 		uploadStore.reset();
@@ -95,6 +95,11 @@ describe('upload', () => {
 	it('loads the target year activities from a Garmin export', async () => {
 		await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
 
+		expect(uploadStore.status).toBe('garmin-units');
+		expect(yearData.activities).toEqual([]);
+		expect(track).not.toHaveBeenCalled();
+		uploadStore.chooseGarminUnits('metric');
+		expect(exportSettings.unit).toBe('km');
 		expect(uploadStore.status).toBe('ready');
 		expect(uploadStore.error).toBeNull();
 		expect(yearData.activities).toEqual([
@@ -106,28 +111,22 @@ describe('upload', () => {
 		expect(track).toHaveBeenCalledWith('sports_count', '1');
 	});
 
-	it('uses Garmin units and keeps them on reset', async () => {
-		uploadStore.garminUnits = 'imperial';
+	it('uses the selected Garmin units and clears the pending choice on reset', async () => {
 		await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
+		uploadStore.chooseGarminUnits('imperial');
 		expect(yearData.activities[0].distance).toBeCloseTo(16.09344);
-		uploadStore.reset();
-		expect(uploadStore.garminUnits).toBe('imperial');
-	});
-
-	it('shows miles after an imperial Garmin upload and km after a metric one', async () => {
-		uploadStore.garminUnits = 'imperial';
-		await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
 		expect(exportSettings.unit).toBe('miles');
-
 		uploadStore.reset();
-		uploadStore.garminUnits = 'metric';
 		await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
-		expect(exportSettings.unit).toBe('km');
+		uploadStore.reset();
+		uploadStore.chooseGarminUnits('metric');
+		expect(uploadStore.status).toBe('idle');
+		expect(yearData.activities).toEqual([]);
 	});
 
 	it('keeps the chosen display unit after a saved year loads', async () => {
-		uploadStore.garminUnits = 'imperial';
 		await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
+		uploadStore.chooseGarminUnits('imperial');
 		const json = yearData.savedYearJson();
 		uploadStore.reset();
 		exportSettings.unit = 'km';
@@ -143,6 +142,7 @@ describe('upload', () => {
 
 		await uploadStore.processFile(new File([bytes], 'activities.csv'));
 
+		uploadStore.chooseGarminUnits('metric');
 		expect(uploadStore.status).toBe('ready');
 		expect(yearData.activities[0]).toMatchObject({ type: 'running', calories: 600 });
 	});
@@ -152,6 +152,7 @@ describe('upload', () => {
 
 		await uploadStore.processFile(csvFile(content));
 
+		uploadStore.chooseGarminUnits('metric');
 		expect(uploadStore.status).toBe('ready');
 		expect(uploadStore.skippedRowCount).toBe(1);
 	});

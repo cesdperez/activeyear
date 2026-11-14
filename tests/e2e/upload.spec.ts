@@ -2,6 +2,7 @@ import { test, expect, type Locator, type Page } from '@playwright/test';
 import { MIN_UPLOAD_LOADING_MS, TARGET_YEAR } from '../../src/lib/constants/time.js';
 import { UPLOAD_ZONE_ID } from '../../src/lib/constants/dom.js';
 import {
+	chooseMetric,
 	DASHBOARD_HEADING,
 	SAMPLE_CSV,
 	STRAVA_CSV,
@@ -63,16 +64,14 @@ function isFileDragCancelled(target: Locator, type: 'dragover' | 'drop') {
 test.describe('Upload Flow', () => {
 	test('imports Garmin imperial distances', async ({ page }) => {
 		await gotoUpload(page);
-		const group = page.getByRole('group', { name: 'Units in your Garmin account' });
-		await expect(group.getByRole('button', { name: 'Metric', exact: true })).toHaveAttribute(
-			'aria-pressed',
-			'true'
-		);
-		await group.getByRole('button', { name: 'Imperial' }).click();
 		await uploadFile(
 			page,
 			`Activity Type,Date,Title,Distance\nRunning,${TARGET_YEAR}-03-01 08:00:00,Run,6.21`
 		);
+		await page
+			.getByRole('group', { name: 'Which units does your Garmin account use?' })
+			.getByRole('button', { name: 'Imperial' })
+			.click();
 		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
 		await expect(page.getByTestId('main-stats').getByText('6.2mi')).toBeVisible();
 		await page
@@ -87,11 +86,7 @@ test.describe('Upload Flow', () => {
 
 		test('still starts on Metric', async ({ page }) => {
 			await gotoUpload(page);
-			const group = page.getByRole('group', { name: 'Units in your Garmin account' });
-			await expect(group.getByRole('button', { name: 'Metric' })).toHaveAttribute(
-				'aria-pressed',
-				'true'
-			);
+
 			await page.getByRole('button', { name: /demo data/i }).click();
 			const units = page.getByRole('group', { name: 'Distance unit' });
 			await expect(units.getByRole('button', { name: 'km' })).toHaveAttribute(
@@ -117,7 +112,17 @@ test.describe('Upload Flow', () => {
 		);
 
 		expect(cancelled).toBe(true);
+		await chooseMetric(page);
 		await expect(page.getByText(/2\s+activities across/)).toBeVisible();
+	});
+
+	test('asks Garmin units after upload and focuses Metric', async ({ page }) => {
+		await gotoUpload(page);
+		const group = page.getByRole('group', { name: 'Which units does your Garmin account use?' });
+		await expect(group).toHaveCount(0);
+		await page.locator('input[type="file"]').setInputFiles(SAMPLE_CSV);
+		await expect(group).toBeVisible();
+		await expect(group.getByRole('button', { name: 'Metric' })).toBeFocused();
 	});
 
 	test('home page displays upload UI', async ({ page }) => {
@@ -195,6 +200,7 @@ test.describe('Upload Flow', () => {
 			page,
 			`Tipo de actividad,Fecha,Título,Distancia,Calorías,Tiempo,Ascenso total\nCarrera,${TARGET_YEAR}-03-01 08:00:00,Carrera,10.00,500,01:00:00,100\nEntrenamiento en cinta,${TARGET_YEAR}-03-02 08:00:00,Cinta,5.00,250,00:30:00,0`
 		);
+		await chooseMetric(page);
 		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
 		await expect(page.getByTestId('main-stats').getByText('15.0km')).toBeVisible();
 	});
@@ -388,6 +394,7 @@ test.describe('Upload accessibility', () => {
 		const fileChooser = page.waitForEvent('filechooser');
 		await page.keyboard.press('Space');
 		await (await fileChooser).setFiles(SAMPLE_CSV);
+		await chooseMetric(page);
 
 		const heading = page.getByRole('heading', { name: DASHBOARD_HEADING });
 		await expect(heading).toBeFocused({ timeout: 10000 });

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { uploadErrorMessage } from '#lib/utils/uploadErrors.js';
 	import { uploadStore } from '#lib/stores/upload.svelte.js';
@@ -14,6 +15,12 @@
 	let fileInput: HTMLInputElement;
 	let currentPhrase = $state(0);
 	const hydrated = createHydrated();
+	let metricButton = $state<HTMLButtonElement>();
+	$effect(() => {
+		if (uploadStore.status === 'garmin-units' && !loading) {
+			void tick().then(() => metricButton?.focus());
+		}
+	});
 
 	function handleDragOver(event: DragEvent) {
 		event.preventDefault();
@@ -88,59 +95,85 @@
 	id="file-upload"
 />
 
-<button
-	type="button"
-	id={UPLOAD_ZONE_ID}
-	class="upload-zone group flex min-h-[280px] w-full cursor-pointer flex-col items-center justify-center p-8 text-center aria-disabled:cursor-not-allowed md:p-12"
-	class:dragover={isDragOver}
-	aria-disabled={loading || !hydrated.current}
-	ondragover={handleDragOver}
-	ondragleave={handleDragLeave}
-	ondrop={handleDrop}
-	onclick={triggerFileInput}
->
-	{#if loading}
-		<span class="mb-4 block">
-			<SpinnerGap
-				class="h-12 w-12 animate-spin text-[var(--color-accent)]"
-				weight="bold"
-				aria-hidden="true"
-			/>
-		</span>
-		<span class="block animate-pulse text-lg text-[var(--color-text-muted)]">
-			{i18n.m.upload.loading[currentPhrase % i18n.m.upload.loading.length]}
-		</span>
-	{:else if uploadStore.status === 'error'}
-		<span class="mb-4 block">
-			<Warning
-				class="h-12 w-12 text-[var(--color-text-primary)]"
-				weight="bold"
-				aria-hidden="true"
-			/>
-		</span>
-		<span class="mb-2 block text-lg text-balance text-[var(--color-text-primary)]"
-			>{uploadStore.error ? uploadErrorMessage(uploadStore.error, i18n.locale) : ''}</span
+{#if uploadStore.status === 'garmin-units' && !loading}
+	<div
+		class="upload-zone flex min-h-[280px] w-full flex-col items-center justify-center p-8 text-center md:p-12"
+	>
+		<h2 class="mb-2 text-xl font-semibold text-balance text-[var(--color-text-primary)]">
+			{i18n.m.upload.garminUnits}
+		</h2>
+		<p class="mb-4 text-sm text-[var(--color-text-muted)]">{i18n.m.upload.garminUnitsHint}</p>
+		<div role="group" aria-label={i18n.m.upload.garminUnits} class="segmented">
+			<button bind:this={metricButton} onclick={() => uploadStore.chooseGarminUnits('metric')}
+				>{i18n.m.upload.metric}</button
+			>
+			<button onclick={() => uploadStore.chooseGarminUnits('imperial')}
+				>{i18n.m.upload.imperial}</button
+			>
+		</div>
+		<button
+			class="mt-4 text-sm text-balance text-[var(--color-text-muted)] underline decoration-[var(--color-border)] underline-offset-4 transition-colors duration-200 hover:text-[var(--color-text-primary)] hover:decoration-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
+			onclick={() => {
+				uploadStore.reset();
+				triggerFileInput();
+			}}>{i18n.m.upload.otherFile}</button
 		>
-		<span class="block text-sm text-[var(--color-text-dim)]">{i18n.m.upload.retry}</span>
-	{:else}
-		<span class="mb-4 block">
-			<UploadSimple
-				class="h-10 w-10 text-[var(--color-text-dim)] transition-colors duration-200 group-hover:text-[var(--color-accent)]"
-				weight="bold"
-				aria-hidden="true"
-			/>
-		</span>
-		<span class="mb-1 block text-xl font-semibold text-balance text-[var(--color-text-primary)]"
-			>{i18n.m.upload.drop}</span
-		>
-		<span class="mb-4 block text-sm text-[var(--color-text-muted)]">{i18n.m.upload.browse}</span>
-		<span class="mb-4 block text-xs text-[var(--color-text-dim)]">{i18n.m.upload.saved}</span>
-		<span class="flex items-center gap-1.5 text-xs text-[var(--color-text-muted)]">
-			<ShieldCheck class="h-3.5 w-3.5" weight="bold" aria-hidden="true" />
-			{i18n.m.upload.privacy}
-		</span>
-	{/if}
-</button>
+	</div>
+{:else}
+	<button
+		type="button"
+		id={UPLOAD_ZONE_ID}
+		class="upload-zone group flex min-h-[280px] w-full cursor-pointer flex-col items-center justify-center p-8 text-center aria-disabled:cursor-not-allowed md:p-12"
+		class:dragover={isDragOver}
+		aria-disabled={loading || !hydrated.current}
+		ondragover={handleDragOver}
+		ondragleave={handleDragLeave}
+		ondrop={handleDrop}
+		onclick={triggerFileInput}
+	>
+		{#if loading}
+			<span class="mb-4 block">
+				<SpinnerGap
+					class="h-12 w-12 animate-spin text-[var(--color-accent)]"
+					weight="bold"
+					aria-hidden="true"
+				/>
+			</span>
+			<span class="block animate-pulse text-lg text-[var(--color-text-muted)]">
+				{i18n.m.upload.loading[currentPhrase % i18n.m.upload.loading.length]}
+			</span>
+		{:else if uploadStore.status === 'error'}
+			<span class="mb-4 block">
+				<Warning
+					class="h-12 w-12 text-[var(--color-text-primary)]"
+					weight="bold"
+					aria-hidden="true"
+				/>
+			</span>
+			<span class="mb-2 block text-lg text-balance text-[var(--color-text-primary)]"
+				>{uploadStore.error ? uploadErrorMessage(uploadStore.error, i18n.locale) : ''}</span
+			>
+			<span class="block text-sm text-[var(--color-text-dim)]">{i18n.m.upload.retry}</span>
+		{:else}
+			<span class="mb-4 block">
+				<UploadSimple
+					class="h-10 w-10 text-[var(--color-text-dim)] transition-colors duration-200 group-hover:text-[var(--color-accent)]"
+					weight="bold"
+					aria-hidden="true"
+				/>
+			</span>
+			<span class="mb-1 block text-xl font-semibold text-balance text-[var(--color-text-primary)]"
+				>{i18n.m.upload.drop}</span
+			>
+			<span class="mb-4 block text-sm text-[var(--color-text-muted)]">{i18n.m.upload.browse}</span>
+			<span class="mb-4 block text-xs text-[var(--color-text-dim)]">{i18n.m.upload.saved}</span>
+			<span class="flex items-center gap-1.5 text-xs text-[var(--color-text-muted)]">
+				<ShieldCheck class="h-3.5 w-3.5" weight="bold" aria-hidden="true" />
+				{i18n.m.upload.privacy}
+			</span>
+		{/if}
+	</button>
+{/if}
 
 <!-- A button's children are presentational, so live regions must sit outside it. -->
 <p role="status" class="sr-only">{loading ? i18n.m.upload.analyzing : ''}</p>

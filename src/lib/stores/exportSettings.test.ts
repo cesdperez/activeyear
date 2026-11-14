@@ -18,6 +18,7 @@ describe('exportSettings', () => {
 				`Activity Type,Date,Title,Distance,Calories,Time,Total Ascent\nYoga,${TARGET_YEAR}-03-01 08:00:00,Yoga,0.0,200,01:00:00,0`
 			)
 		);
+		uploadStore.chooseGarminUnits('metric');
 
 		expect(exportSettings.summaryMetric).toBe('duration');
 	});
@@ -28,6 +29,7 @@ describe('exportSettings', () => {
 				`Activity Type,Date,Title,Distance,Calories,Time,Total Ascent\nRunning,${TARGET_YEAR}-03-01 08:00:00,Run,5.0,200,00:30:00,6`
 			)
 		);
+		uploadStore.chooseGarminUnits('metric');
 		exportSettings.summaryMetric = 'elevation';
 
 		exportSettings.unit = 'miles';

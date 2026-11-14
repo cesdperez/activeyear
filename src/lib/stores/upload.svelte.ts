@@ -5,7 +5,8 @@ import type {
 	UploadError,
 	ParseError,
 	AppStatus,
-	GarminUnits
+	GarminUnits,
+	YearFileResult
 } from '#lib/types/index.js';
 import { activityCountBucket, sportsCountBucket } from '#lib/utils/events.js';
 import { isSavedYearFileName, loadYearFile, unsupportedFileError } from '#lib/utils/yearFile.js';
@@ -18,7 +19,11 @@ import { highlightsStore } from './highlights.svelte.js';
 import { exportSettings } from './exportSettings.svelte.js';
 
 class UploadStore {
-	garminUnits = $state<GarminUnits>('metric');
+	#pending: {
+		name: string;
+		content: string;
+		result: Extract<YearFileResult, { type: 'loaded' }>;
+	} | null = null;
 	#status = $state<AppStatus>('idle');
 	#error = $state<UploadError | null>(null);
 	#parseErrors = $state<ParseError[]>([]);
@@ -43,6 +48,7 @@ class UploadStore {
 	}
 
 	reset() {
+		this.#pending = null;
 		yearData.reset();
 		highlightsStore.reset();
 		exportSettings.userPfp = null;
@@ -52,6 +58,7 @@ class UploadStore {
 	}
 
 	async processFile(file: File) {
+		this.#pending = null;
 		const unsupported = unsupportedFileError(file.name);
 		if (unsupported) {
 			this.#fail('unsupported-file-type', unsupported);
@@ -63,27 +70,47 @@ class UploadStore {
 
 		try {
 			const content = decodeText(await file.arrayBuffer());
-			const result = loadYearFile(file.name, content, TARGET_YEAR, {
-				garminUnits: this.garminUnits
-			});
+			const result = loadYearFile(file.name, content, TARGET_YEAR);
 			if (result.type === 'failed') {
 				this.#fail(result.event, result.error, result.parseErrors);
 				return;
 			}
-			// The Metric/Imperial choice describes a Garmin CSV, not a saved year.
-			if (result.source === 'garmin' && !isSavedYearFileName(file.name))
-				exportSettings.unit = this.garminUnits === 'imperial' ? 'miles' : 'km';
-			this.#load({
-				activities: result.activities,
-				source: result.source,
-				cutShort: result.cutShort,
-				loadedAt: new Date()
-			});
-			this.#parseErrors = result.parseErrors;
-			this.#trackUpload();
+			if (result.source === 'garmin' && !isSavedYearFileName(file.name)) {
+				this.#pending = { name: file.name, content, result };
+				this.#status = 'garmin-units';
+				return;
+			}
+			this.#finish(result);
 		} catch {
 			this.#fail('read-failed', { type: 'unknown-failure' });
 		}
+	}
+
+	chooseGarminUnits(units: GarminUnits) {
+		const pending = this.#pending;
+		if (!pending) return;
+		this.#pending = null;
+		const result =
+			units === 'metric'
+				? pending.result
+				: loadYearFile(pending.name, pending.content, TARGET_YEAR, { garminUnits: units });
+		if (result.type === 'failed') {
+			this.#fail(result.event, result.error, result.parseErrors);
+			return;
+		}
+		exportSettings.unit = units === 'imperial' ? 'miles' : 'km';
+		this.#finish(result);
+	}
+
+	#finish(result: Extract<YearFileResult, { type: 'loaded' }>) {
+		this.#load({
+			activities: result.activities,
+			source: result.source,
+			cutShort: result.cutShort,
+			loadedAt: new Date()
+		});
+		this.#parseErrors = result.parseErrors;
+		this.#trackUpload();
 	}
 
 	loadDemoData() {

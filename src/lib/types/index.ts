@@ -266,7 +266,7 @@ export interface BreakdownCardModel {
 	longestStreak: number;
 }
 
-export type AppStatus = 'idle' | 'parsing' | 'ready' | 'error';
+export type AppStatus = 'idle' | 'parsing' | 'garmin-units' | 'ready' | 'error';
 export interface GarminLocale {
 	headers: Record<string, string>;
 	types: Record<string, string>;

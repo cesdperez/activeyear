@@ -24,6 +24,7 @@ describe('yearData', () => {
 		try {
 			vi.setSystemTime(new Date(TARGET_YEAR, 5, 30));
 			await uploadStore.processFile(csvFile(garminCsv(`${TARGET_YEAR}-03-01 08:00:00`)));
+			uploadStore.chooseGarminUnits('metric');
 			expect(yearData.yearSoFar).toBe(true);
 			expect(yearData.daysCounted).toBe(181);
 			const json = yearData.savedYearJson();

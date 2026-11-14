@@ -23,6 +23,7 @@ describe('highlights', () => {
 		].join('\n');
 
 		await uploadStore.processFile(csvFile(csv));
+		uploadStore.chooseGarminUnits('metric');
 
 		expect(highlightsStore.highlights.map((a) => a.title)).toEqual([
 			'February',

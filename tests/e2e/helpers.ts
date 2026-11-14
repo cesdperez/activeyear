@@ -32,9 +32,14 @@ export async function gotoUpload(
 	await expect(page.locator(`#${UPLOAD_ZONE_ID}`)).not.toHaveAttribute('aria-disabled', 'true');
 }
 
+export async function chooseMetric(page: Page): Promise<void> {
+	await page.locator('.upload-zone').getByRole('group').getByRole('button').first().click();
+}
+
 export async function uploadSample(page: Page): Promise<void> {
 	await gotoUpload(page);
 	await page.locator('input[type="file"]').setInputFiles(SAMPLE_CSV);
+	await chooseMetric(page);
 	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible({
 		timeout: 10000
 	});
@@ -74,6 +79,7 @@ export async function uploadCsv(page: Page, csv: string): Promise<void> {
 	await page
 		.locator('input[type="file"]')
 		.setInputFiles({ name: 'activities.csv', mimeType: 'text/csv', buffer: Buffer.from(csv) });
+	await chooseMetric(page);
 	await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible({
 		timeout: 10000
 	});

@@ -1,3 +1,4 @@
+import { chooseMetric } from './helpers.js';
 import { test, expect, type Page, type Download } from '@playwright/test';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -239,6 +240,7 @@ test.describe('Export Visual Fidelity', () => {
 				.locator('input[type="file"]')
 				.first()
 				.setInputFiles(join(__dirname, 'fixtures', 'garmin-heavy.csv'));
+			await chooseMetric(page);
 			await expect(page.locator('#export-card')).toBeVisible();
 			await navigateToSlide(page, cardIndex);
 			expect(await captureSpecificCardDownload(page, cardIndex)).toMatchSnapshot(
@@ -254,6 +256,7 @@ test.describe('Export Visual Fidelity', () => {
 			mimeType: 'text/csv',
 			buffer: Buffer.from(soFarCsv())
 		});
+		await chooseMetric(page);
 		await expect(page.locator('#export-card')).toBeVisible();
 		expect(await captureSpecificCardDownload(page, 0)).toMatchSnapshot('summary-so-far.png');
 	});

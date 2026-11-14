@@ -1,3 +1,4 @@
+import { chooseMetric } from './helpers.js';
 import { readFileSync } from 'fs';
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { TARGET_YEAR } from '../../src/lib/constants/time.js';
@@ -244,6 +245,7 @@ test('summary uses singular nouns for a single activity on a single day', async 
 		mimeType: 'text/csv',
 		buffer: Buffer.from(`${header}\n${firstActivity}\n`)
 	});
+	await chooseMetric(page);
 	await expect(page.getByTestId('activity-summary')).toHaveText(
 		/^\s*1\s+activity across\s+1\s+active day\s*$/,
 		{ timeout: 10000 }
@@ -430,6 +432,7 @@ test('uploaded year shows progress so far', async ({ page }) => {
 		mimeType: 'text/csv',
 		buffer: Buffer.from(soFarCsv())
 	});
+	await chooseMetric(page);
 	await expect(page.getByRole('heading', { name: `Your ${TARGET_YEAR} so far` })).toBeVisible();
 	await expect(page.locator('#export-card')).toContainText(`Season ${TARGET_YEAR} so far`);
 	await expect(page.getByTestId('main-stats')).toContainText('18% of the year so far');
@@ -444,6 +447,7 @@ test('uploaded finished year has no so far labels', async ({ page }) => {
 	await page.goto('/');
 	await expect(page.locator('#upload-zone')).not.toHaveAttribute('aria-disabled', 'true');
 	await page.locator('input[type="file"]').setInputFiles(SAMPLE_CSV);
+	await chooseMetric(page);
 	await expect(
 		page.getByRole('heading', { name: `Your ${TARGET_YEAR}`, exact: true })
 	).toBeVisible();
