@@ -151,3 +151,22 @@ test.describe('without JavaScript', () => {
 		}
 	});
 });
+
+test('suggests nothing when a supported language is not the first browser language', async ({
+	page
+}) => {
+	await page.addInitScript(() =>
+		Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'es-ES', 'de'] })
+	);
+	await gotoUpload(page);
+	await expect(page.getByRole('link', { name: 'Ver en español' })).toHaveCount(0);
+	await expect(page.getByRole('link', { name: 'Auf Deutsch ansehen' })).toHaveCount(0);
+});
+
+test('suggests the first browser language', async ({ page }) => {
+	await page.addInitScript(() =>
+		Object.defineProperty(navigator, 'languages', { get: () => ['es-MX', 'en-US'] })
+	);
+	await page.goto('/');
+	await expect(page.getByRole('link', { name: 'Ver en español' })).toBeVisible();
+});

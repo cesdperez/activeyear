@@ -34,10 +34,9 @@
 		if (stored !== null) {
 			if (isLocale(stored) && stored !== 'en') suggestion = stored;
 		} else {
-			const preferred = navigator.languages
-				.map((language) => language.split('-')[0].toLowerCase())
-				.find((language) => isLocale(language) && language !== 'en');
-			if (preferred && isLocale(preferred)) suggestion = preferred;
+			// Only the first language: a later one is a fallback the visitor can also read, not a request.
+			const preferred = navigator.languages[0]?.split('-')[0].toLowerCase();
+			if (preferred && isLocale(preferred) && preferred !== 'en') suggestion = preferred;
 		}
 	});
 
