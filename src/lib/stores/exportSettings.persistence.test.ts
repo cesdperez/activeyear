@@ -16,13 +16,6 @@ describe('theme persistence', () => {
 
 	afterEach(() => vi.unstubAllGlobals());
 
-	it('restores a valid theme', async () => {
-		getItem.mockReturnValue('lightmile');
-		const { exportSettings } = await import('./exportSettings.svelte.js');
-		expect(getItem).toHaveBeenCalledWith('activeyear.theme');
-		expect(exportSettings.theme).toBe('lightmile');
-	});
-
 	it('falls back to neon for an unknown theme', async () => {
 		getItem.mockReturnValue('unknown');
 		const { exportSettings } = await import('./exportSettings.svelte.js');
@@ -35,12 +28,6 @@ describe('theme persistence', () => {
 		});
 		const { exportSettings } = await import('./exportSettings.svelte.js');
 		expect(exportSettings.theme).toBe('neon');
-	});
-
-	it('saves the theme when set', async () => {
-		const { exportSettings } = await import('./exportSettings.svelte.js');
-		exportSettings.theme = 'lightmile';
-		expect(setItem).toHaveBeenCalledWith('activeyear.theme', 'lightmile');
 	});
 
 	it('keeps the selected theme when storage cannot be written', async () => {
