@@ -28,6 +28,7 @@
 	function keepSectionHeadingVisible(event: FocusEvent) {
 		const control = event.target;
 		if (!(control instanceof HTMLElement) || !control.closest('[data-section-lead]')) return;
+		if (!control.matches(':focus-visible')) return;
 		const heading = control.closest('section')?.querySelector('h2');
 		if (!heading) return;
 

@@ -333,6 +333,20 @@ test('Back to start stays in view at the bottom of the dashboard', async ({ page
 	await expect(page.getByRole('button', { name: 'Back to start' })).toBeInViewport();
 });
 
+test('clicking the sport metric below Back to start selects it', async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await openDemo(page);
+	const time = page
+		.getByTestId('sport-breakdown')
+		.getByRole('button', { name: 'Time', exact: true });
+	await time.evaluate((el) =>
+		window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 100)
+	);
+	await expect(time).toHaveAttribute('aria-pressed', 'false');
+	await time.click();
+	await expect(time).toHaveAttribute('aria-pressed', 'true');
+});
+
 for (const width of [390, 1440]) {
 	test(`section headings clear Back to start on focus at ${width}px`, async ({ page }) => {
 		await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
@@ -352,6 +366,7 @@ for (const width of [390, 1440]) {
 			await control.evaluate((el) =>
 				window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 50)
 			);
+			await page.keyboard.press('Tab');
 			await control.focus();
 			await expect
 				.poll(async () => {
@@ -379,6 +394,7 @@ for (const width of [390, 1440]) {
 		await control.evaluate((el) =>
 			window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 50)
 		);
+		await page.keyboard.press('Tab');
 		await control.focus();
 		await expect
 			.poll(async () => {
