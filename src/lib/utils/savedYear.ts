@@ -1,4 +1,4 @@
-import { MESSAGES } from '#lib/i18n/messages/index.js';
+import { messages } from '#lib/i18n/messages/index.js';
 import type { Locale } from '#lib/types/index.js';
 import { SAVED_YEAR_VERSION } from '#lib/constants/savedYear.js';
 import { ACTIVITY_TYPES } from '#lib/constants/sports.js';
@@ -125,14 +125,14 @@ export function parseSavedYear(
 export function savedYearErrorMessage(error: SavedYearError, locale: Locale = 'en'): string {
 	switch (error.type) {
 		case 'garmin-data-export':
-			return MESSAGES[locale].upload.garminDataExport;
+			return messages(locale).upload.garminDataExport;
 		case 'unsupported-version':
-			return MESSAGES[locale].upload.unsupportedVersion;
+			return messages(locale).upload.unsupportedVersion;
 		case 'wrong-year':
 			return typeof error.year === 'number' && Number.isFinite(error.year)
-				? MESSAGES[locale].upload.wrongYear(error.year, error.expected)
-				: MESSAGES[locale].upload.invalidSaved;
+				? messages(locale).upload.wrongYear(error.year, error.expected)
+				: messages(locale).upload.invalidSaved;
 		default:
-			return MESSAGES[locale].upload.invalidSaved;
+			return messages(locale).upload.invalidSaved;
 	}
 }

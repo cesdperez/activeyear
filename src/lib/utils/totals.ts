@@ -1,5 +1,5 @@
 import type { Locale, SummaryMetric, Unit, YearStats } from '#lib/types/index.js';
-import { MESSAGES } from '#lib/i18n/messages/index.js';
+import { messages } from '#lib/i18n/messages/index.js';
 import {
 	formatCalories,
 	formatDistance,
@@ -34,7 +34,7 @@ export interface ValuePart {
 }
 
 export function totalStats(locale: Locale, stats: YearStats, unit: Unit): TotalStat[] {
-	const labels = MESSAGES[locale].dashboard;
+	const labels = messages(locale).dashboard;
 	const stat = (
 		id: SummaryMetric,
 		label: string,

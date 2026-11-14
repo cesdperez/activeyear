@@ -1,4 +1,4 @@
-import { MESSAGES } from './messages/index.js';
+import { messages } from './messages/index.js';
 import { page } from '$app/state';
 import { localeFromParam } from './locale.js';
 
@@ -7,6 +7,6 @@ export const i18n = {
 		return localeFromParam(page.params.lang);
 	},
 	get m() {
-		return MESSAGES[this.locale];
+		return messages(this.locale);
 	}
 };

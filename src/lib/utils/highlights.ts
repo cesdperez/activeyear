@@ -1,7 +1,7 @@
 import { HIGHLIGHTS_LIMIT } from '#lib/constants/export.js';
 import { HIGHLIGHT_PRESETS } from '#lib/constants/highlights.js';
 import { INTL_LOCALES, LOCALES } from '#lib/constants/locales.js';
-import { MESSAGES } from '#lib/i18n/messages/index.js';
+import { SPORT_NAMES } from '#lib/i18n/messages/sports.js';
 import type { Activity, ActivityType, HighlightPreset } from '#lib/types/index.js';
 
 const byDate = (a: Activity, b: Activity) => a.date.getTime() - b.date.getTime();
@@ -66,8 +66,8 @@ export function activitySearchText(activity: Activity): string {
 			? `${Math.round(activity.distance)} km ${Math.round(activity.distance / 1.609344)} mi ${activity.distance.toFixed(1)} km ${activity.distance.toFixed(1)}km ${(activity.distance / 1.609344).toFixed(1)} mi ${(activity.distance / 1.609344).toFixed(1)}mi`
 			: '';
 	return normalizeSearch(
-		`${activity.title} ${Object.values(MESSAGES)
-			.map((messages) => messages.common.sports[activity.type])
+		`${activity.title} ${Object.values(SPORT_NAMES)
+			.map((sports) => sports[activity.type])
 			.join(' ')} ${months.join(' ')} ${date.getDate()} ${isoDate} ${distance}`
 	);
 }

@@ -1,14 +1,14 @@
 import type { Activity, Locale, Unit } from '#lib/types/index.js';
 import { INTL_LOCALES } from '#lib/constants/locales.js';
-import { MESSAGES } from '#lib/i18n/messages/index.js';
+import { messages } from '#lib/i18n/messages/index.js';
 import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '#lib/constants/time.js';
 import { KM_TO_MILES, METERS_TO_FEET } from '#lib/constants/units.js';
 
 export function activityTitle(locale: Locale, activity: Activity): string {
 	return (
 		activity.title ||
-		MESSAGES[locale].common.sports[activity.type] ||
-		MESSAGES[locale].export.activity
+		messages(locale).common.sports[activity.type] ||
+		messages(locale).export.activity
 	);
 }
 
@@ -147,7 +147,7 @@ export function calculateEarthLaps(distanceKm: number): number {
  */
 export function formatEarthLaps(locale: Locale, distanceKm: number): string {
 	const laps = calculateEarthLaps(distanceKm);
-	const common = MESSAGES[locale].common;
+	const common = messages(locale).common;
 	if (laps < 1.0) return common.earthPartial(formatShare(locale, laps * 100, 1));
 	return common.earthLaps(fixed(locale, laps, 2));
 }
@@ -164,7 +164,7 @@ export function calculateEverests(elevationM: number): number {
  */
 export function formatEverests(locale: Locale, elevationM: number): string {
 	const everests = calculateEverests(elevationM);
-	const common = MESSAGES[locale].common;
+	const common = messages(locale).common;
 	if (everests < 1.0) return common.everestPartial(formatShare(locale, everests * 100, 0));
 	return common.everestMultiple(fixed(locale, everests, 1));
 }
@@ -181,12 +181,12 @@ export function calculatePizzaSlices(calories: number): number {
  */
 export function formatPizzaSlices(locale: Locale, calories: number): string {
 	const slices = calculatePizzaSlices(calories);
-	if (slices === 0 && calories > 0) return MESSAGES[locale].common.lessPizza;
-	return `${formatCount(locale, slices)} ${MESSAGES[locale].common.pizza(slices)}`;
+	if (slices === 0 && calories > 0) return messages(locale).common.lessPizza;
+	return `${formatCount(locale, slices)} ${messages(locale).common.pizza(slices)}`;
 }
 
 export function formatActivityCount(locale: Locale, count: number, type: string): string {
-	const nouns = MESSAGES[locale].common.nouns;
+	const nouns = messages(locale).common.nouns;
 	const noun = nouns[type.toLowerCase() as keyof typeof nouns];
 	return `${formatCount(locale, count)} ${noun ? noun(count) : count === 1 ? type : `${type}s`}`;
 }
@@ -207,7 +207,7 @@ export function formatLotRMarathons(locale: Locale, seconds: number): string {
 	const marathons = calculateLotRMarathons(seconds);
 	const shown =
 		marathons > 0 && marathons < 0.05 ? `<${fixed(locale, 0.1, 1)}` : fixed(locale, marathons, 1);
-	return `${shown} ${MESSAGES[locale].common.lotr}`;
+	return `${shown} ${messages(locale).common.lotr}`;
 }
 
 export function formatDayMonth(locale: Locale, date: Date): string {

@@ -6,7 +6,7 @@
 	import { LOCALES, LOCALE_NAMES, LOCALE_STORAGE_KEY } from '#lib/constants/locales.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { isLocale } from '#lib/i18n/locale.js';
-	import { MESSAGES } from '#lib/i18n/messages/index.js';
+	import { PICKERS } from '#lib/i18n/messages/picker.js';
 	import { uploadStore } from '#lib/stores/upload.svelte.js';
 	import type { Locale } from '#lib/types/index.js';
 
@@ -141,13 +141,12 @@
 					if (suggestion) save(suggestion);
 					suggestion = null;
 				}}
-				class="flex min-h-11 items-center py-1 pl-4 leading-tight"
-				>{MESSAGES[suggestion].picker.prompt}</a
+				class="flex min-h-11 items-center py-1 pl-4 leading-tight">{PICKERS[suggestion].prompt}</a
 			>
 			<button
 				class="flex h-11 w-11 shrink-0 items-center justify-center"
 				lang={suggestion}
-				aria-label={MESSAGES[suggestion].picker.dismiss}
+				aria-label={PICKERS[suggestion].dismiss}
 				onclick={() => {
 					save('en');
 					suggestion = null;

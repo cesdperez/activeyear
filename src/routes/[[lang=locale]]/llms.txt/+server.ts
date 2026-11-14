@@ -5,16 +5,16 @@ import { faqItems } from '#lib/data/faq.js';
 import { garminExportNote, garminExportSteps } from '#lib/data/garminExport.js';
 import { stravaExportNote, stravaExportSteps } from '#lib/data/stravaExport.js';
 import { localeFromParam, localePath } from '#lib/i18n/locale.js';
-import { MESSAGES } from '#lib/i18n/messages/index.js';
+import { loadMessages } from '#lib/i18n/messages/index.js';
 import type { ExportStep } from '#lib/types/index.js';
 import type { RequestHandler } from './$types.js';
 
 export const prerender = true;
 export const entries = () => [{}, ...ROUTED_LOCALES.map((lang) => ({ lang }))];
 
-export const GET: RequestHandler = ({ params }) => {
+export const GET: RequestHandler = async ({ params }) => {
 	const locale = localeFromParam(params.lang);
-	const { description, llms } = MESSAGES[locale].meta;
+	const { description, llms } = (await loadMessages(locale)).meta;
 	const url = locale === DEFAULT_LOCALE ? SITE_URL : `${SITE_URL}${localePath(locale)}`;
 	const numbered = (steps: ExportStep[]) =>
 		steps.map(({ text, link }, i) => `${i + 1}. ${link ? `${text} ${link.href}` : text}`);

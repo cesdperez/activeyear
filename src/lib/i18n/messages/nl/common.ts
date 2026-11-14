@@ -1,23 +1,9 @@
+import { sports } from './sports.js';
 import { plural } from '#lib/i18n/plural.js';
 import type { common as en } from '../en/common.js';
 export const common: typeof en = {
 	otherSports: 'Overige sporten',
-	sports: {
-		running: 'Hardlopen',
-		cycling: 'Fietsen',
-		swimming: 'Zwemmen',
-		walking: 'Wandelen',
-		hiking: 'Trektochten',
-		strength: 'Krachttraining',
-		yoga: 'Yoga',
-		paddling: 'Peddelen',
-		rowing: 'Roeien',
-		cardio: 'Cardio',
-		winter: 'Wintersport',
-		racket: 'Racketsport',
-		climbing: 'Klimmen',
-		other: 'Overig'
-	},
+	sports,
 	nouns: {
 		activity: (count: number) => plural('nl', count, { one: 'activiteit', other: 'activiteiten' }),
 		swim: (count: number) => plural('nl', count, { one: 'zwemsessie', other: 'zwemsessies' }),

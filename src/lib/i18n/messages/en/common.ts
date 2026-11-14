@@ -1,22 +1,8 @@
+import { sports } from './sports.js';
 import { plural } from '#lib/i18n/plural.js';
 export const common = {
 	otherSports: 'Other sports',
-	sports: {
-		running: 'Running',
-		cycling: 'Cycling',
-		swimming: 'Swimming',
-		walking: 'Walking',
-		hiking: 'Hiking',
-		strength: 'Strength',
-		yoga: 'Yoga',
-		paddling: 'Paddling',
-		rowing: 'Rowing',
-		cardio: 'Cardio',
-		winter: 'Winter sports',
-		racket: 'Racket sports',
-		climbing: 'Climbing',
-		other: 'Other'
-	},
+	sports,
 	nouns: {
 		activity: (count: number) => plural('en', count, { one: 'activity', other: 'activities' }),
 		swim: (count: number) => plural('en', count, { one: 'swim', other: 'swims' }),

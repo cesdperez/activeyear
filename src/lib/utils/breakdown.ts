@@ -1,5 +1,5 @@
 import type { Locale } from '#lib/types/index.js';
-import { MESSAGES } from '#lib/i18n/messages/index.js';
+import { messages } from '#lib/i18n/messages/index.js';
 import type {
 	ActivityType,
 	BreakdownMetric,
@@ -124,17 +124,17 @@ export function donutCentre(
 		const hours = Math.floor(total / ONE_HOUR_IN_SECONDS);
 		const seconds = secondsUnderAMinute(total);
 		if (seconds !== undefined) {
-			return { value: seconds.toString(), label: MESSAGES[locale].common.nouns.second(seconds) };
+			return { value: seconds.toString(), label: messages(locale).common.nouns.second(seconds) };
 		}
 		if (hours === 0) {
 			const minutes = Math.floor(total / ONE_MINUTE_IN_SECONDS);
-			return { value: minutes.toString(), label: MESSAGES[locale].common.nouns.minute(minutes) };
+			return { value: minutes.toString(), label: messages(locale).common.nouns.minute(minutes) };
 		}
-		return { value: formatCount(locale, hours), label: MESSAGES[locale].common.nouns.hour(hours) };
+		return { value: formatCount(locale, hours), label: messages(locale).common.nouns.hour(hours) };
 	}
 	return {
 		value: formatCount(locale, total),
-		label: MESSAGES[locale].common.nouns.activityLabel(total)
+		label: messages(locale).common.nouns.activityLabel(total)
 	};
 }
 

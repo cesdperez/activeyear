@@ -1,4 +1,4 @@
-import { MESSAGES } from '#lib/i18n/messages/index.js';
+import { messages } from '#lib/i18n/messages/index.js';
 import { savedYearErrorMessage } from './savedYear.js';
 import type {
 	Locale,
@@ -43,14 +43,14 @@ export function skippedRowsMessage(
 	{ count, reason, exampleRow }: SkippedRows,
 	locale: Locale = 'en'
 ): string {
-	const m = MESSAGES[locale].upload;
+	const m = messages(locale).upload;
 	return count === 1
 		? m.singleRow(exampleRow, m[reason])
 		: m.multipleRows(formatCount(locale, count), exampleRow, m[reason]);
 }
 
 export function yearsMessage(year: number, yearsInFile: number[], locale: Locale = 'en'): string {
-	const m = MESSAGES[locale].upload;
+	const m = messages(locale).upload;
 	if (yearsInFile.length === 0) return m.noActivities(year);
 	const first = yearsInFile[0];
 	const last = yearsInFile[yearsInFile.length - 1];
@@ -61,16 +61,16 @@ export function unusableFileMessage(error: UnusableFileError, locale: Locale = '
 	if (error.type === 'rows-rejected') return skippedRowsMessage(error.skipped, locale);
 	const years = yearsMessage(error.year, error.yearsInFile, locale);
 	const skipped = error.skipped ? skippedRowsMessage(error.skipped, locale) : null;
-	const exportAgain = MESSAGES[locale].upload.exportAgain(error.year);
+	const exportAgain = messages(locale).upload.exportAgain(error.year);
 	return [years, skipped, exportAgain].filter(Boolean).join(' ');
 }
 
 export function skippedRowsNotice(count: number, locale: Locale = 'en'): string {
-	return MESSAGES[locale].upload.skipped(count, formatCount(locale, count));
+	return messages(locale).upload.skipped(count, formatCount(locale, count));
 }
 
 export function uploadErrorMessage(error: UploadError, locale: Locale): string {
-	const m = MESSAGES[locale].upload;
+	const m = messages(locale).upload;
 	switch (error.type) {
 		case 'invalid-extension':
 			return m.invalidExtension;

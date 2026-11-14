@@ -18,6 +18,7 @@ export default defineConfig({
 	],
 	server: { port: DEV_PORT, strictPort: true },
 	test: {
-		include: ['src/**/*.test.ts', 'scripts/**/*.test.ts']
+		include: ['src/**/*.test.ts', 'scripts/**/*.test.ts'],
+		setupFiles: ['src/lib/i18n/messages/loadAll.test-setup.ts']
 	}
 });
