@@ -318,8 +318,7 @@ test('Upload different file button is named without its decorative glyph', async
 });
 
 test('uploaded year shows progress so far', async ({ page }) => {
-	await page.clock.setFixedTime(new Date(TARGET_YEAR, 7, 15));
-	await page.goto('/');
+	await gotoUpload(page, '/', new Date(TARGET_YEAR, 7, 15));
 	await page.locator('input[type="file"]').setInputFiles({
 		name: 'activities.csv',
 		mimeType: 'text/csv',

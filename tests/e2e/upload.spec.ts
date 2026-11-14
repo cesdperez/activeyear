@@ -125,7 +125,7 @@ test.describe('Upload Flow', () => {
 	});
 
 	test('shows instructions for getting data', async ({ page }) => {
-		await page.goto('/');
+		await gotoUpload(page);
 
 		await expect(page.getByText('How to get your data')).toBeVisible();
 		await expect(page.getByText('connect.garmin.com')).toBeVisible();

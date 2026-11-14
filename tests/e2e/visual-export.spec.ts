@@ -248,8 +248,7 @@ test.describe('Export Visual Fidelity', () => {
 	}
 
 	test('so far summary card snapshot', async ({ page }) => {
-		await page.clock.setFixedTime(new Date(TARGET_YEAR, 7, 15));
-		await page.goto('/');
+		await gotoUpload(page, '/', new Date(TARGET_YEAR, 7, 15));
 		await page.locator('input[type="file"]').setInputFiles({
 			name: 'activities.csv',
 			mimeType: 'text/csv',
