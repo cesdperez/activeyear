@@ -240,7 +240,7 @@ test.describe('Export Visual Fidelity', () => {
 				.locator('input[type="file"]')
 				.first()
 				.setInputFiles(join(__dirname, 'fixtures', 'garmin-heavy.csv'));
-			await chooseMetric(page);
+			await chooseMetric(page, 'Metrisch');
 			await expect(page.locator('#export-card')).toBeVisible();
 			await navigateToSlide(page, cardIndex);
 			expect(await captureSpecificCardDownload(page, cardIndex)).toMatchSnapshot(

@@ -8,7 +8,7 @@ import { gotoUpload, SAMPLE_CSV } from './helpers.js';
 test('Spanish upload and export', async ({ page }) => {
 	await gotoUpload(page, '/es/');
 	await page.locator('input[type="file"]').setInputFiles(SAMPLE_CSV);
-	await chooseMetric(page);
+	await chooseMetric(page, 'Métrico');
 	await expect(page.getByRole('heading', { name: `Tu ${TARGET_YEAR}` })).toBeVisible();
 	await expect(page.getByRole('heading', { name: 'Exportar' })).toBeVisible();
 	const card = page.locator('#export-card');

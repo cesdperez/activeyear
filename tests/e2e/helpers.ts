@@ -32,8 +32,8 @@ export async function gotoUpload(
 	await expect(page.locator(`#${UPLOAD_ZONE_ID}`)).not.toHaveAttribute('aria-disabled', 'true');
 }
 
-export async function chooseMetric(page: Page): Promise<void> {
-	await page.locator('.upload-zone').getByRole('group').getByRole('button').first().click();
+export async function chooseMetric(page: Page, metric = 'Metric'): Promise<void> {
+	await page.locator('.upload-zone').getByRole('button', { name: metric, exact: true }).click();
 }
 
 export async function uploadSample(page: Page): Promise<void> {

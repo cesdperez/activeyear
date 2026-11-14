@@ -44,7 +44,11 @@
 	$effect(() => {
 		if (page.state.dashboard) return;
 		untrack(() => {
-			if (uploadStore.status === 'ready' && !switchingLanguage) void startOver();
+			if (
+				(uploadStore.status === 'ready' || uploadStore.status === 'garmin-units') &&
+				!switchingLanguage
+			)
+				void startOver();
 		});
 	});
 </script>

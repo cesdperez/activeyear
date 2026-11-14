@@ -116,6 +116,37 @@ test.describe('Upload Flow', () => {
 		await expect(page.getByText(/2\s+activities across/)).toBeVisible();
 	});
 
+	test('browser Back clears a pending dashboard upload', async ({ page }) => {
+		await uploadCsv(page, garminCsv([{ title: 'Morning Run' }]));
+		await page.locator('main').evaluate(
+			(main, csv) => {
+				const dataTransfer = new DataTransfer();
+				dataTransfer.items.add(new File([csv], 'activities.csv', { type: 'text/csv' }));
+				main.dispatchEvent(
+					new DragEvent('drop', { dataTransfer, bubbles: true, cancelable: true })
+				);
+			},
+			garminCsv([{ title: 'Evening Run' }])
+		);
+		const group = page.getByRole('group', { name: 'Which units does your Garmin account use?' });
+		await expect(group).toBeVisible();
+		await page.goBack();
+		await expect(page.locator(`#${UPLOAD_ZONE_ID}`)).toBeVisible();
+		await expect(group).toHaveCount(0);
+	});
+
+	test('can replace a pending Garmin file with a Strava file', async ({ page }) => {
+		await gotoUpload(page);
+		await page.locator('input[type="file"]').setInputFiles(SAMPLE_CSV);
+		const group = page.getByRole('group', { name: 'Which units does your Garmin account use?' });
+		await expect(group).toBeVisible();
+		const chooser = page.waitForEvent('filechooser');
+		await page.getByRole('button', { name: 'Upload a different file' }).click();
+		await (await chooser).setFiles(STRAVA_CSV);
+		await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible();
+		await expect(group).toHaveCount(0);
+	});
+
 	test('asks Garmin units after upload and focuses Metric', async ({ page }) => {
 		await gotoUpload(page);
 		const group = page.getByRole('group', { name: 'Which units does your Garmin account use?' });
