@@ -1,5 +1,7 @@
 import type { Theme } from '#lib/types/index.js';
 
+export const THEME_STORAGE_KEY = 'activeyear.theme';
+
 export const THEME_OPTIONS = [
 	{ value: 'neon', label: 'Neon' },
 	{ value: 'minimalist', label: 'Minimal' },

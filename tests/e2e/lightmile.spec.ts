@@ -3,6 +3,17 @@ import { uploadSample } from './helpers.js';
 
 test.use({ viewport: { width: 390, height: 844 } });
 
+test('selected theme persists across reloads', async ({ page }) => {
+	await uploadSample(page);
+	await page.getByRole('button', { name: /Lightmile Paper/ }).click();
+	await page.reload();
+	await uploadSample(page);
+	await expect(page.getByRole('button', { name: /Lightmile Paper/ })).toHaveAttribute(
+		'aria-pressed',
+		'true'
+	);
+});
+
 test('export branding follows the selected theme', async ({ page }) => {
 	await uploadSample(page);
 	const card = page.locator('#export-card');
