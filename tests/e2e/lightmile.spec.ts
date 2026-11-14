@@ -107,21 +107,37 @@ test('focus leaving keeps the hovered panel open', async ({ page }) => {
 	await expect(help).toHaveAttribute('aria-expanded', 'true');
 });
 
-test('the help button is a 24px target clear of the theme options', async ({ page }) => {
+test('the help button sits in the Lightmile tile corner, clear of its text', async ({ page }) => {
 	await uploadSample(page);
-	const help = await page.getByRole('button', { name: 'About Lightmile' }).boundingBox();
-	expect(help!.width).toBeGreaterThanOrEqual(24);
-	expect(help!.height).toBeGreaterThanOrEqual(24);
-	const options = await page
-		.locator('[aria-labelledby="theme-label"] button.toggle')
-		.evaluateAll((elements) => elements.map((el) => el.getBoundingClientRect().toJSON()));
-	for (const { x, y, width, height } of options)
+	const helpButton = page.getByRole('button', { name: 'About Lightmile' });
+	const tileButton = page.getByRole('button', { name: /Lightmile Paper/ });
+	expect(await helpButton.evaluate((el) => el.parentElement?.closest('button'))).toBeNull();
+	const help = (await helpButton.boundingBox())!;
+	const tile = (await tileButton.boundingBox())!;
+	expect(help.width).toBeGreaterThanOrEqual(24);
+	expect(help.height).toBeGreaterThanOrEqual(24);
+	expect(help.x).toBeGreaterThanOrEqual(tile.x);
+	expect(help.y).toBeGreaterThanOrEqual(tile.y);
+	expect(help.x + help.width).toBeLessThanOrEqual(tile.x + tile.width);
+	expect(help.y + help.height).toBeLessThanOrEqual(tile.y + tile.height);
+	const text = await tileButton.locator('span').evaluateAll((spans) =>
+		spans.map((span) => {
+			const range = document.createRange();
+			range.selectNodeContents(span);
+			return range.getBoundingClientRect().toJSON();
+		})
+	);
+	for (const { x, y, width, height } of text)
 		expect(
-			help!.x < x + width &&
-				help!.x + help!.width > x &&
-				help!.y < y + height &&
-				help!.y + help!.height > y
+			help.x < x + width &&
+				help.x + help.width > x &&
+				help.y < y + height &&
+				help.y + help.height > y
 		).toBe(false);
+	await helpButton.click();
+	await expect(tileButton).toHaveAttribute('aria-pressed', 'false');
+	await tileButton.click({ position: { x: 10, y: tile.height - 10 } });
+	await expect(tileButton).toHaveAttribute('aria-pressed', 'true');
 });
 
 test('clicking the help button after hovering keeps it open', async ({ page }) => {

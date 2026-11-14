@@ -209,18 +209,23 @@
 				<span id="theme-label" class="field-label">{i18n.m.export.theme}</span>
 				<div role="group" aria-labelledby="theme-label" class="theme-grid">
 					{#each THEME_OPTIONS as theme (theme.value)}
-						<button
-							onclick={() => setTheme(theme.value)}
-							aria-pressed={exportSettings.theme === theme.value}
-							disabled={exportLock.isExporting}
-							class="toggle px-3 py-3 text-center disabled:cursor-not-allowed disabled:opacity-50"
-						>
-							<span class="block text-sm">{theme.label}</span>
-							<span class="theme-description block text-xs">{descriptions[theme.value]}</span>
-						</button>
+						{@const help = theme.value === 'lightmile'}
+						<div class="theme-cell">
+							<button
+								onclick={() => setTheme(theme.value)}
+								aria-pressed={exportSettings.theme === theme.value}
+								disabled={exportLock.isExporting}
+								class="toggle py-3 text-center disabled:cursor-not-allowed disabled:opacity-50 {help
+									? 'px-8 pointer-coarse:px-11'
+									: 'px-3'}"
+							>
+								<span class="block text-sm">{theme.label}</span>
+								<span class="theme-description block text-xs">{descriptions[theme.value]}</span>
+							</button>
+							{#if help}<LightmileDisclosure />{/if}
+						</div>
 					{/each}
 				</div>
-				<LightmileDisclosure />
 			</div>
 
 			<div>
@@ -425,6 +430,16 @@
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		grid-auto-rows: 1fr;
 		gap: 0.5rem;
+	}
+
+	.theme-cell {
+		position: relative;
+		display: grid;
+	}
+
+	/* The help icon sits on the tile, so it takes the tile's text colour once the tile is filled. */
+	.theme-cell:has(> .toggle[aria-pressed='true']) :global(.lightmile-help) {
+		color: var(--color-on-accent);
 	}
 
 	.theme-description {

@@ -71,11 +71,13 @@
 
 <svelte:window onkeydown={keydown} onpointerdown={pointerDownOutside} />
 
+<!-- A sibling of the theme button, laid over its corner: a button inside a button is invalid HTML. -->
 <div class="lightmile-disclosure">
 	<button
 		type="button"
 		class="lightmile-help"
 		bind:this={button}
+		aria-label={i18n.m.export.aboutLightmile}
 		aria-expanded={open}
 		aria-controls="lightmile-info"
 		onpointerenter={enter}
@@ -90,7 +92,6 @@
 		onclick={toggle}
 	>
 		<Question class="h-4 w-4" weight="bold" aria-hidden="true" />
-		{i18n.m.export.aboutLightmile}
 	</button>
 	<div
 		id="lightmile-info"
@@ -110,26 +111,27 @@
 </div>
 
 <style>
+	/* Positioned against the theme tile's cell, so the button sits in the tile and the panel under it. */
 	.lightmile-disclosure {
-		position: relative;
-		display: flex;
-		justify-content: flex-end;
-		margin-top: 0.25rem;
+		display: contents;
 	}
 	.lightmile-help {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.375rem;
-		min-height: 2rem;
-		padding: 0 0.25rem;
+		position: absolute;
+		top: 0.25rem;
+		right: 0.25rem;
+		display: grid;
+		place-items: center;
+		width: 1.5rem;
+		height: 1.5rem;
 		color: var(--color-text-dim);
-		font-size: 0.8125rem;
-		font-weight: 500;
 		border-radius: var(--radius-control);
 	}
 	@media (pointer: coarse) {
 		.lightmile-help {
-			min-height: 2.75rem;
+			top: 0;
+			right: 0;
+			width: 2.75rem;
+			height: 2.75rem;
 		}
 	}
 	@media (hover: hover) {
@@ -146,6 +148,7 @@
 		top: 100%;
 		right: 0;
 		width: min(18rem, 85vw);
+		margin-top: 0.25rem;
 		padding: 0.75rem;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-panel);
