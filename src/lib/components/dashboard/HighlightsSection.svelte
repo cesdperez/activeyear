@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { tick } from 'svelte';
+	import { tick, untrack } from 'svelte';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { Plus, Check } from 'phosphor-svelte';
 	import { highlightsStore } from '#lib/stores/highlights.svelte.js';
 	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
 	import { exportLock } from '#lib/stores/exportLock.svelte.js';
+	import { hideFloatingSupport } from '#lib/stores/supportVisibility.svelte.js';
 	import { HIGHLIGHTS_LIMIT } from '#lib/constants/export.js';
 	import {
 		activityTitle,
@@ -46,6 +47,10 @@
 	let searchAnnouncement = $derived(
 		[resultsSummary, highlightsStore.canAddHighlight ? '' : limitMessage].filter(Boolean).join(' ')
 	);
+
+	$effect(() => {
+		if (open && query.trim()) return untrack(hideFloatingSupport);
+	});
 
 	function resultDetails(activity: Activity): string {
 		return [

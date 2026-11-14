@@ -1,5 +1,13 @@
 export const supportVisibility = $state({ count: 0 });
 
+/** Hides the floating support link until the returned cleanup is called. */
+export function hideFloatingSupport(): () => void {
+	supportVisibility.count++;
+	return () => {
+		supportVisibility.count--;
+	};
+}
+
 /** Hides the floating support link while this inline one is on screen, so only one shows. */
 export function observeSupport(element: Element) {
 	let visible = false;

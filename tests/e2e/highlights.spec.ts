@@ -96,6 +96,20 @@ function highlightsSection(page: Page) {
 		.filter({ has: page.getByRole('heading', { name: 'Highlights', exact: true }) });
 }
 
+test('floating support hides while the search dropdown is open', async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await uploadCsv(page, twelveTempos());
+	const section = highlightsSection(page);
+	const search = section.getByRole('searchbox', { name: 'Add an activity' });
+	await search.scrollIntoViewIfNeeded();
+	const support = page.locator('a.fixed').filter({ hasText: 'Buy me a gel' });
+	await expect(support).toBeVisible();
+	await search.fill('tempo');
+	await expect(support).toBeHidden();
+	await section.getByRole('button', { name: 'Done', exact: true }).click();
+	await expect(support).toBeVisible();
+});
+
 test('search shows how many activities matched and separates each figure', async ({ page }) => {
 	await uploadCsv(page, twelveTempos());
 	const section = highlightsSection(page);
