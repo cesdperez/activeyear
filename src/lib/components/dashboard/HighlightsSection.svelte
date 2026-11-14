@@ -107,6 +107,7 @@
 				>
 			{/each}
 		</div>
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
 			class="relative"
 			bind:this={searchWrapper}
@@ -114,6 +115,13 @@
 				// WebKit reports no related target when a click moves focus from the input to a button.
 				if (event.relatedTarget instanceof Element && !searchWrapper?.contains(event.relatedTarget))
 					open = false;
+			}}
+			onkeydown={(event) => {
+				if (event.key === 'Escape') {
+					query = '';
+					announcement = '';
+					if (document.activeElement !== searchInput) searchInput?.focus();
+				}
 			}}
 		>
 			<div class="relative">
@@ -133,12 +141,6 @@
 					oninput={() => {
 						open = true;
 						announcement = '';
-					}}
-					onkeydown={(event) => {
-						if (event.key === 'Escape') {
-							query = '';
-							announcement = '';
-						}
 					}}
 					disabled={exportLock.isExporting}
 					class="h-11 w-full rounded-[var(--radius-control)] border border-[var(--color-input-border)] bg-[var(--color-surface-elevated)] px-4 py-2 text-base text-[var(--color-text-primary)] focus-visible:border-[var(--color-accent)] disabled:opacity-50 pointer-coarse:h-[3.125rem]"

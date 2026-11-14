@@ -129,6 +129,40 @@ test('search dropdown keeps picks in place and closes on outside click', async (
 	await expect(section.getByRole('button', { name: 'Done', exact: true })).toBeVisible();
 });
 
+test('Escape from a search result clears the search and restores focus', async ({
+	page,
+	browserName
+}) => {
+	await uploadCsv(page, twelveTempos());
+	const section = highlightsSection(page);
+	const search = section.getByRole('searchbox', { name: 'Add an activity' });
+	const done = section.getByRole('button', { name: 'Done', exact: true });
+	await search.fill('tempo 12');
+	await search.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
+	await expect(section.locator('li button').filter({ hasText: 'Tempo 12' })).toBeFocused();
+	await page.keyboard.press('Escape');
+	await expect(search).toHaveValue('');
+	await expect(done).toBeHidden();
+	await expect(search).toBeFocused();
+});
+
+test('keyboard focus outside closes search without clearing it', async ({ page, browserName }) => {
+	await uploadCsv(page, twelveTempos());
+	const section = highlightsSection(page);
+	const search = section.getByRole('searchbox', { name: 'Add an activity' });
+	const done = section.getByRole('button', { name: 'Done', exact: true });
+	await search.fill('tempo');
+	await expect(done).toBeVisible();
+	await search.press(browserName === 'webkit' ? 'Alt+Shift+Tab' : 'Shift+Tab');
+	await expect(
+		section.getByRole('group', { name: 'Highlight presets' }).getByRole('button').last()
+	).toBeFocused();
+	await expect(done).toBeHidden();
+	await expect(search).toHaveValue('tempo');
+	await search.focus();
+	await expect(done).toBeVisible();
+});
+
 test('done clears search and the picked counter follows selections', async ({ page }) => {
 	await uploadCsv(page, twelveTempos());
 	const section = highlightsSection(page);
