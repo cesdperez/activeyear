@@ -2,11 +2,12 @@
 	import { ArrowLeft } from 'phosphor-svelte';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { exportLock } from '#lib/stores/exportLock.svelte.js';
+	import { BACK_TO_START_CLEARANCE_PX } from '#lib/constants/dom.js';
 	import { leaveDashboard } from './startOver.js';
 
 	$effect(() => {
 		// Keyboard focus scrolls controls clear of this fixed button instead of under it.
-		document.documentElement.style.scrollPaddingTop = '5rem';
+		document.documentElement.style.scrollPaddingTop = `${BACK_TO_START_CLEARANCE_PX}px`;
 		return () => document.documentElement.style.removeProperty('scroll-padding-top');
 	});
 </script>

@@ -6,6 +6,7 @@
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { ArrowDown, Warning } from 'phosphor-svelte';
 	import Logotype from '#lib/components/Logotype.svelte';
+	import { BACK_TO_START_CLEARANCE_PX } from '#lib/constants/dom.js';
 
 	let {
 		activityCount,
@@ -23,15 +24,12 @@
 		demo: boolean;
 	} = $props();
 
-	// Clears the fixed Back to start control at the top-left.
-	const JUMP_GAP_PX = 80;
-
 	function jumpToExport() {
 		const heading = document.querySelector<HTMLElement>('#export-panel h2');
 		if (!heading) return;
 		heading.tabIndex = -1;
 		window.scrollTo({
-			top: heading.getBoundingClientRect().top + window.scrollY - JUMP_GAP_PX,
+			top: heading.getBoundingClientRect().top + window.scrollY - BACK_TO_START_CLEARANCE_PX,
 			behavior: prefersReducedMotion.current ? 'auto' : 'smooth'
 		});
 		heading.focus({ preventScroll: true });
