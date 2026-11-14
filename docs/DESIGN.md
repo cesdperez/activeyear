@@ -131,7 +131,7 @@ The shareable image. This is what users actually care about.
 
 - Show "Buy me a gel" under the Download button after a successful export, at the bottom of the dashboard after "Upload another file", and in the FAQ.
 - The export prompt is "Enjoyed your recap? ActiveYear is free and made by one person." The dashboard prompt is "Enjoying ActiveYear?".
-- Use an accent-coloured link with a lightning icon (`GelLink.svelte`), set inline so its text sits on the sentence's baseline.
+- Use an accent-coloured link that ends in a heart icon (`GelLink.svelte`), set inline so its text sits on the sentence's baseline.
 - A compact fixed link appears after the header scrolls away. It hides while another support link, the highlights section or the export panel is on screen, because it would cover their controls, and while an export runs. While it shows, the page has a bottom scroll padding so a focused control is never under it.
 - Keep it a plain link so the CSP does not need to allow third-party scripts.
 
