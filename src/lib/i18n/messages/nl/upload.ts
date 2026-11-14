@@ -1,9 +1,12 @@
 import { plural } from '#lib/i18n/plural.js';
 import type { upload as en } from '../en/upload.js';
 export const upload: typeof en = {
-	garminUnits: 'Eenheden in je Garmin-account',
+	garminUnits: 'Welke eenheden gebruikt je Garmin-account?',
+	garminUnitsHint:
+		'Garmin-bestanden vermelden dit niet. Kies daarom de eenheden waarin je account afstanden weergeeft.',
 	metric: 'Metrisch',
 	imperial: 'Imperiaal',
+	otherFile: 'Een ander bestand uploaden',
 	drop: 'Sleep je Garmin- of Strava-CSV hierheen',
 	browse: 'of klik om te bladeren',
 	saved: 'Je jaar al opgeslagen? Sleep het .json-bestand hierheen',

@@ -16,7 +16,7 @@ export const faq: typeof en = {
 		},
 		{
 			question: '¿Qué archivo necesito?',
-			answer: `El CSV de Activities de Garmin Connect o activities.csv de tu exportación de Strava. Si tu cuenta de Garmin usa unidades imperiales, elige ${upload.imperial} en la pantalla de carga.`
+			answer: `El CSV de Activities de Garmin Connect o activities.csv de tu exportación de Strava. Si subes un archivo de Garmin, después eliges si tu cuenta usa unidades ${upload.metric} o ${upload.imperial}.`
 		},
 		{
 			question: '¿Qué puedo compartir?',

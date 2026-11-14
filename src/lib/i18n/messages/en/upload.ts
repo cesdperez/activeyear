@@ -1,8 +1,10 @@
 import { plural } from '#lib/i18n/plural.js';
 export const upload = {
-	garminUnits: 'Units in your Garmin account',
+	garminUnits: 'Which units does your Garmin account use?',
+	garminUnitsHint: "Garmin files don't say, so pick the units your account shows distances in.",
 	metric: 'Metric',
 	imperial: 'Imperial',
+	otherFile: 'Upload a different file',
 	drop: 'Drop your Garmin or Strava CSV here',
 	browse: 'or click to browse',
 	saved: 'Saved your year before? Drop the .json file',

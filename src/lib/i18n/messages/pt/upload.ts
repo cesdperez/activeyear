@@ -1,9 +1,12 @@
 import { plural } from '#lib/i18n/plural.js';
 import type { upload as en } from '../en/upload.js';
 export const upload: typeof en = {
-	garminUnits: 'Unidades da sua conta Garmin',
+	garminUnits: 'Quais unidades sua conta Garmin usa?',
+	garminUnitsHint:
+		'Os arquivos Garmin não informam isso, então escolha as unidades em que sua conta mostra as distâncias.',
 	metric: 'Métrico',
 	imperial: 'Imperial',
+	otherFile: 'Enviar outro arquivo',
 	drop: 'Arraste seu CSV do Garmin ou Strava aqui',
 	browse: 'ou clique para procurar',
 	saved: 'Já salvou seu ano? Arraste o arquivo .json',
