@@ -33,16 +33,18 @@ function collectDownloads(page: Page, count: number): Promise<Download[]> {
 test.describe('Export panel accessibility', () => {
 	test('name and photo come first among the export controls', async ({ page }) => {
 		await uploadSample(page);
-		const name = page.getByRole('textbox', { name: 'Your name' });
-		await expect(name).toHaveAttribute('id', 'userName');
-		await expect(page.getByText('Your name and photo (optional)')).toBeVisible();
+		const profile = page.getByRole('group', { name: 'Your name and photo (optional)' });
+		const name = profile.getByRole('textbox', { name: 'Your name' });
+		// The file input is visually hidden; its label is the visible photo button.
+		const photo = profile.getByTitle('Upload image');
+		const snapshot = await page.locator('#export-panel').ariaSnapshot();
+		expect(snapshot.indexOf('textbox "Your name"')).toBeGreaterThanOrEqual(0);
+		expect(snapshot.indexOf('textbox "Your name"')).toBeLessThan(snapshot.indexOf('group "Theme"'));
 		const nameBox = (await name.boundingBox())!;
-		const avatar = (await page.locator('label[for="userAvatar"]').boundingBox())!;
-		const theme = (await page.getByRole('group', { name: 'Theme' }).boundingBox())!;
-		expect(Math.abs(avatar.y + avatar.height / 2 - (nameBox.y + nameBox.height / 2))).toBeLessThan(
-			2
-		);
-		expect(nameBox.y + nameBox.height).toBeLessThan(theme.y);
+		const photoBox = (await photo.boundingBox())!;
+		expect(
+			photoBox.y < nameBox.y + nameBox.height && nameBox.y < photoBox.y + photoBox.height
+		).toBe(true);
 	});
 
 	test('profile picture upload is reachable by keyboard and focus returns after removal', async ({

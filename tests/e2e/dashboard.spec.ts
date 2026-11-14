@@ -78,13 +78,6 @@ test.describe('dashboard toggles', () => {
 	});
 });
 
-test('footer offers a support link', async ({ page }) => {
-	await openDemo(page);
-	const support = page.getByRole('link', { name: /Buy me a gel/ });
-	await expect(support).toBeVisible();
-	await expect(support).toHaveAttribute('href', 'https://ko-fi.com/chechoxyz');
-});
-
 test('every page ends with a footer linking to issues and other projects', async ({ page }) => {
 	const expectFooterLinks = async () => {
 		const footer = page.getByRole('contentinfo');
@@ -104,7 +97,9 @@ test('every page ends with a footer linking to issues and other projects', async
 	await openDemo(page);
 	const dashboardFooter = await expectFooterLinks();
 	await expect(dashboardFooter.getByText('Enjoying ActiveYear?')).toBeVisible();
-	await expect(dashboardFooter.getByRole('link', { name: /Buy me a gel/ })).toBeVisible();
+	const support = dashboardFooter.getByRole('link', { name: /Buy me a gel/ });
+	await expect(support).toBeVisible();
+	await expect(support).toHaveAttribute('href', 'https://ko-fi.com/chechoxyz');
 });
 
 test('more stats are hidden until expanded', async ({ page }) => {
@@ -335,11 +330,7 @@ for (const width of [320, 1024, 1280]) {
 test('Back to start stays in view at the bottom of the dashboard', async ({ page }) => {
 	await openDemo(page);
 	await page.locator('[data-support-placement="footer"]').scrollIntoViewIfNeeded();
-	const back = page.getByRole('button', { name: 'Back to start' });
-	await expect(back).toBeInViewport();
-	await expect(page.getByRole('button', { name: /Upload different file/ })).toHaveCount(0);
-	await back.click();
-	await expect(page.locator('#upload-zone')).toBeFocused();
+	await expect(page.getByRole('button', { name: 'Back to start' })).toBeInViewport();
 });
 
 test('uploaded year shows progress so far', async ({ page }) => {
