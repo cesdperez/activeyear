@@ -1,6 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { KOFI_URL } from '../../src/lib/constants/site.js';
-import { DASHBOARD_HEADING, gotoUpload } from './helpers.js';
+import { DASHBOARD_HEADING } from './helpers.js';
 
 const scrollToRecords = (page: Page) =>
 	page
@@ -124,19 +123,4 @@ test('support link text sits on the sentence baseline', async ({ page }) => {
 		return Math.abs(textBottom('Buy me a gel') - textBottom('Enjoying ActiveYear?'));
 	});
 	expect(offset).toBeLessThan(1);
-});
-
-test('FAQ support link tracks its placement', async ({ page }) => {
-	await page.addInitScript(() =>
-		Object.defineProperty(navigator, 'webdriver', { get: () => false })
-	);
-	await gotoUpload(page);
-	const link = page.locator('#faq-heading').locator('..').getByRole('link', { name: /ko-fi/i });
-	await expect(link).toHaveAttribute('href', KOFI_URL);
-	const event = page.waitForRequest(
-		(request) =>
-			request.url().includes('/api/event') && request.postData()?.includes('faq') === true
-	);
-	await link.click();
-	expect(JSON.parse((await event).postData()!)).toEqual({ event: 'support_clicked', value: 'faq' });
 });

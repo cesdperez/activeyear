@@ -34,11 +34,7 @@ export const faq: typeof en = {
 		},
 		{
 			question: 'Est-ce gratuit ?',
-			answer: 'Oui. Sans inscription ni publicité, et le code est open source sur GitHub.',
-			tip: {
-				text: 'Si l’application vous plaît, vous pouvez laisser un pourboire :',
-				label: 'offrez-moi un gel sur ko-fi'
-			}
+			answer: 'Oui. Sans inscription ni publicité, et le code est open source sur GitHub.'
 		}
 	],
 	garminSteps: [

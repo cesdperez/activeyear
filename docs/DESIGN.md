@@ -130,11 +130,11 @@ The shareable image. This is what users actually care about.
 
 ### Site footer
 
-Every page ends with a quiet footer (`SiteFooter.svelte`): on the dashboard the support line, then muted "Report an issue" (GitHub issues) and "See my other projects" (checho.xyz) links. External links open in a new tab, so a visitor never loses the dashboard.
+Every page ends with a quiet footer (`SiteFooter.svelte`): the support line, then muted "Report an issue" (GitHub issues) and "See my other projects" (checho.xyz) links. External links open in a new tab, so a visitor never loses the dashboard.
 
 ### Support link
 
-- Show "Buy me a gel" under the Download button after a successful export, in the site footer on the dashboard, and in the FAQ.
+- Show "Buy me a gel" under the Download button after a successful export, and in the site footer on every page.
 - The export prompt is "Enjoyed your recap? ActiveYear is free and made by one person." The dashboard prompt is "Enjoying ActiveYear?".
 - Use an accent-coloured link that ends in a heart icon (`GelLink.svelte`), set inline so its text sits on the sentence's baseline.
 - A compact fixed link appears after the header scrolls away and stays until the footer's support line is on screen. It also hides while the export confirmation's support line is on screen and while an export runs. It never hides for a section it passes over, because that made it blink in and out while scrolling. While it shows, the page has bottom scroll padding for focused controls. The Download button has extra scroll margin for its helper line.

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import GelLink from './GelLink.svelte';
 	import { faqItems } from '#lib/data/faq.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
 	import { faqPageSchema } from '#lib/utils/structuredData.js';
@@ -15,15 +14,11 @@
 	<dl
 		class="divide-y divide-[var(--color-border)] border-y border-[var(--color-border)] text-sm text-pretty"
 	>
-		{#each faqItems(i18n.locale) as { question, answer, tip } (question)}
+		{#each faqItems(i18n.locale) as { question, answer } (question)}
 			<div class="py-4">
 				<dt class="font-semibold text-[var(--color-text-primary)]">{question}</dt>
 				<dd class="mt-1 leading-relaxed text-[var(--color-text-muted)]">
 					{answer}
-					{#if tip}
-						{tip.text}
-						<GelLink placement="faq">{tip.label}</GelLink>.
-					{/if}
 				</dd>
 			</div>
 		{/each}

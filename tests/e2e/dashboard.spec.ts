@@ -93,7 +93,8 @@ test('every page ends with a footer linking to issues and other projects', async
 	};
 	await gotoUpload(page);
 	const landingFooter = await expectFooterLinks();
-	await expect(landingFooter.getByRole('link', { name: /Buy me a gel/ })).toHaveCount(0);
+	await expect(landingFooter.getByText('Enjoying ActiveYear?')).toBeVisible();
+	await expect(landingFooter.getByRole('link', { name: /Buy me a gel/ })).toBeVisible();
 	await openDemo(page);
 	const dashboardFooter = await expectFooterLinks();
 	await expect(dashboardFooter.getByText('Enjoying ActiveYear?')).toBeVisible();

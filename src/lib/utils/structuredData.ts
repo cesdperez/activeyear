@@ -31,12 +31,12 @@ export function faqPageSchema(items: FaqItem[]): JsonLdObject {
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'FAQPage',
-		mainEntity: items.map(({ question, answer, tip }) => ({
+		mainEntity: items.map(({ question, answer }) => ({
 			'@type': 'Question',
 			name: question,
 			acceptedAnswer: {
 				'@type': 'Answer',
-				text: tip ? `${answer} ${tip.text} ${tip.label}.` : answer
+				text: answer
 			}
 		}))
 	};

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { AUTHOR_URL, ISSUES_URL } from '#lib/constants/site.js';
 	import { i18n } from '#lib/i18n/i18n.svelte.js';
-	import { uploadStore } from '#lib/stores/upload.svelte.js';
 	import ExternalLink from '#lib/components/ExternalLink.svelte';
 	import SupportLink from '#lib/components/dashboard/SupportLink.svelte';
 
@@ -15,9 +14,7 @@
 	<div
 		class="flex flex-col items-center gap-4 border-t border-[var(--color-border)] pt-8 text-center"
 	>
-		{#if uploadStore.status === 'ready'}
-			<SupportLink placement="footer" />
-		{/if}
+		<SupportLink placement="footer" />
 		<ul class="flex flex-wrap justify-center gap-x-6 text-sm">
 			{#each links as { href, label } (href)}
 				<li>

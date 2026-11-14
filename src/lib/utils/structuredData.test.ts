@@ -27,14 +27,14 @@ describe('webApplicationSchema', () => {
 });
 
 describe('faqPageSchema', () => {
-	it('includes the full tip sentence in the plain-text answer', () => {
+	it('uses the answer text without additions', () => {
 		const schema = faqPageSchema(faqItems('en'));
 		expect(schema.mainEntity).toContainEqual({
 			'@type': 'Question',
 			name: 'Is it free?',
 			acceptedAnswer: {
 				'@type': 'Answer',
-				text: 'Yes. No sign-up, no ads, and the code is open source on GitHub. If you enjoy it, tips are welcome: buy me a gel on ko-fi.'
+				text: 'Yes. No sign-up, no ads, and the code is open source on GitHub.'
 			}
 		});
 	});

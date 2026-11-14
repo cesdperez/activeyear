@@ -33,8 +33,7 @@ export const faq = {
 		},
 		{
 			question: 'Is it free?',
-			answer: 'Yes. No sign-up, no ads, and the code is open source on GitHub.',
-			tip: { text: 'If you enjoy it, tips are welcome:', label: 'buy me a gel on ko-fi' }
+			answer: 'Yes. No sign-up, no ads, and the code is open source on GitHub.'
 		}
 	],
 	garminSteps: [

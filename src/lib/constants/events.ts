@@ -14,7 +14,7 @@ export const EVENT_VALUES = {
 	],
 	theme_selected: THEMES,
 	export: THEMES,
-	support_clicked: ['export', 'footer', 'faq', 'floating'],
+	support_clicked: ['export', 'footer', 'floating'],
 	more_stats_opened: [''],
 	sports_count: ['1', '2', '3-5', '6+']
 } as const;
