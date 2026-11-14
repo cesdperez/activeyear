@@ -333,6 +333,79 @@ test('Back to start stays in view at the bottom of the dashboard', async ({ page
 	await expect(page.getByRole('button', { name: 'Back to start' })).toBeInViewport();
 });
 
+for (const width of [390, 1440]) {
+	test(`section headings clear Back to start on focus at ${width}px`, async ({ page }) => {
+		await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
+		await page.goto('/');
+		await page.getByRole('button', { name: /demo data/i }).click();
+		const back = page.getByRole('button', { name: 'Back to start' });
+		for (const [heading, control] of [
+			[
+				page.getByRole('heading', { name: 'Highlights' }),
+				page.getByRole('searchbox', { name: 'Add an activity' })
+			],
+			[
+				page.getByRole('heading', { name: 'By sport' }),
+				page.getByTestId('sport-breakdown').getByRole('button').first()
+			]
+		] as const) {
+			await control.evaluate((el) =>
+				window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 50)
+			);
+			await control.focus();
+			await expect
+				.poll(async () => {
+					const a = await back.boundingBox();
+					const b = await heading.boundingBox();
+					return a && b ? b.y - (a.y + a.height) : -Infinity;
+				})
+				.toBeGreaterThanOrEqual(0);
+		}
+	});
+
+	test(`wrapped section headings clear Back to start on focus at ${width}px`, async ({ page }) => {
+		await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
+		await openDemo(page);
+		const heading = page.getByRole('heading', { name: 'By sport' });
+		await heading.evaluate((el) => (el.style.maxWidth = '5ch'));
+		await expect
+			.poll(() =>
+				heading.evaluate(
+					(el) => el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)
+				)
+			)
+			.toBeGreaterThanOrEqual(2);
+		const control = page.getByTestId('sport-breakdown').getByRole('button').first();
+		await control.evaluate((el) =>
+			window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 50)
+		);
+		await control.focus();
+		await expect
+			.poll(async () => {
+				const back = await page.getByRole('button', { name: 'Back to start' }).boundingBox();
+				const title = await heading.boundingBox();
+				return back && title ? title.y - (back.y + back.height) : -Infinity;
+			})
+			.toBeGreaterThanOrEqual(0);
+		await expect(control).toBeInViewport();
+	});
+
+	test(`focus deeper in a section does not scroll back to its heading at ${width}px`, async ({
+		page
+	}) => {
+		await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
+		await openDemo(page);
+		const control = page.getByTestId('highlight-row').last().getByRole('button');
+		await control.evaluate((el) =>
+			window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 100)
+		);
+		const scrollY = await page.evaluate(() => window.scrollY);
+		await control.focus();
+		await expect(control).toBeFocused();
+		expect(await page.evaluate(() => window.scrollY)).toBe(scrollY);
+	});
+}
+
 test('uploaded year shows progress so far', async ({ page }) => {
 	await gotoUpload(page, '/', new Date(TARGET_YEAR, 7, 15));
 	await page.locator('input[type="file"]').setInputFiles({

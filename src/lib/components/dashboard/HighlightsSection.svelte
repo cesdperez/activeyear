@@ -83,6 +83,7 @@
 	<p class="mb-6 text-[var(--color-text-muted)]">{caption}</p>
 	<div class="mb-6 grid gap-3 lg:grid-cols-[auto_minmax(16rem,1fr)] lg:items-start">
 		<div
+			data-section-lead
 			role="group"
 			aria-label={i18n.m.dashboard.highlightPresets}
 			class="segmented lg:mt-[1.625rem]"
@@ -103,6 +104,7 @@
 				>{i18n.m.dashboard.addActivity}</label
 			>
 			<input
+				data-section-lead
 				id="highlight-search"
 				type="search"
 				aria-describedby={highlightsStore.canAddHighlight

@@ -5,6 +5,7 @@
 	import { exportSettings } from '#lib/stores/exportSettings.svelte.js';
 	import { uploadStore } from '#lib/stores/upload.svelte.js';
 	import { TARGET_YEAR } from '#lib/constants/time.js';
+	import { BACK_TO_START_CLEARANCE_PX } from '#lib/constants/dom.js';
 	import { recordActivities } from '#lib/utils/yearLane.js';
 	import ExportPanel from '#lib/components/ExportPanel.svelte';
 	import DashboardHeader from '#lib/components/dashboard/DashboardHeader.svelte';
@@ -23,9 +24,28 @@
 
 	useConfettiRain();
 	let header: HTMLDivElement;
+
+	function keepSectionHeadingVisible(event: FocusEvent) {
+		const control = event.target;
+		if (!(control instanceof HTMLElement) || !control.closest('[data-section-lead]')) return;
+		const heading = control.closest('section')?.querySelector('h2');
+		if (!heading) return;
+
+		const correction = BACK_TO_START_CLEARANCE_PX - heading.getBoundingClientRect().top;
+		if (correction <= 0) return;
+		const bottomPadding =
+			parseFloat(getComputedStyle(document.documentElement).scrollPaddingBottom) || 0;
+		// Keep the focused control in view when the heading and intro are taller than the viewport.
+		if (control.getBoundingClientRect().bottom + correction > window.innerHeight - bottomPadding)
+			return;
+		window.scrollBy({ top: -correction, behavior: 'instant' });
+	}
 </script>
 
-<div class="relative mx-auto max-w-6xl overflow-x-hidden px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+<div
+	class="relative mx-auto max-w-6xl overflow-x-hidden px-4 py-12 sm:px-6 md:py-16 lg:px-8"
+	onfocusin={keepSectionHeadingVisible}
+>
 	<div bind:this={header}>
 		<DashboardHeader
 			activityCount={yearData.stats?.activityCount ?? 0}
