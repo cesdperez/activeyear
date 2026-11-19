@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-cloudflare';
+import { markdownPages } from './markdown-pages.js';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
@@ -13,7 +13,10 @@ export default defineConfig({
 		sveltekit({
 			preprocess: vitePreprocess(),
 			paths: { relative: false },
-			adapter: adapter({ routes: { include: ['/api/*'], exclude: [] } })
+			adapter: markdownPages(
+				{ routes: { include: ['/api/*'], exclude: [] } },
+				'.svelte-kit/cloudflare'
+			)
 		}),
 		catalogPreload('.svelte-kit/cloudflare'),
 		cspScriptHashes('.svelte-kit/cloudflare')

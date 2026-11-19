@@ -41,7 +41,7 @@ After changes, run `pnpm check && pnpm test:run`.
 
 Cloudflare Pages deploys on push to `main`. Do not push unless explicitly requested. The Pages dashboard injects the Web Analytics beacon, so the CSP allows `static.cloudflareinsights.com` and `cloudflareinsights.com`.
 
-Every page is prerendered and the worker is routed only `/api/*` (the event endpoint), so `_headers` is the only source of security headers for pages. `csp-script-hashes.ts` adds the hash of every inline script in the prerendered HTML (JSON-LD excepted) to the CSP at build time, so an inline script injected at runtime is blocked.
+Every page is prerendered. The Pages worker handles `/api/*` and serves build-generated Markdown variants of public pages. It forwards the static HTML and its `_headers` when the request prefers HTML. `csp-script-hashes.ts` adds the hash of every inline script in the prerendered HTML (JSON-LD excepted) to the CSP at build time, so an inline script injected at runtime is blocked.
 
 ## Checks
 

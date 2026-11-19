@@ -24,7 +24,10 @@ const AI_CRAWLERS = [
 ];
 
 export function GET(): Response {
-	const groups = ['*', ...AI_CRAWLERS].map((agent) => `User-agent: ${agent}\nAllow: /`);
+	const groups = ['*', ...AI_CRAWLERS].map(
+		(agent) =>
+			`User-agent: ${agent}\nAllow: /\nContent-Signal: ai-train=no, search=yes, ai-input=no`
+	);
 	const body = [...groups, `Sitemap: ${SITE_URL}/sitemap.xml`].join('\n\n') + '\n';
 	return new Response(body, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 }
