@@ -142,14 +142,13 @@
 	</div>
 	{#if hasHighlights || hasRecords}
 		<figcaption class="legend mt-3 flex flex-wrap justify-end gap-x-5 gap-y-1 {style.legend}">
-			{#if hasHighlights}<span class="flex items-center gap-2"
-					><span class="key marker-highlight" aria-hidden="true"></span>{i18n.m.common.yearLane
-						.highlight}</span
-				>{/if}
-			{#if hasRecords}<span class="flex items-center gap-2"
-					><span class="key marker-record" aria-hidden="true"></span>{i18n.m.common.yearLane
-						.record}</span
-				>{/if}
+			{#if hasHighlights}<span class="flex items-center gap-2">
+					<span class="key marker-highlight" aria-hidden="true"></span>{i18n.m.common.yearLane
+						.highlight}
+				</span>{/if}
+			{#if hasRecords}<span class="flex items-center gap-2">
+					<span class="key marker-record" aria-hidden="true"></span>{i18n.m.common.yearLane.record}
+				</span>{/if}
 		</figcaption>
 	{/if}
 </figure>

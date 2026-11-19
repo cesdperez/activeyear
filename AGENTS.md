@@ -19,7 +19,7 @@ After changes, run `pnpm check && pnpm test:run`.
 ## Testing
 
 - E2E tests (`tests/e2e/`) are the primary coverage for user flows. Unit tests (`*.test.ts`) cover edge cases and logic too slow to reach through E2E; avoid duplicating a flow in both.
-- E2E runs against `pnpm preview` (`wrangler pages dev` on the build), so `_headers` and the CSP are enforced. `pnpm test:e2e` builds and starts a fresh preview each run. `E2E_REUSE_SERVER=1` reuses a running one instead, which keeps serving the build it started with.
+- E2E runs against `pnpm preview` (`wrangler pages dev` on the build), so `_headers` and the CSP are enforced. `pnpm test:e2e` builds and starts a fresh HTTPS preview each run so WebKit can load assets under the CSP. `E2E_REUSE_SERVER=1` reuses a preview started with `pnpm preview --local-protocol https`, which keeps serving the build it started with.
 - Each checkout gets its own ports from `scripts/ports.ts`, so worktrees run dev, preview and E2E in parallel. The main checkout uses 4173 (preview) and 5173 (dev), a linked worktree a pair derived from its path. `ACTIVEYEAR_PORT` overrides the preview port; dev is one above it.
 - Ports are strict: a busy port fails rather than serving another build. `workerd` can outlive a killed `wrangler` and hold the port; `bash scripts/stop-servers.sh` stops this checkout's servers and everything they started. It finds them by port, so pass the same `ACTIVEYEAR_PORT` a server was started with. Orca runs it when it removes a worktree.
 - The `webkit` project runs only the specs it matches; it needs `npx playwright install webkit`.

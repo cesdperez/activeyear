@@ -104,20 +104,22 @@
 		</h2>
 		<p class="mb-4 text-sm text-[var(--color-text-muted)]">{i18n.m.upload.garminUnitsHint}</p>
 		<div role="group" aria-label={i18n.m.upload.garminUnits} class="segmented">
-			<button bind:this={metricButton} onclick={() => uploadStore.chooseGarminUnits('metric')}
-				>{i18n.m.upload.metric}</button
-			>
-			<button onclick={() => uploadStore.chooseGarminUnits('imperial')}
-				>{i18n.m.upload.imperial}</button
-			>
+			<button bind:this={metricButton} onclick={() => uploadStore.chooseGarminUnits('metric')}>
+				{i18n.m.upload.metric}
+			</button>
+			<button onclick={() => uploadStore.chooseGarminUnits('imperial')}>
+				{i18n.m.upload.imperial}
+			</button>
 		</div>
 		<button
 			class="mt-4 text-sm text-balance text-[var(--color-text-muted)] underline decoration-[var(--color-border)] underline-offset-4 transition-colors duration-200 hover:text-[var(--color-text-primary)] hover:decoration-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
 			onclick={() => {
 				uploadStore.reset();
 				triggerFileInput();
-			}}>{i18n.m.upload.otherFile}</button
+			}}
 		>
+			{i18n.m.upload.otherFile}
+		</button>
 	</div>
 {:else}
 	<button
@@ -150,9 +152,9 @@
 					aria-hidden="true"
 				/>
 			</span>
-			<span class="mb-2 block text-lg text-balance text-[var(--color-text-primary)]"
-				>{uploadStore.error ? uploadErrorMessage(uploadStore.error, i18n.locale) : ''}</span
-			>
+			<span class="mb-2 block text-lg text-balance text-[var(--color-text-primary)]">
+				{uploadStore.error ? uploadErrorMessage(uploadStore.error, i18n.locale) : ''}
+			</span>
 			<span class="block text-sm text-[var(--color-text-dim)]">{i18n.m.upload.retry}</span>
 		{:else}
 			<span class="mb-4 block">
@@ -162,9 +164,9 @@
 					aria-hidden="true"
 				/>
 			</span>
-			<span class="mb-1 block text-xl font-semibold text-balance text-[var(--color-text-primary)]"
-				>{i18n.m.upload.drop}</span
-			>
+			<span class="mb-1 block text-xl font-semibold text-balance text-[var(--color-text-primary)]">
+				{i18n.m.upload.drop}
+			</span>
 			<span class="mb-4 block text-sm text-[var(--color-text-muted)]">{i18n.m.upload.browse}</span>
 			<span class="mb-4 block text-xs text-[var(--color-text-dim)]">{i18n.m.upload.saved}</span>
 			<span class="flex items-center gap-1.5 text-xs text-[var(--color-text-muted)]">

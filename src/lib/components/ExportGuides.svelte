@@ -51,8 +51,10 @@
 			aria-controls="garmin-panel"
 			tabindex={selected === 'garmin' ? 0 : -1}
 			onclick={() => (selected = 'garmin')}
-			class="min-h-11 px-5">Garmin Connect</button
+			class="min-h-11 px-5"
 		>
+			Garmin Connect
+		</button>
 		<button
 			onkeydown={handleKeydown}
 			bind:this={stravaTab}
@@ -63,8 +65,10 @@
 			aria-controls="strava-panel"
 			tabindex={selected === 'strava' ? 0 : -1}
 			onclick={() => (selected = 'strava')}
-			class="min-h-11 px-5">Strava</button
+			class="min-h-11 px-5"
 		>
+			Strava
+		</button>
 	</div>
 </div>
 <div id="garmin-panel" role="tabpanel" aria-labelledby="garmin-tab" hidden={selected !== 'garmin'}>

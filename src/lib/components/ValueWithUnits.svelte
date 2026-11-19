@@ -15,8 +15,10 @@
 
 {#each parts as part, i (i)}{i > 0 ? ' ' : ''}{part.number}<span
 		class="unit {tone}"
-		style:--unit-scale={unitScale}>{part.unit}</span
-	>{/each}
+		style:--unit-scale={unitScale}
+	>
+		{part.unit}
+	</span>{/each}
 
 <style>
 	.unit {

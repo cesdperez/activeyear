@@ -157,8 +157,9 @@
 						class="stat-value fit-value block leading-none text-[var(--color-text-primary)]"
 						style:--fit-chars={fitChars}
 						style:--fit-max="calc(84px * var(--stat-scale))"
-						><ValueWithUnits value={stat.value} unitScale={UNIT_SCALE.board} /></span
 					>
+						<ValueWithUnits value={stat.value} unitScale={UNIT_SCALE.board} />
+					</span>
 				</dd>
 			</div>
 		{/each}

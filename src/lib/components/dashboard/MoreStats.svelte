@@ -44,9 +44,9 @@
 	}
 </script>
 
-{#snippet empty()}<span aria-hidden="true">–</span><span class="sr-only"
-		>{i18n.m.dashboard.noData}</span
-	>{/snippet}
+{#snippet empty()}<span aria-hidden="true">–</span><span class="sr-only">
+		{i18n.m.dashboard.noData}
+	</span>{/snippet}
 
 <div class="mb-24">
 	<button
@@ -83,9 +83,9 @@
 									<p class="mt-2 text-sm text-[var(--color-text-muted)]">
 										{formatCount(i18n.locale, quarter.count)}
 										{i18n.m.common.nouns.activity(quarter.count)},
-										<span class="whitespace-nowrap"
-											>{formatDuration(i18n.locale, quarter.duration)}</span
-										>
+										<span class="whitespace-nowrap">
+											{formatDuration(i18n.locale, quarter.duration)}
+										</span>
 									</p>
 								{:else}
 									<p class="stat-value mt-1 text-3xl leading-none text-[var(--color-text-dim)]">
@@ -107,12 +107,12 @@
 							<p class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
 								<span class="stat-value text-5xl leading-none">
 									{formatCount(i18n.locale, longestBreak.days)}
-									<span class="text-2xl text-[var(--color-text-muted)]"
-										>{plural(i18n.locale, longestBreak.days, {
+									<span class="text-2xl text-[var(--color-text-muted)]">
+										{plural(i18n.locale, longestBreak.days, {
 											one: i18n.m.dashboard.day,
 											other: i18n.m.dashboard.days
-										})}</span
-									>
+										})}
+									</span>
 								</span>
 								<span class="text-[var(--color-text-muted)]">
 									{formatShortDate(i18n.locale, longestBreak.start)}
@@ -131,11 +131,11 @@
 						<h3 class="sub-heading">{i18n.m.dashboard.byWeekday}</h3>
 						<table class="stats-table">
 							<thead>
-								<tr
-									><th scope="col">{i18n.m.dashboard.weekday}</th><th scope="col"
-										>{i18n.m.dashboard.distance}</th
-									><th scope="col">{i18n.m.dashboard.time}</th></tr
-								>
+								<tr>
+									<th scope="col">{i18n.m.dashboard.weekday}</th><th scope="col">
+										{i18n.m.dashboard.distance}
+									</th><th scope="col">{i18n.m.dashboard.time}</th>
+								</tr>
 							</thead>
 							<tbody>
 								{#each weekdaysLabels as day, i (day)}
@@ -163,11 +163,11 @@
 						<h3 class="sub-heading">{i18n.m.dashboard.averageActivity}</h3>
 						<table class="stats-table">
 							<thead>
-								<tr
-									><th scope="col">{i18n.m.dashboard.sport}</th><th scope="col"
-										>{i18n.m.dashboard.distance}</th
-									><th scope="col">{i18n.m.dashboard.time}</th></tr
-								>
+								<tr>
+									<th scope="col">{i18n.m.dashboard.sport}</th><th scope="col">
+										{i18n.m.dashboard.distance}
+									</th><th scope="col">{i18n.m.dashboard.time}</th>
+								</tr>
 							</thead>
 							<tbody>
 								{#each averages as average (average.type)}

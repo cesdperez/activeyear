@@ -38,19 +38,21 @@
 	</span>
 	<span class="figures stat-value">
 		<span>{activity.distance > 0 ? formatDistance(i18n.locale, activity.distance, unit) : ''}</span>
-		{#if showElevation}<span class="elevation"
-				><ArrowUp class="h-3.5 w-3.5" weight="bold" aria-hidden="true" /><span class="sr-only"
-					>{i18n.m.dashboard.elevationGained}</span
-				>{formatElevation(i18n.locale, activity.elevation, unit)}</span
-			>{/if}
+		{#if showElevation}<span class="elevation">
+				<ArrowUp class="h-3.5 w-3.5" weight="bold" aria-hidden="true" /><span class="sr-only">
+					{i18n.m.dashboard.elevationGained}
+				</span>{formatElevation(i18n.locale, activity.elevation, unit)}
+			</span>{/if}
 		<span>{formatDuration(i18n.locale, activity.duration)}</span>
 	</span>
 	<button
 		class="remove"
 		aria-label={i18n.m.dashboard.removeHighlight(activityTitle(i18n.locale, activity), date)}
 		disabled={exportLock.isExporting}
-		onclick={onremove}><X class="h-4 w-4" weight="bold" aria-hidden="true" /></button
+		onclick={onremove}
 	>
+		<X class="h-4 w-4" weight="bold" aria-hidden="true" />
+	</button>
 </li>
 
 <style>

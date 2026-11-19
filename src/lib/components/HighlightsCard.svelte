@@ -181,9 +181,9 @@
 										style:font-size={size.meta}
 									>
 										{#if fav.distance > 0}
-											<span class="stat-value"
-												>{formatDistance(i18n.locale, fav.distance, unit)}</span
-											>
+											<span class="stat-value">
+												{formatDistance(i18n.locale, fav.distance, unit)}
+											</span>
 										{/if}
 										<span class="stat-value">{formatDuration(i18n.locale, fav.duration)}</span>
 										<span class="sport-name">{i18n.m.common.sports[fav.type] ?? fav.type}</span>

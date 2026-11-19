@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import { PREVIEW_PORT } from './scripts/ports.js';
 
-const baseURL = `http://localhost:${PREVIEW_PORT}`;
+const baseURL = `https://localhost:${PREVIEW_PORT}`;
 
 export default defineConfig({
 	testDir: './tests/e2e',
@@ -12,6 +12,7 @@ export default defineConfig({
 	reporter: 'html',
 	use: {
 		baseURL,
+		ignoreHTTPSErrors: true,
 		reducedMotion: 'reduce',
 		// A US browser starts on miles and Imperial, so specs pin a metric region and opt into US.
 		locale: 'en-GB',
@@ -29,8 +30,9 @@ export default defineConfig({
 		}
 	],
 	webServer: {
-		command: 'pnpm run build && pnpm run preview',
+		command: 'pnpm run build && pnpm run preview --local-protocol https',
 		url: baseURL,
+		ignoreHTTPSErrors: true,
 		// A reused server keeps serving the build it started with, so tests would miss new changes.
 		reuseExistingServer: process.env.E2E_REUSE_SERVER === '1'
 	}

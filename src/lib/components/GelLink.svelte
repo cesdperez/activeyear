@@ -10,9 +10,10 @@
 <KofiLink
 	{...rest}
 	class="font-semibold whitespace-nowrap text-[var(--color-accent)] underline underline-offset-4 hover:text-[var(--color-text-primary)]"
-	>{@render children()}<Heart
+>
+	{@render children()}<Heart
 		class="ml-1 inline-block h-4 w-4 align-[-0.15em]"
 		weight="bold"
 		aria-hidden="true"
-	/></KofiLink
->
+	/>
+</KofiLink>

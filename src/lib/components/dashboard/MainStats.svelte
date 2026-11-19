@@ -84,8 +84,9 @@
 							class="stat-value fit-value block leading-none text-[var(--color-text-primary)]"
 							style:--fit-chars={fitChars}
 							style:--fit-max="3.25rem"
-							><ValueWithUnits {value} unitScale={UNIT_SCALE.board} /></span
 						>
+							<ValueWithUnits {value} unitScale={UNIT_SCALE.board} />
+						</span>
 					</dd>
 					{#if funFact}<dd class="fun-fact">{funFact}</dd>{/if}
 				</div>

@@ -140,8 +140,10 @@
 					if (suggestion) save(suggestion);
 					suggestion = null;
 				}}
-				class="flex min-h-11 items-center py-1 pl-4 leading-tight">{PICKERS[suggestion].prompt}</a
+				class="flex min-h-11 items-center py-1 pl-4 leading-tight"
 			>
+				{PICKERS[suggestion].prompt}
+			</a>
 			<button
 				class="flex h-11 w-11 shrink-0 items-center justify-center"
 				lang={suggestion}
@@ -150,8 +152,10 @@
 					save('en');
 					suggestion = null;
 					button.focus();
-				}}><X class="h-4 w-4" aria-hidden="true" /></button
+				}}
 			>
+				<X class="h-4 w-4" aria-hidden="true" />
+			</button>
 		</div>
 	{/if}
 	<noscript>
@@ -160,8 +164,10 @@
 					href={resolve('/[[lang=locale]]', { lang: locale === 'en' ? undefined : locale })}
 					hreflang={locale}
 					lang={locale}
-					class="block px-3 py-2 text-[var(--color-text-primary)]">{LOCALE_NAMES[locale]}</a
-				>{/each}
+					class="block px-3 py-2 text-[var(--color-text-primary)]"
+				>
+					{LOCALE_NAMES[locale]}
+				</a>{/each}
 		</nav>
 	</noscript>
 </div>

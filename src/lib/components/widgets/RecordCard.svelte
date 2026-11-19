@@ -41,9 +41,9 @@
 			class="stat-value leading-[1.05] whitespace-nowrap text-[var(--color-text-primary)]"
 			style:font-size={style.fitMax}
 		>
-			<span class="fit-value" style:--fit-chars={value.length} style:--fit-max={style.fitMax}
-				>{value}</span
-			>
+			<span class="fit-value" style:--fit-chars={value.length} style:--fit-max={style.fitMax}>
+				{value}
+			</span>
 		</div>
 	</div>
 

@@ -108,8 +108,10 @@
 					onclick={() => {
 						highlightsStore.applyHighlightPreset(preset);
 						rankedByClimb = preset === 'climbs';
-					}}>{i18n.m.dashboard.presets[preset].label}</button
+					}}
 				>
+					{i18n.m.dashboard.presets[preset].label}
+				</button>
 			{/each}
 		</div>
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -130,9 +132,9 @@
 			}}
 		>
 			<div class="relative">
-				<label for="highlight-search" class="mb-1.5 block text-sm font-medium"
-					>{i18n.m.dashboard.addActivity}</label
-				>
+				<label for="highlight-search" class="mb-1.5 block text-sm font-medium">
+					{i18n.m.dashboard.addActivity}
+				</label>
 				<input
 					data-section-lead
 					id="highlight-search"
@@ -168,13 +170,14 @@
 											aria-disabled={unavailable || undefined}
 											disabled={exportLock.isExporting}
 											onclick={() => toggle(activity)}
-											><span class="min-w-0 flex-1"
-												><span class="block font-semibold wrap-anywhere"
-													>{activityTitle(i18n.locale, activity)}</span
-												><span class="block text-sm text-[var(--color-text-muted)]"
-													>{resultDetails(activity)}</span
-												></span
-											>{#if selected}<Check
+										>
+											<span class="min-w-0 flex-1">
+												<span class="block font-semibold wrap-anywhere">
+													{activityTitle(i18n.locale, activity)}
+												</span><span class="block text-sm text-[var(--color-text-muted)]">
+													{resultDetails(activity)}
+												</span>
+											</span>{#if selected}<Check
 													class="h-5 w-5 shrink-0 text-[var(--color-accent)]"
 													weight="bold"
 													aria-hidden="true"
@@ -182,8 +185,8 @@
 													class="h-5 w-5 shrink-0 text-[var(--color-text-muted)]"
 													weight="bold"
 													aria-hidden="true"
-												/>{/if}</button
-										>
+												/>{/if}
+										</button>
 									</li>
 								{/each}
 							</ul>
@@ -196,12 +199,9 @@
 						<div
 							class="sticky bottom-0 flex items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-4 py-2"
 						>
-							<span class="text-sm text-[var(--color-text-muted)]"
-								>{i18n.m.dashboard.pickedCount(
-									highlightsStore.highlights.length,
-									HIGHLIGHTS_LIMIT
-								)}</span
-							>
+							<span class="text-sm text-[var(--color-text-muted)]">
+								{i18n.m.dashboard.pickedCount(highlightsStore.highlights.length, HIGHLIGHTS_LIMIT)}
+							</span>
 							<button
 								class="btn-secondary min-h-11 px-4 text-[var(--color-accent)]"
 								disabled={exportLock.isExporting}
@@ -209,8 +209,10 @@
 									query = '';
 									open = false;
 									searchInput?.focus();
-								}}>{i18n.m.dashboard.searchDone}</button
+								}}
 							>
+								{i18n.m.dashboard.searchDone}
+							</button>
 						</div>
 					</div>
 				{/if}

@@ -18,7 +18,7 @@
 
 <!-- A new tab, so following a link never throws away the dashboard. -->
 <!-- eslint-disable svelte/no-navigation-without-resolve -- external site, not an app route -->
-<a {...rest} {href} target="_blank" rel="noopener noreferrer"
-	>{@render children()}<span class="sr-only"> {newTabLabel ?? i18n.m.common.opensInNewTab}</span></a
->
+<a {...rest} {href} target="_blank" rel="noopener noreferrer">
+	{@render children()}<span class="sr-only"> {newTabLabel ?? i18n.m.common.opensInNewTab}</span>
+</a>
 <!-- eslint-enable svelte/no-navigation-without-resolve -->

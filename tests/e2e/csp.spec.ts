@@ -9,8 +9,10 @@ test.describe('Content Security Policy', () => {
 		const response = await page.goto('/');
 		const headers = response!.headers();
 
-		expect(headers['strict-transport-security']).toContain('max-age=31536000');
-		expect(headers['x-frame-options']).toBe('SAMEORIGIN');
+		expect(headers['strict-transport-security']).toBe(
+			'max-age=63072000; includeSubDomains; preload'
+		);
+		expect(headers['x-frame-options']).toBe('DENY');
 		expect(headers['x-content-type-options']).toBe('nosniff');
 		const scriptSrc = headers['content-security-policy'].match(/script-src ([^;]*)/)![1];
 		expect(scriptSrc).toMatch(/'sha256-/);

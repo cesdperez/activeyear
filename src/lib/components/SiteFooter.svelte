@@ -21,8 +21,9 @@
 					<ExternalLink
 						{href}
 						class="inline-flex items-center text-[var(--color-text-muted)] underline decoration-[var(--color-border)] underline-offset-4 transition-colors duration-200 hover:text-[var(--color-text-primary)] hover:decoration-[var(--color-accent)] pointer-coarse:min-h-11"
-						>{label}</ExternalLink
 					>
+						{label}
+					</ExternalLink>
 				</li>
 			{/each}
 		</ul>

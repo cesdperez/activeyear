@@ -71,8 +71,10 @@
 					<span
 						class="stat-value leading-none {style.count} {isTopDay
 							? 'text-[var(--color-accent)]'
-							: 'text-[var(--color-text-muted)]'}">{pattern[i]}</span
+							: 'text-[var(--color-text-muted)]'}"
 					>
+						{pattern[i]}
+					</span>
 					<div
 						data-testid="weekly-pattern-bar"
 						class="weekly-bar w-full transition-all {style.bar}"

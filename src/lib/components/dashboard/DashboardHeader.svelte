@@ -58,8 +58,9 @@
 		<p class="mb-4" data-testid="demo-data-tag">
 			<span
 				class="inline-block rounded-[var(--radius-control)] border border-[var(--color-border)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-muted)]"
-				>{i18n.m.dashboard.demoData}</span
 			>
+				{i18n.m.dashboard.demoData}
+			</span>
 		</p>
 	{/if}
 	<h1

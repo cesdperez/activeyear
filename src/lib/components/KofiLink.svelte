@@ -19,5 +19,7 @@
 	{...rest}
 	href={KOFI_URL}
 	newTabLabel={i18n.m.dashboard.opensKofi}
-	onclick={() => track('support_clicked', placement)}>{@render children()}</ExternalLink
+	onclick={() => track('support_clicked', placement)}
 >
+	{@render children()}
+</ExternalLink>
