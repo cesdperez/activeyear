@@ -21,6 +21,10 @@ export default defineConfig({
 		catalogPreload('.svelte-kit/cloudflare'),
 		cspScriptHashes('.svelte-kit/cloudflare')
 	],
+	resolve: {
+		// The Node entry imports streams, which the Pages bundle cannot resolve.
+		alias: { papaparse: 'papaparse/papaparse.min.js' }
+	},
 	server: { port: DEV_PORT, strictPort: true },
 	test: {
 		include: ['src/**/*.test.ts', 'scripts/**/*.test.ts'],
